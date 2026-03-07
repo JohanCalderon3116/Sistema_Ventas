@@ -24,6 +24,8 @@ const Container = styled.main`
     background-color: black;
   }
   .contentRouters {
+    grid-column: 1;
+    width: 100%;
     background-color: black;
   }
   @media ${Device.tablet} {
@@ -33,6 +35,9 @@ const Container = styled.main`
     }
     .contentMenuambur {
       display: none;
+    }
+    .contentRouters{
+      grid-column: 2;
     }
   }
 `;
