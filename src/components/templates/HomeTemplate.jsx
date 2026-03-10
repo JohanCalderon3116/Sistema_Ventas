@@ -1,8 +1,10 @@
 import styled from "styled-components";
 import { useAuthStore } from "../../store/AuthStore";
+import { userAuth } from "../../context/AuthContext";
 
 export const HomeTemplate = () => {
   const { cerrarSesion } = useAuthStore();
+  const {user} = userAuth()
   return (
     <Container>
       <span>HomeTemplate</span>

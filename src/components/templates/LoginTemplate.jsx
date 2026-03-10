@@ -14,6 +14,10 @@ export const LoginTemplate = () => {
   return (
     <Container>
       <div className="card">
+        <ContentLogo>
+          <img src={v.logo} alt="" />
+          <span>SoftCreate POS v1.0</span>
+        </ContentLogo>
         <Title $paddingBottom="20px">Iniciar sesión</Title>
         <form action="">
           <InputText2>
@@ -60,6 +64,7 @@ const Container = styled.div`
   text-align: center;
   flex-direction: column;
   padding: 20px;
+  color: ${({ theme }) => theme.text};
 
   .card {
     display: flex;
@@ -73,3 +78,14 @@ const Container = styled.div`
     }
   }
 `;
+const ContentLogo = styled.section`
+display: flex;
+align-items: center;
+justify-content: center;
+margin: 20px;
+span{
+  font-weight: 700;
+}
+img{
+  width: 10%;
+}`;

@@ -10,6 +10,7 @@ export * from './components/organismos/sidebar/sidebar/Sidebar';
 export * from './components/templates/HomeTemplate';
 export * from './components/templates/LoginTemplate';
 export * from './context/AuthContext';
+export * from './hooks/ProtectedRoute';
 export * from './index';
 export * from './main';
 export * from './pages/Home';
