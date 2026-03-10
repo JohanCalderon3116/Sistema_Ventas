@@ -1,5 +1,5 @@
 import styled, { ThemeProvider } from "styled-components";
-import { GlobalStyles, Myroutes, Sidebar } from "./index";
+import { AuthContextProvider, GlobalStyles, Myroutes, Sidebar } from "./index";
 import { Device } from "./styles/breakpoints";
 import { useThemeStore } from "./store/ThemeStore";
 import { useState } from "react";
@@ -8,19 +8,21 @@ function App() {
   const { themeStyle } = useThemeStore();
   return (
     <ThemeProvider theme={themeStyle}>
-      <Container className={sidebarOpen ? "active" : ""}>
-        <GlobalStyles></GlobalStyles>
-        <section className="contentSidebar">
-          <Sidebar
-            state={sidebarOpen}
-            setState={() => setSidebarOpen(!sidebarOpen)}
-          ></Sidebar>
-        </section>
-        <section className="contentMenuambur"></section>
-        <section className="contentRouters ">
-          <Myroutes></Myroutes>
-        </section>
-      </Container>
+      <AuthContextProvider>
+        <Container className={sidebarOpen ? "active" : ""}>
+          <GlobalStyles></GlobalStyles>
+          <section className="contentSidebar">
+            <Sidebar
+              state={sidebarOpen}
+              setState={() => setSidebarOpen(!sidebarOpen)}
+            ></Sidebar>
+          </section>
+          <section className="contentMenuambur"></section>
+          <section className="contentRouters ">
+            <Myroutes></Myroutes>
+          </section>
+        </Container>
+      </AuthContextProvider>
     </ThemeProvider>
   );
 }
@@ -28,7 +30,7 @@ const Container = styled.main`
   transition: 0.1s all ease-in-out;
   display: grid;
   grid-template-columns: 1fr;
-  color: ${({theme}) => theme.text};
+  color: ${({ theme }) => theme.text};
 
   .contentSidebar {
     display: none;

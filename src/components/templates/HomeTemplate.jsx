@@ -1,9 +1,12 @@
 import styled from "styled-components";
+import { useAuthStore } from "../../store/AuthStore";
 
 export const HomeTemplate = () => {
+  const { cerrarSesion } = useAuthStore();
   return (
     <Container>
       <span>HomeTemplate</span>
+      <button onClick={cerrarSesion}>Cerrar</button>
     </Container>
   );
 };
