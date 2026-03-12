@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { supabase } from "../supabase/supabase.config";
+import { MostrarUsuarios, supabase } from "../index";
 
 export const useAuthStore = create((set) => ({
   loginGoogle: async () => {

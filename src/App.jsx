@@ -10,6 +10,7 @@ import { Device } from "./styles/breakpoints";
 import { useThemeStore } from "./store/ThemeStore";
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools"; 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { themeStyle } = useThemeStore();
@@ -34,14 +35,15 @@ function App() {
         ) : (
           <Login></Login>
         )}
+        <ReactQueryDevtools initialIsOpen={true}></ReactQueryDevtools>
       </AuthContextProvider>
     </ThemeProvider>
   );
 }
 const Container = styled.main`
-  transition: 0.1s all ease-in-out;
   display: grid;
   grid-template-columns: 1fr;
+  transition: 0.1s ease-in-out;
   color: ${({ theme }) => theme.text};
 
   .contentSidebar {

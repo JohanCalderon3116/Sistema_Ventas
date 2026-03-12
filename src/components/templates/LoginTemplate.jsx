@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import {
-  Btnsave,
+  Btn1,
   Footer,
   InputText2,
   Linea,
@@ -34,22 +34,22 @@ export const LoginTemplate = () => {
               type="password"
             ></input>
           </InputText2>
-          <Btnsave
+          <Btn1
             titulo="Ingresar"
             bgcolor="#1cb0f6"
             color="255,255,255"
             width="100%"
-          ></Btnsave>
+          ></Btn1>
         </form>
         <Linea>
           <span>0</span>
         </Linea>
-        <Btnsave
+        <Btn1
           funcion={loginGoogle}
           titulo="Google"
           color="#fff"
           icono={<v.iconogoogle />}
-        ></Btnsave>
+        ></Btn1>
       </div>
       <Footer></Footer>
     </Container>
@@ -79,13 +79,14 @@ const Container = styled.div`
   }
 `;
 const ContentLogo = styled.section`
-display: flex;
-align-items: center;
-justify-content: center;
-margin: 20px;
-span{
-  font-weight: 700;
-}
-img{
-  width: 10%;
-}`;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px;
+  span {
+    font-weight: 700;
+  }
+  img {
+    width: 10%;
+  }
+`;

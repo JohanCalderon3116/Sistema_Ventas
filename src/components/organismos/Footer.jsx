@@ -13,10 +13,10 @@ export function Footer() {
       </section>
       <section className="derechos">
         <span>
-          SoftCreate POS v1.0 <br></br> NIT: 1.081.274.697
+          SoftCreate POS v1.0 
         </span>
         <div className="separador"></div>
-        <span>Desarrollado por Ingeniero: Johan Camilo Calderón Álvarez</span>
+        <span>Ing: Johan Camilo Calderón Álvarez</span>
         <div className="separador"></div>
         <span>© 2026 Todos los derechos reservados</span>
       </section>
