@@ -23,7 +23,7 @@ export async function InsertarCategorias(p, file) {
   }
 }
 
-async function subirImagen(idcategoria) {
+async function subirImagen(idcategoria, file) {
   const ruta = "categorias/" + idcategoria;
   const { data, error } = await supabase.storage
     .from("imagenes")
@@ -40,7 +40,7 @@ async function subirImagen(idcategoria) {
     return;
   }
   if (data) {
-    const { data: urlImagen } = await supabase.storage
+    const { data: urlImagen } = supabase.storage
       .from("imagenes")
       .getPublicUrl(ruta);
     return urlImagen;

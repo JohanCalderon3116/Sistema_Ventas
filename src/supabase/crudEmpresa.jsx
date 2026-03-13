@@ -22,13 +22,13 @@ export async function MostrarEmpresaXidusuario(p) {
   const { data, error } = await supabase
     .rpc("mostrarempresaxiduser", p)
     .maybeSingle();
-  // if (error) {
-  //   Swal.fire({
-  //     icon: "error",
-  //     title: "Oops...",
-  //     text: error.message,
-  //   });
-  //   return;
-  // }
+  if (error) {
+    // Swal.fire({
+    //   icon: "error",
+    //   title: "Oops...",
+    //   text: error.message,
+    // });
+    return;
+  }
   return data;
 }
