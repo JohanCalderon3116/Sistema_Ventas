@@ -19,11 +19,13 @@ export function Myroutes() {
   const { isLoading, error } = useQuery({
     queryKey: ["mostrar usuarios"],
     queryFn: mostrarusuarios,
+    refetchOnWindowFocus: false
   });
   const {data: dtaempresa} = useQuery({
     queryKey: ["mostrar empresa", datausuarios?.id],
     queryFn: () => mostrarempresa({ _id_usuario: datausuarios?.id }),
     enabled: !!datausuarios,
+    refetchOnWindowFocus: false
   });
   if (isLoading) {
     return <Spinner1></Spinner1>;

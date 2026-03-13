@@ -50,7 +50,7 @@ export function RegistrarCategorias({
     if (accion === "Editar") {
       const p = {
         _nombre: ConvertirCapitalize(data.descripcion),
-        _id_empresa: dataempresa.id,
+        _idempresa: dataempresa.id,
         _color: currentColor,
         _id: dataSelect.id,
       };

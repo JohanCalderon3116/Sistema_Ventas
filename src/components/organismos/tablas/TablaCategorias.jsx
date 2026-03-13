@@ -29,7 +29,7 @@ export function TablaCategorias({
   const [datas, setData] = useState(data);
   const [columnFilters, setColumnFilters] = useState([]);
 
-  const { eliminarCategoria } = useCategroriasStore();
+  const { eliminarCategorias } = useCategroriasStore();
   function eliminar(p) {
     if (p.nombre === "General") {
       Swal.fire({
@@ -41,7 +41,7 @@ export function TablaCategorias({
       return;
     }
     Swal.fire({
-      title: "¿Estás seguro(a)(e)?",
+      title: "¿Estás seguro(a)?",
       text: "Una vez eliminado, ¡no podrá recuperar este registro!",
       icon: "warning",
       showCancelButton: true,
@@ -50,7 +50,7 @@ export function TablaCategorias({
       confirmButtonText: "Si, eliminar",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        await eliminarCategoria({ id: p.id });
+        await eliminarCategorias({ id: p.id });
       }
     });
   }
@@ -90,17 +90,17 @@ export function TablaCategorias({
         return filterStatuses.includes(status?.id);
       },
     },
-    {
-      accessorKey: "id",
-      header: "Id",
-      cell: (info) => <span>{info.getValue()}</span>,
-      enableColumnFilter: true,
-      filterFn: (row, columnId, filterStatuses) => {
-        if (filterStatuses.length === 0) return true;
-        const status = row.getValue(columnId);
-        return filterStatuses.includes(status?.id);
-      },
-    },
+    // {
+    //   accessorKey: "id",
+    //   header: "Id",
+    //   cell: (info) => <span>{info.getValue()}</span>,
+    //   enableColumnFilter: true,
+    //   filterFn: (row, columnId, filterStatuses) => {
+    //     if (filterStatuses.length === 0) return true;
+    //     const status = row.getValue(columnId);
+    //     return filterStatuses.includes(status?.id);
+    //   },
+    // },
     {
       accessorKey: "nombre",
       header: "Descripcion",
