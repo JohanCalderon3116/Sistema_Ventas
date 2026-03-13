@@ -4,6 +4,7 @@ import {
   Configuraciones,
   Home,
   Login,
+  Marca,
   ProtectedRoute,
   Spinner1,
   useEmpresaStore,
@@ -19,13 +20,13 @@ export function Myroutes() {
   const { isLoading, error } = useQuery({
     queryKey: ["mostrar usuarios"],
     queryFn: mostrarusuarios,
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: false,
   });
-  const {data: dtaempresa} = useQuery({
+  const { data: dtaempresa } = useQuery({
     queryKey: ["mostrar empresa", datausuarios?.id],
     queryFn: () => mostrarempresa({ _id_usuario: datausuarios?.id }),
     enabled: !!datausuarios,
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: false,
   });
   if (isLoading) {
     return <Spinner1></Spinner1>;
@@ -48,6 +49,10 @@ export function Myroutes() {
         <Route
           path="/configuracion/categorias"
           element={<Categorias></Categorias>}
+        ></Route>
+        <Route
+          path="/configuracion/marca"
+          element={<Marca></Marca>}
         ></Route>
       </Route>
       <Route path="/login" element={<Login></Login>}></Route>

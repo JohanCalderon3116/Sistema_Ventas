@@ -104,15 +104,7 @@ export const DataModulosConfiguracion =[
     icono:"https://i.ibb.co/VYbMRLZ/categoria.png",
     link:"/configuracion/categorias",
     
-  },
-  {
-    title:"Marca de productos",
-    subtitle:"gestiona tus marcas",
-    icono:"https://i.ibb.co/1qsbCRb/piensa-fuera-de-la-caja.png",
-    link:"/configurar/marca",
-   
-  },
-
+  }
 ]
 //tipo usuario
 export const TipouserData = [
