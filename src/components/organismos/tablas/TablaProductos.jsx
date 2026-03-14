@@ -2,7 +2,7 @@ import styled from "styled-components";
 import {
   ContentAccionesTabla,
   Paginacion,
-  useMarcaStore,
+  useProductosStore,
 } from "../../../index";
 import Swal from "sweetalert2";
 import { v } from "../../../styles/variables";
@@ -16,7 +16,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { FaArrowsAltV } from "react-icons/fa";
-export function TablaMarca({
+export function TablaProductos({
   data,
   SetopenRegistro,
   setdataSelect,
@@ -27,7 +27,7 @@ export function TablaMarca({
   const [datas, setData] = useState(data);
   const [columnFilters, setColumnFilters] = useState([]);
 
-  const { eliminarmarca } = useMarcaStore();
+  const { eliminarProductos } = useProductosStore();
   function eliminar(p) {
     if (p.nombre === "General") {
       Swal.fire({
@@ -48,7 +48,7 @@ export function TablaMarca({
       confirmButtonText: "Si, eliminar",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        await eliminarmarca({ id: p.id });
+        await eliminarProductos({ id: p.id });
       }
     });
   }

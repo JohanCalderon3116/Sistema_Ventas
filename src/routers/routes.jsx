@@ -5,6 +5,7 @@ import {
   Home,
   Login,
   Marca,
+  Productos,
   ProtectedRoute,
   Spinner1,
   useEmpresaStore,
@@ -53,6 +54,10 @@ export function Myroutes() {
         <Route
           path="/configuracion/marca"
           element={<Marca></Marca>}
+        ></Route>
+        <Route
+          path="/configuracion/productos"
+          element={<Productos></Productos>}
         ></Route>
       </Route>
       <Route path="/login" element={<Login></Login>}></Route>
