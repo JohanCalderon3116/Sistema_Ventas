@@ -49,6 +49,7 @@ const Container = styled.div`
   gap: 10px;
   z-index: 3;
   height: 230px;
+  width: 95%;
   @media ${() => Device.tablet} {
   }
   .contentClose {

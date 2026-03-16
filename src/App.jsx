@@ -5,6 +5,7 @@ import {
   Myroutes,
   Sidebar,
   Login,
+  Toogle,
 } from "./index";
 import { Device } from "./styles/breakpoints";
 import { useThemeStore } from "./store/ThemeStore";
@@ -27,7 +28,7 @@ function App() {
                 setState={() => setSidebarOpen(!sidebarOpen)}
               ></Sidebar>
             </section>
-            <section className="contentMenuambur"></section>
+            <section className="contentMenuambur"><Toogle></Toogle></section>
             <section className="contentRouters ">
               <Myroutes></Myroutes>
             </section>

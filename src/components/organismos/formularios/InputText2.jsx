@@ -11,7 +11,6 @@ const Container = styled.div`
   position: relative;
   display: flex;
   align-items: center;
-  margin-bottom: 15px;
   width: 100%;
 
   .form__group {
