@@ -2,7 +2,7 @@ import Swal from "sweetalert2";
 import { supabase } from "./supabase.config";
 const tabla = "productos";
 export async function InsertarProductos(p) {
-  const { error } = await supabase.rpc("insertarProductos", p);
+  const { error, data } = await supabase.rpc("insertarproductos", p);
   if (error) {
     Swal.fire({
       icon: "error",
@@ -11,21 +11,19 @@ export async function InsertarProductos(p) {
     });
     return;
   }
+  return data;
 }
 export async function MostrarProductos(p) {
-  const { data } = await supabase
-    .from(tabla)
-    .select()
-    .eq("id_empresa", p.id_empresa)
-    .order("id", { ascending: false });
+  const { data } = await supabase.rpc("mostrarproductos", {
+    _id_empresa: p.id_empresa,
+  });
   return data;
 }
 export async function BuscarProductos(p) {
-  const { data } = await supabase
-    .from(tabla)
-    .select()
-    .eq("id_empresa", p.id_empresa)
-    .ilike("nombre", "%" + p.Productos + "%");
+  const { data } = await supabase.rpc("buscarproductos", {
+    _id_empresa: p.id_empresa,
+    buscador: p.buscador,
+  });
   return data;
 }
 export async function EliminarProductos(p) {
@@ -40,7 +38,7 @@ export async function EliminarProductos(p) {
   }
 }
 export async function EditarProductos(p) {
-  const { error } = await supabase.rpc("editarProductos", p);
+  const { error } = await supabase.rpc("editarproductos", p);
   if (error) {
     Swal.fire({
       icon: "error",
@@ -50,3 +48,4 @@ export async function EditarProductos(p) {
     return;
   }
 }
+

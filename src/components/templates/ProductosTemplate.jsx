@@ -11,7 +11,7 @@ import { v } from "../../styles/variables";
 import { useState } from "react";
 import Confetti from "react-confetti-boom";
 export const ProductosTemplate = () => {
-  const { dataProductos, setBuscador } = useProductosStore();
+  const { dataProductos, setBuscador, generarCodigo } = useProductosStore();
   const [openRegistro, setOpenRegistro] = useState(false);
   const [accion, setAccion] = useState("");
   const [dataSelect, setDataSelect] = useState([]);
@@ -21,6 +21,7 @@ export const ProductosTemplate = () => {
     setAccion("Nuevo");
     setDataSelect([]);
     setIsExploding(false);
+    generarCodigo();
   }
   return (
     <Container>
@@ -29,6 +30,7 @@ export const ProductosTemplate = () => {
         onClose={() => setOpenRegistro(!openRegistro)}
         dataSelect={dataSelect}
         accion={accion}
+        state={openRegistro}
       ></RegistrarProductos>
 
       <section className="area1">

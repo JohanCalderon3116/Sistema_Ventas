@@ -8,22 +8,77 @@ import {
   ContainerSelector,
   Switch1,
   Selector,
+  useSucursalesStore,
+  ListaDesplegable,
+  useCategroriasStore,
+  Checkbox1,
+  Btngenerarcodigo,
+  useAlmacenesStore,
 } from "../../../index";
 import { useForm } from "react-hook-form";
 import { useEmpresaStore } from "../../../store/EmpresaStore";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Device } from "../../../styles/breakpoints";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 
 export function RegistrarProductos({
   onClose,
   dataSelect,
   accion,
   setIsExploding,
+  state,
 }) {
-  const { insertarProductos, editarProductos } = useProductosStore();
+  if (!state) {
+    return;
+  }
+  const [isCheked1, setIsCheked1] = useState(true);
+  const [isCheked2, setIsCheked2] = useState(false);
+  const [sevendePor, setSevendePor] = useState("Unidad");
+  const handleCheckboxChange = (cheboxNumber) => {
+    if (cheboxNumber === 1) {
+      setIsCheked1(true);
+      setIsCheked2(false);
+      setSevendePor("Unidad");
+    } else {
+      setIsCheked1(false);
+      setIsCheked2(true);
+      setSevendePor("Peso (Kg)");
+    }
+  };
+  const {
+    insertarProductos,
+    editarProductos,
+    generarCodigo,
+    codigogenerado,
+    refetchs,
+  } = useProductosStore();
   const { dataempresa } = useEmpresaStore();
+  const {
+    insertarStockAlmacenes,
+    mostrarAlmacen,
+    dataalmacen,
+    eliminarAlmacen,
+  } = useAlmacenesStore();
   const [stateInventarios, setStateInventarios] = useState(false);
+  const [stateEnabledStock, setstatEEnabledStock] = useState(false);
+  const { datacategorias, selectCategoria, categoriaItemSelect } =
+    useCategroriasStore();
+  const { sucursalesItemSelect, dataSucursales, selectSucursal } =
+    useSucursalesStore();
+  const [stateSucursalesLista, setStateSucursalesLista] = useState(false);
+  const [stateCategoriasLista, setStateCategoriasLista] = useState(false);
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: [
+      "mostrar stock almacen por sucursal",
+      { id_producto: dataSelect.id, id_sucursal: sucursalesItemSelect.id },
+    ],
+    queryFn: () =>
+      mostrarAlmacen({
+        id_sucursal: sucursalesItemSelect.id,
+        id_producto: dataSelect.id,
+      }),
+  });
   const {
     register,
     formState: { errors },
@@ -31,7 +86,7 @@ export function RegistrarProductos({
   } = useForm();
   const { isPending, mutate: doInsertar } = useMutation({
     mutationFn: insertar,
-    mutationKey: "insertar marca",
+    mutationKey: "insertar productos",
     onError: (err) => console.log("El error", err.message),
     onSuccess: () => cerrarFormulario(),
   });
@@ -43,22 +98,155 @@ export function RegistrarProductos({
     setIsExploding(true);
   };
   async function insertar(data) {
+    validarVacios(data);
     if (accion === "Editar") {
       const p = {
-        _nombre: ConvertirCapitalize(data.marca),
-        _id_empresa: dataempresa.id,
         _id: dataSelect.id,
+        _nombre: ConvertirCapitalize(data.nombre),
+        _precio_venta: parseFloat(data.precio_venta),
+        _precio_compra: parseFloat(data.precio_compra),
+        _id_categoria: categoriaItemSelect.id,
+        _codigo_barra: randomCodeBarras ? randomCodeBarras : codigogenerado,
+        _codigo_interno: randomCodeInterno ? randomCodeInterno : codigogenerado,
+        _id_empresa: dataempresa.id,
+        _sevende_por: sevendePor,
+        _maneja_inventarios: stateInventarios,
       };
       await editarProductos(p);
+      if (stateInventarios) {
+        if (dataalmacen === null) {
+          const palmacenes = {
+            id_sucursal: sucursalesItemSelect.id,
+            id_producto: dataSelect.id,
+            stock: parseFloat(data.stock),
+            stock_minimo: parseFloat(data.stock_minimo),
+          };
+          await insertarStockAlmacenes(palmacenes);
+        }
+      }
     } else {
       const p = {
-        _nombre: ConvertirCapitalize(data.marca),
+        _nombre: ConvertirCapitalize(data.nombre),
+        _precio_venta: parseFloat(data.precio_venta),
+        _precio_compra: parseFloat(data.precio_compra),
+        _id_categoria: categoriaItemSelect.id,
+        _codigo_barra: randomCodeBarras ? randomCodeBarras : codigogenerado,
+        _codigo_interno: randomCodeInterno ? randomCodeInterno : codigogenerado,
         _id_empresa: dataempresa.id,
+        _sevende_por: sevendePor,
+        _maneja_inventarios: stateInventarios,
+        _maneja_multiprecios: false,
       };
-
-      await insertarProductos(p);
+      const id_producto_nuevo = await insertarProductos(p);
+      if (stateInventarios) {
+        const palmacenes = {
+          id_sucursal: sucursalesItemSelect.id,
+          id_producto: id_producto_nuevo,
+          stock: parseFloat(data.stock),
+          stock_minimo: parseFloat(data.stock_minimo),
+        };
+        await insertarStockAlmacenes(palmacenes);
+      }
     }
   }
+  //#region validar vacios
+  function validarVacios(data) {
+    if (!randomCodeInterno) {
+      generarCodigoInterno();
+    }
+    if (!randomCodeBarras) {
+      generarCodigoBarras();
+    }
+    if (data.precio_venta.trim() === "") {
+      data.precio_venta = 0;
+    }
+    if (data.precio_compra.trim() === "") {
+      data.precio_compra = 0;
+    }
+    if (stateInventarios) {
+      if (!dataalmacen) {
+        if (data.stock.trim() === "") {
+          data.stock = 0;
+        }
+        if (data.stock_minimo.trim() === "") {
+          data.stock_minimo = 0;
+        }
+      }
+    }
+  }
+  //#endregion
+  //#region generarcodigo
+  const [randomCodeInterno, setRandomCodeInterno] = useState("");
+  const [randomCodeBarras, setRandomCodeBarras] = useState("");
+  function generarCodigoInterno() {
+    generarCodigo();
+    setRandomCodeInterno(codigogenerado);
+    dataSelect.codigo_interno = codigogenerado;
+  }
+  function generarCodigoBarras() {
+    generarCodigo();
+    setRandomCodeBarras(codigogenerado);
+    dataSelect.codigo_barra = codigogenerado;
+  }
+  const handleChangeinterno = (event) => {
+    setRandomCodeInterno(event.target.value);
+  };
+  const handleChangebarras = (event) => {
+    setRandomCodeBarras(event.target.value);
+  };
+  //#endregion
+  //#region validar accion
+  useEffect(() => {
+    if (accion != "Editar") {
+      generarCodigoInterno();
+    } else {
+      setRandomCodeInterno(dataSelect.codigo_interno);
+      setRandomCodeBarras(dataSelect.codigo_barra);
+      if (dataSelect.sevende_por === "Unidad") {
+        handleCheckboxChange(1);
+      } else {
+        handleCheckboxChange(0);
+      }
+      dataSelect.maneja_inventarios
+        ? setStateInventarios(true)
+        : setStateInventarios(false);
+      dataSelect.maneja_inventarios
+        ? setstatEEnabledStock(true)
+        : setstatEEnabledStock(false);
+    }
+  }, []);
+  //#endregion
+  //#region validar check
+  function checkUseInventarios() {
+    if (accion === "Editar") {
+      if (dataalmacen) {
+        if (stateInventarios) {
+          Swal.fire({
+            title: "¿Estás seguro(a)?",
+            text: "Si desactiva esta opción se elimina el stock",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Si, eliminar",
+          }).then(async (result) => {
+            if (result.isConfirmed) {
+              setStateInventarios(false);
+              await eliminarAlmacen({ id: dataalmacen.id });
+              await edi;
+            }
+          });
+        } else {
+          setStateInventarios(true);
+        }
+      } else {
+        setStateInventarios(!stateInventarios);
+      }
+    } else {
+      setStateInventarios(!stateInventarios);
+    }
+  }
+  //#endregion
   return (
     <Container>
       {isPending ? (
@@ -75,7 +263,14 @@ export function RegistrarProductos({
             </section>
 
             <section>
-              <span onClick={onClose}>x</span>
+              <span
+                onClick={() => {
+                  onClose();
+                  refetchs();
+                }}
+              >
+                x
+              </span>
             </section>
           </div>
           <form className="formulario" onSubmit={handleSubmit(handlesub)}>
@@ -92,132 +287,170 @@ export function RegistrarProductos({
                     })}
                   />
                   <label className="form__label">Nombre</label>
-                  {errors.descripcion?.type === "required" && (
-                    <p>Campo requerido</p>
-                  )}
+                  {errors.nombre?.type === "required" && <p>Campo requerido</p>}
                 </InputText>
               </article>
               <article>
                 <InputText icono={<v.iconoflechaderecha />}>
                   <input
                     className="form__field"
-                    defaultValue={dataSelect.nombre}
+                    defaultValue={dataSelect.precio_venta}
                     type="number"
                     step="0.01"
                     placeholder="precio venta"
-                    {...register("precio_venta", {
-                      required: true,
-                    })}
+                    {...register("precio_venta", {})}
                   />
                   <label className="form__label">Precio venta</label>
-                  {errors.descripcion?.type === "required" && (
-                    <p>Campo requerido</p>
-                  )}
                 </InputText>
               </article>
               <article>
                 <InputText icono={<v.iconoflechaderecha />}>
                   <input
                     className="form__field"
-                    defaultValue={dataSelect.nombre}
+                    defaultValue={dataSelect.precio_compra}
                     type="number"
                     step="0.01"
                     placeholder="precio compra"
-                    {...register("precio_compra", {
-                      required: true,
-                    })}
+                    {...register("precio_compra", {})}
                   />
                   <label className="form__label">Precio compra</label>
-                  {errors.descripcion?.type === "required" && (
-                    <p>Campo requerido</p>
-                  )}
                 </InputText>
               </article>
-              <article>
+              <article className="contentPadregenerar">
                 <InputText icono={<v.iconoflechaderecha />}>
                   <input
                     className="form__field"
-                    defaultValue={dataSelect.nombre}
+                    value={randomCodeBarras}
+                    onChange={handleChangebarras}
                     type="text"
-                    step="1"
                     placeholder="codigo de barras"
-                    {...register("codigo_barras", {
-                      required: true,
-                    })}
+                    // {...register("codigo_barra", {})}
                   />
                   <label className="form__label">Codigo de barras</label>
-                  {errors.descripcion?.type === "required" && (
-                    <p>Campo requerido</p>
-                  )}
                 </InputText>
+                <ContainerBtnGenerar>
+                  <Btngenerarcodigo
+                    titulo="Generar"
+                    funcion={generarCodigoBarras}
+                  ></Btngenerarcodigo>
+                </ContainerBtnGenerar>
               </article>
-              <article>
+              <article className="contentPadregenerar">
                 <InputText icono={<v.iconoflechaderecha />}>
                   <input
                     className="form__field"
-                    defaultValue={dataSelect.nombre}
+                    value={randomCodeInterno}
+                    onChange={handleChangeinterno}
                     type="text"
-                    step="1"
                     placeholder="codigo interno"
-                    {...register("codigo_interno", {
-                      required: true,
-                    })}
+                    // {...register("codigo_interno", {})}
                   />
                   <label className="form__label">Codigo interno</label>
-                  {errors.descripcion?.type === "required" && (
-                    <p>Campo requerido</p>
-                  )}
                 </InputText>
+                <ContainerBtnGenerar>
+                  <Btngenerarcodigo
+                    titulo="Generar"
+                    funcion={generarCodigoInterno}
+                  ></Btngenerarcodigo>
+                </ContainerBtnGenerar>
               </article>
             </section>
             <section className="section2">
+              <label>Se vende por: </label>
+              <ContainerSelector>
+                <label>Unidad</label>
+                <Checkbox1
+                  isChecked={isCheked1}
+                  onChange={() => handleCheckboxChange(1)}
+                ></Checkbox1>
+                <label>Pesado (decimales)</label>
+                <Checkbox1
+                  isChecked={isCheked2}
+                  onChange={() => handleCheckboxChange(2)}
+                ></Checkbox1>
+              </ContainerSelector>
+              <ContainerSelector>
+                <label>Categoria</label>
+                <Selector
+                  state={stateCategoriasLista}
+                  funcion={() => setStateCategoriasLista(!stateCategoriasLista)}
+                  color="#fc6027"
+                  texto1="🏬"
+                  texto2={categoriaItemSelect?.nombre}
+                ></Selector>
+                <ListaDesplegable
+                  funcion={selectCategoria}
+                  state={stateCategoriasLista}
+                  data={datacategorias}
+                  top="4rem"
+                  setState={() =>
+                    setStateCategoriasLista(!stateCategoriasLista)
+                  }
+                ></ListaDesplegable>
+              </ContainerSelector>
               <ContainerSelector>
                 <label>Controlar stock:</label>
                 <Switch1
                   state={stateInventarios}
-                  setState={() => setStateInventarios(!stateInventarios)}
+                  setState={checkUseInventarios}
                 ></Switch1>
               </ContainerSelector>
               {stateInventarios && (
                 <ContainerStock>
                   <ContainerSelector>
                     <label>Sucursal</label>
-                    <Selector color="#fc6027" texto1="🏬"></Selector>
+                    <Selector
+                      state={stateSucursalesLista}
+                      funcion={() =>
+                        setStateSucursalesLista(!stateSucursalesLista)
+                      }
+                      color="#fc6027"
+                      texto1="🏬"
+                      texto2={sucursalesItemSelect?.nombre}
+                    ></Selector>
+                    <ListaDesplegable
+                      refetch={refetch}
+                      funcion={selectSucursal}
+                      state={stateSucursalesLista}
+                      data={dataSucursales}
+                      top="4rem"
+                      setState={() =>
+                        setStateSucursalesLista(!stateSucursalesLista)
+                      }
+                    ></ListaDesplegable>
                   </ContainerSelector>
+                  {stateEnabledStock && (
+                    <ContainerMensajeStock>
+                      💀 Para poder editar el stock, te toca en el modulo
+                      'Inventario' 💀 XD
+                    </ContainerMensajeStock>
+                  )}
                   <article>
                     <InputText icono={<v.iconoflechaderecha />}>
                       <input
+                        disabled={stateEnabledStock}
                         className="form__field"
-                        defaultValue={dataSelect.nombre}
+                        defaultValue={dataalmacen?.stock}
                         type="number"
                         step="0.01"
                         placeholder="stock "
-                        {...register("stock", {
-                          required: true,
-                        })}
+                        {...register("stock", {})}
                       />
                       <label className="form__label">Stock</label>
-                      {errors.descripcion?.type === "required" && (
-                        <p>Campo requerido</p>
-                      )}
                     </InputText>
                   </article>
                   <article>
                     <InputText icono={<v.iconoflechaderecha />}>
                       <input
+                        disabled={stateEnabledStock}
                         className="form__field"
-                        defaultValue={dataSelect.nombre}
+                        defaultValue={dataalmacen?.stock_minimo}
                         type="number"
                         step="0.01"
                         placeholder="stock minimo"
-                        {...register("stock_minimo", {
-                          required: true,
-                        })}
+                        {...register("stock_minimo", {})}
                       />
                       <label className="form__label">Stock minimo</label>
-                      {errors.descripcion?.type === "required" && (
-                        <p>Campo requerido</p>
-                      )}
                     </InputText>
                   </article>
                 </ContainerStock>
@@ -252,6 +485,8 @@ const Container = styled.div`
     position: relative;
     width: 100%;
     max-width: 90%;
+    max-height: 90vh; /* 👈 limite de altura */
+    overflow-y: auto;
     border-radius: 20px;
     background: ${({ theme }) => theme.bgtotal};
     box-shadow: -10px 15px 30px rgba(10, 9, 9, 0.4);
@@ -280,10 +515,14 @@ const Container = styled.div`
       @media ${Device.tablet} {
         grid-template-columns: repeat(2, 1fr);
       }
-      section{
+      .section1,
+      .section2 {
         gap: 20px;
         display: flex;
         flex-direction: column;
+      }
+      .contentPadregenerar {
+        position: relative;
       }
     }
   }
@@ -336,4 +575,17 @@ const PictureContainer = styled.div`
   input {
     display: none;
   }
+`;
+const ContainerBtnGenerar = styled.div`
+  position: absolute;
+  right: 0px;
+  top: 10%;
+`;
+const ContainerMensajeStock = styled.div`
+  text-align: center;
+  color: #f9184c;
+  background-color: rgba(249, 24, 35, 0.2);
+  border-radius: 10px;
+  padding: 5px;
+  margin: 10px;
 `;

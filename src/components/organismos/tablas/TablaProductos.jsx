@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import {
+  Checkbox1,
   ContentAccionesTabla,
   Paginacion,
   useProductosStore,
@@ -83,16 +84,77 @@ export function TablaProductos({
       },
     },
     {
+      accessorKey: "p_venta",
+      header: "Precio de venta",
+      cell: (info) => (
+        <td data-title="Precio de venta" className="ContentCell">
+          <span>{info.getValue()}</span>
+        </td>
+      ),
+      enableColumnFilter: true,
+      filterFn: (row, columnId, filterStatuses) => {
+        if (filterStatuses.length === 0) return true;
+        const status = row.getValue(columnId);
+        return filterStatuses.includes(status?.id);
+      },
+    },
+    {
+      accessorKey: "p_compra",
+      header: "Precio de compra",
+      cell: (info) => (
+        <td data-title="Precio de compra" className="ContentCell">
+          <span>{info.getValue()}</span>
+        </td>
+      ),
+      enableColumnFilter: true,
+      filterFn: (row, columnId, filterStatuses) => {
+        if (filterStatuses.length === 0) return true;
+        const status = row.getValue(columnId);
+        return filterStatuses.includes(status?.id);
+      },
+    },
+    {
+      accessorKey: "sevende_por",
+      header: "Se vende por",
+      cell: (info) => (
+        <td data-title="Se vende por" className="ContentCell">
+          <span>{info.getValue()}</span>
+        </td>
+      ),
+      enableColumnFilter: true,
+      filterFn: (row, columnId, filterStatuses) => {
+        if (filterStatuses.length === 0) return true;
+        const status = row.getValue(columnId);
+        return filterStatuses.includes(status?.id);
+      },
+    },
+    {
+      accessorKey: "maneja_inventarios",
+      header: "Maneja inventario",
+      cell: (info) => (
+        <td data-title="Maneja inventario" className="ContentCell">
+          <span>{info.getValue()}</span>
+          <Checkbox1 isChecked={info.getValue()}></Checkbox1>
+        </td>
+      ),
+      enableColumnFilter: true,
+      filterFn: (row, columnId, filterStatuses) => {
+        if (filterStatuses.length === 0) return true;
+        const status = row.getValue(columnId);
+        return filterStatuses.includes(status?.id);
+      },
+    },
+    {
       accessorKey: "acciones",
       header: "",
       enableSorting: false,
       cell: (info) => (
-        <td data-title="Acciones" className="ContentCell">
+        <div data-title="Acciones" className="ContentCell">
           <ContentAccionesTabla
             funcionEditar={() => editar(info.row.original)}
             funcionEliminar={() => eliminar(info.row.original)}
           />
-        </td>
+        </div>
       ),
       enableColumnFilter: true,
       filterFn: (row, columnId, filterStatuses) => {
