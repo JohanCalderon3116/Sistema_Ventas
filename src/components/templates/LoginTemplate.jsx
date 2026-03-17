@@ -35,6 +35,7 @@ export const LoginTemplate = () => {
             ></input>
           </InputText2>
           <Btn1
+          border="2px"
             titulo="Ingresar"
             bgcolor="#1cb0f6"
             color="255,255,255"
@@ -45,9 +46,10 @@ export const LoginTemplate = () => {
           <span>0</span>
         </Linea>
         <Btn1
+        border="2px"
           funcion={loginGoogle}
           titulo="Google"
-          color="#fff"
+          color={(theme) => theme.bgtotal}
           icono={<v.iconogoogle />}
         ></Btn1>
       </div>
@@ -75,6 +77,11 @@ const Container = styled.div`
     margin: 20px;
     @media ${Device.tablet} {
       width: 400px;
+    }
+    form{
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
     }
   }
 `;

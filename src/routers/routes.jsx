@@ -7,59 +7,82 @@ import {
   Marca,
   Productos,
   ProtectedRoute,
-  Spinner1,
-  useEmpresaStore,
-  userAuth,
-  useUsuariosStore,
   POS,
+  Layout,
 } from "../index";
-import { useQuery } from "@tanstack/react-query";
 
 export function Myroutes() {
-  const { datausuarios, mostrarusuarios } = useUsuariosStore();
-  const { user } = userAuth();
-  const { mostrarempresa, dataempresa } = useEmpresaStore();
-  const { isLoading, error } = useQuery({
-    queryKey: ["mostrar usuarios"],
-    queryFn: mostrarusuarios,
-    refetchOnWindowFocus: false,
-  });
-  const { data: dtaempresa } = useQuery({
-    queryKey: ["mostrar empresa", datausuarios?.id],
-    queryFn: () => mostrarempresa({ _id_usuario: datausuarios?.id }),
-    enabled: !!datausuarios,
-    refetchOnWindowFocus: false,
-  });
-  if (isLoading) {
-    return <Spinner1></Spinner1>;
-  }
-  if (error) {
-    return <span>error...</span>;
-  }
   return (
     <Routes>
       <Route
+        path="/login"
         element={
-          <ProtectedRoute user={user} redirectTo={"/login"}></ProtectedRoute>
+          <ProtectedRoute accesby="non-authenticated">
+            <Login></Login>
+          </ProtectedRoute>
         }
-      >
-        <Route path="/" element={<Home></Home>}></Route>
-        <Route
-          path="/configuracion"
-          element={<Configuraciones></Configuraciones>}
-        ></Route>
-        <Route
-          path="/configuracion/categorias"
-          element={<Categorias></Categorias>}
-        ></Route>
-        <Route path="/configuracion/marca" element={<Marca></Marca>}></Route>
-        <Route
-          path="/configuracion/productos"
-          element={<Productos></Productos>}
-        ></Route>
-        <Route path="/pos" element={<POS></POS>}></Route>
-      </Route>
-      <Route path="/login" element={<Login></Login>}></Route>
+      />
+
+      <Route
+        path="/"
+        element={
+          <ProtectedRoute accesby="authenticated">
+            <Layout>
+              <Home></Home>
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/configuracion"
+        element={
+          <ProtectedRoute accesby="authenticated">
+            <Layout>
+              <Configuraciones></Configuraciones>
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/configuracion/categorias"
+        element={
+          <ProtectedRoute accesby="authenticated">
+            <Layout>
+              <Categorias></Categorias>
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/configuracion/marca"
+        element={
+          <ProtectedRoute accesby="authenticated">
+            <Layout>
+              <Marca></Marca>
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/configuracion/productos"
+        element={
+          <ProtectedRoute accesby="authenticated">
+            <Layout>
+              <Productos></Productos>
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/pos"
+        element={
+          <ProtectedRoute accesby="authenticated">
+            <Layout>
+              <POS></POS>
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   );
 }

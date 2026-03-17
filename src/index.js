@@ -42,6 +42,7 @@ export * from './components/templates/POSTemplate';
 export * from './components/templates/ProductosTemplate';
 export * from './context/AuthContext';
 export * from './hooks/GenerarCodigo';
+export * from './hooks/Layout';
 export * from './hooks/ProtectedRoute';
 export * from './index';
 export * from './main';
