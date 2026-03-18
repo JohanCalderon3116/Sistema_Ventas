@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import {
+  MenuMovil,
   Sidebar,
   Spinner1,
   Toogle,
@@ -13,6 +14,7 @@ export const Layout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { datausuarios, mostrarusuarios } = useUsuariosStore();
   const { mostrarempresa } = useEmpresaStore();
+  const [stateMenu, setStateMenu] = useState(false)
   const { isLoading, error } = useQuery({
     queryKey: ["mostrar usuarios"],
     queryFn: mostrarusuarios,
@@ -39,7 +41,10 @@ export const Layout = ({ children }) => {
         ></Sidebar>
       </section>
       <section className="contentMenuambur">
-        <Toogle></Toogle>
+        <Toogle state={stateMenu} setstate={() => setStateMenu(!stateMenu)}></Toogle>
+        {
+          stateMenu && <MenuMovil setState={()=> setStateMenu(!stateMenu)}></MenuMovil>
+        }
       </section>
       <Containerbody>{children}</Containerbody>
     </Container>

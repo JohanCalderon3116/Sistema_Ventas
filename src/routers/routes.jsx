@@ -9,6 +9,7 @@ import {
   ProtectedRoute,
   POS,
   Layout,
+  PageNot,
 } from "../index";
 
 export function Myroutes() {
@@ -83,6 +84,7 @@ export function Myroutes() {
           </ProtectedRoute>
         }
       />
+      <Route path="*" element={<PageNot></PageNot>}></Route>
     </Routes>
   );
 }

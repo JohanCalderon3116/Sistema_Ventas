@@ -8,6 +8,7 @@ export function ListaDesplegable({
   top,
   state,
   refetch,
+  funcioncrud,
 }) {
   if (!state) return;
   function seleccionar(p) {
@@ -16,6 +17,9 @@ export function ListaDesplegable({
     }
     funcion(p);
     setState();
+    if (funcioncrud) {
+      funcioncrud(p);
+    }
   }
   return (
     <Container scroll={scroll} $top={top}>

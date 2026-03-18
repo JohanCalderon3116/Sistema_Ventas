@@ -4,7 +4,11 @@ import {
   InputText2,
   ListaDesplegable,
   Reloj,
+  useDetalleVentasStore,
+  useEmpresaStore,
   useProductosStore,
+  useUsuariosStore,
+  useVentasStore,
 } from "../../../index";
 import { v } from "../../../styles/variables";
 import { Device } from "../../../styles/breakpoints";
@@ -14,7 +18,13 @@ export const HeaderPos = () => {
   const [stateListaProductos, setStateListaProductos] = useState(false);
   const [stateTeclado, setStateTeclado] = useState(false);
   const [stateLector, setStateLector] = useState(true);
-  const { setBuscador, dataProductos, selectProductos } = useProductosStore();
+  const { setBuscador, dataProductos, selectProductos, ProductosItemSelect } =
+    useProductosStore();
+  const { insertarVentas, idventa, eliminarventasIncompletas } =
+    useVentasStore();
+  const { datausuarios } = useUsuariosStore();
+  const { dataempresa } = useEmpresaStore();
+  const { insertarDetalleVentas } = useDetalleVentasStore();
   const buscadorRef = useRef(null);
   function focusclick() {
     buscadorRef.current.focus();
@@ -33,8 +43,38 @@ export const HeaderPos = () => {
       setStateListaProductos(true);
     }
   }
+  async function funcion_insertarventa(itemProducto) {
+    const pVentas = {
+      id_usuario: datausuarios?.id,
+      id_empresa: dataempresa?.id,
+    };
+    const pDetalleventas = {
+      id_venta: idventa,
+      precio_venta: ProductosItemSelect.precio_venta,
+      total: 1 * ProductosItemSelect.precio_venta,
+      descripcion: ProductosItemSelect.nombre,
+      id_producto: ProductosItemSelect.id,
+      precio_compra: ProductosItemSelect.precio_compra,
+      id_sucursal: 139,
+    };
+    if (idventa == 0) {
+      const result = await insertarVentas(pVentas);
+    
+        pDetalleventas.id_venta= result?.id,
+        pDetalleventas.precio_venta= itemProducto.precio_venta,
+        pDetalleventas.total= 1 * itemProducto.precio_venta,
+        pDetalleventas.descripcion= itemProducto.nombre,
+        pDetalleventas.id_producto= itemProducto.id,
+        pDetalleventas.precio_compra= itemProducto.precio_compra,
+
+      await insertarDetalleVentas(pDetalleventas);
+    } else {
+      await insertarDetalleVentas(pDetalleventas);
+    }
+  } 
   useEffect(() => {
     buscadorRef.current.focus();
+    eliminarventasIncompletas({ id_usuario: datausuarios?.id });
   }, []);
   return (
     <Header>
@@ -70,8 +110,9 @@ export const HeaderPos = () => {
               placeholder="Buscar"
             ></input>
             <ListaDesplegable
-            funcion={selectProductos}
-              setState={ () => setStateListaProductos(!stateListaProductos)}
+              funcioncrud={funcion_insertarventa}
+              funcion={selectProductos}
+              setState={() => setStateListaProductos(!stateListaProductos)}
               data={dataProductos}
               state={stateListaProductos}
             ></ListaDesplegable>
