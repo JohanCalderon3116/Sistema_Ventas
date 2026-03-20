@@ -4,9 +4,12 @@ import {
   InputText2,
   ListaDesplegable,
   Reloj,
+  useAlmacenesStore,
+  useCartVentasStore,
   useDetalleVentasStore,
   useEmpresaStore,
   useProductosStore,
+  useSucursalesStore,
   useUsuariosStore,
   useVentasStore,
 } from "../../../index";
@@ -25,6 +28,9 @@ export const HeaderPos = () => {
   const { datausuarios } = useUsuariosStore();
   const { dataempresa } = useEmpresaStore();
   const { insertarDetalleVentas } = useDetalleVentasStore();
+  const { sucursalesItemSelectAsignadas } = useSucursalesStore();
+  const { dataalmacenxsucursal } = useAlmacenesStore();
+  const { addItem } = useCartVentasStore();
   const buscadorRef = useRef(null);
   function focusclick() {
     buscadorRef.current.focus();
@@ -43,41 +49,47 @@ export const HeaderPos = () => {
       setStateListaProductos(true);
     }
   }
-  async function funcion_insertarventa(itemProducto) {
+  async function funcion_insertarventa() {
     const pVentas = {
       id_usuario: datausuarios?.id,
-      id_empresa: dataempresa?.id,
+      id_sucursal: sucursalesItemSelectAsignadas?.id_sucursal,
+      id_empresa: dataempresa.id,
     };
+    const ProductosItemSelect =
+      useProductosStore.getState().ProductosItemSelect;
     const pDetalleventas = {
-      id_venta: idventa,
-      precio_venta: ProductosItemSelect.precio_venta,
-      total: 1 * ProductosItemSelect.precio_venta,
-      descripcion: ProductosItemSelect.nombre,
-      id_producto: ProductosItemSelect.id,
-      precio_compra: ProductosItemSelect.precio_compra,
-      id_sucursal: 139,
+      _id_venta: idventa,
+      _cantidad: 1,
+      _precio_venta: ProductosItemSelect.precio_venta,
+      _total: 1 * ProductosItemSelect.precio_venta,
+      _descripcion: ProductosItemSelect.nombre,
+      _id_producto: ProductosItemSelect.id,
+      _precio_compra: ProductosItemSelect.precio_compra,
+      _id_sucursal: sucursalesItemSelectAsignadas.id_sucursal,
     };
+    console.log(pDetalleventas);
     if (idventa == 0) {
       const result = await insertarVentas(pVentas);
-    
-        pDetalleventas.id_venta= result?.id,
-        pDetalleventas.precio_venta= itemProducto.precio_venta,
-        pDetalleventas.total= 1 * itemProducto.precio_venta,
-        pDetalleventas.descripcion= itemProducto.nombre,
-        pDetalleventas.id_producto= itemProducto.id,
-        pDetalleventas.precio_compra= itemProducto.precio_compra,
 
-      await insertarDetalleVentas(pDetalleventas);
-    } else {
-      await insertarDetalleVentas(pDetalleventas);
+      (pDetalleventas._id_venta = result?.id);
+      addItem(pDetalleventas);
     }
-  } 
+    if (idventa > 0) {
+      addItem(pDetalleventas);
+      // await insertarDetalleVentas(pDetalleventas);
+    }
+  }
   useEffect(() => {
     buscadorRef.current.focus();
-    eliminarventasIncompletas({ id_usuario: datausuarios?.id });
+    // eliminarventasIncompletas({ id_usuario: datausuarios?.id });
   }, []);
   return (
     <Header>
+      <ContentSucursal>
+        <strong>Sucursal:&nbsp;</strong>
+
+        {sucursalesItemSelectAsignadas.sucursal}
+      </ContentSucursal>
       <section className="contentprincipal">
         <Contentuser className="area1">
           <div className="contentimg">
@@ -106,7 +118,7 @@ export const HeaderPos = () => {
               ref={buscadorRef}
               onChange={buscar}
               className="form__field"
-              type="text"
+              type="search"
               placeholder="Buscar"
             ></input>
             <ListaDesplegable
@@ -244,4 +256,14 @@ const Contentuser = styled.div`
       font-weight: 700;
     }
   }
+`;
+const ContentSucursal = styled.section`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  height: 45px;
+  border-bottom: 2px solid ${({ theme }) => theme.color2};
 `;

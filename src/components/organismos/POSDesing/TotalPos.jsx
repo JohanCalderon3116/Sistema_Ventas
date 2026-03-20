@@ -2,11 +2,14 @@ import styled from "styled-components";
 import { Btn1 } from "../../moleculas/Btn1";
 import { Device } from "../../../styles/breakpoints";
 import { Icon } from "@iconify/react";
+import { useCartVentasStore, useDetalleVentasStore } from "../../../index";
+import {FormatearNumeroDinero} from "../../../utils/Conversiones"
 export const TotalPos = () => {
+  const {total, resetState} = useCartVentasStore()
   return (
     <Container>
       <section className="imagen">
-        <img src="https://i.ibb.co/HdYgDdp/corazon-2.png" alt="" />
+        <img src="https://i.ibb.co/tw1xqhHx/Cobrar-Roshi.png" alt="" />
       </section>
       <section className="contentTotal">
         <section className="contentTtuloTotal">
@@ -19,7 +22,7 @@ export const TotalPos = () => {
           ></Btn1>
           <Btn1 border="2px" bgcolor="#fff" titulo="..."></Btn1>
         </section>
-        <span>$ 9.99</span>
+        <span> {FormatearNumeroDinero(total)} </span>
       </section>
     </Container>
   );
@@ -37,17 +40,7 @@ const Container = styled.div`
   color: #207c33;
   position: relative;
   overflow: hidden;
-  &::after {
-    content: "";
-    display: block;
-    width: 100px;
-    height: 100px;
-    background-color: #7fff99;
-    position: absolute;
-    border-radius: 50%;
-    top: -20px;
-    left: -15px;
-  }
+  
   &::before {
     content: "";
     display: block;

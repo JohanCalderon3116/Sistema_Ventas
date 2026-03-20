@@ -19,7 +19,6 @@ export const AreaTecladoPos = () => {
           <span>
             Sub total: <strong> $9.99</strong>{" "}
           </span>{" "}
-          <span>IGV (18%): $ 0.00</span>{" "}
           <span>
             Sub total: <strong>$ 9.99</strong>{" "}
           </span>

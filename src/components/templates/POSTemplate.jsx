@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { Device } from "../../styles/breakpoints";
 import { v } from "../../styles/variables";
+import { blur_in } from "../../styles/Keyframes";
 import {
   AreaDetalleventaPos,
   AreaTecladoPos,
@@ -32,6 +33,7 @@ const Container = styled.div`
   grid-template:
     "header" 220px
     "main" auto;
+  animation: ${blur_in} 0.4s linear both;
   @media ${Device.desktop} {
     grid-template:
       "header header" 140px

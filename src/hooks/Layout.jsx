@@ -5,6 +5,7 @@ import {
   Spinner1,
   Toogle,
   useEmpresaStore,
+  useSucursalesStore,
   useUsuariosStore,
 } from "../index";
 import { useState } from "react";
@@ -14,10 +15,18 @@ export const Layout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { datausuarios, mostrarusuarios } = useUsuariosStore();
   const { mostrarempresa } = useEmpresaStore();
-  const [stateMenu, setStateMenu] = useState(false)
+  const { mostrarSucursalesAsignadas } = useSucursalesStore();
+  const [stateMenu, setStateMenu] = useState(false);
   const { isLoading, error } = useQuery({
     queryKey: ["mostrar usuarios"],
     queryFn: mostrarusuarios,
+    refetchOnWindowFocus: false,
+  });
+  useQuery({
+    queryKey: ["mostrar sucursales asignadas", datausuarios?.id],
+    queryFn: () =>
+      mostrarSucursalesAsignadas({ id_usuario: datausuarios?.id }),
+    enabled: !!datausuarios,
     refetchOnWindowFocus: false,
   });
   useQuery({
@@ -26,6 +35,7 @@ export const Layout = ({ children }) => {
     enabled: !!datausuarios,
     refetchOnWindowFocus: false,
   });
+
   if (isLoading) {
     return <Spinner1></Spinner1>;
   }
@@ -41,10 +51,13 @@ export const Layout = ({ children }) => {
         ></Sidebar>
       </section>
       <section className="contentMenuambur">
-        <Toogle state={stateMenu} setstate={() => setStateMenu(!stateMenu)}></Toogle>
-        {
-          stateMenu && <MenuMovil setState={()=> setStateMenu(!stateMenu)}></MenuMovil>
-        }
+        <Toogle
+          state={stateMenu}
+          setstate={() => setStateMenu(!stateMenu)}
+        ></Toogle>
+        {stateMenu && (
+          <MenuMovil setState={() => setStateMenu(!stateMenu)}></MenuMovil>
+        )}
       </section>
       <Containerbody>{children}</Containerbody>
     </Container>

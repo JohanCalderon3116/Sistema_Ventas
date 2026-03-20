@@ -22,6 +22,15 @@ export async function MostrarStockAlmacenXSucursal(p) {
     .maybeSingle();
   return data;
 }
+export async function MostrarAlmacenXSucursal(p) {
+  const { data } = await supabase
+    .from()
+    .select()
+    .eq("id_sucursal", p.id_sucursal)
+    .maybeSingle();
+
+  return data;
+}
 
 export async function EliminarAlmacen(p) {
   const { error } = await supabase.from(tabla).delete().eq("id", p.id);

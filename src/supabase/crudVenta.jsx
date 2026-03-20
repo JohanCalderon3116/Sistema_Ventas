@@ -17,12 +17,15 @@ export async function InsertarVentas(p) {
   }
   return data;
 }
-// export async function MostrarProductos(p) {
-//   const { data } = await supabase.rpc("mostrarproductos", {
-//     _id_empresa: p.id_empresa,
-//   });
-//   return data;
-// }
+export async function MostrarVentasXsucursal(p) {
+  const { data } = await supabase
+    .from(tabla)
+    .select()
+    .eq("id_sucursal", p.id_sucursal)
+    .eq("estado", "nueva")
+    .maybeSingle();
+  return data;
+}
 // export async function BuscarProductos(p) {
 //   const { data } = await supabase.rpc("buscarproductos", {
 //     _id_empresa: p.id_empresa,

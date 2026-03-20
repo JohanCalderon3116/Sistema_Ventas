@@ -8,20 +8,21 @@ import {
   useProductosStore,
 } from "../../index";
 import { v } from "../../styles/variables";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Confetti from "react-confetti-boom";
 export const ProductosTemplate = () => {
   const { dataProductos, setBuscador, generarCodigo } = useProductosStore();
   const [openRegistro, setOpenRegistro] = useState(false);
   const [accion, setAccion] = useState("");
-  const [dataSelect, setDataSelect] = useState([]);
+  const [dataSelect, setdataSelect] = useState([]);
   const [isExploding, setIsExploding] = useState(false);
   function nuevoRegistro() {
     setOpenRegistro(!openRegistro);
     setAccion("Nuevo");
-    setDataSelect([]);
+    setdataSelect([]);
     setIsExploding(false);
     generarCodigo();
+    console.log(dataSelect)
   }
   return (
     <Container>
@@ -51,7 +52,7 @@ export const ProductosTemplate = () => {
           data={dataProductos}
           SetopenRegistro={setOpenRegistro}
           setAccion={setAccion}
-          setdataSelect={setDataSelect}
+          setdataSelect={setdataSelect}
         ></TablaProductos>{" "}
       </section>
     </Container>

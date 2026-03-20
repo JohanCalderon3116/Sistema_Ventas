@@ -14,6 +14,7 @@ import {
   Checkbox1,
   Btngenerarcodigo,
   useAlmacenesStore,
+  ConvertirMinusculas,
 } from "../../../index";
 import { useForm } from "react-hook-form";
 import { useEmpresaStore } from "../../../store/EmpresaStore";
@@ -72,6 +73,7 @@ export function RegistrarProductos({
     queryKey: [
       "mostrar stock almacen por sucursal",
       { id_producto: dataSelect.id, id_sucursal: sucursalesItemSelect.id },
+      console.log(dataSelect?.id),
     ],
     queryFn: () =>
       mostrarAlmacen({
@@ -102,7 +104,7 @@ export function RegistrarProductos({
     if (accion === "Editar") {
       const p = {
         _id: dataSelect.id,
-        _nombre: ConvertirCapitalize(data.nombre),
+        _nombre: ConvertirMinusculas(data.nombre),
         _precio_venta: parseFloat(data.precio_venta),
         _precio_compra: parseFloat(data.precio_compra),
         _id_categoria: categoriaItemSelect.id,
@@ -126,7 +128,7 @@ export function RegistrarProductos({
       }
     } else {
       const p = {
-        _nombre: ConvertirCapitalize(data.nombre),
+        _nombre: ConvertirMinusculas(data.nombre),
         _precio_venta: parseFloat(data.precio_venta),
         _precio_compra: parseFloat(data.precio_compra),
         _id_categoria: categoriaItemSelect.id,

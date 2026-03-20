@@ -18,7 +18,7 @@ export function ListaDesplegable({
     funcion(p);
     setState();
     if (funcioncrud) {
-      funcioncrud(p);
+      funcioncrud();
     }
   }
   return (
