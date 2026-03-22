@@ -5,10 +5,14 @@ export function ConvertirMinusculas(input) {
   return input.toLowerCase();
 }
 
-export function FormatearNumeroDinero(numero) {
-  const numeroconvertido = numero.toLocaleString("es-CO", {
+export function FormatearNumeroDinero(numero, currency, iso) {
+  if (currency === undefined) {
+    return;
+  }
+  const esiso = "es-" + iso;
+  const numeroconvertido = numero.toLocaleString(esiso, {
     style: "currency",
-    currency: "COP",
+    currency: `${currency}`,
   });
   return numeroconvertido;
 }

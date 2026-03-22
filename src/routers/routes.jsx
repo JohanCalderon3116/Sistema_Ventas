@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import {
   Categorias,
   Configuraciones,
@@ -10,6 +10,10 @@ import {
   POS,
   Layout,
   PageNot,
+  Empresa,
+  BasicosConfig,
+  MonedaConfig,
+  ClientesProveedores,
 } from "../index";
 
 export function Myroutes() {
@@ -75,6 +79,29 @@ export function Myroutes() {
         }
       />
       <Route
+        path="/configuracion/empresa"
+        element={
+          <ProtectedRoute accesby="authenticated">
+            <Layout>
+              <Empresa></Empresa>
+            </Layout>
+          </ProtectedRoute>
+        }
+      >
+        <Route
+          index
+          element={<Navigate to="empresabasicos"></Navigate>}
+        ></Route>
+        <Route
+          path="empresabasicos"
+          element={<BasicosConfig></BasicosConfig>}
+        ></Route>
+        <Route
+          path="monedaconfig"
+          element={<MonedaConfig></MonedaConfig>}
+        ></Route>
+      </Route>
+      <Route
         path="/pos"
         element={
           <ProtectedRoute accesby="authenticated">
@@ -85,6 +112,26 @@ export function Myroutes() {
         }
       />
       <Route path="*" element={<PageNot></PageNot>}></Route>
+      <Route
+        path="/configuracion/clientes"
+        element={
+          <ProtectedRoute accesby="authenticated">
+            <Layout>
+              <ClientesProveedores></ClientesProveedores>
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/configuracion/proveedores"
+        element={
+          <ProtectedRoute accesby="authenticated">
+            <Layout>
+              <ClientesProveedores></ClientesProveedores>
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   );
 }

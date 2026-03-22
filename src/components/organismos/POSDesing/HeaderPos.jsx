@@ -4,14 +4,9 @@ import {
   InputText2,
   ListaDesplegable,
   Reloj,
-  useAlmacenesStore,
   useCartVentasStore,
-  useDetalleVentasStore,
-  useEmpresaStore,
   useProductosStore,
   useSucursalesStore,
-  useUsuariosStore,
-  useVentasStore,
 } from "../../../index";
 import { v } from "../../../styles/variables";
 import { Device } from "../../../styles/breakpoints";
@@ -21,15 +16,10 @@ export const HeaderPos = () => {
   const [stateListaProductos, setStateListaProductos] = useState(false);
   const [stateTeclado, setStateTeclado] = useState(false);
   const [stateLector, setStateLector] = useState(true);
-  const { setBuscador, dataProductos, selectProductos, ProductosItemSelect } =
+  const { setBuscador, dataProductos, selectProductos, buscador } =
     useProductosStore();
-  const { insertarVentas, idventa, eliminarventasIncompletas } =
-    useVentasStore();
-  const { datausuarios } = useUsuariosStore();
-  const { dataempresa } = useEmpresaStore();
-  const { insertarDetalleVentas } = useDetalleVentasStore();
+
   const { sucursalesItemSelectAsignadas } = useSucursalesStore();
-  const { dataalmacenxsucursal } = useAlmacenesStore();
   const { addItem } = useCartVentasStore();
   const buscadorRef = useRef(null);
   function focusclick() {
@@ -50,15 +40,15 @@ export const HeaderPos = () => {
     }
   }
   async function funcion_insertarventa() {
-    const pVentas = {
-      id_usuario: datausuarios?.id,
-      id_sucursal: sucursalesItemSelectAsignadas?.id_sucursal,
-      id_empresa: dataempresa.id,
-    };
+    // const pVentas = {
+    //   id_usuario: datausuarios?.id,
+    //   id_sucursal: sucursalesItemSelectAsignadas?.id_sucursal,
+    //   id_empresa: dataempresa.id,
+    // };
     const ProductosItemSelect =
       useProductosStore.getState().ProductosItemSelect;
     const pDetalleventas = {
-      _id_venta: idventa,
+      _id_venta: 1,
       _cantidad: 1,
       _precio_venta: ProductosItemSelect.precio_venta,
       _total: 1 * ProductosItemSelect.precio_venta,
@@ -68,16 +58,18 @@ export const HeaderPos = () => {
       _id_sucursal: sucursalesItemSelectAsignadas.id_sucursal,
     };
     console.log(pDetalleventas);
-    if (idventa == 0) {
-      const result = await insertarVentas(pVentas);
+    // if (idventa == 0) {
+    //   const result = await insertarVentas(pVentas);
 
-      (pDetalleventas._id_venta = result?.id);
-      addItem(pDetalleventas);
-    }
-    if (idventa > 0) {
-      addItem(pDetalleventas);
-      // await insertarDetalleVentas(pDetalleventas);
-    }
+    //   (pDetalleventas._id_venta = result?.id);
+    addItem(pDetalleventas);
+    setBuscador("");
+    buscadorRef.current.focus();
+    // }
+    // if (idventa > 0) {
+    //   addItem(pDetalleventas);
+    //   // await insertarDetalleVentas(pDetalleventas);
+    // }
   }
   useEffect(() => {
     buscadorRef.current.focus();
@@ -115,6 +107,7 @@ export const HeaderPos = () => {
         <article className="area1">
           <InputText2>
             <input
+              value={buscador}
               ref={buscadorRef}
               onChange={buscar}
               className="form__field"

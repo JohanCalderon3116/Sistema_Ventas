@@ -74,38 +74,6 @@ export const TemasData = [
   },
 ];
 
-//data configuracion
-export const DataModulosConfiguracion =[
-  {
-    title:"Productos",
-    subtitle:"registra tus productos",
-    icono:"https://i.ibb.co/85zJ6yG/caja-del-paquete.png",
-    link:"/configurar/productos",
-   
-  },
-  {
-    title:"Personal",
-    subtitle:"ten el control de tu personal",
-    icono:"https://i.ibb.co/5vgZ0fX/hombre.png",
-    link:"/configurar/usuarios",
-   
-  },
-
-  {
-    title:"Tu empresa",
-    subtitle:"configura tus opciones básicas",
-    icono:"https://i.ibb.co/x7mHPgm/administracion-de-empresas.png",
-    link:"/configurar/empresa",
-    
-  },
-  {
-    title:"Categoria de productos",
-    subtitle:"asigna categorias a tus productos",
-    icono:"https://i.ibb.co/VYbMRLZ/categoria.png",
-    link:"/configuracion/categorias",
-    
-  }
-]
 //tipo usuario
 export const TipouserData = [
   {

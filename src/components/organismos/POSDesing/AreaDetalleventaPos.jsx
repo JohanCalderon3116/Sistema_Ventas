@@ -1,24 +1,20 @@
 import styled from "styled-components";
-import { useDetalleVentasStore } from "../../../store/DetalleVentasStore";
-import { useQuery } from "@tanstack/react-query";
-import { useVentasStore } from "../../../store/VentasStore";
 import { blur_in } from "../../../styles/Keyframes";
 import { FormatearNumeroDinero } from "../../../utils/Conversiones";
-import { Btn1, Lottieanimation, useCartVentasStore } from "../../../index";
+import {
+  Btn1,
+  Lottieanimation,
+  useCartVentasStore,
+  useEmpresaStore,
+} from "../../../index";
 import animaciovacio from "../../../assets/vacioanimation.json.json";
 import { Device } from "../../../styles/breakpoints";
 import { Icon } from "@iconify/react";
 export const AreaDetalleventaPos = () => {
-  const { mostrardetalleventI, detalleventa, eliminardetalleventa, total } =
-    useDetalleVentasStore();
   const { items, addCantidadItem, restarCantidadItem, removeItem } =
     useCartVentasStore();
-  const { idventa } = useVentasStore();
-  useQuery({
-    queryKey: ["mostrar detalle venta", { id_venta: idventa }],
-    queryFn: async () => mostrardetalleventa({ id_venta: idventa }),
-    enabled: idventa != undefined,
-  });
+  const { dataempresa } = useEmpresaStore();
+
   return (
     <AreaDetalleventa className={items.length > 0 ? "" : "animacion"}>
       {items.length > 0 ? (
@@ -26,13 +22,14 @@ export const AreaDetalleventaPos = () => {
           return (
             <Itemventa key={index}>
               <article className="contentdescripcion">
-                <span className="descripcion">
-                  {" "}
-                  {item._cantidad} {item._descripcion}{" "}
-                </span>
+                <span className="descripcion"> {item._descripcion} </span>
                 <span className="importe">
-                  Precio de venta:
-                  {FormatearNumeroDinero(item._precio_venta)}{" "}
+                  <strong>Precio venta: </strong>
+                  {FormatearNumeroDinero(
+                    item._precio_venta,
+                    dataempresa?.currency,
+                    dataempresa?.iso,
+                  )}{" "}
                 </span>
               </article>
               <article className="contentbtn">
@@ -41,7 +38,13 @@ export const AreaDetalleventaPos = () => {
                   width="20px"
                   icono={<Icon icon="line-md:minus" width="20" height="20" />}
                 ></Btn1>
+                <span className="cantidad">
+                  {" "}
+                  <strong>{item._cantidad} </strong>
+                </span>
                 <Btn1
+                  bgcolor="#0aca21"
+                  color="#fff"
                   funcion={() => addCantidadItem(item)}
                   width="20px"
                   icono={
@@ -51,7 +54,13 @@ export const AreaDetalleventaPos = () => {
               </article>
               <article className="contentcantidad">
                 <span className="cantidad">
-                  <strong>{FormatearNumeroDinero(item._total)}</strong>
+                  <strong>
+                    {FormatearNumeroDinero(
+                      item._total,
+                      dataempresa?.currency,
+                      dataempresa?.iso,
+                    )}
+                  </strong>
                 </span>
                 <span className="delete" onClick={() => removeItem(item)}>
                   💀
@@ -100,7 +109,7 @@ const Itemventa = styled.section`
       font-size: 20px;
     }
     .importe {
-      font-size: 12px;
+      font-size: 15px;
     }
   }
   .contentbtn {
@@ -110,6 +119,9 @@ const Itemventa = styled.section`
     justify-content: center;
     height: 100%;
     width: 100%;
+    .cantidad {
+    font-size: 1.8rem;
+    }
   }
   .contentcantidad {
     width: 100%;

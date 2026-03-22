@@ -24,7 +24,7 @@ export function POS() {
     enabled: !!dataempresa,
     refetchOnWindowFocus: false,
   });
-  useQuery({
+  const { isLoading, error } = useQuery({
     queryKey: [
       "mostrar almacen por sucursal",
       sucursalesItemSelectAsignadas.id_sucursal,
@@ -34,7 +34,7 @@ export function POS() {
         id_sucursal: sucursalesItemSelectAsignadas.id_sucursal,
       }),
   });
-  const { isLoading, error } = useQuery({
+  useQuery({
     queryKey: [
       "mostrar ventas por sucursal",
       sucursalesItemSelectAsignadas.id_sucursal,
@@ -45,11 +45,15 @@ export function POS() {
       }),
     enabled: !!sucursalesItemSelectAsignadas,
   });
-  if(isLoading){
-    return <span><SpinnerSecundario texto="Cargando ventas..."></SpinnerSecundario></span>
-  }
-  if(error){
-    return <span>Error {error.message} </span>
-  }
+  // if (isLoading) {
+  //   return (
+  //     <span>
+  //       <SpinnerSecundario texto="Cargando ventas..."></SpinnerSecundario>
+  //     </span>
+  //   );
+  // }
+  // if (error) {
+  //   return <span>Error {error.message} </span>;
+  // }
   return <POSTemplate></POSTemplate>;
 }

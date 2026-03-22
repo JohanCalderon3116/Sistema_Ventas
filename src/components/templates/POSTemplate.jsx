@@ -9,13 +9,20 @@ import {
   FooterPos,
   HeaderPos,
   InputText2,
+  PantallaCobro,
   Reloj,
+  useCartVentasStore,
 } from "../../index";
+import { Toaster } from "sonner";
 export const POSTemplate = () => {
+  const { statePantallaCobro } = useCartVentasStore();
   return (
     <Container>
+      {statePantallaCobro && <PantallaCobro></PantallaCobro>}
+
       <HeaderPos></HeaderPos>
       <Main>
+        <Toaster richColors position="top-center" />
         <AreaDetalleventaPos></AreaDetalleventaPos>
         <AreaTecladoPos></AreaTecladoPos>
       </Main>

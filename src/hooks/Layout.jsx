@@ -17,24 +17,28 @@ export const Layout = ({ children }) => {
   const { mostrarempresa } = useEmpresaStore();
   const { mostrarSucursalesAsignadas } = useSucursalesStore();
   const [stateMenu, setStateMenu] = useState(false);
-  const { isLoading, error } = useQuery({
+
+  const { refetch: refetchUsuarios } = useQuery({
     queryKey: ["mostrar usuarios"],
     queryFn: mostrarusuarios,
     refetchOnWindowFocus: false,
   });
   useQuery({
     queryKey: ["mostrar sucursales asignadas", datausuarios?.id],
-    queryFn: () =>
-      mostrarSucursalesAsignadas({ id_usuario: datausuarios?.id }),
+    queryFn: () => mostrarSucursalesAsignadas({ id_usuario: datausuarios?.id }),
     enabled: !!datausuarios,
     refetchOnWindowFocus: false,
   });
-  useQuery({
+  const { isLoading, error } = useQuery({
     queryKey: ["mostrar empresa", datausuarios?.id],
     queryFn: () => mostrarempresa({ _id_usuario: datausuarios?.id }),
     enabled: !!datausuarios,
     refetchOnWindowFocus: false,
   });
+
+  if (datausuarios == null) {
+    refetchUsuarios();
+  }
 
   if (isLoading) {
     return <Spinner1></Spinner1>;

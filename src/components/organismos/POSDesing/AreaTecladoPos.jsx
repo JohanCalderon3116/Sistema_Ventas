@@ -1,17 +1,44 @@
 import styled from "styled-components";
-import { Btn1, TotalPos } from "../../../index";
+import { Btn1, TotalPos, useCartVentasStore } from "../../../index";
 import { Device } from "../../../styles/breakpoints";
 export const AreaTecladoPos = () => {
+  const { setStatePantallaCobro } = useCartVentasStore();
   return (
     <Container>
       <section className="areatipopago">
         <article className="box">
-          <Btn1 border="0" height="70px" width="100%" titulo="Efectivo" bgcolor="#a6f868"></Btn1>
-          <Btn1 border="0" width="100%" titulo="Crédito" bgcolor="#fb81c6"></Btn1>
+          <Btn1
+            funcion={() => setStatePantallaCobro({ tipocobro: "efectivo" })}
+            border="0"
+            height="70px"
+            width="100%"
+            titulo="Efectivo"
+            bgcolor="#a6f868"
+          ></Btn1>
+          <Btn1
+            funcion={() => setStatePantallaCobro({ tipocobro: "credito" })}
+            border="0"
+            width="100%"
+            titulo="Crédito"
+            bgcolor="#fb81c6"
+          ></Btn1>
         </article>
         <article className="box">
-          <Btn1 border="0" width="100%" height="70px" titulo="Tarjeta"bgcolor="#fba256"></Btn1>
-          <Btn1 border="0" width="100%" titulo="Mixto" bgcolor="#919afd"></Btn1>
+          <Btn1
+            funcion={() => setStatePantallaCobro({ tipocobro: "tarjeta" })}
+            border="0"
+            width="100%"
+            height="70px"
+            titulo="Tarjeta"
+            bgcolor="#fba256"
+          ></Btn1>
+          <Btn1
+            funcion={() => setStatePantallaCobro({ tipocobro: "mixto" })}
+            border="0"
+            width="100%"
+            titulo="Mixto"
+            bgcolor="#919afd"
+          ></Btn1>
         </article>
       </section>
       <section className="totales">
@@ -19,6 +46,9 @@ export const AreaTecladoPos = () => {
           <span>
             Sub total: <strong> $9.99</strong>{" "}
           </span>{" "}
+          <span>
+            IGV: <strong> $9.99</strong>{" "}
+          </span>
           <span>
             Sub total: <strong>$ 9.99</strong>{" "}
           </span>
@@ -34,8 +64,8 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  position: absolute;
-  bottom: 10px;
+  position: relative;
+  margin-top: auto;
   width: calc(100% - 5px);
   border-radius: 15px;
   @media ${Device.desktop} {

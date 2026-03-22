@@ -2,10 +2,15 @@ import styled from "styled-components";
 import { Btn1 } from "../../moleculas/Btn1";
 import { Device } from "../../../styles/breakpoints";
 import { Icon } from "@iconify/react";
-import { useCartVentasStore, useDetalleVentasStore } from "../../../index";
-import {FormatearNumeroDinero} from "../../../utils/Conversiones"
+import {
+  useCartVentasStore,
+  useDetalleVentasStore,
+  useEmpresaStore,
+} from "../../../index";
+import { FormatearNumeroDinero } from "../../../utils/Conversiones";
 export const TotalPos = () => {
-  const {total, resetState} = useCartVentasStore()
+  const { total, setStatePantallaCobro } = useCartVentasStore();
+  const { dataempresa } = useEmpresaStore();
   return (
     <Container>
       <section className="imagen">
@@ -14,15 +19,23 @@ export const TotalPos = () => {
       <section className="contentTotal">
         <section className="contentTtuloTotal">
           <Btn1
-          border="2px"
-          bgcolor="#3ff563"
-          color="#207c33"
+            funcion={() => setStatePantallaCobro({ tipocobro: "mixto" })}
+            border="2px"
+            bgcolor="#3ff563"
+            color="#207c33"
             icono={<Icon icon="emojione:money-bag" width="20" height="20" />}
             titulo="Cobrar"
           ></Btn1>
           <Btn1 border="2px" bgcolor="#fff" titulo="..."></Btn1>
         </section>
-        <span> {FormatearNumeroDinero(total)} </span>
+        <span>
+          {" "}
+          {FormatearNumeroDinero(
+            total,
+            dataempresa?.currency,
+            dataempresa?.iso,
+          )}{" "}
+        </span>
       </section>
     </Container>
   );
@@ -40,7 +53,7 @@ const Container = styled.div`
   color: #207c33;
   position: relative;
   overflow: hidden;
-  
+
   &::before {
     content: "";
     display: block;

@@ -6,14 +6,13 @@ export function PageNot() {
       <section className="home">
         <div className="home__container container">
           <div className="home__data">
-            <span className="home__subtitle">página en </span>
+            <span className="home__subtitle">Página en </span>
             <h1 className="home__title">Construcción</h1>
             <p className="home__description">
-              Esta página se encuentra en <br /> construcción, pequeño
-              cerdecillo.
+              Esta página se encuentra en <br /> construcción o tas' perdido xd
             </p>
             <a href="/" className="home__button">
-              VOLVER A HOME
+              La unica, volver al "Inicio" :O
             </a>
           </div>
 

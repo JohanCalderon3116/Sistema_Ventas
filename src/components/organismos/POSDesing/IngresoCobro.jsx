@@ -1,0 +1,345 @@
+import styled from "styled-components";
+import { useCartVentasStore } from "../../../store/CartVentasStore";
+import { Icon } from "@iconify/react";
+import { InputText } from "../formularios/InputText";
+import { FormatearNumeroDinero } from "../../../utils/Conversiones";
+import { useEffect, useState, forwardRef, useImperativeHandle } from "react";
+import { Btn1 } from "../../moleculas/Btn1";
+import { useUsuariosStore } from "../../../store/UsuariosStore";
+import { useSucursalesStore } from "../../../store/SucursalesStore";
+import { useEmpresaStore } from "../../../store/EmpresaStore";
+import { useVentasStore } from "../../../store/VentasStore";
+import { useDetalleVentasStore } from "../../../store/DetalleVentasStore";
+import { toast } from "sonner";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { PanelBuscador } from "./PanelBuscador";
+import { useClientesProveedoresStore } from "../../../store/ClientesProveedoresStore";
+export const IngresoCobro = forwardRef((props, ref) => {
+  const { tipocobro, total, items, resetState, setStatePantallaCobro } =
+    useCartVentasStore();
+  const [stateBuscadorClientes, setStateBuscadorClientes] = useState(false);
+  //valores a mostrar
+  const [vuelto, setVuelto] = useState(0);
+  const [restante, setRestante] = useState(0);
+
+  //valores a calcular
+  const [precioVenta, setPrecioVenta] = useState(total);
+  const [valorTarjeta, setValorTarjeta] = useState(
+    tipocobro === "tarjeta" ? total : 0,
+  );
+  const [valorEfectivo, setValorEfectivo] = useState(
+    tipocobro === "efectivo" ? total : 0,
+  );
+  const [valorCredito, setValorCredito] = useState(
+    tipocobro === "credito" ? total : 0,
+  );
+
+  const { datausuarios } = useUsuariosStore();
+  const { sucursalesItemSelectAsignadas } = useSucursalesStore();
+  const { dataempresa } = useEmpresaStore();
+  //#region Clientes
+  const {
+    buscarCliPro,
+    setBuscador,
+    buscador,
+    selectCliPro,
+    cliproItemSelect,
+  } = useClientesProveedoresStore();
+  const { data: databuscadorcliente, isLoading: isloadingbuscadorcliento } =
+    useQuery({
+      queryKey: ["buscar cliente", dataempresa?.id, "cliente", buscador],
+      queryFn: () =>
+        buscarCliPro({
+          id_empresa: dataempresa?.id,
+          tipo: "cliente",
+          buscador: buscador,
+        }),
+      enabled: !!dataempresa,
+      refetchOnWindowFocus: false,
+    });
+  //#endregion
+  const { idventa, insertarVentas, resetarventas } = useVentasStore();
+  const { insertarDetalleVentas } = useDetalleVentasStore();
+  //funcion para calcular vueltoas y restante
+  const calcularVueltoYRestante = () => {
+    const totalPagado = valorTarjeta + valorEfectivo + valorCredito;
+    if (totalPagado >= precioVenta) {
+      setVuelto(totalPagado - precioVenta);
+      setRestante(0);
+    } else {
+      setVuelto(0);
+      setRestante(precioVenta - totalPagado);
+    }
+  };
+  //Manjeador de cambio
+  const handleChangeValorEfectivo = (event) => {
+    const value = parseFloat(event.target.value) || 0;
+    setValorEfectivo(value);
+  };
+  const handleChangeValorCreadito = (event) => {
+    const value = parseFloat(event.target.value) || 0;
+    setValorCredito(value);
+  };
+  const handleChangeValorTarjeta = (event) => {
+    const value = parseFloat(event.target.value) || 0;
+    setValorTarjeta(value);
+  };
+  // exponiendo la funcion mutation a travez de ref
+  useImperativeHandle(ref, () => ({
+    mutateAsync: mutation.mutateAsync,
+  }));
+  //funcion para realizar venta
+  const mutation = useMutation({
+    mutationKey: ["insertar ventas"],
+    mutationFn: insertarventa,
+    onSuccess: () => {
+      if (restante != 0) {
+        return;
+      }
+      setStatePantallaCobro({ tipocobro: "" });
+      resetState();
+      resetarventas();
+      toast.success("😁🎉 Venta generada correctamente :p");
+    },
+  });
+  async function insertarventa(p) {
+    if (restante === 0) {
+      const pventas = {
+        id_usuario: datausuarios?.id,
+        id_sucursal: sucursalesItemSelectAsignadas?.id_sucursal,
+        id_empresa: dataempresa?.id,
+        id_cliente: cliproItemSelect?.id,
+        estado: "confirmada",
+        vuelto: vuelto,
+        efectivo: parseFloat(valorEfectivo),
+        creadito: parseFloat(valorCredito),
+        tarjeta: parseFloat(valorTarjeta),
+        monto_total: total,
+        tipo_de_pago: tipocobro,
+      };
+      if (idventa === 0) {
+        const result = await insertarVentas(pventas);
+        console.log(pventas);
+        items.forEach(async (item) => {
+          if (result?.id > 0) {
+            item._id_venta = result?.id;
+            await insertarDetalleVentas(item);
+          }
+        });
+      }
+    } else {
+      toast.warning("Falta completar el pago, el restante tiene que ser cero");
+    }
+  }
+
+  //useeffect para calcular cunaod los valores cambian
+  useEffect(() => {
+    calcularVueltoYRestante();
+  }, [precioVenta, valorTarjeta, valorEfectivo, valorCredito]);
+  return (
+    <Container>
+      {mutation.isPending ? (
+        <span>Guardando...</span>
+      ) : (
+        <>
+          {mutation.isError && <span>Error: {mutation.error.message} </span>}
+          <section className="area1">
+            <span className="tipocobro"> {tipocobro} </span>
+            <Icon
+              icon="fluent-emoji:smiling-face-with-sunglasses"
+              width="20"
+              height="20"
+            ></Icon>
+            <span>Cliente</span>
+            <EditButton
+              onClick={() => setStateBuscadorClientes(!stateBuscadorClientes)}
+            >
+              <Icon
+                className="icono"
+                icon="line-md:pencil-twotone"
+                width="24"
+                height="24"
+              />
+            </EditButton>
+            <span className="cliente"> {cliproItemSelect?.nombres} </span>
+          </section>
+          <section className="area2">
+            {tipocobro != "efectivo" && tipocobro != "mixto" ? null : (
+              <InputText textaling="center">
+                <input
+                  onChange={handleChangeValorEfectivo}
+                  defaultValue={tipocobro === "mixto" ? "" : total}
+                  className="form__field"
+                  type="number"
+                ></input>
+                <label className="form__label">Efectivo</label>
+              </InputText>
+            )}
+            {tipocobro != "tarjeta" && tipocobro != "mixto" ? null : (
+              <InputText textaling="center">
+                <input
+                  onChange={handleChangeValorTarjeta}
+                  defaultValue={tipocobro === "mixto" ? "" : total}
+                  disabled={tipocobro === "mixto" ? false : true}
+                  className="form__field"
+                  type="number"
+                ></input>
+                <label className="form__label">Tarjeta</label>
+              </InputText>
+            )}
+            {tipocobro != "credito" && tipocobro != "mixto" ? null : (
+              <InputText textaling="center">
+                <input
+                  onChange={handleChangeValorCreadito}
+                  defaultValue={tipocobro === "mixto" ? "" : total}
+                  disabled={tipocobro === "mixto" ? false : true}
+                  className="form__field"
+                  type="number"
+                ></input>
+                <label className="form__label">Crédito</label>
+              </InputText>
+            )}
+          </section>
+          <section className="area3">
+            <article>
+              <span className="total">Total: </span>
+              <span>Vuelto: </span>
+              <span>Restante: </span>
+            </article>
+            <article>
+              <span className="total"> {FormatearNumeroDinero(total)} </span>
+              <span> {vuelto} </span>
+              <span> {restante} </span>
+            </article>
+          </section>
+          <section className="area4">
+            <Btn1
+              funcion={() => mutation.mutateAsync()}
+              border="2px"
+              titulo="Cobrar (Enter)"
+              bgcolor="#0aca21"
+              color="#ffffff"
+              width="100%"
+            ></Btn1>
+          </section>
+          {stateBuscadorClientes && (
+            <PanelBuscador
+              data={databuscadorcliente}
+              selector={selectCliPro}
+              setBuscador={setBuscador}
+              displayField="nombres"
+              setStateBuscador={() =>
+                setStateBuscadorClientes(!stateBuscadorClientes)
+              }
+            ></PanelBuscador>
+          )}
+        </>
+      )}
+    </Container>
+  );
+});
+
+const Container = styled.div`
+  position: relative;
+  box-sizing: border-box;
+  width: 400px;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 2px 2px 15px 0px #e2e2e2;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  color: #000;
+  min-height: 100%;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  input {
+    color: #000 !important;
+    font-weight: 700;
+  }
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    left: 5px;
+    height: 6px;
+    width: 380px;
+  }
+  &::before {
+    top: -5px;
+    background: radial-gradient(
+        circle,
+        transparent,
+        transparent 50%,
+        #fbfbfb 50%,
+        #fbfbfb 100%
+      ) -7px -8px /16px
+      16px repeat-x;
+  }
+  &::after {
+    bottom: -5px;
+    background: radial-gradient(
+        circle,
+        transparent,
+        transparent 50%,
+        #fbfbfb 50%,
+        #fbfbfb 100%
+      ) -7px -2px /16px
+      16px repeat-x;
+  }
+  .area1 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 5px;
+    .cliente {
+      font-weight: 700;
+    }
+    .tipocobro {
+      position: absolute;
+      right: 6px;
+      top: 6px;
+      background-color: rgba(233, 6, 184, 0.2);
+      padding: 5px;
+      color: #e61eb1;
+      border-radius: 5px;
+      font-size: 15px;
+      font-weight: 650;
+    }
+  }
+  .area2 {
+    margin-top: 5px;
+    input {
+      font-size: 30px;
+    }
+  }
+  .area3 {
+    margin-top: 5px;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    article {
+      display: flex;
+      flex-direction: column;
+    }
+    .total {
+      font-weight: 700;
+    }
+  }
+`;
+const EditButton = styled.button`
+  background-color: #62c6f7;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  .icono {
+    font-size: 20px;
+  }
+`;

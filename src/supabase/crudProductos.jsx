@@ -49,3 +49,13 @@ export async function EditarProductos(p) {
   }
 }
 
+export async function MostrarUltimoProducto(p) {
+  const { data } = await supabase
+    .from(tabla)
+    .select()
+    .eq("id_empresa", p.id_empresa)
+    .order("id", { ascending: false }).maybeSingle();
+
+  return data;
+}
+

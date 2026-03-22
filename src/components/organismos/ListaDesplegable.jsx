@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { Device } from "../../index";
+import { useEffect, useRef, useState } from "react";
 export function ListaDesplegable({
   data,
   setState,
@@ -11,6 +12,8 @@ export function ListaDesplegable({
   funcioncrud,
 }) {
   if (!state) return;
+  const [selectIndex, setSelectIndex] = useState(0);
+  const dropdownRef = useRef(null);
   function seleccionar(p) {
     if (refetch) {
       refetch();
@@ -21,15 +24,43 @@ export function ListaDesplegable({
       funcioncrud();
     }
   }
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      seleccionar(data[selectIndex]);
+    } else if (e.key === "ArrowUp") {
+      setSelectIndex((prevIndex) =>
+        prevIndex === 0 ? data.length - 1 : prevIndex - 1,
+      );
+    } else if (e.key === "ArrowDown") {
+      setSelectIndex((prevIndex) =>
+        prevIndex === 0 ? data.length - 1 : prevIndex + 1,
+      );
+    }
+  };
+  useEffect(() => {
+    dropdownRef.current.focus();
+  }, []);
   return (
-    <Container scroll={scroll} $top={top}>
+    <Container
+      scroll={scroll}
+      $top={top}
+      ref={dropdownRef}
+      tabIndex={0}
+      onKeyDown={handleKeyDown}
+    >
       <section className="contentClose" onClick={setState}>
         x
       </section>
       <section className="contentItems">
         {data?.map((item, index) => {
           return (
-            <ItemContainer key={index} onClick={() => seleccionar(item)}>
+            <ItemContainer
+              key={index}
+              onClick={() => seleccionar(item)}
+              style={{
+                background: index === selectIndex ? "rgba(47,48,52,0.3)" : "",
+              }}
+            >
               <span>🌫️</span>
               <span>{item?.nombre}</span>
             </ItemContainer>
@@ -54,6 +85,9 @@ const Container = styled.div`
   z-index: 3;
   height: 230px;
   width: 95%;
+  &:focus {
+    outline: none;
+  }
   @media ${() => Device.tablet} {
   }
   .contentClose {
