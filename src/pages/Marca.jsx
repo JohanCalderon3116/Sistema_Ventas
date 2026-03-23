@@ -26,8 +26,8 @@ export const Marca = () => {
   if (isLoading) {
     return <Spinner1></Spinner1>;
   }
-  if (error) {
-    return <span>Error...</span>;
-  }
+  // if (error) {
+  //   return <span>Error...</span>;
+  // }
   return <MarcaTemplate></MarcaTemplate>;
 };

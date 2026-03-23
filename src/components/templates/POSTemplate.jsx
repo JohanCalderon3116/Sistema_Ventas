@@ -9,13 +9,18 @@ import {
   FooterPos,
   HeaderPos,
   InputText2,
+  MenuFlotante,
+  PantallaCierreCaja,
   PantallaCobro,
+  PantallaIngresoSalidaDinero,
   Reloj,
   useCartVentasStore,
+  useCierreCajaStore,
 } from "../../index";
 import { Toaster } from "sonner";
 export const POSTemplate = () => {
   const { statePantallaCobro } = useCartVentasStore();
+  const { stateIngresoSalida } = useCierreCajaStore();
   return (
     <Container>
       {statePantallaCobro && <PantallaCobro></PantallaCobro>}
@@ -27,6 +32,11 @@ export const POSTemplate = () => {
         <AreaTecladoPos></AreaTecladoPos>
       </Main>
       <FooterPos></FooterPos>
+      <MenuFlotante></MenuFlotante>
+      {stateIngresoSalida && (
+        <PantallaIngresoSalidaDinero></PantallaIngresoSalidaDinero>
+      )}
+      <PantallaCierreCaja></PantallaCierreCaja>
     </Container>
   );
 };

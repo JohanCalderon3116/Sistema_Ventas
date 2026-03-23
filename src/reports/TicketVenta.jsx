@@ -77,7 +77,7 @@ const TicketVenta = async (output, data) => {
       alignment: "center",
     },
     {
-      text: "NOMBRE EMPRESA",
+      text: `${data.nombre}`,
       style: "header",
       margin: [0, 10, 0, 0],
     },
@@ -105,9 +105,9 @@ const TicketVenta = async (output, data) => {
         body: [
           [
             { text: "FECHA", style: "tHeaderLabel" },
-            { text: "20/25/20", style: "tHeaderLabel" },
+            { text: `${data.fecha}`, style: "tHeaderLabel" },
             { text: "HORA", style: "tHeaderLabel" },
-            { text: "00:25:00", style: "tHeaderLabel" },
+            { text: `${data.hora}`, style: "tHeaderLabel" },
           ],
           [
             { text: "CAJERO/A", style: "tHeaderLabel" },
@@ -148,7 +148,7 @@ const TicketVenta = async (output, data) => {
               style: "tClientLabel",
             },
             {
-              text: "GENERICO",
+              text: `${data.nombre_cliente}`,
               style: "tClientValue",
               colSpan: 3,
             },
@@ -174,7 +174,7 @@ const TicketVenta = async (output, data) => {
               style: "tClientLabel",
             },
             {
-              text: "CALLE 7 SUR # 22A131",
+              text: `${data.direccion}`,
               style: "tClientValue",
               colSpan: 3,
             },
@@ -247,7 +247,7 @@ const TicketVenta = async (output, data) => {
             },
             {},
             {
-              text: "45",
+              text: `${data.monto_total}`,
               style: "tTotals",
               colSpan: 2,
             },
@@ -291,7 +291,7 @@ const TicketVenta = async (output, data) => {
           ],
           [
             {
-              text: "EFECTIVO",
+              text: `${data.tipo_de_pago}`,
               style: "tProductsBody",
               colSpan: 4,
             },
@@ -307,7 +307,7 @@ const TicketVenta = async (output, data) => {
             },
             {},
             {
-              text: "50.000",
+              text: `${data.efectivo}`,
               style: "tTotals",
               colSpan: 2,
             },
@@ -321,7 +321,7 @@ const TicketVenta = async (output, data) => {
             },
             {},
             {
-              text: "50.000",
+              text: `${data.credito}`,
               style: "tTotals",
               colSpan: 2,
             },
@@ -335,7 +335,7 @@ const TicketVenta = async (output, data) => {
             },
             {},
             {
-              text: "50.000",
+              text: `${data.tarjeta}`,
               style: "tTotals",
               colSpan: 2,
             },

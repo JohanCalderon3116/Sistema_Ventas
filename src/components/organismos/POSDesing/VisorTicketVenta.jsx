@@ -1,16 +1,42 @@
 import styled from "styled-components";
 import TicketVenta from "../../../reports/TicketVenta";
 import { useEffect, useState } from "react";
-import { Btn1, useCartVentasStore } from "../../..";
+import {
+  BasicosConfig,
+  Btn1,
+  IngresoCobro,
+  Reloj,
+  useCartVentasStore,
+  useClientesProveedoresStore,
+  useEmpresaStore,
+  useVentasStore,
+} from "../../..";
 import { Icon } from "@iconify/react";
 
 export const VisorTicketVenta = ({ setState }) => {
   const [base64, setBase64] = useState("");
-  const { items } = useCartVentasStore();
+  const { items, tipocobro, total } = useCartVentasStore();
+  const { dataempresa: dataempresainfo } = useEmpresaStore();
+  const { cliproItemSelect } = useClientesProveedoresStore();
   const onGenerateTicket = async (output) => {
+    const ahora = new Date();
+    const horaFormateada = ahora.toLocaleTimeString("en-US", {
+      hour12: true,
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+    const fechaFormateada = ahora.toLocaleDateString();
     const dataempresa = {
-      logo: "https://i.ibb.co/85zJ6yG/caja-del-paquete.png",
+      logo: dataempresainfo.logo,
       productos: items,
+      tipo_de_pago: tipocobro,
+      monto_total: total,
+      nombre: dataempresainfo.nombre,
+      hora: horaFormateada,
+      fecha: fechaFormateada,
+      nombre_cliente: cliproItemSelect?.nombres,
+      direccion: cliproItemSelect?.direccion,
     };
     const response = await TicketVenta(output, dataempresa);
     console.log(productos);

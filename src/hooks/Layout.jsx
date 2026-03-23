@@ -43,9 +43,9 @@ export const Layout = ({ children }) => {
   if (isLoading) {
     return <Spinner1></Spinner1>;
   }
-  if (error) {
-    return <span>error...</span>;
-  }
+  // if (error) {
+  //   return <span>error...</span>;
+  // }
   return (
     <Container className={sidebarOpen ? "active" : ""}>
       <section className="contentSidebar">
