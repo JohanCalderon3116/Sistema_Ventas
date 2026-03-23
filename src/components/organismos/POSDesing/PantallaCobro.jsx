@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { useCartVentasStore } from "../../../store/CartVentasStore";
 import { IngresoCobro } from "./IngresoCobro";
+import { VisorTicketVenta } from "./VisorTicketVenta";
 
 export const PantallaCobro = () => {
   const [stateVerticket, setStateVerticket] = useState(false);
@@ -27,6 +28,12 @@ export const PantallaCobro = () => {
   return (
     <Container>
       <section className="contentingresocobro">
+        {stateVerticket && (
+          <VisorTicketVenta
+            setState={() => setStateVerticket(!stateVerticket)}
+          ></VisorTicketVenta>
+        )}
+
         <article
           className="contentverticket"
           onClick={() => setStateVerticket(!stateVerticket)}

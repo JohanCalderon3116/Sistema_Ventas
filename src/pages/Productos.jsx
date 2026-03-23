@@ -44,7 +44,12 @@ export const Productos = () => {
     return <Spinner1></Spinner1>;
   }
   if (error) {
-    return <span>Error...</span>;
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: error.message,
+    });
+    return;
   }
   return <ProductosTemplate></ProductosTemplate>;
 };
