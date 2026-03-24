@@ -83,7 +83,6 @@ const Container = styled.div`
   border-radius: 10px;
   gap: 10px;
   z-index: 3;
-  height: 230px;
   width: 95%;
   &:focus {
     outline: none;

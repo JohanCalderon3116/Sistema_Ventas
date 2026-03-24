@@ -18,9 +18,6 @@ export const AuthContextProvider = ({ children }) => {
       } else {
         setUser(session?.user);
       }
-      // console.log("value", value);
-      // console.log("session", session);
-      // console.log("session", session.user.id);
       insertarDatos(session?.user.id, session?.user.email);
     });
     return () => {
@@ -32,24 +29,10 @@ export const AuthContextProvider = ({ children }) => {
     if (response) {
       return;
     } else {
-      const responseEmpresa = await InsertarEmpresa({
+      await InsertarEmpresa({
         id_auth: id_auth,
-      });
-      const responseTipoDoc = await MostrarTipoDocumentos({
-        id_empresa: responseEmpresa?.id,
-      });
-      console.log(responseTipoDoc);
-      const responseRol = await MostrarRolesXnombre({
-        nombre: "SuperAdmin",
-      });
-      const pUser = {
-        id_tipodocumento: responseTipoDoc[0]?.id,
-        id_rol: responseRol?.id,
         correo: correo,
-        fecharegistro: new Date(),
-        id_auth: id_auth,
-      };
-      await InsertarAdmin(pUser);
+      });
     }
   };
 

@@ -14,6 +14,10 @@ import { toast } from "sonner";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { PanelBuscador } from "./PanelBuscador";
 import { useClientesProveedoresStore } from "../../../store/ClientesProveedoresStore";
+import { useMetodosPagoStore } from "../../../store/MetodosPagoStore";
+import { useCierreCajaStore } from "../../../store/CierreCajaStore";
+import { useCajasStore } from "../../../store/CajaStore";
+import { useMovCajaStore } from "../../../store/MovCajaStore";
 export const IngresoCobro = forwardRef((props, ref) => {
   const { tipocobro, total, items, resetState, setStatePantallaCobro } =
     useCartVentasStore();
@@ -22,6 +26,7 @@ export const IngresoCobro = forwardRef((props, ref) => {
   const [vuelto, setVuelto] = useState(0);
   const [restante, setRestante] = useState(0);
 
+  const [valoresPago, setValoresPago] = useState({});
   //valores a calcular
   const [precioVenta, setPrecioVenta] = useState(total);
   const [valorTarjeta, setValorTarjeta] = useState(
@@ -35,6 +40,7 @@ export const IngresoCobro = forwardRef((props, ref) => {
   );
 
   const { datausuarios } = useUsuariosStore();
+  const { dataMetodosPago } = useMetodosPagoStore();
   const { sucursalesItemSelectAsignadas } = useSucursalesStore();
   const { dataempresa } = useEmpresaStore();
   //#region Clientes
@@ -58,31 +64,44 @@ export const IngresoCobro = forwardRef((props, ref) => {
       refetchOnWindowFocus: false,
     });
   //#endregion
+  //Mostrar cierres de caja
+  const { dataCierreCaja } = useCierreCajaStore();
+  //Movimientos de caja
   const { idventa, insertarVentas, resetarventas } = useVentasStore();
+  const { insertarMovcaja } = useMovCajaStore();
   const { insertarDetalleVentas } = useDetalleVentasStore();
   //funcion para calcular vueltoas y restante
+
   const calcularVueltoYRestante = () => {
-    const totalPagado = valorTarjeta + valorEfectivo + valorCredito;
-    if (totalPagado >= precioVenta) {
-      setVuelto(totalPagado - precioVenta);
-      setRestante(0);
-    } else {
+    const totalPagado = Object.values(valoresPago).reduce(
+      (acc, curr) => acc + curr,
+      0,
+    );
+    const totalSinEfectivo = totalPagado - (valoresPago["Efectivo"] || 0);
+    //Si el total sin efectivo excede el precio de venta , no permitir el exceso
+    if (totalSinEfectivo > precioVenta) {
       setVuelto(0);
-      setRestante(precioVenta - totalPagado);
+      setRestante(precioVenta - totalSinEfectivo); //restante negativo para indicar que se excede sin efectivo
+    } else {
+      //Permitir el exceso solo si es efectivo
+      if (totalPagado >= precioVenta) {
+        const exceso = totalPagado - precioVenta;
+        setVuelto(valoresPago["Efectivo"] ? exceso : 0);
+        setRestante(0);
+      } else {
+        //Si el total pagado no cubre el precio de venta, calcular el restante
+        setVuelto(0);
+        setRestante(precioVenta - totalPagado);
+      }
     }
   };
+
   //Manjeador de cambio
-  const handleChangeValorEfectivo = (event) => {
-    const value = parseFloat(event.target.value) || 0;
-    setValorEfectivo(value);
-  };
-  const handleChangeValorCreadito = (event) => {
-    const value = parseFloat(event.target.value) || 0;
-    setValorCredito(value);
-  };
-  const handleChangeValorTarjeta = (event) => {
-    const value = parseFloat(event.target.value) || 0;
-    setValorTarjeta(value);
+  const handleChangePago = (tipo, valor) => {
+    setValoresPago((prev) => ({
+      ...prev,
+      [tipo]: parseFloat(valor) || 0,
+    }));
   };
   // exponiendo la funcion mutation a travez de ref
   useImperativeHandle(ref, () => ({
@@ -111,21 +130,38 @@ export const IngresoCobro = forwardRef((props, ref) => {
         id_cliente: cliproItemSelect?.id,
         estado: "confirmada",
         vuelto: vuelto,
-        efectivo: parseFloat(valorEfectivo),
-        creadito: parseFloat(valorCredito),
-        tarjeta: parseFloat(valorTarjeta),
         monto_total: total,
-        tipo_de_pago: tipocobro,
+        id_cierre_caja: dataCierreCaja?.id,
       };
       if (idventa === 0) {
         const result = await insertarVentas(pventas);
-        console.log(pventas);
         items.forEach(async (item) => {
           if (result?.id > 0) {
             item._id_venta = result?.id;
             await insertarDetalleVentas(item);
           }
         });
+        if (result?.id > 0) {
+          //Insertar movimiento de caja, solo los metodos de pago con mayor a cero
+          for (const [tipo, monto] of Object.entries(valoresPago)) {
+            if (monto > 0) {
+              const metodoPago = dataMetodosPago.find(
+                (item) => item.nombre === tipo,
+              );
+              const pmovcaja = {
+                tipo_movimiento: "ingreso",
+                monto: monto,
+                id_metodo_pago: metodoPago?.id,
+                descripcion: `Pago de venta con ${tipo} `,
+                id_usuario: datausuarios?.id,
+                id_cierre_caja: dataCierreCaja?.id,
+                id_venta: result?.id,
+                vuelto: tipo === "Efectivo" ? vuelto : 0,
+              };
+              await insertarMovcaja(pmovcaja);
+            }
+          }
+        }
       }
     } else {
       toast.warning("Falta completar el pago, el restante tiene que ser cero");
@@ -134,8 +170,17 @@ export const IngresoCobro = forwardRef((props, ref) => {
 
   //useeffect para calcular cunaod los valores cambian
   useEffect(() => {
+    if (tipocobro !== "Mixto" && valoresPago[tipocobro] != total) {
+      setValoresPago((prev) => ({
+        ...prev,
+        [tipocobro]: total,
+      }));
+    }
+  }, [tipocobro, total]);
+
+  useEffect(() => {
     calcularVueltoYRestante();
-  }, [precioVenta, valorTarjeta, valorEfectivo, valorCredito]);
+  }, [precioVenta, tipocobro, valoresPago]);
   return (
     <Container>
       {mutation.isPending ? (
@@ -164,41 +209,28 @@ export const IngresoCobro = forwardRef((props, ref) => {
             <span className="cliente"> {cliproItemSelect?.nombres} </span>
           </section>
           <section className="area2">
-            {tipocobro != "efectivo" && tipocobro != "mixto" ? null : (
-              <InputText textaling="center">
-                <input
-                  onChange={handleChangeValorEfectivo}
-                  defaultValue={tipocobro === "mixto" ? "" : total}
-                  className="form__field"
-                  type="number"
-                ></input>
-                <label className="form__label">Efectivo</label>
-              </InputText>
-            )}
-            {tipocobro != "tarjeta" && tipocobro != "mixto" ? null : (
-              <InputText textaling="center">
-                <input
-                  onChange={handleChangeValorTarjeta}
-                  defaultValue={tipocobro === "mixto" ? "" : total}
-                  disabled={tipocobro === "mixto" ? false : true}
-                  className="form__field"
-                  type="number"
-                ></input>
-                <label className="form__label">Tarjeta</label>
-              </InputText>
-            )}
-            {tipocobro != "credito" && tipocobro != "mixto" ? null : (
-              <InputText textaling="center">
-                <input
-                  onChange={handleChangeValorCreadito}
-                  defaultValue={tipocobro === "mixto" ? "" : total}
-                  disabled={tipocobro === "mixto" ? false : true}
-                  className="form__field"
-                  type="number"
-                ></input>
-                <label className="form__label">Crédito</label>
-              </InputText>
-            )}
+            {dataMetodosPago?.map((item, index) => {
+              return (tipocobro === "Mixto" && item.nombre !== "Mixto") ||
+                (tipocobro === item.nombre && item.nombre != "Mixto") ? (
+                <InputText textaling="center">
+                  <input
+                    key={index}
+                    onChange={(e) =>
+                      handleChangePago(item.nombre, e.target.value)
+                    }
+                    defaultValue={tipocobro === item.nombre ? total : ""}
+                    className="form__field"
+                    type="number"
+                    disabled={
+                      tipocobro === "Mixto" || tipocobro === "Efectivo"
+                        ? false
+                        : true
+                    }
+                  ></input>
+                  <label className="form__label"> {item.nombre} </label>
+                </InputText>
+              ) : null;
+            })}
           </section>
           <section className="area3">
             <article>

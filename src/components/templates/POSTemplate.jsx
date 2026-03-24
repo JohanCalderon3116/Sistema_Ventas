@@ -42,7 +42,6 @@ export const POSTemplate = () => {
 };
 
 const Container = styled.div`
-  height: calc(100vh - 60px);
   padding: 10px;
   display: grid;
   padding-top: 50px;

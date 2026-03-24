@@ -12,6 +12,7 @@ export function Btn1({
   border,
   height,
   decorador,
+  imagen,
 }) {
   return (
     <Container
@@ -27,6 +28,11 @@ export function Btn1({
     >
       <section className="content">
         <Icono $color={color}>{icono}</Icono>
+        {imagen && (
+          <ContentImage>
+            <img src={imagen}></img>
+          </ContentImage>
+        )}
         {titulo && (
           <span className="btn">
             <a href={url} target="_blank">
@@ -71,6 +77,8 @@ const Container = styled.button`
   .content {
     display: flex;
     gap: 12px;
+    align-items: center;
+    justify-content: center;
   }
   &:active {
     transform: translate(0, 0);
@@ -80,5 +88,19 @@ const Container = styled.button`
     background-color: #646464;
     cursor: no-drop;
     box-shadow: none;
+  }
+`;
+const ContentImage = styled.section`
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    border-radius: 10%;
+    object-fit: contain;
   }
 `;
