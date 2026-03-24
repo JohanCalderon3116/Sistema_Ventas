@@ -16,6 +16,7 @@ export const HeaderPos = () => {
   const [stateListaProductos, setStateListaProductos] = useState(false);
   const [stateTeclado, setStateTeclado] = useState(false);
   const [stateLector, setStateLector] = useState(true);
+  const [catidadInput, setCantidadInput] = useState(1);
   const { setBuscador, dataProductos, selectProductos, buscador } =
     useProductosStore();
 
@@ -49,7 +50,7 @@ export const HeaderPos = () => {
       useProductosStore.getState().ProductosItemSelect;
     const pDetalleventas = {
       _id_venta: 1,
-      _cantidad: 1,
+      _cantidad: parseFloat(catidadInput) || 1,
       _precio_venta: ProductosItemSelect.precio_venta,
       _total: 1 * ProductosItemSelect.precio_venta,
       _descripcion: ProductosItemSelect.nombre,
@@ -65,12 +66,18 @@ export const HeaderPos = () => {
     addItem(pDetalleventas);
     setBuscador("");
     buscadorRef.current.focus();
+    setCantidadInput(1)
     // }
     // if (idventa > 0) {
     //   addItem(pDetalleventas);
     //   // await insertarDetalleVentas(pDetalleventas);
     // }
   }
+  //validar cantidad
+  const ValidarCantidad = (e) => {
+    const value = Math.max(0, parseFloat(e.target.value));
+    setCantidadInput(value);
+  };
   useEffect(() => {
     buscadorRef.current.focus();
     // eliminarventasIncompletas({ id_usuario: datausuarios?.id });
@@ -105,6 +112,18 @@ export const HeaderPos = () => {
       </section>
       <section className="contentbuscador">
         <article className="area1">
+          <div className="contentCantidad">
+            <InputText2>
+              <input
+                value={catidadInput}
+                onChange={ValidarCantidad}
+                className="form__field"
+                type="number"
+                min="1"
+                placeholder="Cantidad..."
+              ></input>
+            </InputText2>
+          </div>
           <InputText2>
             <input
               value={buscador}
@@ -210,6 +229,11 @@ const Header = styled.div`
     position: relative;
     .area1 {
       grid-area: area1;
+      display: flex;
+      gap: 30px;
+      .contentCantidad {
+        width: 150px;
+      }
     }
     .area2 {
       grid-area: area2;

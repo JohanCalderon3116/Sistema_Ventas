@@ -31,10 +31,11 @@ export const useCartVentasStore = create(
             //Si el producto ya esta en el carrito, aumentar la cantidad
             const updatedItems = state.items.map((item) => {
               if (item._id_producto === p._id_producto) {
+                const newQuantity = item._cantidad + (p._cantidad || 1);
                 return {
                   ...item,
-                  _cantidad: item._cantidad + 1,
-                  _total: item._total + p._cantidad * p._precio_venta,
+                  _cantidad: newQuantity,
+                  _total: newQuantity * item._precio_venta,
                 };
               }
               return item;
@@ -95,6 +96,24 @@ export const useCartVentasStore = create(
             })
             .filter(Boolean); //filtrar elementso nulos
           return { items: updatedItems, total: calcularTotal(updatedItems) };
+        }),
+      updateCantidadItem: (p, cantidad) =>
+        set((state) => {
+          const updateItems = state.items.map((item) => {
+            if (item._id_producto === p._id_producto) {
+              const updateItem = {
+                ...item,
+                _cantidad: cantidad,
+                _total: cantidad * item._precio_venta,
+              };
+              return updateItem;
+            }
+            return item;
+          });
+          return {
+            items: updateItems,
+            total: calcularTotal(updateItems),
+          };
         }),
       setStatePantallaCobro: (p) =>
         set((state) => {
