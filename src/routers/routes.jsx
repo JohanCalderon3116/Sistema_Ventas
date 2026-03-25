@@ -14,6 +14,7 @@ import {
   BasicosConfig,
   MonedaConfig,
   ClientesProveedores,
+  MetodosPago,
 } from "../index";
 
 export function Myroutes() {
@@ -128,6 +129,16 @@ export function Myroutes() {
           <ProtectedRoute accesby="authenticated">
             <Layout>
               <ClientesProveedores></ClientesProveedores>
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/configuracion/metodospago"
+        element={
+          <ProtectedRoute accesby="authenticated">
+            <Layout>
+              <MetodosPago></MetodosPago>
             </Layout>
           </ProtectedRoute>
         }

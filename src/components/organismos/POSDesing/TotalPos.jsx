@@ -9,7 +9,8 @@ import {
 } from "../../../index";
 import { FormatearNumeroDinero } from "../../../utils/Conversiones";
 export const TotalPos = () => {
-  const { total, setStatePantallaCobro } = useCartVentasStore();
+  const { total, setStatePantallaCobro, setStateMetodosPago } =
+    useCartVentasStore();
   const { dataempresa } = useEmpresaStore();
   return (
     <Container>
@@ -19,7 +20,7 @@ export const TotalPos = () => {
       <section className="contentTotal">
         <section className="contentTtuloTotal">
           <Btn1
-            funcion={() => setStatePantallaCobro({ tipocobro: "mixto" })}
+            funcion={setStateMetodosPago}
             border="2px"
             bgcolor="#3ff563"
             color="#207c33"
@@ -66,7 +67,6 @@ const Container = styled.div`
     right: 5px;
   }
   .imagen {
-    z-index: 1;
     width: 55px;
     position: relative;
     @media ${Device.desktop} {
@@ -81,11 +81,17 @@ const Container = styled.div`
     display: flex;
     flex-direction: column;
     font-size: 35px;
+    position: relative; /* Añade esto */
+    z-index: 10; /* Añade esto para que esté por encima de la imagen */
+
     .contentTtuloTotal {
       margin-top: 30px;
       display: flex;
       align-items: center;
-      gap: 10px;
+      cursor: pointer;
+      position: relative; /* Asegura que el cursor responda aquí */
+      z-index: 11; /* Refuerza la posición */
+
       @media ${Device.desktop} {
         display: none;
       }

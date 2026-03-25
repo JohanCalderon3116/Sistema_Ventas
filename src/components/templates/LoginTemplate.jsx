@@ -4,11 +4,13 @@ import {
   Footer,
   InputText2,
   Linea,
+  Lottieanimation,
   Title,
   useAuthStore,
 } from "../../index";
 import { v } from "../../styles/variables";
 import { Device } from "../../styles/breakpoints";
+import cart from "../../assets/add to cart.json"
 export const LoginTemplate = () => {
   const { loginGoogle } = useAuthStore();
   return (
@@ -19,7 +21,7 @@ export const LoginTemplate = () => {
           <span>SoftCreate POS v1.0</span>
         </ContentLogo>
         <Title $paddingBottom="20px">Iniciar sesión</Title>
-        <form action="">
+        {/* <form action="">
           <InputText2>
             <input
               className="form__field"
@@ -41,7 +43,8 @@ export const LoginTemplate = () => {
             color="255,255,255"
             width="100%"
           ></Btn1>
-        </form>
+        </form> */}
+        <Lottieanimation ancho={220} alto={220} animacion={cart}></Lottieanimation>
         <Linea>
           <span>0</span>
         </Linea>

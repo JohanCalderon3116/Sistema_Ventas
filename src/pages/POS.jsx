@@ -7,6 +7,7 @@ import {
   useAlmacenesStore,
   useCierreCajaStore,
   useEmpresaStore,
+  useMetodosPagoStore,
   useProductosStore,
   useSucursalesStore,
   useVentasStore,
@@ -22,6 +23,7 @@ export function POS() {
   const { mostrarventasxsucursal } = useVentasStore();
   const { mostrarCajaXSucursal } = useCajasStore();
   const { mostrarCierreCaja } = useCierreCajaStore();
+  const { mostrarMetodosPago } = useMetodosPagoStore();
   useQuery({
     queryKey: ["buscar productos", buscador],
     queryFn: () =>
@@ -29,7 +31,7 @@ export function POS() {
     enabled: !!dataempresa,
     refetchOnWindowFocus: false,
   });
-  const { isLoading, error } = useQuery({
+  const { isLoading: isLoadingAlmacen, error } = useQuery({
     queryKey: [
       "mostrar almacen por sucursal",
       sucursalesItemSelectAsignadas?.id_sucursal,
@@ -50,7 +52,7 @@ export function POS() {
       }),
     enabled: !!sucursalesItemSelectAsignadas,
   });
-  const { data: dataCaja } = useQuery({
+  const { data: dataCaja, isLoading: isLoadingCaja } = useQuery({
     queryKey: [
       "mostrar caja por sucursal",
       { id_sucursal: sucursalesItemSelectAsignadas?.id_sucursal },
@@ -74,14 +76,26 @@ export function POS() {
       }),
     enabled: !!dataCaja,
   });
+  const { isLoading: isLoadingMetodosPago } = useQuery({
+    queryKey: ["mostrar metodos de pago"],
+    queryFn: () => mostrarMetodosPago({ id_empresa: dataempresa?.id }),
+    enabled: !!dataempresa,
+  });
+
+  //unificar los estados de carga
+  const isLoading =
+    isLoadingAlmacen ||
+    isLoadingCaja ||
+    isLoadingCierreCaja ||
+    isLoadingMetodosPago;
   //Mostrar spinner mientras carga la informacion de caja
-  if (isLoadingCierreCaja) {
-    return (
-      <span>
-        <SpinnerSecundario texto="Cargando ventas..."></SpinnerSecundario>
-      </span>
-    );
-  }
+  // if (isLoading) {
+  //   return (
+  //     <span>
+  //       <Spinner1 texto="Cargando ventas..."></Spinner1>
+  //     </span>
+  //   );
+  // }
   if (errorCierreCaja) {
     return <span>Error {errorCierreCaja.message} </span>;
   }

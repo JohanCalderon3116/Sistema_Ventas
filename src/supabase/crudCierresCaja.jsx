@@ -2,8 +2,6 @@ import Swal from "sweetalert2";
 import { supabase } from "./supabase.config";
 
 const tabla = "cierrecaja";
-const tabla2 = "ingresos_salidas_caja";
-
 export async function MostrarCierreCajaAperturada(p) {
   const { data } = await supabase
     .from(tabla)
@@ -13,27 +11,22 @@ export async function MostrarCierreCajaAperturada(p) {
     .maybeSingle();
   return data;
 }
-export async function InsertarIngresosalidaCaja(p) {
-  const { data, error } = await supabase.from(tabla2).insert(p);
+export async function AperturarCierreCaja(p) {
+  const { data, error } = await supabase
+    .from(tabla)
+    .insert(p)
+    .select()
+    .maybeSingle();
   if (error) {
-    Swal.fire({
-      icon: "error",
-      title: "Oops... Cierre caja",
-      text: error.message,
-    });
-    return;
+    throw new Error(error.message);
   }
   return data;
 }
-export async function AperturarCierreCaja(p) {
-  const { data, error } = await supabase.from(tabla).insert(p).maybeSingle();
+
+export async function CerrarTurnoCaja(p) {
+  const { data, error } = await supabase.from(tabla).update(p).eq("id", p.id);
   if (error) {
-    Swal.fire({
-      icon: "error",
-      title: "Oops... Cierre caja",
-      text: error.message,
-    });
-    return;
+    throw new Error(error.message);
   }
   return data;
 }

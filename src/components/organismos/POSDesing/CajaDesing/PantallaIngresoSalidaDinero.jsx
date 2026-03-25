@@ -1,17 +1,32 @@
 import styled from "styled-components";
 import { useCierreCajaStore } from "../../../../store/CierreCajaStore";
-import { Btn1, InputText2, useCajasStore, VolverBtn } from "../../../../index";
+import {
+  Btn1,
+  InputText2,
+  useCajasStore,
+  useFormattedDate,
+  useMetodosPagoStore,
+  useMovCajaStore,
+  useUsuariosStore,
+  VolverBtn,
+} from "../../../../index";
 import "react-datepicker/dist/react-datepicker.css";
 import DatePicker from "react-datepicker";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
+import { filterFns } from "@tanstack/react-table";
 export const PantallaIngresoSalidaDinero = () => {
-  const { tipoRegistro, setStateIngresoSalida, insertarIngresoSalidaCaja } =
-    useCierreCajaStore();
+  const fechaActual = useFormattedDate();
+  const { tipoRegistro, setStateIngresoSalida } = useCierreCajaStore();
   const [startDate, setStartDate] = useState(new Date());
+  const [selectMetodo, setSelectMetodo] = useState(null);
+  const { insertarMovcaja } = useMovCajaStore();
   const { dataCaja } = useCajasStore();
+  const { dataMetodosPago } = useMetodosPagoStore();
+  const { datausuarios } = useUsuariosStore();
+  const { dataCierreCaja } = useCierreCajaStore();
   const {
     register,
     formState: { errors },
@@ -19,14 +34,16 @@ export const PantallaIngresoSalidaDinero = () => {
     reset,
   } = useForm();
   const insertar = async (data) => {
-    const p = {
-      fecha: startDate,
+    const pmovcaja = {
+      fecha_movimiento: fechaActual,
+      tipo_movimiento: tipoRegistro,
       monto: parseFloat(data.monto),
-      descripcion: data.motivo,
-      id_caja: dataCaja?.id,
-      tipo: tipoRegistro,
+      id_metodo_pago: selectMetodo?.id,
+      descripcion: ` ${tipoRegistro === "ingreso" ? "Ingreso" : "Salida"} de dinero con ${selectMetodo?.nombre} ${data.motivo ? ` - Detalle: ${data.motivo}` : ""} `,
+      id_usuario: datausuarios?.id,
+      id_cierre_caja: dataCierreCaja?.id,
     };
-    await insertarIngresoSalidaCaja(p);
+    await insertarMovcaja(pmovcaja);
   };
 
   const { isPending, mutate: doInsertar } = useMutation({
@@ -34,6 +51,7 @@ export const PantallaIngresoSalidaDinero = () => {
     mutationFn: insertar,
     onSuccess: () => {
       toast.success("Movimiento registrado :p");
+      setStateIngresoSalida(false)
       reset();
     },
     onError: () => {
@@ -43,14 +61,44 @@ export const PantallaIngresoSalidaDinero = () => {
   const manejadorEnvio = (data) => {
     doInsertar(data);
   };
+  const handleMetodoClick = (item) => {
+    setSelectMetodo(item);
+  };
+  useEffect(() => {
+    const efectivo = dataMetodosPago?.find(
+      (item) => item.nombre === "Efectivo",
+    );
+    if (efectivo) {
+      setSelectMetodo(efectivo);
+    }
+  }, [dataMetodosPago]);
   return (
     <Container>
-      <VolverBtn funcion={setStateIngresoSalida}></VolverBtn>
+      <VolverBtn funcion={ () => setStateIngresoSalida(false)}></VolverBtn>
       <span className="title">
         {tipoRegistro === "ingreso"
           ? "Ingresar dinero a caja"
           : "Retirar dinero de caja"}
       </span>
+      <section className="areatipopago">
+        {dataMetodosPago
+          ?.filter((item) => item.nombre !== "Mixto")
+          .map((item, index) => {
+            return (
+              <article className="box" key={index}>
+                <Btn1
+                  funcion={() => handleMetodoClick(item)}
+                  imagen={item.icono != "-" ? item.icono : null}
+                  border="0"
+                  height="70px"
+                  width="100%"
+                  titulo={item.nombre}
+                  bgcolor={item.id === selectMetodo?.id ? "#ffd700" : "#fff"}
+                ></Btn1>
+              </article>
+            );
+          })}
+      </section>
       <form action="" onSubmit={handleSubmit(manejadorEnvio)}>
         <section className="area1">
           <span>Monto: </span>
@@ -64,14 +112,14 @@ export const PantallaIngresoSalidaDinero = () => {
             {errors.monto?.type === "required" && <span>Campo requerido</span>}
           </InputText2>
 
-          <StyleDataPickerWrapper>
+          {/* <StyleDataPickerWrapper>
             <StyleDataPicker
               selected={startDate}
               onChange={(date) => setStartDate(date)}
               dateFormat="dd/MM/yyyy"
               placeholderText="Seleccionar fecha"
             ></StyleDataPicker>
-          </StyleDataPickerWrapper>
+          </StyleDataPickerWrapper> */}
           <span>Motivo (Puede ser blanco)</span>
           <InputText2>
             <textarea
@@ -106,6 +154,16 @@ const Container = styled.div`
   align-items: center;
   justify-content: center;
   flex-direction: column;
+  .areatipopago {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px;
+    .box {
+      flex: 1 1 40%;
+      display: flex;
+    }
+  }
   .area1 {
     display: flex;
     gap: 12px;

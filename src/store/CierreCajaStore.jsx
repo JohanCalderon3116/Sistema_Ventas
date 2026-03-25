@@ -1,15 +1,17 @@
 import { create } from "zustand";
 import {
   AperturarCierreCaja,
-  InsertarIngresosalidaCaja,
+  CerrarTurnoCaja,
   MostrarCierreCajaAperturada,
 } from "../supabase/crudCierresCaja";
 
 export const useCierreCajaStore = create((set) => ({
+  stateConteoCaja: false,
+  setStateConteoCaja: (p) => set({ stateConteoCaja: p }),
   stateIngresoSalida: false,
-  setStateIngresoSalida: (state) => set({ stateIngresoSalida: !state }),
+  setStateIngresoSalida: (p) => set({ stateIngresoSalida: p }),
   stateCierreCaja: false,
-  setStateCierreCaja: (state) => set({ stateCierreCaja: !state }),
+  setStateCierreCaja: (p) => set({ stateCierreCaja: p }),
   tipoRegistro: "",
   setTipoRegistro: (p) => set({ tipoRegistro: p }),
   dataCierreCaja: null,
@@ -23,7 +25,7 @@ export const useCierreCajaStore = create((set) => ({
     set({ dataCierreCaja: response });
     return response;
   },
-  insertarIngresoSalidaCaja: async (p) => {
-    await InsertarIngresosalidaCaja(p);
+  cerrarTurnoCaja: async (p) => {
+    await CerrarTurnoCaja(p);
   },
 }));

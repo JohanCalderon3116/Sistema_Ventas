@@ -8,6 +8,7 @@ const initialState = {
   total: 0,
   statePantallaCobro: false,
   tipocobro: "",
+  stateMetodosPago: false,
 };
 
 function calcularTotal(items) {
@@ -50,9 +51,13 @@ export const useCartVentasStore = create(
           }
         }),
       removeItem: (p) =>
-        set((state) => ({
-          items: state.items.filter((item) => item !== p),
-        })),
+        set((state) => {
+          const updatedItems = state.items.filter((item) => item !== p);
+          return {
+            items: updatedItems,
+            total: calcularTotal(updatedItems)
+          }
+        }),
       resetState: () => {
         const { selectCliPro } = useClientesProveedoresStore.getState();
         selectCliPro([]);
@@ -131,6 +136,8 @@ export const useCartVentasStore = create(
             };
           }
         }),
+      setStateMetodosPago: () =>
+        set((state) => ({ stateMetodosPago: !state.stateMetodosPago })),
     }),
     {
       name: "cart-ventas-storage",

@@ -37,9 +37,6 @@ export function ListaDesplegable({
       );
     }
   };
-  useEffect(() => {
-    dropdownRef.current.focus();
-  }, []);
   return (
     <Container
       scroll={scroll}

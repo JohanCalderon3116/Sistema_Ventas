@@ -1,7 +1,7 @@
 import { useState } from "react";
 import styled, { keyframes } from "styled-components";
 import { useCierreCajaStore } from "../../../store/CierreCajaStore";
-import {Device} from "../../../styles/breakpoints"
+import { Device } from "../../../styles/breakpoints";
 import { Icon } from "@iconify/react";
 export const MenuFlotante = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -20,7 +20,7 @@ export const MenuFlotante = () => {
           delay="0s"
           onClick={() => {
             toggleMenu();
-            setStateIngresoSalida();
+            setStateIngresoSalida(true);
             setTipoRegistro("ingreso");
           }}
         >
@@ -32,7 +32,7 @@ export const MenuFlotante = () => {
           delay="0.1s"
           onClick={() => {
             toggleMenu();
-            setStateIngresoSalida();
+            setStateIngresoSalida(true);
             setTipoRegistro("salida");
           }}
         >
@@ -44,7 +44,7 @@ export const MenuFlotante = () => {
           delay="0.2s"
           onClick={() => {
             toggleMenu();
-            setStateCierreCaja();
+            setStateCierreCaja(true);
           }}
         >
           <Icon icon="fxemoji:closedmailboxraised" />

@@ -41,11 +41,6 @@ export const HeaderPos = () => {
     }
   }
   async function funcion_insertarventa() {
-    // const pVentas = {
-    //   id_usuario: datausuarios?.id,
-    //   id_sucursal: sucursalesItemSelectAsignadas?.id_sucursal,
-    //   id_empresa: dataempresa.id,
-    // };
     const ProductosItemSelect =
       useProductosStore.getState().ProductosItemSelect;
     const pDetalleventas = {
@@ -59,19 +54,10 @@ export const HeaderPos = () => {
       _id_sucursal: sucursalesItemSelectAsignadas.id_sucursal,
     };
     console.log(pDetalleventas);
-    // if (idventa == 0) {
-    //   const result = await insertarVentas(pVentas);
-
-    //   (pDetalleventas._id_venta = result?.id);
     addItem(pDetalleventas);
     setBuscador("");
     buscadorRef.current.focus();
-    setCantidadInput(1)
-    // }
-    // if (idventa > 0) {
-    //   addItem(pDetalleventas);
-    //   // await insertarDetalleVentas(pDetalleventas);
-    // }
+    setCantidadInput(1);
   }
   //validar cantidad
   const ValidarCantidad = (e) => {
@@ -80,7 +66,6 @@ export const HeaderPos = () => {
   };
   useEffect(() => {
     buscadorRef.current.focus();
-    // eliminarventasIncompletas({ id_usuario: datausuarios?.id });
   }, []);
   return (
     <Header>
@@ -132,6 +117,12 @@ export const HeaderPos = () => {
               className="form__field"
               type="search"
               placeholder="Buscar"
+              onKeyDown={(e) => {
+                if (e.key === "ArrowDown" && stateListaProductos) {
+                  e.preventDefault();
+                  document.querySelector("[tabindex = '0'").focus();
+                }
+              }}
             ></input>
             <ListaDesplegable
               funcioncrud={funcion_insertarventa}

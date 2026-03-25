@@ -20,7 +20,7 @@ import {
 import { Toaster } from "sonner";
 export const POSTemplate = () => {
   const { statePantallaCobro } = useCartVentasStore();
-  const { stateIngresoSalida } = useCierreCajaStore();
+  const { stateIngresoSalida, stateCierreCaja } = useCierreCajaStore();
   return (
     <Container>
       {statePantallaCobro && <PantallaCobro></PantallaCobro>}
@@ -36,20 +36,22 @@ export const POSTemplate = () => {
       {stateIngresoSalida && (
         <PantallaIngresoSalidaDinero></PantallaIngresoSalidaDinero>
       )}
-      <PantallaCierreCaja></PantallaCierreCaja>
+      {stateCierreCaja && <PantallaCierreCaja></PantallaCierreCaja>}
     </Container>
   );
 };
 
 const Container = styled.div`
+  height: calc(100vh - 60px);
   padding: 10px;
-  display: grid;
   padding-top: 50px;
+  display: grid;
   gap: 10px;
   grid-template:
     "header" 220px
     "main" auto;
-  animation: ${blur_in} 0.4s linear both;
+
+  animation: ${blur_in} 0.5s linear both;
   @media ${Device.desktop} {
     grid-template:
       "header header" 140px
@@ -60,12 +62,14 @@ const Container = styled.div`
 
 const Main = styled.div`
   grid-area: main;
+  /* background-color: rgba(228, 20, 20, 0.5); */
   display: flex;
   flex-direction: column;
   width: 100%;
   position: relative;
   overflow: hidden;
   gap: 10px;
+
   @media ${Device.desktop} {
     flex-direction: row;
   }

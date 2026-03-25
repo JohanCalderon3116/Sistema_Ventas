@@ -9,16 +9,15 @@ import {
 import { Device } from "../../../styles/breakpoints";
 import { useQuery } from "@tanstack/react-query";
 export const AreaTecladoPos = () => {
-  const { setStatePantallaCobro } = useCartVentasStore();
-  const { mostrarMetodosPago } = useMetodosPagoStore();
-  const { dataempresa } = useEmpresaStore();
-  const { data: dataMetodosPago } = useQuery({
-    queryKey: ["mostrar metodos de pago"],
-    queryFn: () => mostrarMetodosPago({ id_empresa: dataempresa?.id }),
-    enabled: !!dataempresa,
-  });
+  const { setStatePantallaCobro, stateMetodosPago } = useCartVentasStore();
+  const { dataMetodosPago} = useMetodosPagoStore();
+  // const { data: dataMetodosPago } = useQuery({
+  //   queryKey: ["mostrar metodos de pago"],
+  //   queryFn: () => mostrarMetodosPago({ id_empresa: dataempresa?.id }),
+  //   enabled: !!dataempresa,
+  // });
   return (
-    <Container>
+    <Container stateMetodosPago={stateMetodosPago}>
       <section className="areatipopago">
         {dataMetodosPago?.map((item, index) => {
           return (
@@ -36,40 +35,6 @@ export const AreaTecladoPos = () => {
             </article>
           );
         })}
-        {/* <article className="box">
-          <Btn1
-            funcion={() => setStatePantallaCobro({ tipocobro: "efectivo" })}
-            border="0"
-            height="70px"
-            width="100%"
-            titulo="Efectivo"
-            bgcolor="#a6f868"
-          ></Btn1>
-          <Btn1
-            funcion={() => setStatePantallaCobro({ tipocobro: "credito" })}
-            border="0"
-            width="100%"
-            titulo="Crédito"
-            bgcolor="#fb81c6"
-          ></Btn1>
-        </article> */}
-        {/* <article className="box">
-          <Btn1
-            funcion={() => setStatePantallaCobro({ tipocobro: "tarjeta" })}
-            border="0"
-            width="100%"
-            height="70px"
-            titulo="Tarjeta"
-            bgcolor="#fba256"
-          ></Btn1>
-          <Btn1
-            funcion={() => setStatePantallaCobro({ tipocobro: "mixto" })}
-            border="0"
-            width="100%"
-            titulo="Mixto"
-            bgcolor="#919afd"
-          ></Btn1>
-        </article> */}
       </section>
       <section className="totales">
         {/* <div className="subtotal">
@@ -94,19 +59,17 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  position: relative;
-  margin-top: auto;
+  position: absolute;
+  bottom: 10px;
   width: calc(100% - 5px);
-  max-height: 100%;
   border-radius: 15px;
   @media ${Device.desktop} {
     position: relative;
-    width: auto;
+    width: 450px;
     bottom: initial;
   }
   .areatipopago {
-    // display: none;
-    display: flex;
+    display: ${({ stateMetodosPago }) => (stateMetodosPago ? "flex" : "none")};
     flex-wrap: wrap;
     gap: 10px;
     padding: 10px;
@@ -119,6 +82,7 @@ const Container = styled.div`
     .box {
       flex: 1 1 40%;
       display: flex;
+      gap: 10px;
     }
   }
   .totales {
@@ -130,7 +94,7 @@ const Container = styled.div`
       display: none;
       flex-direction: column;
       justify-content: end;
-      align-items: end;
+      text-align: end;
       gap: 10px;
       font-weight: 500;
       @media ${Device.desktop} {

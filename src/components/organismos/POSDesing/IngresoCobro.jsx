@@ -18,7 +18,9 @@ import { useMetodosPagoStore } from "../../../store/MetodosPagoStore";
 import { useCierreCajaStore } from "../../../store/CierreCajaStore";
 import { useCajasStore } from "../../../store/CajaStore";
 import { useMovCajaStore } from "../../../store/MovCajaStore";
+import { useFormattedDate } from "../../../hooks/useFormattedDate";
 export const IngresoCobro = forwardRef((props, ref) => {
+  const fechaActual = useFormattedDate();
   const { tipocobro, total, items, resetState, setStatePantallaCobro } =
     useCartVentasStore();
   const [stateBuscadorClientes, setStateBuscadorClientes] = useState(false);
@@ -124,6 +126,7 @@ export const IngresoCobro = forwardRef((props, ref) => {
   async function insertarventa(p) {
     if (restante === 0) {
       const pventas = {
+        fecha: fechaActual,
         id_usuario: datausuarios?.id,
         id_sucursal: sucursalesItemSelectAsignadas?.id_sucursal,
         id_empresa: dataempresa?.id,

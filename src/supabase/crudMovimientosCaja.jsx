@@ -6,11 +6,18 @@ const tabla = "movimientos_caja";
 export async function InsertarMovCaja(p) {
   const { error } = await supabase.from(tabla).insert(p);
   if (error) {
-    Swal.fire({
-      icon: "error",
-      title: "Oops... InerstarMovCaja" + error.message,
-      text: error.message,
-    });
-    return;
+    throw Error(error.message);
   }
+}
+
+export async function MostrarEfectivoSinVentasMovCierreCaja(p) {
+  const { data } = await supabase
+    .rpc("sumarefectivosinventasmovcierrecaja", p);
+  return data;
+}
+
+export async function MostrarVentasMetodoPagoMovCaja(p) {
+  const { data } = await supabase
+    .rpc("sumarventasmetodopagomovcierrecaja", p);
+  return data;
 }
