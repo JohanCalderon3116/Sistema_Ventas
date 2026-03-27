@@ -6,6 +6,7 @@ import {
 } from "../index";
 
 export const useVentasStore = create((set) => ({
+  porcentajeCambio: 0,
   idventa: 0,
   dataventas: [],
   resetarventas: () => set({ idventa: 0 }),

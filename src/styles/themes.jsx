@@ -46,7 +46,7 @@ export const Dark = {
   bgcards: "#171717",
   rgbafondoanimado: "rgba(198, 198, 198, 0.2)",
   bgtgderecha: "#21252B",
-  body: "#202020",
+  body: "#000",
   text: "#fff",
   bodyRgba: "32,32,32",
   textRgba: "255, 255, 255",

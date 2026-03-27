@@ -44,14 +44,19 @@ export async function EliminarDetalleVentas(p) {
     return;
   }
 }
-// export async function EditarProductos(p) {
-//   const { error } = await supabase.rpc("editarproductos", p);
-//   if (error) {
-//     Swal.fire({
-//       icon: "error",
-//       title: "Oops...",
-//       text: error.message,
-//     });
-//     return;
-//   }
-// }
+
+export async function MostrarTop5ProductosMasVenidosPorCantidad(p) {
+  const { data } = await supabase.rpc(
+    "mostrartop5productosmasvenidosporcantidad",
+    p,
+  );
+  return data;
+}
+
+export async function MostrarTop10ProductosMasVenidosPorMonto(p) {
+  const { data } = await supabase.rpc(
+    "mostrartop10productosmasvenidospormonto",
+    p,
+  );
+  return data;
+}

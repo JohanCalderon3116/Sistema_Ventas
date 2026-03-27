@@ -1,17 +1,10 @@
 import styled from "styled-components";
-import {
-  LinksArray,
-  SecondarylinksArray,
-  ToggleTema,
-} from "../../../../index";
+import { LinksArray, SecondarylinksArray, ToggleTema } from "../../../../index";
 import { v } from "../../../../styles/variables";
 import { NavLink } from "react-router-dom";
 import { Icon } from "@iconify/react";
 
-
-
 export function Sidebar({ state, setState }) {
- 
   return (
     <Main $isopen={state.toString()}>
       <span className="Sidebarbutton" onClick={() => setState(!state)}>
@@ -72,8 +65,6 @@ export function Sidebar({ state, setState }) {
               <span className={state ? "label_ver" : "label_oculto"}>Más</span>
             </section>
           </div>
-         
-         
         </div>
 
         <ToggleTema />
@@ -93,7 +84,7 @@ const Container = styled.div`
   overflow-y: auto;
   overflow-x: hidden;
   border-right: 2px solid ${({ theme }) => theme.color2};
-  
+
   &::-webkit-scrollbar {
     width: 6px;
     border-radius: 10px;
@@ -133,8 +124,8 @@ const Container = styled.div`
   }
   .LinkContainer {
     margin: 9px 0;
-    margin-right:10px;
-    margin-left:8px;
+    margin-right: 10px;
+    margin-left: 8px;
     transition: all 0.3s ease-in-out;
     position: relative;
     font-weight: 700;
@@ -157,7 +148,7 @@ const Container = styled.div`
       .Linkicon {
         display: flex;
         font-size: 33px;
-
+        filter: grayscale(100%);
         svg {
           font-size: 25px;
         }
@@ -189,6 +180,9 @@ const Container = styled.div`
       border: 2px solid ${(props) => props.theme.bg5};
       color: ${(props) => props.theme.color1};
       font-weight: 600;
+      .Linkicon {
+        filter: grayscale(0%);
+      }
     }
   }
 `;
@@ -201,7 +195,8 @@ const Main = styled.div`
     height: 32px;
     border-radius: 50%;
     background: ${(props) => props.theme.bgtgderecha};
-    box-shadow: 0 0 4px ${(props) => props.theme.bg3},
+    box-shadow:
+      0 0 4px ${(props) => props.theme.bg3},
       0 0 7px ${(props) => props.theme.bg};
     display: flex;
     align-items: center;

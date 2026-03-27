@@ -3,6 +3,8 @@ import {
   EliminarDetalleVentas,
   InsertarDetalleVentas,
   MostrarDetalleVenta,
+  MostrarTop10ProductosMasVenidosPorMonto,
+  MostrarTop5ProductosMasVenidosPorCantidad,
 } from "../index";
 
 export const useDetalleVentasStore = create((set, get) => ({
@@ -31,5 +33,13 @@ export const useDetalleVentasStore = create((set, get) => ({
     const { mostrardetalleventa } = get();
     const { parametros } = get();
     set(mostrardetalleventa(parametros));
+  },
+  mostrarTop5ProductosMasVenidosPorCantidad: async (p) => {
+    const response = await MostrarTop5ProductosMasVenidosPorCantidad(p);
+    return response;
+  },
+  mostrarTop10ProductosMasVenidosPorMonto: async (p) => {
+    const response = await MostrarTop10ProductosMasVenidosPorMonto(p);
+    return response;
   },
 }));

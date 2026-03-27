@@ -13,12 +13,12 @@ export const Toogle = ({state, setstate}) => {
 };
 
 const Container = styled.div`
-  position: relative;
+  position: fixed;
   display: flex;
   articule {
     display: flex;
   }
-z-index:100;
+z-index:101;
   .toggle {
     position: relative;
     width: 40px;

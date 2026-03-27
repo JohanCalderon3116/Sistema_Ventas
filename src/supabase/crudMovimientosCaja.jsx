@@ -21,3 +21,8 @@ export async function MostrarVentasMetodoPagoMovCaja(p) {
     .rpc("sumarventasmetodopagomovcierrecaja", p);
   return data;
 }
+export async function MostrarMovimientosCajaLive(p) {
+  const { data } = await supabase
+    .rpc("mostrarmovimientoscajalive", p);
+  return data;
+}

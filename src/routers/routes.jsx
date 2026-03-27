@@ -15,6 +15,7 @@ import {
   MonedaConfig,
   ClientesProveedores,
   MetodosPago,
+  Dashboard,
 } from "../index";
 
 export function Myroutes() {
@@ -25,17 +26,6 @@ export function Myroutes() {
         element={
           <ProtectedRoute accesby="non-authenticated">
             <Login></Login>
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/"
-        element={
-          <ProtectedRoute accesby="authenticated">
-            <Layout>
-              <Home></Home>
-            </Layout>
           </ProtectedRoute>
         }
       />
@@ -139,6 +129,16 @@ export function Myroutes() {
           <ProtectedRoute accesby="authenticated">
             <Layout>
               <MetodosPago></MetodosPago>
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/"
+        element={
+          <ProtectedRoute accesby="authenticated">
+            <Layout>
+              <Dashboard></Dashboard>
             </Layout>
           </ProtectedRoute>
         }

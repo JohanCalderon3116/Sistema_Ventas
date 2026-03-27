@@ -2,6 +2,7 @@ import { create } from "zustand";
 import {
   InsertarMovCaja,
   MostrarEfectivoSinVentasMovCierreCaja,
+  MostrarMovimientosCajaLive,
   MostrarVentasMetodoPagoMovCaja,
 } from "../supabase/crudMovimientosCaja";
 
@@ -88,5 +89,9 @@ export const useMovCajaStore = create((set, get) => ({
     set({ totalVentasEfectivo: totalEfectivo });
     get().setTotalVentasEfectivo(totalEfectivo);
     return result;
+  },
+  mostrarMovimentosCajaLive: async (p) => {
+    const response = await MostrarMovimientosCajaLive(p);
+    return response;
   },
 }));
