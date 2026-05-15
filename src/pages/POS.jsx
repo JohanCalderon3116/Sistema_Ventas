@@ -13,12 +13,13 @@ import {
   useVentasStore,
 } from "../index";
 import { useCajasStore } from "../store/CajaStore";
+import { useAsignacionCajaSucursalesStore } from "../store/AsignacionCajaSucursales";
 
 export function POS() {
   const { buscarProductos, buscador, ProductosItemSelect } =
     useProductosStore();
   const { mostrarAlmacenXsucursal } = useAlmacenesStore();
-  const { sucursalesItemSelectAsignadas } = useSucursalesStore();
+  const { sucursalesItemSelectAsignadas } = useAsignacionCajaSucursalesStore();
   const { dataempresa } = useEmpresaStore();
   const { mostrarventasxsucursal } = useVentasStore();
   const { mostrarCajaXSucursal } = useCajasStore();
@@ -52,29 +53,21 @@ export function POS() {
       }),
     enabled: !!sucursalesItemSelectAsignadas,
   });
-  const { data: dataCaja, isLoading: isLoadingCaja } = useQuery({
-    queryKey: [
-      "mostrar caja por sucursal",
-      { id_sucursal: sucursalesItemSelectAsignadas?.id_sucursal },
-    ],
-    queryFn: () =>
-      mostrarCajaXSucursal({
-        id_sucursal: sucursalesItemSelectAsignadas?.id_sucursal,
-      }),
-    enabled: !!dataempresa,
-    refetchOnWindowFocus: false,
-  });
+
   const {
     isLoading: isLoadingCierreCaja,
     data: dataCierreCaja,
     error: errorCierreCaja,
   } = useQuery({
-    queryKey: ["mostrar cierre de caja", { id_caja: dataCaja?.id }],
+    queryKey: [
+      "mostrar cierre de caja",
+      { id_caja: sucursalesItemSelectAsignadas?.id_caja },
+    ],
     queryFn: () =>
       mostrarCierreCaja({
-        id_caja: dataCaja?.id,
+        id_caja: sucursalesItemSelectAsignadas?.id_caja,
       }),
-    enabled: !!dataCaja,
+    enabled: !!sucursalesItemSelectAsignadas,
   });
   const { isLoading: isLoadingMetodosPago } = useQuery({
     queryKey: ["mostrar metodos de pago"],
@@ -84,10 +77,7 @@ export function POS() {
 
   //unificar los estados de carga
   const isLoading =
-    isLoadingAlmacen ||
-    isLoadingCaja ||
-    isLoadingCierreCaja ||
-    isLoadingMetodosPago;
+    isLoadingAlmacen || isLoadingCierreCaja || isLoadingMetodosPago;
   //Mostrar spinner mientras carga la informacion de caja
   // if (isLoading) {
   //   return (

@@ -6,7 +6,7 @@ export const GlobalStyles = createGlobalStyle`
         box-sizing: border-box;
         font-family: "Poppins", sans-serif;
         background-color:  ${(props) => props.theme.bgtotal};
-        color: white;
+        color: ${(props) => props.theme.text};
     }
        body::-webkit-scrollbar {
   width: 12px;

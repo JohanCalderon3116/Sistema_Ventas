@@ -16,6 +16,7 @@ import {
   ClientesProveedores,
   MetodosPago,
   Dashboard,
+  SucursalesCaja,
 } from "../index";
 
 export function Myroutes() {
@@ -129,6 +130,16 @@ export function Myroutes() {
           <ProtectedRoute accesby="authenticated">
             <Layout>
               <MetodosPago></MetodosPago>
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/configuracion/sucursales-cajas"
+        element={
+          <ProtectedRoute accesby="authenticated">
+            <Layout>
+              <SucursalesCaja></SucursalesCaja>
             </Layout>
           </ProtectedRoute>
         }

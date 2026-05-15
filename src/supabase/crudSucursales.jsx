@@ -23,3 +23,29 @@ export async function MostrarSucursalesAsignadasXuser(p) {
 
   return data;
 }
+
+export async function MostrarCajasPorSucursal(p) {
+  const { data } = await supabase
+    .from(tabla)
+    .select(`*, caja(*)`)
+    .eq("id_empresa", p.id_empresa);
+  return data;
+}
+export async function InsertarSucursal(p) {
+  const { error } = await supabase.from(tabla).insert(p);
+  if (error) {
+    throw new Error(error.message);
+  }
+}
+export async function EditarSucursal(p) {
+  const { error } = await supabase.from(tabla).update(p).eq("id", p.id);
+  if (error) {
+    throw new Error(error.message);
+  }
+}
+export async function EliminarSucursal(p) {
+  const { error } = await supabase.from(tabla).delete(p).eq("id", p.id);
+  if (error) {
+    throw new Error(error.message);
+  }
+}

@@ -19,6 +19,7 @@ import { useCierreCajaStore } from "../../../store/CierreCajaStore";
 import { useCajasStore } from "../../../store/CajaStore";
 import { useMovCajaStore } from "../../../store/MovCajaStore";
 import { useFormattedDate } from "../../../hooks/useFormattedDate";
+import { useAsignacionCajaSucursalesStore } from "../../../store/AsignacionCajaSucursales";
 export const IngresoCobro = forwardRef((props, ref) => {
   const fechaActual = useFormattedDate();
   const { tipocobro, total, items, resetState, setStatePantallaCobro } =
@@ -43,7 +44,7 @@ export const IngresoCobro = forwardRef((props, ref) => {
 
   const { datausuarios } = useUsuariosStore();
   const { dataMetodosPago } = useMetodosPagoStore();
-  const { sucursalesItemSelectAsignadas } = useSucursalesStore();
+  const { sucursalesItemSelectAsignadas } = useAsignacionCajaSucursalesStore();
   const { dataempresa } = useEmpresaStore();
   //#region Clientes
   const {

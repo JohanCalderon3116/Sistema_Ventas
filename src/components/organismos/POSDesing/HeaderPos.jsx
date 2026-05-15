@@ -12,6 +12,7 @@ import { v } from "../../../styles/variables";
 import { Device } from "../../../styles/breakpoints";
 import { Icon } from "@iconify/react";
 import { useEffect, useRef, useState } from "react";
+import { useAsignacionCajaSucursalesStore } from "../../../store/AsignacionCajaSucursales";
 export const HeaderPos = () => {
   const [stateListaProductos, setStateListaProductos] = useState(false);
   const [stateTeclado, setStateTeclado] = useState(false);
@@ -20,7 +21,7 @@ export const HeaderPos = () => {
   const { setBuscador, dataProductos, selectProductos, buscador } =
     useProductosStore();
 
-  const { sucursalesItemSelectAsignadas } = useSucursalesStore();
+  const { sucursalesItemSelectAsignadas } = useAsignacionCajaSucursalesStore();
   const { addItem } = useCartVentasStore();
   const buscadorRef = useRef(null);
   function focusclick() {
@@ -72,7 +73,7 @@ export const HeaderPos = () => {
       <ContentSucursal>
         <strong>Sucursal:&nbsp;</strong>
 
-        {sucursalesItemSelectAsignadas.sucursal}
+        {sucursalesItemSelectAsignadas?.sucursales.nombre}
       </ContentSucursal>
       <section className="contentprincipal">
         <Contentuser className="area1">

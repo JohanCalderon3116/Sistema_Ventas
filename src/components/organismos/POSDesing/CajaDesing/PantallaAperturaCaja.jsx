@@ -10,13 +10,14 @@ import { toast, Toaster } from "sonner";
 import { useFormattedDate } from "../../../../hooks/useFormattedDate";
 import { useMetodosPagoStore } from "../../../../store/MetodosPagoStore";
 import { useMovCajaStore } from "../../../../store/MovCajaStore";
+import { useAsignacionCajaSucursalesStore } from "../../../../store/AsignacionCajaSucursales";
 
 export const PantallaAperturaCaja = () => {
   const fechaActual = useFormattedDate();
   const [montoEfectivo, setMontoEfectivo] = useState(0);
   const queryClient = useQueryClient();
   const { datausuarios } = useUsuariosStore();
-  const { dataCaja } = useCajasStore();
+  const { sucursalesItemSelectAsignadas } = useAsignacionCajaSucursalesStore();
   const { aperturarCaja } = useCierreCajaStore();
   const { dataMetodosPago } = useMetodosPagoStore();
   const { insertarMovcaja } = useMovCajaStore();
@@ -42,7 +43,7 @@ export const PantallaAperturaCaja = () => {
       fechainicio: fechaActual,
       fechacierre: fechaActual,
       id_usuario: datausuarios?.id,
-      id_caja: dataCaja?.id,
+      id_caja: sucursalesItemSelectAsignadas?.id_caja,
     };
     const data = await aperturarCaja(p);
     console.log(data);

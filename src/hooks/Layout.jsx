@@ -11,11 +11,14 @@ import {
 import { useState } from "react";
 import { Device } from "../styles/breakpoints";
 import { useQuery } from "@tanstack/react-query";
+import {
+  useAsignacionCajaSucursalesStore,
+} from "../store/AsignacionCajaSucursales";
 export const Layout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { datausuarios, mostrarusuarios } = useUsuariosStore();
   const { mostrarempresa } = useEmpresaStore();
-  const { mostrarSucursalesAsignadas } = useSucursalesStore();
+  const { mostrarSucursalCajaAsignada } = useAsignacionCajaSucursalesStore();
   const [stateMenu, setStateMenu] = useState(false);
 
   const { refetch: refetchUsuarios } = useQuery({
@@ -24,8 +27,8 @@ export const Layout = ({ children }) => {
     refetchOnWindowFocus: false,
   });
   useQuery({
-    queryKey: ["mostrar sucursales asignadas", datausuarios?.id],
-    queryFn: () => mostrarSucursalesAsignadas({ id_usuario: datausuarios?.id }),
+    queryKey: ["mostrar sucursales caja asignadas", datausuarios?.id],
+    queryFn: () => mostrarSucursalCajaAsignada({ id_usuario: datausuarios?.id }),
     enabled: !!datausuarios,
     refetchOnWindowFocus: false,
   });
