@@ -17,6 +17,7 @@ import {
   MetodosPago,
   Dashboard,
   SucursalesCaja,
+  Impresoras
 } from "../index";
 
 export function Myroutes() {
@@ -140,6 +141,16 @@ export function Myroutes() {
           <ProtectedRoute accesby="authenticated">
             <Layout>
               <SucursalesCaja></SucursalesCaja>
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/configuracion/impresoras"
+        element={
+          <ProtectedRoute accesby="authenticated">
+            <Layout>
+              <Impresoras></Impresoras>
             </Layout>
           </ProtectedRoute>
         }
