@@ -83,6 +83,7 @@ export * from './components/templates/Welcome';
 export * from './components/ui/animated/AnimatedGrid';
 export * from './components/ui/buttons/BtnClose';
 export * from './components/ui/buttons/ButtonDashed';
+export * from './components/ui/toogles/Switch';
 export * from './context/AuthContext';
 export * from './hooks/GenerarCodigo';
 export * from './hooks/Layout';
