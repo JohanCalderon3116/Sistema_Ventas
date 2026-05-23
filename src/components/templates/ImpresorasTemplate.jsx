@@ -11,6 +11,7 @@ import { toast, Toaster } from "sonner";
 import { useAsignacionCajaSucursalesStore } from "../../store/AsignacionCajaSucursales";
 import { useState } from "react";
 import ticket from "../../reports/TicketPrueba";
+import { HeaderImpresoras } from "../organismos/ImpresorasDesing/HeaderImpresoras";
 export const ImpresorasTemplate = () => {
   const [selectedFile, setselectedFile] = useState(null);
   const {
@@ -134,6 +135,7 @@ export const ImpresorasTemplate = () => {
       <Toaster richColors></Toaster>
       {dataPcLocal ? (
         <SubContainer>
+          <HeaderImpresoras></HeaderImpresoras>
           <Title>Impresoras</Title>
           <ContentSwich>
             <SubTitle>Imprimir directo</SubTitle>
