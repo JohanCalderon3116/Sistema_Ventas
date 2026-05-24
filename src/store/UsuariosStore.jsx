@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import {
+  EliminarUsuariosAsignados,
   InsertarAsignacionCajaSucursal,
   InsertarCreadencialesUser,
   InsertarPermisos,
@@ -48,5 +49,8 @@ export const useUsuariosStore = create((set) => ({
     } else {
       throw new Error("No hay módulos seleccionados");
     }
+  },
+  eliminarUsuariosAsignados: async (p) => {
+    await EliminarUsuariosAsignados(p);
   },
 }));

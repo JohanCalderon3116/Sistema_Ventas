@@ -47,3 +47,9 @@ export async function ObtenerIdAuthSupabase() {
     return idauth;
   }
 }
+export async function EliminarUsuariosAsignados(p) {
+  const { error } = await supabase.from(tabla).delete().eq("id", p.id);
+  if (error) {
+    throw new Error(error.message);
+  }
+}

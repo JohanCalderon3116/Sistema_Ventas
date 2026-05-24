@@ -5,6 +5,8 @@ import {
   Paginacion,
   ImageContent,
   Icono,
+  useAsignacionCajaSucursalesStore,
+  useUsuariosStore,
 } from "../../../index";
 import Swal from "sweetalert2";
 import { v } from "../../../styles/variables";
@@ -18,6 +20,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { FaArrowsAltV } from "react-icons/fa";
+import { useQueryClient } from "@tanstack/react-query";
 export function TablaUsuarios({
   data,
   SetopenRegistro,
@@ -28,18 +31,9 @@ export function TablaUsuarios({
   const [pagina, setPagina] = useState(1);
   const [datas, setData] = useState(data);
   const [columnFilters, setColumnFilters] = useState([]);
-
-  const { eliminarCategorias } = useCategroriasStore();
+  const queryClinet = useQueryClient();
+  const { eliminarUsuariosAsignados } = useUsuariosStore();
   function eliminar(p) {
-    if (p.nombre === "General") {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Este registro no se permite modificar ya que es valor por defecto.",
-        footer: '<a href="">...</a>',
-      });
-      return;
-    }
     Swal.fire({
       title: "¿Estás seguro(a)?",
       text: "Una vez eliminado, ¡no podrá recuperar este registro!",
@@ -50,7 +44,8 @@ export function TablaUsuarios({
       confirmButtonText: "Si, eliminar",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        await eliminarCategorias({ id: p.id });
+        await eliminarUsuariosAsignados({ id: p.id_usuario });
+        queryClinet.invalidateQueries(["mostrar usuarios asignados"]);
       }
     });
   }
