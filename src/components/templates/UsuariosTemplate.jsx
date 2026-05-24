@@ -3,7 +3,7 @@ import {
   Btn1,
   Buscador,
   RegistrarUsuarios,
-  TablaCategorias,
+  TablaUsuarios,
   Title,
   useAsignacionCajaSucursalesStore,
   useCategroriasStore,
@@ -13,11 +13,10 @@ import { useState } from "react";
 import Confetti from "react-confetti-boom";
 import { Toaster } from "sonner";
 export const UsuariosTemplate = () => {
-  const { datacategorias, setBuscador } = useCategroriasStore();
   const [openRegistro, setOpenRegistro] = useState(false);
   const [dataSelect, setDataSelect] = useState([]);
   const [isExploding, setIsExploding] = useState(false);
-  const {accion, setAccion} = useAsignacionCajaSucursalesStore()
+  const {accion, setAccion, dataUsuariosAsignados, setBuscador} = useAsignacionCajaSucursalesStore()
   function nuevoRegistro() {
     setOpenRegistro(!openRegistro);
     setAccion("Nuevo");
@@ -50,12 +49,12 @@ export const UsuariosTemplate = () => {
       </section>
       <section className="main">
         {isExploding && <Confetti></Confetti>}
-        <TablaCategorias
-          data={datacategorias}
+        <TablaUsuarios
+          data={dataUsuariosAsignados}
           SetopenRegistro={setOpenRegistro}
           setAccion={setAccion}
           setdataSelect={setDataSelect}
-        ></TablaCategorias>{" "}
+        ></TablaUsuarios>{" "}
       </section>
     </Container>
   );

@@ -1,6 +1,14 @@
 import { create } from "zustand";
-import { MostrarSucursalCajaAsignada } from "../supabase/crudAsignacionSucursales";
+import {
+  BuscarUsuariosAsignados,
+  MostrarSucursalCajaAsignada,
+  MostrarUsuariosAsignados,
+} from "../supabase/crudAsignacionSucursales";
 export const useAsignacionCajaSucursalesStore = create((set) => ({
+  buscador: "",
+  setBuscador: (p) => {
+    set({ buscador: p });
+  },
   accion: "",
   setAccion: (p) => {
     set({ accion: p });
@@ -15,6 +23,17 @@ export const useAsignacionCajaSucursalesStore = create((set) => ({
     const response = await MostrarSucursalCajaAsignada(p);
     set({ datSucursalesAsignadas: response });
     set({ sucursalesItemSelectAsignadas: response });
+    return response;
+  },
+  dataUsuariosAsignados: [],
+  mostrarUsariosAsignados: async (p) => {
+    const response = await MostrarUsuariosAsignados(p);
+    set({ dataUsuariosAsignados: response });
+    return response;
+  },
+  buscarUsariosAsignados: async (p) => {
+    const response = await BuscarUsuariosAsignados(p);
+    set({ dataUsuariosAsignados: response });
     return response;
   },
 }));

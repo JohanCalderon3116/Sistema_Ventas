@@ -14,3 +14,13 @@ export async function InsertarAsignacionCajaSucursal(p) {
     throw new Error(error.message);
   }
 }
+export async function MostrarUsuariosAsignados(p) {
+  const { data } = await supabase.rpc("mostrarusuariosasignados", p);
+  return data;
+}
+export async function BuscarUsuariosAsignados(p) {
+  const { data } = await supabase.rpc("buscarusuariosasignados", p);
+  return data;
+}
+
+

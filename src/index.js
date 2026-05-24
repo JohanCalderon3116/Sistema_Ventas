@@ -68,6 +68,7 @@ export * from './components/organismos/tablas/TablaMetodosPago';
 export * from './components/organismos/tablas/TablaMovimientosCajaLive';
 export * from './components/organismos/tablas/TablaProductos';
 export * from './components/organismos/tablas/TablaProductosTop10';
+export * from './components/organismos/tablas/TablaUsuarios';
 export * from './components/templates/404';
 export * from './components/templates/CategoriasTemplate';
 export * from './components/templates/ClientesProveedoresTemplate';
