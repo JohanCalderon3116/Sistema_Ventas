@@ -8,6 +8,14 @@ export async function MostrarPermisos(p) {
     .eq("id_usuario", p.id_usuario);
   return data;
 }
+export async function MostrarPermisosConfiguraciones(p) {
+  const { data } = await supabase
+    .from(tabla)
+    .select(`*, modulos!inner(*)`)
+    .eq("modulos.etiquetas", "#configuracion")
+    .eq("id_usuario", p.id_usuario);
+  return data;
+}
 export async function MostrarPermisosDefault() {
   const { data } = await supabase.from(tablaDefault).select();
   return data;
@@ -26,4 +34,11 @@ export async function EliminarPermisos(p) {
   if (error) {
     throw new Error(error.message);
   }
+}
+export async function MostrarPermisosGlobales(p) {
+  const { data } = await supabase
+    .from(tabla)
+    .select(`*, modulos(*)`)
+    .eq("id_usuario", p.id_usuario);
+  return data;
 }

@@ -8,9 +8,16 @@ import {
 } from "../../../index";
 import { Device } from "../../../styles/breakpoints";
 import { useQuery } from "@tanstack/react-query";
+import { useValidarPermisosOpertivos } from "../../../hooks/UseValidarPermisosOpertivos";
 export const AreaTecladoPos = () => {
   const { setStatePantallaCobro, stateMetodosPago } = useCartVentasStore();
-  const { dataMetodosPago} = useMetodosPagoStore();
+  const { dataMetodosPago } = useMetodosPagoStore();
+  const { validarPermiso } = useValidarPermisosOpertivos();
+  const validarPermisosCobrar = (p) => {
+    const response = validarPermiso("Cobrar venta");
+    if (!response) return;
+    setStatePantallaCobro({ tipocobro: p.nombre });
+  };
   // const { data: dataMetodosPago } = useQuery({
   //   queryKey: ["mostrar metodos de pago"],
   //   queryFn: () => mostrarMetodosPago({ id_empresa: dataempresa?.id }),
@@ -24,9 +31,7 @@ export const AreaTecladoPos = () => {
             <article className="box" key={index}>
               <Btn1
                 imagen={item.icono != "-" ? item.icono : null}
-                funcion={() =>
-                  setStatePantallaCobro({ tipocobro: item.nombre })
-                }
+                funcion={() => validarPermisosCobrar({ item })}
                 border="0"
                 height="70px"
                 width="100%"

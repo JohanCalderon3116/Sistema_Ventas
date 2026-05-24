@@ -3,7 +3,9 @@ import {
   EliminarPermisos,
   InsertarPermisos,
   MostrarPermisos,
+  MostrarPermisosConfiguraciones,
   MostrarPermisosDefault,
+  MostrarPermisosGlobales,
 } from "../supabase/crudPermisos";
 
 export const usePermisosStore = create((set, get) => ({
@@ -32,5 +34,18 @@ export const usePermisosStore = create((set, get) => ({
   actualizarPermisos: async (p) => {
     // await EliminarPermisos(p);
     // await InsertarPermisos(p);
+  },
+  dataPermisosGlobales: [],
+  mostrarPermisosGlobales: async (p) => {
+    const response = await MostrarPermisosGlobales(p);
+    console.log("respuesta cruda supabase:", JSON.stringify(response[0]));
+    set({ dataPermisosGlobales: response });
+    return response;
+  },
+  dataPermisosConfiguraciones: [],
+  mostrarPermisosConfiguraciones: async (p) => {
+    const response = await MostrarPermisosConfiguraciones(p);
+    set({ dataPermisosConfiguraciones: response });
+    return response;
   },
 }));

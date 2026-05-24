@@ -1,15 +1,26 @@
 import styled from "styled-components";
-import { ConfiguracionesTemplate, Spinner1, useModulosStore } from "../index";
+import {
+  ConfiguracionesTemplate,
+  Spinner1,
+  useAsignacionCajaSucursalesStore,
+  useModulosStore,
+  usePermisosStore,
+  useUsuariosStore,
+} from "../index";
 import { useQuery } from "@tanstack/react-query";
 
 export const Configuraciones = () => {
-  const { mostrarmodulos } = useModulosStore();
+  const { datausuarios } = useUsuariosStore();
+  const { mostrarPermisosConfiguraciones } = usePermisosStore();
   const { isLoading, error } = useQuery({
-    queryKey: "mostra modulos",
-    queryFn: mostrarmodulos,
+    queryKey: "mostrar permisos configuracion",
+    queryFn: () =>
+      mostrarPermisosConfiguraciones({
+        id_usuario: datausuarios?.id,
+      }),
   });
   if (isLoading) {
-    return <Spinner1></Spinner1>
+    return <Spinner1></Spinner1>;
   }
   if (error) {
     return <span>Error XD</span>;

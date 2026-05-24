@@ -8,10 +8,17 @@ import {
   useEmpresaStore,
 } from "../../../index";
 import { FormatearNumeroDinero } from "../../../utils/Conversiones";
+import { useValidarPermisosOpertivos } from "../../../hooks/UseValidarPermisosOpertivos";
 export const TotalPos = () => {
   const { total, setStatePantallaCobro, setStateMetodosPago } =
     useCartVentasStore();
   const { dataempresa } = useEmpresaStore();
+  const { validarPermiso } = useValidarPermisosOpertivos();
+  const validarPermisosCobrar = () => {
+    const hasPermission = validarPermiso("Cobrar venta");
+    if (!hasPermission) return;
+    setStateMetodosPago();
+  };
   return (
     <Container>
       <section className="imagen">
@@ -20,7 +27,7 @@ export const TotalPos = () => {
       <section className="contentTotal">
         <section className="contentTtuloTotal">
           <Btn1
-            funcion={setStateMetodosPago}
+            funcion={validarPermisosCobrar}
             border="2px"
             bgcolor="#3ff563"
             color="#207c33"

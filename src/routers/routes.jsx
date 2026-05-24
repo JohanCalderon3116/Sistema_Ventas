@@ -17,7 +17,7 @@ import {
   MetodosPago,
   Dashboard,
   SucursalesCaja,
-  Impresoras
+  Impresoras,
 } from "../index";
 import { Usuarios } from "../pages/Usuarios";
 
@@ -35,51 +35,51 @@ export function Myroutes() {
       <Route
         path="/configuracion"
         element={
-          <ProtectedRoute accesby="authenticated">
-            <Layout>
+          <Layout>
+            <ProtectedRoute accesby="authenticated">
               <Configuraciones></Configuraciones>
-            </Layout>
-          </ProtectedRoute>
+            </ProtectedRoute>
+          </Layout>
         }
       />
       <Route
         path="/configuracion/categorias"
         element={
-          <ProtectedRoute accesby="authenticated">
-            <Layout>
+          <Layout>
+            <ProtectedRoute accesby="authenticated">
               <Categorias></Categorias>
-            </Layout>
-          </ProtectedRoute>
+            </ProtectedRoute>
+          </Layout>
         }
       />
       <Route
         path="/configuracion/marca"
         element={
-          <ProtectedRoute accesby="authenticated">
-            <Layout>
+          <Layout>
+            <ProtectedRoute accesby="authenticated">
               <Marca></Marca>
-            </Layout>
-          </ProtectedRoute>
+            </ProtectedRoute>
+          </Layout>
         }
       />
       <Route
         path="/configuracion/productos"
         element={
-          <ProtectedRoute accesby="authenticated">
-            <Layout>
+          <Layout>
+            <ProtectedRoute accesby="authenticated">
               <Productos></Productos>
-            </Layout>
-          </ProtectedRoute>
+            </ProtectedRoute>
+          </Layout>
         }
       />
       <Route
         path="/configuracion/empresa"
         element={
-          <ProtectedRoute accesby="authenticated">
-            <Layout>
+          <Layout>
+            <ProtectedRoute accesby="authenticated">
               <Empresa></Empresa>
-            </Layout>
-          </ProtectedRoute>
+            </ProtectedRoute>
+          </Layout>
         }
       >
         <Route
@@ -98,84 +98,84 @@ export function Myroutes() {
       <Route
         path="/pos"
         element={
-          <ProtectedRoute accesby="authenticated">
-            <Layout>
+          <Layout>
+            <ProtectedRoute accesby="authenticated">
               <POS></POS>
-            </Layout>
-          </ProtectedRoute>
+            </ProtectedRoute>
+          </Layout>
         }
       />
-      <Route path="*" element={<PageNot></PageNot>}></Route>
       <Route
         path="/configuracion/clientes"
         element={
-          <ProtectedRoute accesby="authenticated">
-            <Layout>
+          <Layout>
+            <ProtectedRoute accesby="authenticated">
               <ClientesProveedores></ClientesProveedores>
-            </Layout>
-          </ProtectedRoute>
+            </ProtectedRoute>
+          </Layout>
         }
       />
       <Route
         path="/configuracion/proveedores"
         element={
-          <ProtectedRoute accesby="authenticated">
-            <Layout>
+          <Layout>
+            <ProtectedRoute accesby="authenticated">
               <ClientesProveedores></ClientesProveedores>
-            </Layout>
-          </ProtectedRoute>
+            </ProtectedRoute>
+          </Layout>
         }
       />
       <Route
         path="/configuracion/metodospago"
         element={
-          <ProtectedRoute accesby="authenticated">
-            <Layout>
+          <Layout>
+            <ProtectedRoute accesby="authenticated">
               <MetodosPago></MetodosPago>
-            </Layout>
-          </ProtectedRoute>
+            </ProtectedRoute>
+          </Layout>
         }
       />
       <Route
         path="/configuracion/sucursales-cajas"
         element={
-          <ProtectedRoute accesby="authenticated">
-            <Layout>
+          <Layout>
+            <ProtectedRoute accesby="authenticated">
               <SucursalesCaja></SucursalesCaja>
-            </Layout>
-          </ProtectedRoute>
+            </ProtectedRoute>
+          </Layout>
         }
       />
       <Route
         path="/configuracion/impresoras"
         element={
-          <ProtectedRoute accesby="authenticated">
-            <Layout>
+          <Layout>
+            <ProtectedRoute accesby="authenticated">
               <Impresoras></Impresoras>
-            </Layout>
-          </ProtectedRoute>
+            </ProtectedRoute>
+          </Layout>
         }
       />
       <Route
         path="/configuracion/usuarios"
         element={
-          <ProtectedRoute accesby="authenticated">
-            <Layout>
+          <Layout>
+            <ProtectedRoute accesby="authenticated">
               <Usuarios></Usuarios>
-            </Layout>
-          </ProtectedRoute>
+            </ProtectedRoute>
+          </Layout>
         }
       />
       <Route
         path="/"
         element={
-          <ProtectedRoute accesby="authenticated">
-            <Layout>
+          <Layout>
+            <ProtectedRoute accesby="authenticated">
               <Dashboard></Dashboard>
-            </Layout>
-          </ProtectedRoute>
+            </ProtectedRoute>
+          </Layout>
         }
       />
+      <Route path="*" element={<PageNot></PageNot>}></Route>
     </Routes>
   );
 }

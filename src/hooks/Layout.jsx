@@ -5,43 +5,67 @@ import {
   Spinner1,
   Toogle,
   useEmpresaStore,
+  usePermisosStore,
   useSucursalesStore,
   useUsuariosStore,
 } from "../index";
 import { useState } from "react";
 import { Device } from "../styles/breakpoints";
 import { useQuery } from "@tanstack/react-query";
-import {
-  useAsignacionCajaSucursalesStore,
-} from "../store/AsignacionCajaSucursales";
+import { useAsignacionCajaSucursalesStore } from "../store/AsignacionCajaSucursales";
 export const Layout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { datausuarios, mostrarusuarios } = useUsuariosStore();
+  const { mostrarusuarios } = useUsuariosStore();
   const { mostrarempresa } = useEmpresaStore();
   const { mostrarSucursalCajaAsignada } = useAsignacionCajaSucursalesStore();
+  const { mostrarPermisosGlobales } = usePermisosStore();
   const [stateMenu, setStateMenu] = useState(false);
 
-  const { refetch: refetchUsuarios } = useQuery({
+  const {
+    refetch: refetchUsuarios,
+    data: datausuarios,
+    isLoading: isLoadingUsuarios,
+    error: errorUsuarios,
+  } = useQuery({
     queryKey: ["mostrar usuarios"],
     queryFn: mostrarusuarios,
     refetchOnWindowFocus: false,
   });
-  useQuery({
+  const {
+    data: dataSucursales,
+    isLoading: isLoadingSucursales,
+    error: errorSucursales,
+  } = useQuery({
     queryKey: ["mostrar sucursales caja asignadas", datausuarios?.id],
-    queryFn: () => mostrarSucursalCajaAsignada({ id_usuario: datausuarios?.id }),
+    queryFn: () =>
+      mostrarSucursalCajaAsignada({ id_usuario: datausuarios?.id }),
     enabled: !!datausuarios,
     refetchOnWindowFocus: false,
   });
-  const { isLoading, error } = useQuery({
+  const { isLoading: isLoadingEmpresa, error: errorEmpresa } = useQuery({
     queryKey: ["mostrar empresa", datausuarios?.id],
     queryFn: () => mostrarempresa({ _id_usuario: datausuarios?.id }),
     enabled: !!datausuarios,
     refetchOnWindowFocus: false,
   });
+  const { isLoading: isLoadingPermisosGlobales, error: errorPermisosGlobales } =
+    useQuery({
+      queryKey: ["permisos globales", datausuarios?.id],
+      queryFn: () => mostrarPermisosGlobales({ id_usuario: datausuarios?.id }),
+      enabled: !!datausuarios,
+      refetchOnWindowFocus: false,
+    });
 
   if (datausuarios == null) {
     refetchUsuarios();
   }
+
+  const isLoading =
+    isLoadingPermisosGlobales ||
+    isLoadingEmpresa ||
+    isLoadingSucursales ||
+    isLoadingUsuarios;
+  const error = errorEmpresa || errorPermisosGlobales;
 
   if (isLoading) {
     return <Spinner1></Spinner1>;
