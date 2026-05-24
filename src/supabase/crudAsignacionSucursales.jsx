@@ -8,3 +8,9 @@ export async function MostrarSucursalCajaAsignada(p) {
     .maybeSingle();
   return data;
 }
+export async function InsertarAsignacionCajaSucursal(p) {
+  const { error } = await supabase.from(tabla).insert(p);
+  if (error) {
+    throw new Error(error.message);
+  }
+}

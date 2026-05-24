@@ -1,6 +1,14 @@
 import { create } from "zustand";
 import { MostrarSucursalCajaAsignada } from "../supabase/crudAsignacionSucursales";
 export const useAsignacionCajaSucursalesStore = create((set) => ({
+  accion: "",
+  setAccion: (p) => {
+    set({ accion: p });
+  },
+  selectItem: null,
+  setSelectItem: (p) => {
+    set({ selectItem: p });
+  },
   datSucursalesAsignadas: null,
   sucursalesItemSelectAsignadas: null,
   mostrarSucursalCajaAsignada: async (p) => {

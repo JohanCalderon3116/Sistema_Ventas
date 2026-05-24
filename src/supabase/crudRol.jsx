@@ -4,6 +4,11 @@ export async function MostrarRolesXnombre(p) {
   const { data } = await supabase
     .from(tabla)
     .select()
-    .eq("nombre", p.nombre).maybeSingle();
+    .eq("nombre", p.nombre)
+    .maybeSingle();
+  return data;
+}
+export async function MostrarRoles(p) {
+  const { data } = await supabase.from(tabla).select().neq("nombre", "superadmin");
   return data;
 }

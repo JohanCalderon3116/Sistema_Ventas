@@ -16,6 +16,7 @@ export const useCajasStore = create((set) => ({
   dataCaja: null,
   mostrarCajaXSucursal: async (p) => {
     const response = await MostrarCajaXSucursal(p);
+    set({ cajaSelelctItem: response[0] });
     set({ dataCaja: response });
     return response;
   },

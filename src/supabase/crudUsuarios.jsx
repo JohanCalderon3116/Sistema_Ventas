@@ -9,7 +9,17 @@ export async function MostrarUsuarios(p) {
   return data;
 }
 export async function InsertarAdmin(p) {
-  await supabase.from(tabla).insert(p);
+  const { error } = await supabase.from(tabla).insert(p);
+  if (error) {
+    throw new Error(error.message);
+  }
+}
+export async function InsertarUsuarios(p) {
+  const { error, data } = await supabase
+    .from(tabla)
+    .insert(p)
+    .select()
+    .maybeSingle();
   if (error) {
     Swal.fire({
       icon: "error",
@@ -18,6 +28,14 @@ export async function InsertarAdmin(p) {
     });
     return;
   }
+  return data;
+}
+export async function InsertarCreadencialesUser(p) {
+  const { data, error } = await supabase.rpc("crearcredencialesuser", p);
+  if (error) {
+    throw new Error(error.message);
+  }
+  return data;
 }
 export async function ObtenerIdAuthSupabase() {
   const {

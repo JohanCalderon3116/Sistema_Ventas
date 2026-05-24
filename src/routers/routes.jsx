@@ -19,6 +19,7 @@ import {
   SucursalesCaja,
   Impresoras
 } from "../index";
+import { Usuarios } from "../pages/Usuarios";
 
 export function Myroutes() {
   return (
@@ -151,6 +152,16 @@ export function Myroutes() {
           <ProtectedRoute accesby="authenticated">
             <Layout>
               <Impresoras></Impresoras>
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/configuracion/usuarios"
+        element={
+          <ProtectedRoute accesby="authenticated">
+            <Layout>
+              <Usuarios></Usuarios>
             </Layout>
           </ProtectedRoute>
         }
