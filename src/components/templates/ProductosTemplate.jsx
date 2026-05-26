@@ -10,6 +10,7 @@ import {
 import { v } from "../../styles/variables";
 import { useEffect, useState } from "react";
 import Confetti from "react-confetti-boom";
+import { Toaster } from "sonner";
 export const ProductosTemplate = () => {
   const { dataProductos, setBuscador, generarCodigo } = useProductosStore();
   const [openRegistro, setOpenRegistro] = useState(false);
@@ -22,10 +23,11 @@ export const ProductosTemplate = () => {
     setdataSelect([]);
     setIsExploding(false);
     generarCodigo();
-    console.log(dataSelect)
+    console.log(dataSelect);
   }
   return (
     <Container>
+      <Toaster richColors></Toaster>
       <RegistrarProductos
         setIsExploding={setIsExploding}
         onClose={() => setOpenRegistro(!openRegistro)}

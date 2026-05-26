@@ -15,6 +15,8 @@ import {
   Btngenerarcodigo,
   useAlmacenesStore,
   ConvertirMinusculas,
+  SelectList,
+  BtnClose,
 } from "../../../index";
 import { useForm } from "react-hook-form";
 import { useEmpresaStore } from "../../../store/EmpresaStore";
@@ -22,6 +24,8 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { Device } from "../../../styles/breakpoints";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
+import { useStockStore } from "../../../store/StockStore";
+import { toast } from "sonner";
 
 export function RegistrarProductos({
   onClose,
@@ -56,10 +60,12 @@ export function RegistrarProductos({
   } = useProductosStore();
   const { dataempresa } = useEmpresaStore();
   const {
-    insertarStockAlmacenes,
     mostrarAlmacen,
     dataalmacen,
     eliminarAlmacen,
+    mostrarAlmacenesXSucursal,
+    almacenSelelctItem,
+    setAlmacenSelelctItem,
   } = useAlmacenesStore();
   const [stateInventarios, setStateInventarios] = useState(false);
   const [stateEnabledStock, setstatEEnabledStock] = useState(false);
@@ -69,16 +75,35 @@ export function RegistrarProductos({
     useSucursalesStore();
   const [stateSucursalesLista, setStateSucursalesLista] = useState(false);
   const [stateCategoriasLista, setStateCategoriasLista] = useState(false);
-  const { data, isLoading, error, refetch } = useQuery({
+  const { insertarStock, mostrarStockAlmacenYProduct } = useStockStore();
+  const {
+    data: dataStockXAlamacenYProducto,
+    isLoading,
+    error,
+    refetch,
+  } = useQuery({
     queryKey: [
-      "mostrar stock almacen por sucursal",
-      { id_producto: dataSelect.id, id_sucursal: sucursalesItemSelect.id },
-      console.log(dataSelect?.id),
+      "mostrar stock almacen y producto",
+      { id_producto: dataSelect.id, id_almacen: almacenSelelctItem?.id },
     ],
     queryFn: () =>
-      mostrarAlmacen({
+      mostrarStockAlmacenYProduct({
+        id_almacen: almacenSelelctItem?.id,
+        id_producto: dataSelect?.id,
+      }),
+  });
+  const {
+    data: dataAlmacenes,
+    isLoading: isLoadingAlmacenes,
+    error: errorAlmacenes,
+  } = useQuery({
+    queryKey: [
+      "mostrar almacenes x sucursal",
+      { id_producto: dataSelect.id, id_sucursal: sucursalesItemSelect.id },
+    ],
+    queryFn: () =>
+      mostrarAlmacenesXSucursal({
         id_sucursal: sucursalesItemSelect.id,
-        id_producto: dataSelect.id,
       }),
   });
   const {
@@ -89,8 +114,12 @@ export function RegistrarProductos({
   const { isPending, mutate: doInsertar } = useMutation({
     mutationFn: insertar,
     mutationKey: "insertar productos",
-    onError: (err) => console.log("El error", err.message),
-    onSuccess: () => cerrarFormulario(),
+    onError: (err) =>
+      toast.error(`Error al insertar producto... ${err.message}`),
+    onSuccess: () => {
+      toast.success("Producto guardado correctamnete");
+      cerrarFormulario();
+    },
   });
   const handlesub = (data) => {
     doInsertar(data);
@@ -116,14 +145,15 @@ export function RegistrarProductos({
       };
       await editarProductos(p);
       if (stateInventarios) {
-        if (dataalmacen === null) {
-          const palmacenes = {
-            id_sucursal: sucursalesItemSelect.id,
+        if (!dataStockXAlamacenYProducto) {
+          const pstock = {
+            id_almacen: almacenSelelctItem.id,
             id_producto: dataSelect.id,
             stock: parseFloat(data.stock),
             stock_minimo: parseFloat(data.stock_minimo),
+            ubicacion: data.ubicacion,
           };
-          await insertarStockAlmacenes(palmacenes);
+          await insertarStock(pstock);
         }
       }
     } else {
@@ -141,13 +171,14 @@ export function RegistrarProductos({
       };
       const id_producto_nuevo = await insertarProductos(p);
       if (stateInventarios) {
-        const palmacenes = {
-          id_sucursal: sucursalesItemSelect.id,
+        const pstock = {
+          id_almacen: almacenSelelctItem.id,
           id_producto: id_producto_nuevo,
           stock: parseFloat(data.stock),
           stock_minimo: parseFloat(data.stock_minimo),
+          ubicacion: data.ubicacion,
         };
-        await insertarStockAlmacenes(palmacenes);
+        await insertarStock(pstock);
       }
     }
   }
@@ -265,14 +296,12 @@ export function RegistrarProductos({
             </section>
 
             <section>
-              <span
-                onClick={() => {
+              <BtnClose
+                funcion={() => {
                   onClose();
                   refetchs();
                 }}
-              >
-                x
-              </span>
+              ></BtnClose>
             </section>
           </div>
           <form className="formulario" onSubmit={handleSubmit(handlesub)}>
@@ -400,28 +429,25 @@ export function RegistrarProductos({
               {stateInventarios && (
                 <ContainerStock>
                   <ContainerSelector>
-                    <label>Sucursal</label>
-                    <Selector
-                      state={stateSucursalesLista}
-                      funcion={() =>
-                        setStateSucursalesLista(!stateSucursalesLista)
-                      }
-                      color="#fc6027"
-                      texto1="🏬"
-                      texto2={sucursalesItemSelect?.nombre}
-                    ></Selector>
-                    <ListaDesplegable
-                      refetch={refetch}
-                      funcion={selectSucursal}
-                      state={stateSucursalesLista}
+                    <label>Sucursal: </label>
+                    <SelectList
                       data={dataSucursales}
-                      top="4rem"
-                      setState={() =>
-                        setStateSucursalesLista(!stateSucursalesLista)
-                      }
-                    ></ListaDesplegable>
+                      itemSelect={sucursalesItemSelect}
+                      onSelect={selectSucursal}
+                      displayField="nombre"
+                    ></SelectList>
                   </ContainerSelector>
-                  {stateEnabledStock && (
+                  <br />
+                  <ContainerSelector>
+                    <label>Almacen: </label>
+                    <SelectList
+                      data={dataAlmacenes}
+                      itemSelect={almacenSelelctItem}
+                      onSelect={setAlmacenSelelctItem}
+                      displayField="nombre"
+                    ></SelectList>
+                  </ContainerSelector>
+                  {stateEnabledStock && dataStockXAlamacenYProducto && (
                     <ContainerMensajeStock>
                       💀 Para poder editar el stock, te toca en el modulo
                       'Inventario' 💀 XD
@@ -430,9 +456,9 @@ export function RegistrarProductos({
                   <article>
                     <InputText icono={<v.iconoflechaderecha />}>
                       <input
-                        disabled={stateEnabledStock}
+                        disabled={!!dataStockXAlamacenYProducto}
                         className="form__field"
-                        defaultValue={dataalmacen?.stock}
+                        defaultValue={dataStockXAlamacenYProducto?.stock}
                         type="number"
                         step="0.01"
                         placeholder="stock "
@@ -444,15 +470,28 @@ export function RegistrarProductos({
                   <article>
                     <InputText icono={<v.iconoflechaderecha />}>
                       <input
-                        disabled={stateEnabledStock}
+                        disabled={!!dataStockXAlamacenYProducto}
                         className="form__field"
-                        defaultValue={dataalmacen?.stock_minimo}
+                        defaultValue={dataStockXAlamacenYProducto?.stock_minimo}
                         type="number"
                         step="0.01"
                         placeholder="stock minimo"
                         {...register("stock_minimo", {})}
                       />
                       <label className="form__label">Stock minimo</label>
+                    </InputText>
+                  </article>
+                  <article>
+                    <InputText icono={<v.iconoflechaderecha />}>
+                      <input
+                        disabled={!!dataStockXAlamacenYProducto}
+                        className="form__field"
+                        defaultValue={dataStockXAlamacenYProducto?.ubicacion}
+                        type="text"
+                        placeholder="ubicacion"
+                        {...register("ubicacion", {})}
+                      />
+                      <label className="form__label">Ubicación</label>
                     </InputText>
                   </article>
                 </ContainerStock>
@@ -482,10 +521,10 @@ const Container = styled.div`
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  backdrop-filter: blur(5px);
 
   .sub-contenedor {
     position: relative;
-    width: 100%;
     max-width: 90%;
     max-height: 90vh; /* 👈 limite de altura */
     overflow-y: auto;
@@ -494,6 +533,7 @@ const Container = styled.div`
     box-shadow: -10px 15px 30px rgba(10, 9, 9, 0.4);
     padding: 13px 36px 20px 36px;
     z-index: 100;
+    border-radius: 8px;
 
     .headers {
       display: flex;
@@ -502,7 +542,7 @@ const Container = styled.div`
       margin-bottom: 20px;
 
       h1 {
-        font-size: 20px;
+        font-size: 25px;
         font-weight: 500;
       }
       span {

@@ -18,6 +18,7 @@ import {
   Dashboard,
   SucursalesCaja,
   Impresoras,
+  Almacenes,
 } from "../index";
 import { Usuarios } from "../pages/Usuarios";
 
@@ -161,6 +162,16 @@ export function Myroutes() {
           <Layout>
             <ProtectedRoute accesby="authenticated">
               <Usuarios></Usuarios>
+            </ProtectedRoute>
+          </Layout>
+        }
+      />
+      <Route
+        path="/configuracion/almacenes"
+        element={
+          <Layout>
+            <ProtectedRoute accesby="authenticated">
+              <Almacenes></Almacenes>
             </ProtectedRoute>
           </Layout>
         }
