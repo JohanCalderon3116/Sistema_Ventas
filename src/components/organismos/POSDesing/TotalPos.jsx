@@ -3,15 +3,15 @@ import { Btn1 } from "../../moleculas/Btn1";
 import { Device } from "../../../styles/breakpoints";
 import { Icon } from "@iconify/react";
 import {
-  useCartVentasStore,
   useDetalleVentasStore,
   useEmpresaStore,
+  useVentasStore,
 } from "../../../index";
 import { FormatearNumeroDinero } from "../../../utils/Conversiones";
 import { useValidarPermisosOpertivos } from "../../../hooks/UseValidarPermisosOpertivos";
 export const TotalPos = () => {
-  const { total, setStatePantallaCobro, setStateMetodosPago } =
-    useCartVentasStore();
+  const { setStateMetodosPago } = useVentasStore();
+  const { total } = useDetalleVentasStore();
   const { dataempresa } = useEmpresaStore();
   const { validarPermiso } = useValidarPermisosOpertivos();
   const validarPermisosCobrar = () => {

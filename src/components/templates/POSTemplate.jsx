@@ -14,15 +14,19 @@ import {
   PantallaCobro,
   PantallaIngresoSalidaDinero,
   Reloj,
-  useCartVentasStore,
   useCierreCajaStore,
+  useStockStore,
+  useVentasStore,
 } from "../../index";
 import { Toaster } from "sonner";
+import { SelectAlmacen } from "../organismos/POSDesing/SelectAlmacen";
 export const POSTemplate = () => {
-  const { statePantallaCobro } = useCartVentasStore();
+  const { statePantallaCobro } = useVentasStore();
   const { stateIngresoSalida, stateCierreCaja } = useCierreCajaStore();
+  const { stateModal } = useStockStore();
   return (
     <Container>
+      {stateModal && <SelectAlmacen></SelectAlmacen>}
       {statePantallaCobro && <PantallaCobro></PantallaCobro>}
 
       <HeaderPos></HeaderPos>

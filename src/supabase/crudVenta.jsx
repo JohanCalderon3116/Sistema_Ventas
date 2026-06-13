@@ -8,11 +8,7 @@ export async function InsertarVentas(p) {
     .select()
     .maybeSingle();
   if (error) {
-    Swal.fire({
-      icon: "error",
-      title: "Oops...",
-      text: error.message,
-    });
+    throw new Error(error.message);
     return;
   }
   return data;
@@ -59,3 +55,22 @@ export async function EliminarVentasIncompletas(p) {
 //     return;
 //   }
 // }
+
+export async function ConfirmarVenta(p) {
+  const { data, error } = await supabase
+    .from(tabla)
+    .update(p)
+    .eq("id", p.id)
+    .select();
+  return data;
+  if (error) {
+    throw new Error(error.message);
+  }
+}
+
+export async function EliminarVenta(p) {
+  const { error } = await supabase.from(tabla).delete().eq("id", p.id);
+  if (error) {
+    throw new Error(error.message);
+  }
+}

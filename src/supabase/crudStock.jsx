@@ -19,3 +19,16 @@ export async function MostrarStockAlmacenYProduct(p) {
     throw new Error(error.message);
   }
 }
+
+export async function MostrarStockAlmacenesYProducto(p) {
+  const { data, error } = await supabase
+    .from(tabla)
+    .select(`*, almacenes(*)`)
+    .eq("id_almacen", p.id_almacen)
+    .eq("id_producto", p.id_producto)
+    .gt("stock", 0);
+  return data;
+  if (error) {
+    throw new Error(error.message);
+  }
+}

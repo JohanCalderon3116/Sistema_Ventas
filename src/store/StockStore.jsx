@@ -1,11 +1,16 @@
 import { create } from "zustand";
 import {
   InsertarStock,
+  MostrarStockAlmacenesYProducto,
   MostrarStockAlmacenYProduct,
 } from "../supabase/crudStock";
 import {} from "../supabase/crudAlmacenes";
 
 export const useStockStore = create((set) => ({
+  stateModal: false,
+  setStateModal: (p) => {
+    set({ stateModal: p });
+  },
   insertarStock: async (p) => {
     await InsertarStock(p);
   },
@@ -13,6 +18,12 @@ export const useStockStore = create((set) => ({
   mostrarStockAlmacenYProduct: async (p) => {
     const response = await MostrarStockAlmacenYProduct(p);
     set({ dataStockXAlmacenYProducto: response });
+    return response;
+  },
+  dataStockXAlmacenesYProducto: [],
+  mostrarStockAlmacenesYProducto: async (p) => {
+    const response = await MostrarStockAlmacenesYProducto(p);
+    set({ dataStockXAlmacenesYProducto: response });
     return response;
   },
 }));

@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { useCartVentasStore } from "../../../store/CartVentasStore";
 import { Icon } from "@iconify/react";
 import { InputText } from "../formularios/InputText";
 import { FormatearNumeroDinero } from "../../../utils/Conversiones";
@@ -11,7 +10,12 @@ import { useEmpresaStore } from "../../../store/EmpresaStore";
 import { useVentasStore } from "../../../store/VentasStore";
 import { useDetalleVentasStore } from "../../../store/DetalleVentasStore";
 import { toast } from "sonner";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+  QueryClient,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { PanelBuscador } from "./PanelBuscador";
 import { useClientesProveedoresStore } from "../../../store/ClientesProveedoresStore";
 import { useMetodosPagoStore } from "../../../store/MetodosPagoStore";
@@ -21,9 +25,16 @@ import { useMovCajaStore } from "../../../store/MovCajaStore";
 import { useFormattedDate } from "../../../hooks/useFormattedDate";
 import { useAsignacionCajaSucursalesStore } from "../../../store/AsignacionCajaSucursales";
 export const IngresoCobro = forwardRef((props, ref) => {
+  const queryClient = useQueryClient();
   const fechaActual = useFormattedDate();
-  const { tipocobro, total, items, resetState, setStatePantallaCobro } =
-    useCartVentasStore();
+  const {
+    tipocobro,
+    items,
+    resetState,
+    setStatePantallaCobro,
+    confirmarVenta,
+  } = useVentasStore();
+  const { total, detalleventa } = useDetalleVentasStore();
   const [stateBuscadorClientes, setStateBuscadorClientes] = useState(false);
   //valores a mostrar
   const [vuelto, setVuelto] = useState(0);
@@ -113,38 +124,28 @@ export const IngresoCobro = forwardRef((props, ref) => {
   //funcion para realizar venta
   const mutation = useMutation({
     mutationKey: ["insertar ventas"],
-    mutationFn: insertarventa,
+    mutationFn: ConfirmarVenta,
     onSuccess: () => {
       if (restante != 0) {
         return;
       }
-      setStatePantallaCobro({ tipocobro: "" });
       resetState();
-      resetarventas();
+      queryClient.invalidateQueries(["mostrar detalle venta"]);
       toast.success("😁🎉 Venta generada correctamente :p");
     },
   });
-  async function insertarventa(p) {
+  async function ConfirmarVenta(p) {
     if (restante === 0) {
       const pventas = {
         fecha: fechaActual,
         id_usuario: datausuarios?.id,
-        id_sucursal: sucursalesItemSelectAsignadas?.id_sucursal,
-        id_empresa: dataempresa?.id,
         id_cliente: cliproItemSelect?.id,
         estado: "confirmada",
         vuelto: vuelto,
         monto_total: total,
-        id_cierre_caja: dataCierreCaja?.id,
       };
       if (idventa === 0) {
-        const result = await insertarVentas(pventas);
-        items.forEach(async (item) => {
-          if (result?.id > 0) {
-            item._id_venta = result?.id;
-            await insertarDetalleVentas(item);
-          }
-        });
+        const result = await confirmarVenta(pventas);
         if (result?.id > 0) {
           //Insertar movimiento de caja, solo los metodos de pago con mayor a cero
           for (const [tipo, monto] of Object.entries(valoresPago)) {

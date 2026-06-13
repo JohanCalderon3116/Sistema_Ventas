@@ -5,24 +5,57 @@ import {
   Btn1,
   InputText2,
   Lottieanimation,
-  useCartVentasStore,
+  useDetalleVentasStore,
   useEmpresaStore,
+  useVentasStore,
 } from "../../../index";
 import animaciovacio from "../../../assets/vacioanimation.json.json";
 import { Device } from "../../../styles/breakpoints";
 import { Icon } from "@iconify/react";
 import { useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 export const AreaDetalleventaPos = () => {
-  const {
-    items,
-    addCantidadItem,
-    restarCantidadItem,
-    removeItem,
-    updateCantidadItem,
-  } = useCartVentasStore();
   const { dataempresa } = useEmpresaStore();
+  const {
+    mostrardetalleventa,
+    editarCantidadDetalleVenta,
+    eliminardetalleventa,
+  } = useDetalleVentasStore();
+  const { idventa } = useVentasStore();
   const [editIndex, setEditIndex] = useState(null);
   const [newCantidad, setNewCantidad] = useState(1);
+  const queryClient = useQueryClient();
+  const EditarCantidadDv = async (data) => {
+    const p = {
+      _id: data.id,
+      _cantidad: data.cantidad,
+    };
+    await editarCantidadDetalleVenta(p);
+  };
+  const { mutate: mutateEditarCantidadDetalleVenta } = useMutation({
+    mutationKey: ["editar cantidad detalle venta"],
+    mutationFn: EditarCantidadDv,
+    onError: (error) => {
+      toast.error(`Error: ${error.message}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["mostrar detalle venta"]);
+    },
+  });
+  const EliminarDV = async (p) => {
+    await eliminardetalleventa({ id: p.id });
+  };
+  const { mutate: mutateEliminarDV } = useMutation({
+    mutationKey: ["elminar cantidad detalle venta"],
+    mutationFn: EliminarDV,
+    onError: (error) => {
+      toast.error(`Error: ${error.message}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["mostrar detalle venta"]);
+    },
+  });
   const handleEditClick = (index, cantidad) => {
     setEditIndex(index);
     setNewCantidad(cantidad);
@@ -32,7 +65,7 @@ export const AreaDetalleventaPos = () => {
     setNewCantidad(value);
   };
   const handleInputBlur = (item) => {
-    updateCantidadItem(item, newCantidad);
+    mutateEditarCantidadDetalleVenta({ id: item.id, cantidad: newCantidad });
     setEditIndex(null);
   };
   const handleKeyDown = (e, item) => {
@@ -40,18 +73,22 @@ export const AreaDetalleventaPos = () => {
       handleInputBlur(item);
     }
   };
+  const { data: items } = useQuery({
+    queryKey: ["mostrar detalle venta", { id_vanta: idventa }],
+    queryFn: () => mostrardetalleventa({ id_venta: idventa }),
+  });
   return (
-    <AreaDetalleventa className={items.length > 0 ? "" : "animacion"}>
-      {items.length > 0 ? (
-        items.map((item, index) => {
+    <AreaDetalleventa className={items?.length > 0 ? "" : "animacion"}>
+      {items?.length > 0 ? (
+        items?.map((item, index) => {
           return (
             <Itemventa key={index}>
               <article className="contentdescripcion">
-                <span className="descripcion"> {item._descripcion} </span>
+                <span className="descripcion"> {item.descripcion} </span>
                 <span className="importe">
                   <strong>Precio venta: </strong>
                   {FormatearNumeroDinero(
-                    item._precio_venta,
+                    item.precio_venta,
                     dataempresa?.currency,
                     dataempresa?.iso,
                   )}{" "}
@@ -59,7 +96,12 @@ export const AreaDetalleventaPos = () => {
               </article>
               <article className="contentbtn">
                 <Btn1
-                  funcion={() => restarCantidadItem(item)}
+                  funcion={() =>
+                    mutateEditarCantidadDetalleVenta({
+                      id: item.id,
+                      cantidad: item.cantidad - 1,
+                    })
+                  }
                   width="20px"
                   icono={<Icon icon="line-md:minus" width="20" height="20" />}
                 ></Btn1>
@@ -80,10 +122,10 @@ export const AreaDetalleventaPos = () => {
                   <>
                     <span className="cantidad">
                       {" "}
-                      <strong>{item._cantidad} </strong>
+                      <strong>{item.cantidad} </strong>
                     </span>
                     <Icon
-                      onClick={() => handleEditClick(index, item._cantidad)}
+                      onClick={() => handleEditClick(index, item.cantidad)}
                       icon="line-md:pencil"
                       width="24"
                       height="24"
@@ -95,7 +137,12 @@ export const AreaDetalleventaPos = () => {
                 <Btn1
                   bgcolor="#0aca21"
                   color="#fff"
-                  funcion={() => addCantidadItem(item)}
+                  funcion={() =>
+                    mutateEditarCantidadDetalleVenta({
+                      id: item.id,
+                      cantidad: item.cantidad + 1,
+                    })
+                  }
                   width="20px"
                   icono={
                     <Icon icon="material-symbols:add" width="20" height="20" />
@@ -106,13 +153,13 @@ export const AreaDetalleventaPos = () => {
                 <span className="cantidad">
                   <strong>
                     {FormatearNumeroDinero(
-                      item._total,
+                      item.total,
                       dataempresa?.currency,
                       dataempresa?.iso,
                     )}
                   </strong>
                 </span>
-                <span className="delete" onClick={() => removeItem(item)}>
+                <span className="delete" onClick={() => mutateEliminarDV(item)}>
                   💀
                 </span>
               </article>

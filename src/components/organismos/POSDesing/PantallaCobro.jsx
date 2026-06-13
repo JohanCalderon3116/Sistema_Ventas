@@ -1,14 +1,16 @@
 import { Icon } from "@iconify/react";
 import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { useCartVentasStore } from "../../../store/CartVentasStore";
 import { IngresoCobro } from "./IngresoCobro";
 import { VisorTicketVenta } from "./VisorTicketVenta";
+import { useVentasStore } from "../../../store/VentasStore";
+import { useDetalleVentasStore } from "../../../store/DetalleVentasStore";
 
 export const PantallaCobro = () => {
   const [stateVerticket, setStateVerticket] = useState(false);
-  const { setStatePantallaCobro } = useCartVentasStore();
+  const { setStatePantallaCobro, tipocobro } = useVentasStore();
   const ingresoCobroRef = useRef();
+  const { detalleventa } = useDetalleVentasStore();
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === "Enter") {
@@ -49,7 +51,12 @@ export const PantallaCobro = () => {
           )}
         </article>
         <IngresoCobro ref={ingresoCobroRef}></IngresoCobro>
-        <article className="contentverticket" onClick={setStatePantallaCobro}>
+        <article
+          className="contentverticket"
+          onClick={() =>
+            setStatePantallaCobro({ data: detalleventa, tipocobro: tipocobro })
+          }
+        >
           <Icon icon="line-md:arrow-left" width="24" height="24" />
           <span>Volver</span>
         </article>

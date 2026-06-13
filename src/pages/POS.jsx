@@ -9,6 +9,7 @@ import {
   useEmpresaStore,
   useMetodosPagoStore,
   useProductosStore,
+  useStockStore,
   useSucursalesStore,
   useVentasStore,
 } from "../index";
@@ -18,13 +19,18 @@ import { useAsignacionCajaSucursalesStore } from "../store/AsignacionCajaSucursa
 export function POS() {
   const { buscarProductos, buscador, ProductosItemSelect } =
     useProductosStore();
-  const { mostrarAlmacenXsucursal } = useAlmacenesStore();
+  const {
+    mostrarAlmacenXsucursal,
+    mostrarAlmacenesXSucursal,
+    almacenSelelctItem,
+  } = useAlmacenesStore();
   const { sucursalesItemSelectAsignadas } = useAsignacionCajaSucursalesStore();
   const { dataempresa } = useEmpresaStore();
   const { mostrarventasxsucursal } = useVentasStore();
   const { mostrarCajaXSucursal } = useCajasStore();
   const { mostrarCierreCaja } = useCierreCajaStore();
   const { mostrarMetodosPago } = useMetodosPagoStore();
+  const { mostrarStockAlmacenesYProducto } = useStockStore();
   useQuery({
     queryKey: ["buscar productos", buscador],
     queryFn: () =>
@@ -34,25 +40,43 @@ export function POS() {
   });
   const { isLoading: isLoadingAlmacen, error } = useQuery({
     queryKey: [
-      "mostrar almacen por sucursal",
+      "mostrar almacenes por sucursal",
       sucursalesItemSelectAsignadas?.id_sucursal,
     ],
     queryFn: () =>
-      mostrarAlmacenXsucursal({
+      mostrarAlmacenesXSucursal({
         id_sucursal: sucursalesItemSelectAsignadas?.id_sucursal,
       }),
   });
-  useQuery({
+  //consultar estock por producto y almacenes
+  const {
+    isLoading: isLoadingStockXProductoYAlmacen,
+    error: errorStockXProductoYAlmacen,
+  } = useQuery({
     queryKey: [
-      "mostrar ventas por sucursal",
-      sucursalesItemSelectAsignadas?.id_sucursal,
+      "mostrar Stock Almacenes y Producto",
+      {
+        id_producto: ProductosItemSelect?.id,
+        id_almacen: almacenSelelctItem?.id,
+      },
     ],
     queryFn: () =>
-      mostrarventasxsucursal({
-        id_sucursal: sucursalesItemSelectAsignadas?.id_sucursal,
+      mostrarStockAlmacenesYProducto({
+        id_producto: ProductosItemSelect?.id,
+        id_almacen: almacenSelelctItem?.id,
       }),
-    enabled: !!sucursalesItemSelectAsignadas,
   });
+  // useQuery({
+  //   queryKey: [
+  //     "mostrar ventas por sucursal",
+  //     sucursalesItemSelectAsignadas?.id_sucursal,
+  //   ],
+  //   queryFn: () =>
+  //     mostrarventasxsucursal({
+  //       id_sucursal: sucursalesItemSelectAsignadas?.id_sucursal,
+  //     }),
+  //   enabled: !!sucursalesItemSelectAsignadas,
+  // });
 
   const {
     isLoading: isLoadingCierreCaja,

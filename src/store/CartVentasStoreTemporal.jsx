@@ -18,7 +18,7 @@ function calcularTotal(items) {
   );
 }
 
-export const useCartVentasStore = create(
+export const useCartVentasStoreTemporal = create(
   persist(
     (set) => ({
       ...initialState,

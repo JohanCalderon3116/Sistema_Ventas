@@ -4,25 +4,43 @@ import {
   InputText2,
   ListaDesplegable,
   Reloj,
-  useCartVentasStore,
+  SelectList,
+  useAlmacenesStore,
+  useCierreCajaStore,
+  useDetalleVentasStore,
+  useEmpresaStore,
+  useFormattedDate,
   useProductosStore,
+  useStockStore,
   useSucursalesStore,
+  useUsuariosStore,
+  useVentasStore,
 } from "../../../index";
 import { v } from "../../../styles/variables";
 import { Device } from "../../../styles/breakpoints";
 import { Icon } from "@iconify/react";
 import { useEffect, useRef, useState } from "react";
 import { useAsignacionCajaSucursalesStore } from "../../../store/AsignacionCajaSucursales";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 export const HeaderPos = () => {
+  const queryClien = useQueryClient();
   const [stateListaProductos, setStateListaProductos] = useState(false);
   const [stateTeclado, setStateTeclado] = useState(false);
   const [stateLector, setStateLector] = useState(true);
   const [catidadInput, setCantidadInput] = useState(1);
   const { setBuscador, dataProductos, selectProductos, buscador } =
     useProductosStore();
-
   const { sucursalesItemSelectAsignadas } = useAsignacionCajaSucursalesStore();
-  const { addItem } = useCartVentasStore();
+  const { idventa, insertarVentas } = useVentasStore();
+  const { dataempresa } = useEmpresaStore();
+  const fechaActual = useFormattedDate();
+  const { dataCierreCaja } = useCierreCajaStore();
+  const { almacenSelelctItem, dataAlmacenesXSucursa, setAlmacenSelelctItem } =
+    useAlmacenesStore();
+  const { insertarDetalleVentas } = useDetalleVentasStore();
+  const { datausuarios } = useUsuariosStore();
+  const { dataStockXAlmacenesYProducto, setStateModal } = useStockStore();
   const buscadorRef = useRef(null);
   function focusclick() {
     buscadorRef.current.focus();
@@ -41,25 +59,57 @@ export const HeaderPos = () => {
       setStateListaProductos(true);
     }
   }
-  async function funcion_insertarventa() {
-    const ProductosItemSelect =
-      useProductosStore.getState().ProductosItemSelect;
-    const pDetalleventas = {
-      _id_venta: 1,
-      _cantidad: parseFloat(catidadInput) || 1,
-      _precio_venta: ProductosItemSelect.precio_venta,
-      _total: 1 * ProductosItemSelect.precio_venta,
-      _descripcion: ProductosItemSelect.nombre,
-      _id_producto: ProductosItemSelect.id,
-      _precio_compra: ProductosItemSelect.precio_compra,
-      _id_sucursal: sucursalesItemSelectAsignadas.id_sucursal,
-    };
-    console.log(pDetalleventas);
-    addItem(pDetalleventas);
+  async function insertarventa() {
+    if (idventa === 0) {
+      const pventas = {
+        fecha: fechaActual,
+        id_usuario: datausuarios?.id,
+        id_sucursal: sucursalesItemSelectAsignadas?.id_sucursal,
+        id_empresa: dataempresa?.id,
+        id_cierre_caja: dataCierreCaja?.id,
+      };
+      const result = await insertarVentas(pventas);
+      if (result?.id > 0) {
+        await insertarDVentas(result?.id);
+      }
+    } else {
+      await insertarDVentas(idventa);
+    }
     setBuscador("");
     buscadorRef.current.focus();
     setCantidadInput(1);
   }
+  async function insertarDVentas(p) {
+    const ProductosItemSelect =
+      useProductosStore.getState().ProductosItemSelect;
+    const pDetalleventas = {
+      _id_venta: p,
+      _cantidad: parseFloat(catidadInput) || 1,
+      _precio_venta: ProductosItemSelect.precio_venta,
+      _descripcion: ProductosItemSelect.nombre,
+      _id_producto: ProductosItemSelect.id,
+      _precio_compra: ProductosItemSelect.precio_compra,
+      _id_sucursal: sucursalesItemSelectAsignadas.id_sucursal,
+      _id_almacen: almacenSelelctItem?.id,
+    };
+    await insertarDetalleVentas(pDetalleventas);
+    console.log(pDetalleventas);
+  }
+
+  const { mutate: mutateInsertarVentas } = useMutation({
+    mutationKey: ["insertar ventas"],
+    mutationFn: insertarventa,
+    onError: (error) => {
+      toast.error(`Error al insertar la venta ${error.message}`);
+      queryClien.invalidateQueries(["mostrar Stock Almacenes y Producto"]);
+      if (dataStockXAlmacenesYProducto) {
+        setStateModal(true);
+      }
+    },
+    onSuccess: () => {
+      queryClien.invalidateQueries(["mostrar detalle venta"]);
+    },
+  });
   //validar cantidad
   const ValidarCantidad = (e) => {
     const value = Math.max(0, parseFloat(e.target.value));
@@ -90,7 +140,16 @@ export const HeaderPos = () => {
         </Contentuser>
         <article className="contentlogo area2">
           <img src={v.logo}></img>
-          <span>SoftCreate POS v1.0</span>
+          <span>SoftCreate POS</span>
+        </article>
+        <article className="contentlogo1 area2">
+          <span>Almacen: </span>
+          <SelectList
+            data={dataAlmacenesXSucursa}
+            itemSelect={almacenSelelctItem}
+            onSelect={setAlmacenSelelctItem}
+            displayField="nombre"
+          ></SelectList>
         </article>
         <article className="contentfecha area3">
           <Reloj></Reloj>
@@ -126,7 +185,7 @@ export const HeaderPos = () => {
               }}
             ></input>
             <ListaDesplegable
-              funcioncrud={funcion_insertarventa}
+              funcioncrud={mutateInsertarVentas}
               funcion={selectProductos}
               setState={() => setStateListaProductos(!stateListaProductos)}
               data={dataProductos}
@@ -201,9 +260,22 @@ const Header = styled.div`
       justify-content: space-between;
     }
     .contentlogo {
+      @media ${Device.desktop} {
+        display: flex;
+      }
+      display: none;
+      align-items: center;
+      font-weight: 700;
+      img {
+        width: 30px;
+        object-fit: contain;
+      }
+    }
+    .contentlogo1 {
       display: flex;
       align-items: center;
       font-weight: 700;
+      gap: 5px;
       img {
         width: 30px;
         object-fit: contain;

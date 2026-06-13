@@ -3,14 +3,38 @@ import styled, { keyframes } from "styled-components";
 import { useCierreCajaStore } from "../../../store/CierreCajaStore";
 import { Device } from "../../../styles/breakpoints";
 import { Icon } from "@iconify/react";
+import { useVentasStore } from "../../../store/VentasStore";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 export const MenuFlotante = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { eliminarVenta, idventa } = useVentasStore();
   const { setStateIngresoSalida, setTipoRegistro, setStateCierreCaja } =
     useCierreCajaStore();
+  const queryClient = useQueryClient();
+  const { mutate: mutateEliminarVenta, isPending } = useMutation({
+    mutationKey: ["elminar venta"],
+    mutationFn: () => {
+      if (idventa > 0) {
+        return eliminarVenta({ id: idventa });
+      } else {
+        return Promise.reject(new Error("Sin registro de venta para eliminar"));
+      }
+    },
+    onError: (error) => {
+      toast.error(`Error: ${error.message}`);
+    },
+    onSuccess: () => {
+      toggleMenu();
+      queryClient.invalidateQueries(["mostrar detalle venta"]);
+      toast.success("Venta eliminada correctamente :3");
+    },
+  });
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
+
   return (
     <Container>
       {/* Menú flotante que se expande al hacer clic */}
@@ -55,7 +79,7 @@ export const MenuFlotante = () => {
           <Icon icon="icon-park:preview-open" />
           <Text>Ver ventas del día</Text>
         </MenuItem>
-        <MenuItem isOpen={isOpen} delay="0.3s" onClick={toggleMenu}>
+        <MenuItem isOpen={isOpen} delay="0.3s" onClick={mutateEliminarVenta}>
           <Icon icon="flat-color-icons:delete-row" />
           <Text>Eliminar venta</Text>
         </MenuItem>

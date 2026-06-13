@@ -4,44 +4,24 @@ const tabla = "detalle_venta";
 export async function InsertarDetalleVentas(p) {
   const { error } = await supabase.rpc("insertardetalleventa", p);
   if (error) {
-    Swal.fire({
-      icon: "error",
-      title: "Oops...",
-      text: error.message,
-    });
-    return;
+    throw new Error(error.message);
   }
 }
 export async function MostrarDetalleVenta(p) {
-  const { data, error } = await supabase.rpc("mostrardetalleventa", {
-    _id_venta: p.id_venta,
-  });
+  const { data, error } = await supabase
+    .from(tabla)
+    .select()
+    .eq("id_venta", p.id_venta);
   if (error) {
-    Swal.fire({
-      icon: "error",
-      title: "Oops...",
-      text: error.message,
-    });
-    return;
+    throw new Error(error.message);
   }
   return data;
 }
-// export async function BuscarProductos(p) {
-//   const { data } = await supabase.rpc("buscarproductos", {
-//     _id_empresa: p.id_empresa,
-//     buscador: p.buscador,
-//   });
-//   return data;
-// }
+
 export async function EliminarDetalleVentas(p) {
   const { error } = await supabase.from(tabla).delete().eq("id", p.id);
   if (error) {
-    Swal.fire({
-      icon: "error",
-      title: "Oops...",
-      text: error.message,
-    });
-    return;
+    throw new Error(error.message);
   }
 }
 
@@ -58,5 +38,12 @@ export async function MostrarTop10ProductosMasVenidosPorMonto(p) {
     "mostrartop10productosmasvenidospormonto",
     p,
   );
+  return data;
+}
+export async function EditarCantidadDetalleVenta(p) {
+  const { data, error } = await supabase.rpc("editarcantidaddv", p);
+  if (error) {
+    throw new Error(error.message);
+  }
   return data;
 }

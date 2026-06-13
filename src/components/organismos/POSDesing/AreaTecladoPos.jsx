@@ -2,21 +2,24 @@ import styled from "styled-components";
 import {
   Btn1,
   TotalPos,
-  useCartVentasStore,
+  useDetalleVentasStore,
   useEmpresaStore,
   useMetodosPagoStore,
+  useVentasStore,
 } from "../../../index";
 import { Device } from "../../../styles/breakpoints";
 import { useQuery } from "@tanstack/react-query";
 import { useValidarPermisosOpertivos } from "../../../hooks/UseValidarPermisosOpertivos";
 export const AreaTecladoPos = () => {
-  const { setStatePantallaCobro, stateMetodosPago } = useCartVentasStore();
+  const { setStatePantallaCobro, stateMetodosPago } = useVentasStore();
   const { dataMetodosPago } = useMetodosPagoStore();
   const { validarPermiso } = useValidarPermisosOpertivos();
+  const { detalleventa } = useDetalleVentasStore();
   const validarPermisosCobrar = (p) => {
     const response = validarPermiso("Cobrar venta");
     if (!response) return;
-    setStatePantallaCobro({ tipocobro: p.nombre });
+    console.log("tipocobro: ", p.nombre);
+    setStatePantallaCobro({ data: detalleventa, tipocobro: p.nombre });
   };
   // const { data: dataMetodosPago } = useQuery({
   //   queryKey: ["mostrar metodos de pago"],
@@ -31,7 +34,7 @@ export const AreaTecladoPos = () => {
             <article className="box" key={index}>
               <Btn1
                 imagen={item.icono != "-" ? item.icono : null}
-                funcion={() => validarPermisosCobrar({ item })}
+                funcion={() => validarPermisosCobrar( item )}
                 border="0"
                 height="70px"
                 width="100%"

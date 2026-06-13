@@ -6,7 +6,6 @@ import {
   Btn1,
   IngresoCobro,
   Reloj,
-  useCartVentasStore,
   useClientesProveedoresStore,
   useEmpresaStore,
   useVentasStore,
@@ -15,7 +14,7 @@ import { Icon } from "@iconify/react";
 
 export const VisorTicketVenta = ({ setState }) => {
   const [base64, setBase64] = useState("");
-  const { items, tipocobro, total } = useCartVentasStore();
+  const { items, tipocobro, total } = useVentasStore();
   const { dataempresa: dataempresainfo } = useEmpresaStore();
   const { cliproItemSelect } = useClientesProveedoresStore();
   const onGenerateTicket = async (output) => {
