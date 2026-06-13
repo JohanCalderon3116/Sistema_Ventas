@@ -32,6 +32,11 @@ export const LinksArray = [
     to: "/",
   },
   {
+    label: "Dashboard",
+    icon: "streamline-flex-color:dashboard-3-flat",
+    to: "/dashboard",
+  },
+  {
     label: "Vender",
     icon: "flat-color-icons:shop",
     to: "/pos",

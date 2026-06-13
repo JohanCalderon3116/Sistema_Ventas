@@ -21,12 +21,7 @@ export async function InsertarUsuarios(p) {
     .select()
     .maybeSingle();
   if (error) {
-    Swal.fire({
-      icon: "error",
-      title: "Oops...",
-      text: error.message,
-    });
-    return;
+    throw new Error(error.message)
   }
   return data;
 }

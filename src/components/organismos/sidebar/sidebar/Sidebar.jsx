@@ -1,10 +1,16 @@
 import styled from "styled-components";
-import { LinksArray, SecondarylinksArray, ToggleTema } from "../../../../index";
+import {
+  LinksArray,
+  SecondarylinksArray,
+  ToggleTema,
+  useAuthStore,
+} from "../../../../index";
 import { v } from "../../../../styles/variables";
 import { NavLink } from "react-router-dom";
 import { Icon } from "@iconify/react";
 
 export function Sidebar({ state, setState }) {
+  const { cerrarSesion } = useAuthStore();
   return (
     <Main $isopen={state.toString()}>
       <span className="Sidebarbutton" onClick={() => setState(!state)}>
@@ -62,7 +68,12 @@ export function Sidebar({ state, setState }) {
                 className="Linkicon"
                 icon="heroicons:ellipsis-horizontal-circle-solid"
               />
-              <span className={state ? "label_ver" : "label_oculto"}>Más</span>
+              <span
+                onClick={cerrarSesion}
+                className={state ? "label_ver" : "label_oculto"}
+              >
+                Salir
+              </span>
             </section>
           </div>
         </div>
@@ -158,10 +169,12 @@ const Container = styled.div`
         transition: 0.3s ease-in-out;
         opacity: 1;
         display: initial;
+        cursor: pointer;
       }
       .label_oculto {
         opacity: 0;
         display: none;
+        cursor: pointer;
       }
 
       &.open {

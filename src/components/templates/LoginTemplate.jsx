@@ -10,23 +10,39 @@ import {
 } from "../../index";
 import { v } from "../../styles/variables";
 import { Device } from "../../styles/breakpoints";
-import cart from "../../assets/add to cart.json"
+import cart from "../../assets/add to cart.json";
+import { useForm } from "react-hook-form";
+import { useMutation } from "@tanstack/react-query";
+import { toast, Toaster } from "sonner";
 export const LoginTemplate = () => {
-  const { loginGoogle } = useAuthStore();
+  const { loginGoogle, loginEmail } = useAuthStore();
+  const { register, handleSubmit } = useForm();
+  const { mutate } = useMutation({
+    mutationKey: ["iniciar sesion con email"],
+    mutationFn: loginEmail,
+    onError: (error) => {
+      toast.error(`Error al iniciar sesión: ${error.message}`);
+    },
+  });
+  const manejadorEmailSesion = (data) => {
+    mutate({ email: data.email, password: data.password });
+  };
   return (
     <Container>
+      <Toaster richColors></Toaster>
       <div className="card">
         <ContentLogo>
           <img src={v.logo} alt="" />
           <span>SoftCreate POS v1.0</span>
         </ContentLogo>
         <Title $paddingBottom="20px">Iniciar sesión</Title>
-        {/* <form action="">
+        <form onSubmit={handleSubmit(manejadorEmailSesion)} action="">
           <InputText2>
             <input
               className="form__field"
               placeholder="Correo"
               type="text"
+              {...register("email", { required: true })}
             ></input>
           </InputText2>
           <InputText2>
@@ -34,22 +50,27 @@ export const LoginTemplate = () => {
               className="form__field"
               placeholder="Contraseña"
               type="password"
+              {...register("password", { required: true })}
             ></input>
           </InputText2>
           <Btn1
-          border="2px"
+            border="2px"
             titulo="Ingresar"
             bgcolor="#1cb0f6"
             color="255,255,255"
             width="100%"
           ></Btn1>
-        </form> */}
-        <Lottieanimation ancho={220} alto={220} animacion={cart}></Lottieanimation>
+        </form>
+        <Lottieanimation
+          ancho={220}
+          alto={220}
+          animacion={cart}
+        ></Lottieanimation>
         <Linea>
           <span>0</span>
         </Linea>
         <Btn1
-        border="2px"
+          border="2px"
           funcion={loginGoogle}
           titulo="Google"
           color={(theme) => theme.bgtotal}
@@ -81,7 +102,7 @@ const Container = styled.div`
     @media ${Device.tablet} {
       width: 400px;
     }
-    form{
+    form {
       display: flex;
       flex-direction: column;
       gap: 10px;
