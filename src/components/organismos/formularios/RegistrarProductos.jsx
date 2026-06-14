@@ -40,6 +40,9 @@ export function RegistrarProductos({
   const [isCheked1, setIsCheked1] = useState(true);
   const [isCheked2, setIsCheked2] = useState(false);
   const [sevendePor, setSevendePor] = useState("Unidad");
+  const [stockMinimo, setStockMinimo] = useState("");
+  const [stock, setStock] = useState("");
+  const [ubicacion, setUbicacion] = useState("");
   const handleCheckboxChange = (cheboxNumber) => {
     if (cheboxNumber === 1) {
       setIsCheked1(true);
@@ -458,11 +461,16 @@ export function RegistrarProductos({
                       <input
                         disabled={!!dataStockXAlamacenYProducto}
                         className="form__field"
-                        defaultValue={dataStockXAlamacenYProducto?.stock}
+                        value={
+                          accion === "Editar"
+                            ? dataStockXAlamacenYProducto?.stock
+                            : stock
+                        }
                         type="number"
                         step="0.01"
                         placeholder="stock "
                         {...register("stock", {})}
+                        onChange={(e) => setStock(e.target.value)}
                       />
                       <label className="form__label">Stock</label>
                     </InputText>
@@ -472,11 +480,16 @@ export function RegistrarProductos({
                       <input
                         disabled={!!dataStockXAlamacenYProducto}
                         className="form__field"
-                        defaultValue={dataStockXAlamacenYProducto?.stock_minimo}
+                        value={
+                          accion === "Editar"
+                            ? dataStockXAlamacenYProducto?.stock_minimo
+                            : stockMinimo
+                        }
                         type="number"
                         step="0.01"
                         placeholder="stock minimo"
                         {...register("stock_minimo", {})}
+                        onChange={(e) => setStockMinimo(e.target.value)}
                       />
                       <label className="form__label">Stock minimo</label>
                     </InputText>
@@ -486,10 +499,15 @@ export function RegistrarProductos({
                       <input
                         disabled={!!dataStockXAlamacenYProducto}
                         className="form__field"
-                        defaultValue={dataStockXAlamacenYProducto?.ubicacion}
+                        value={
+                          accion === "Editar"
+                            ? dataStockXAlamacenYProducto?.ubicacion
+                            : ubicacion
+                        }
                         type="text"
                         placeholder="ubicacion"
                         {...register("ubicacion", {})}
+                        onChange={(e) => setUbicacion(e.target.value)}
                       />
                       <label className="form__label">Ubicación</label>
                     </InputText>
