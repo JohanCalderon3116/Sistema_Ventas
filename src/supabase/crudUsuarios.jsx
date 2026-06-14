@@ -21,7 +21,14 @@ export async function InsertarUsuarios(p) {
     .select()
     .maybeSingle();
   if (error) {
-    throw new Error(error.message)
+    throw new Error(error.message);
+  }
+  return data;
+}
+export async function EditarUsuario(p) {
+  const { error, data } = await supabase.from(tabla).update(p).eq("id", p.id);
+  if (error) {
+    throw new Error(error.message);
   }
   return data;
 }
@@ -32,6 +39,7 @@ export async function InsertarCreadencialesUser(p) {
   }
   return data;
 }
+
 export async function ObtenerIdAuthSupabase() {
   const {
     data: { session },

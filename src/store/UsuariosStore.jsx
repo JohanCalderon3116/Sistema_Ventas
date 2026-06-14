@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import {
+  EditarUsuario,
   EliminarUsuariosAsignados,
   InsertarAsignacionCajaSucursal,
   InsertarCreadencialesUser,
@@ -52,5 +53,8 @@ export const useUsuariosStore = create((set) => ({
   },
   eliminarUsuariosAsignados: async (p) => {
     await EliminarUsuariosAsignados(p);
+  },
+  editarUsuario: async (p) => {
+    await EditarUsuario(p);
   },
 }));
