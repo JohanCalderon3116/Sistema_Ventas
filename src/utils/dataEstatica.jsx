@@ -44,7 +44,7 @@ export const LinksArray = [
   {
     label: "Inventario",
     icon: "flat-ui:box",
-    to: "/kardex",
+    to: "/inventario",
   },
 
 ];

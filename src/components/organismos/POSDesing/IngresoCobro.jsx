@@ -137,6 +137,7 @@ export const IngresoCobro = forwardRef((props, ref) => {
   async function ConfirmarVenta(p) {
     if (restante === 0) {
       const pventas = {
+        id: idventa,
         fecha: fechaActual,
         id_usuario: datausuarios?.id,
         id_cliente: cliproItemSelect?.id,
@@ -144,7 +145,7 @@ export const IngresoCobro = forwardRef((props, ref) => {
         vuelto: vuelto,
         monto_total: total,
       };
-      if (idventa === 0) {
+
         const result = await confirmarVenta(pventas);
         if (result?.id > 0) {
           //Insertar movimiento de caja, solo los metodos de pago con mayor a cero
@@ -166,7 +167,6 @@ export const IngresoCobro = forwardRef((props, ref) => {
               await insertarMovcaja(pmovcaja);
             }
           }
-        }
       }
     } else {
       toast.warning("Falta completar el pago, el restante tiene que ser cero");
