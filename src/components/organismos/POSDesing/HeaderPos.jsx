@@ -134,8 +134,8 @@ export const HeaderPos = () => {
             />
           </div>
           <div className="textos">
-            <span className="usuario">Johan</span>
-            <span>🧑‍💻Programador</span>
+            <span className="usuario"> {datausuarios?.nombres} </span>
+            <span> {datausuarios?.roles.nombre} </span>
           </div>
         </Contentuser>
         <article className="contentlogo area2">
@@ -331,10 +331,14 @@ const Contentuser = styled.div`
     }
   }
   .textos {
-    display: flex;
+    display: none;
     flex-direction: column;
     .usuario {
       font-weight: 700;
+    }
+    @media ${Device.laptop} {
+      display: flex;
+      flex-direction: column;
     }
   }
 `;

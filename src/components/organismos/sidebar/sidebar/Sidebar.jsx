@@ -62,16 +62,16 @@ export function Sidebar({ state, setState }) {
         ))}
         <div className={state ? "LinkContainer active" : "LinkContainer"}>
           <div className="Links">
-            <section className={state ? "content open" : "content"}>
+            <section
+              onClick={cerrarSesion}
+              className={state ? "content open" : "content"}
+            >
               <Icon
                 color="#CE82FF"
                 className="Linkicon"
                 icon="heroicons:ellipsis-horizontal-circle-solid"
               />
-              <span
-                onClick={cerrarSesion}
-                className={state ? "label_ver" : "label_oculto"}
-              >
+              <span className={state ? "label_ver" : "label_oculto"}>
                 Salir
               </span>
             </section>
@@ -156,6 +156,7 @@ const Container = styled.div`
       justify-content: center;
       width: 100%;
       align-items: center;
+      cursor: pointer;
       .Linkicon {
         display: flex;
         font-size: 33px;

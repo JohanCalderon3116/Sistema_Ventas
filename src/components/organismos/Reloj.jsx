@@ -1,6 +1,7 @@
 import { Icon } from "@iconify/react";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
+import { Device } from "../../styles/breakpoints";
 export function Reloj() {
   const [hora, setHora] = useState("");
   const [fecha, setFecha] = useState("");
@@ -49,7 +50,7 @@ export function Reloj() {
 
       setHora(`${hr}:${formattedMinutos}:${formattedSegundos}:${am}`);
       setFecha(
-        `${dias[fechaActual.getDay()]} ${diaActual} ${mes} del ${añoActual}`
+        `${dias[fechaActual.getDay()]} ${diaActual} ${mes} del ${añoActual}`,
       );
     };
 
@@ -63,7 +64,7 @@ export function Reloj() {
     <Container>
       <div class="cont-reloj">
         <div class="reloj" id="reloj">
-         {<Icon icon="icon-park:alarm-clock" />} {hora}
+          {<Icon icon="icon-park:alarm-clock" />} {hora}
         </div>
         <div class="datos">
           <span id="fec_Datos">{fecha}</span>
@@ -77,17 +78,21 @@ const Container = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    flex-direction: column;
+    flex-direction: row;
+    gap: 10px;
     font-weight: bold;
+    @media ${Device.laptop} {
+      margin-top: 0;
+      
+    }
   }
   .reloj {
     font-size: 1em;
-    align-items:center;
-    display:flex;
-    gap:5px;
+    align-items: center;
+    display: flex;
+    gap: 5px;
   }
   .datos {
     font-size: 1em;
-   
   }
 `;

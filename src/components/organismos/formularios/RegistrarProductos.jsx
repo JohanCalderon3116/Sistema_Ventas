@@ -236,6 +236,10 @@ export function RegistrarProductos({
     if (accion != "Editar") {
       generarCodigoInterno();
     } else {
+      selectCategoria({
+        id: dataSelect.id_categoria,
+        nombre: dataSelect.categoria,
+      });
       setRandomCodeInterno(dataSelect.codigo_interno);
       setRandomCodeBarras(dataSelect.codigo_barra);
       if (dataSelect.sevende_por === "Unidad") {
@@ -405,22 +409,12 @@ export function RegistrarProductos({
               </ContainerSelector>
               <ContainerSelector>
                 <label>Categoria</label>
-                <Selector
-                  state={stateCategoriasLista}
-                  funcion={() => setStateCategoriasLista(!stateCategoriasLista)}
-                  color="#fc6027"
-                  texto1="🏬"
-                  texto2={categoriaItemSelect?.nombre}
-                ></Selector>
-                <ListaDesplegable
-                  funcion={selectCategoria}
-                  state={stateCategoriasLista}
+                <SelectList
                   data={datacategorias}
-                  top="4rem"
-                  setState={() =>
-                    setStateCategoriasLista(!stateCategoriasLista)
-                  }
-                ></ListaDesplegable>
+                  itemSelect={categoriaItemSelect}
+                  onSelect={selectCategoria}
+                  displayField="nombre"
+                ></SelectList>
               </ContainerSelector>
               <ContainerSelector>
                 <label>Controlar stock:</label>

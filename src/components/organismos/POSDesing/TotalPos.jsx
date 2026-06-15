@@ -25,7 +25,7 @@ export const TotalPos = () => {
         <img src="https://i.ibb.co/tw1xqhHx/Cobrar-Roshi.png" alt="" />
       </section>
       <section className="contentTotal">
-        <section className="contentTtuloTotal">
+        <section className="contentTituloTotal">
           <Btn1
             funcion={validarPermisosCobrar}
             border="2px"
@@ -55,13 +55,23 @@ const Container = styled.div`
   justify-content: space-between;
   border-radius: 15px;
   font-weight: 700;
-  font-size: 40px;
+  font-size: 38px;
   background-color: #3ff563;
   padding: 10px;
   color: #207c33;
   position: relative;
   overflow: hidden;
-
+  &::after {
+    content: "";
+    display: block;
+    width: 100px;
+    height: 100px;
+    background-color: #7fff99;
+    position: absolute;
+    border-radius: 50%;
+    top: -20px;
+    left: -15px;
+  }
   &::before {
     content: "";
     display: block;
@@ -74,7 +84,9 @@ const Container = styled.div`
     right: 5px;
   }
   .imagen {
+    z-index: 1;
     width: 55px;
+   
     position: relative;
     @media ${Device.desktop} {
       bottom: initial;
@@ -84,21 +96,17 @@ const Container = styled.div`
     }
   }
   .contentTotal {
+    z-index:10;
     margin-top: 10px;
     display: flex;
     flex-direction: column;
-    font-size: 35px;
-    position: relative; /* Añade esto */
-    z-index: 10; /* Añade esto para que esté por encima de la imagen */
-
-    .contentTtuloTotal {
-      margin-top: 30px;
+    .contentTituloTotal {
       display: flex;
       align-items: center;
-      cursor: pointer;
-      position: relative; /* Asegura que el cursor responda aquí */
-      z-index: 11; /* Refuerza la posición */
-
+      position: relative;
+      margin-top: 30px;
+      justify-content:end;
+      align-content:end;
       @media ${Device.desktop} {
         display: none;
       }

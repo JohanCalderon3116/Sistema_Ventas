@@ -3,7 +3,7 @@ const tabla = "usuarios";
 export async function MostrarUsuarios(p) {
   const { data } = await supabase
     .from(tabla)
-    .select()
+    .select(`*, roles(*)`)
     .eq("id_auth", p.id_auth)
     .maybeSingle();
   return data;

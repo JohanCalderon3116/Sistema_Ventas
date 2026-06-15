@@ -2,6 +2,7 @@ import styled from "styled-components";
 import {
   Btn1,
   Footer,
+  GenerarCodigo,
   InputText2,
   Linea,
   Lottieanimation,
@@ -15,7 +16,7 @@ import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { toast, Toaster } from "sonner";
 export const LoginTemplate = () => {
-  const { loginGoogle, loginEmail } = useAuthStore();
+  const { loginGoogle, loginEmail, crearUserYLogin } = useAuthStore();
   const { register, handleSubmit } = useForm();
   const { mutate } = useMutation({
     mutationKey: ["iniciar sesion con email"],
@@ -24,8 +25,27 @@ export const LoginTemplate = () => {
       toast.error(`Error al iniciar sesión: ${error.message}`);
     },
   });
+  const { mutate: mutateTester } = useMutation({
+    mutationKey: ["iniciar sesion con email tester"],
+    mutationFn: loginEmail,
+    onError: (error) => {
+      toast.error(`Error al iniciar sesión: ${error.message}`);
+    },
+    onSuccess: () => {
+      window.location.reload();
+    },
+  });
   const manejadorEmailSesion = (data) => {
     mutate({ email: data.email, password: data.password });
+  };
+  const manejadorEmailSesionTester = (data) => {
+    mutate({ email: "tester1@gmail.com", password: "123456" });
+  };
+  const manejarCrearUserTester = () => {
+    const response = GenerarCodigo({ id: 2 });
+    const email = "@gmail.com";
+    const correoCompleto = response.toLowerCase() + email;
+    mutateTester({ email: correoCompleto, password: "123456" });
   };
   return (
     <Container>
@@ -75,6 +95,15 @@ export const LoginTemplate = () => {
           titulo="Google"
           color={(theme) => theme.bgtotal}
           icono={<v.iconogoogle />}
+        ></Btn1>
+        <Linea>
+          <span>0</span>
+        </Linea>
+        <Btn1
+          border="2px"
+          funcion={manejadorEmailSesionTester}
+          titulo="Invitado"
+          bgcolor="#f6ce1c"
         ></Btn1>
       </div>
       <Footer></Footer>

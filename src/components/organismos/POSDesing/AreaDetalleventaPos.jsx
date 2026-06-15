@@ -84,30 +84,59 @@ export const AreaDetalleventaPos = () => {
           return (
             <Itemventa key={index}>
               <article className="contentdescripcion">
-                <span className="descripcion"> {item.descripcion} </span>
+                <span className="descripcion">{item.descripcion}</span>
                 <span className="importe">
-                  <strong>Precio venta: </strong>
+                  <strong>precio unit:</strong>
+                  🪵
                   {FormatearNumeroDinero(
                     item.precio_venta,
                     dataempresa?.currency,
                     dataempresa?.iso,
-                  )}{" "}
+                  )}
                 </span>
+                <ContentTotalResponsive>
+                  <span className="importerespo">
+                    <strong>precio unit:</strong>
+                    🪵
+                    {FormatearNumeroDinero(
+                      item.precio_venta,
+                      dataempresa?.currency,
+                      dataempresa?.iso,
+                    )}
+                  </span>
+                  <article className="contentTotaldetalleventarespon">
+                    <span className="cantidad">
+                      <strong>
+                        {FormatearNumeroDinero(
+                          item.total,
+                          dataempresa?.currency,
+                          dataempresa?.iso,
+                        )}
+                      </strong>
+                    </span>
+                    <span
+                      className="delete"
+                      onClick={() => mutateEliminarDV(item)}
+                    >
+                      <Icon icon="weui:delete-filled" width="24" height="24" />
+                    </span>
+                  </article>
+                </ContentTotalResponsive>
               </article>
               <article className="contentbtn">
                 <Btn1
                   funcion={() =>
                     mutateEditarCantidadDetalleVenta({
                       id: item.id,
-                      cantidad: item.cantidad - 1,
+                      cantidad: item.cantidad + 1,
                     })
                   }
                   width="20px"
-                  icono={<Icon icon="line-md:minus" width="20" height="20" />}
+                  height="35px"
+                  icono={<Icon icon="mdi:add-bold" />}
                 ></Btn1>
                 {editIndex === index ? (
                   <InputText2>
-                    {" "}
                     <input
                       type="number"
                       value={newCantidad}
@@ -116,40 +145,32 @@ export const AreaDetalleventaPos = () => {
                       onKeyDown={(e) => handleKeyDown(e, item)}
                       className="form__field"
                       min="1"
-                    ></input>{" "}
+                    />
                   </InputText2>
                 ) : (
                   <>
-                    <span className="cantidad">
-                      {" "}
-                      <strong>{item.cantidad} </strong>
-                    </span>
+                    <span className="cantidad">{item.cantidad}</span>
                     <Icon
+                      icon="mdi:pencil"
                       onClick={() => handleEditClick(index, item.cantidad)}
-                      icon="line-md:pencil"
-                      width="24"
-                      height="24"
                       className="edit-icon"
                     />
                   </>
                 )}
 
                 <Btn1
-                  bgcolor="#0aca21"
-                  color="#fff"
                   funcion={() =>
                     mutateEditarCantidadDetalleVenta({
                       id: item.id,
-                      cantidad: item.cantidad + 1,
+                      cantidad: item.cantidad - 1,
                     })
                   }
                   width="20px"
-                  icono={
-                    <Icon icon="material-symbols:add" width="20" height="20" />
-                  }
+                  height="35px"
+                  icono={<Icon icon="subway:subtraction-1" />}
                 ></Btn1>
               </article>
-              <article className="contenttotaldetalleventa">
+              <article className="contentTotaldetalleventa">
                 <span className="cantidad">
                   <strong>
                     {FormatearNumeroDinero(
@@ -160,34 +181,79 @@ export const AreaDetalleventaPos = () => {
                   </strong>
                 </span>
                 <span className="delete" onClick={() => mutateEliminarDV(item)}>
-                  💀
+                  <Icon icon="weui:delete-filled" width="24" height="24" />
                 </span>
               </article>
             </Itemventa>
           );
         })
       ) : (
-        <Lottieanimation
-          alto="200"
-          ancho="200"
-          animacion={animaciovacio}
-        ></Lottieanimation>
+        <Lottieanimation animacion={animaciovacio} alto="200" ancho="200" />
       )}
     </AreaDetalleventa>
   );
 };
 
+const ContentTotalResponsive = styled.div`
+  display: flex;
+  flex-direction: flex;
+  gap: 8px;
+  width: 100%;
+  justify-content: space-between;
+  .descripcionrespon {
+    font-weight: 700;
+    font-size: 20px;
+  }
+  .importerespo {
+    font-size: 15px;
+    display: flex;
+    width: 100%;
+  }
+  @media ${Device.laptop} {
+    display: none;
+  }
+  .contentTotaldetalleventarespon {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: end;
+    text-align: end;
+    align-items: center;
+gap:8px;
+    width: 100%;
+    .delete {
+      cursor: pointer;
+      width: 20px;
+      align-self: center;
+    }
+  }
+`;
 const AreaDetalleventa = styled.section`
   display: flex;
-  flex-direction: column;
   width: 100%;
   margin-top: 10px;
+  flex-direction: column;
   gap: 10px;
+  max-height:calc(100vh - 500px);
+  overflow-y: auto; /* Activa el scroll solo en Y */
+  overflow-x: hidden; /* Oculta el scroll en X */
+      
+  &::-webkit-scrollbar {
+  width: 12px;
+  background: rgba(24, 24, 24, 0.2);
+}
+
+&::-webkit-scrollbar-thumb {
+  background: rgba(148, 148, 148, 0.9);
+  border-radius: 10px;
+  filter: blur(10px);
+}
+
   &.animacion {
-    @media ${Device.desktop} {
-      height: 100%;
-      justify-content: center;
-    }
+    height: 100%;
+    justify-content: center;
+  }
+  @media ${Device.laptop} {
+    max-height:initial;
   }
 `;
 const Itemventa = styled.section`
@@ -195,7 +261,7 @@ const Itemventa = styled.section`
   justify-content: space-between;
   width: 100%;
   border-bottom: 1px dashed ${({ theme }) => theme.color2};
-  animation: ${blur_in} 0.4s linear both;
+  animation: ${blur_in} 0.2s linear both;
   flex-direction: column;
   gap: 10px;
   .contentdescripcion {
@@ -209,15 +275,19 @@ const Itemventa = styled.section`
     }
     .importe {
       font-size: 15px;
+      display: none;
+      @media ${Device.laptop} {
+        display: block;
+      }
     }
   }
   .contentbtn {
     display: flex;
+    width: 100%;
+    height: 100%;
     gap: 10px;
     align-items: center;
     justify-content: center;
-    height: 100%;
-    width: 100%;
     .cantidad {
       font-size: 1.8rem;
       font-weight: 700;
@@ -227,25 +297,26 @@ const Itemventa = styled.section`
       font-size: 18px;
     }
   }
-  .contenttotaldetalleventa {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    text-align: end;
-    margin-bottom: 10px;
-    .delete {
-      cursor: pointer;
-      width: 20px;
-      align-self: flex-end;
+  .contentTotaldetalleventa {
+    display: none;
+    @media ${Device.laptop} {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      text-align: end;
+      align-items: center;
+      margin-bottom: 10px;
+      width: 100%;
+      .delete {
+        cursor: pointer;
+        width: 20px;
+        align-self: center;
+      }
     }
   }
   @media ${Device.tablet} {
     display: flex;
     justify-content: space-between;
-    width: 100%;
-    border-bottom: 1px dashed ${({ theme }) => theme.color2};
-    animation: ${blur_in} 0.4s linear both;
     flex-direction: row;
     .contentdescripcion {
       display: flex;
@@ -262,11 +333,11 @@ const Itemventa = styled.section`
     }
     .contentbtn {
       display: flex;
+      width: 100%;
+      height: 100%;
       gap: 10px;
       align-items: center;
       justify-content: center;
-      height: 100%;
-      width: 100%;
       .cantidad {
         font-size: 1.8rem;
         font-weight: 700;
@@ -274,19 +345,6 @@ const Itemventa = styled.section`
       .edit-icon {
         cursor: pointer;
         font-size: 18px;
-      }
-    }
-    .contenttotaldetalleventa {
-      width: 100%;
-      display: flex;
-      flex-direction: row;
-      justify-content: center;
-      text-align: end;
-      margin-bottom: 10px;
-      .delete {
-        cursor: pointer;
-        width: 20px;
-        align-self: flex-end;
       }
     }
   }

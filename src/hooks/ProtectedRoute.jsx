@@ -20,8 +20,10 @@ export const ProtectedRoute = ({ children, accesby }) => {
     queryFn: () => mostrarPermisosGlobales({ id_usuario: datausuarios?.id }),
     enabled: !!datausuarios,
   });
-  if(isLoadingPermisosGlobales){
-    return <SpinnerSecundario texto={"Cargando permisos :p"}></SpinnerSecundario>
+  if (isLoadingPermisosGlobales) {
+    return (
+      <SpinnerSecundario texto={"Cargando permisos :p"}></SpinnerSecundario>
+    );
   }
   const hasPermission = dataPermisosGlobales?.some((item) => {
     return item.modulos?.link === location.pathname;

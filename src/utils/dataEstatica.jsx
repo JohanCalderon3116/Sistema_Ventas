@@ -46,12 +46,7 @@ export const LinksArray = [
     icon: "flat-ui:box",
     to: "/kardex",
   },
-  {
-    label: "Reportes",
-    icon: "flat-ui:graph",
-    to: "/reportes",
-  },
- 
+
 ];
 export const SecondarylinksArray = [
  

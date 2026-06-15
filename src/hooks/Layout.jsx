@@ -6,6 +6,7 @@ import {
   Toogle,
   useEmpresaStore,
   usePermisosStore,
+  userAuth,
   useSucursalesStore,
   useUsuariosStore,
 } from "../index";
@@ -18,6 +19,8 @@ export const Layout = ({ children }) => {
   const { mostrarusuarios } = useUsuariosStore();
   const { mostrarempresa } = useEmpresaStore();
   const { mostrarSucursalCajaAsignada } = useAsignacionCajaSucursalesStore();
+  const { user } = userAuth();
+  const id_auth = user?.id;
   const { mostrarPermisosGlobales } = usePermisosStore();
   const [stateMenu, setStateMenu] = useState(false);
 
@@ -28,8 +31,12 @@ export const Layout = ({ children }) => {
     error: errorUsuarios,
   } = useQuery({
     queryKey: ["mostrar usuarios"],
-    queryFn: mostrarusuarios,
+    queryFn: () =>
+      mostrarusuarios({
+        id_auth: id_auth,
+      }),
     refetchOnWindowFocus: false,
+    enabled: !!id_auth,
   });
   const {
     data: dataSucursales,
