@@ -48,24 +48,14 @@ export const Layout = ({ children }) => {
     enabled: !!datausuarios,
     refetchOnWindowFocus: false,
   });
-  const { isLoading: isLoadingPermisosGlobales, error: errorPermisosGlobales } =
-    useQuery({
-      queryKey: ["permisos globales", datausuarios?.id],
-      queryFn: () => mostrarPermisosGlobales({ id_usuario: datausuarios?.id }),
-      enabled: !!datausuarios,
-      refetchOnWindowFocus: false,
-    });
 
   if (datausuarios == null) {
     refetchUsuarios();
   }
 
   const isLoading =
-    isLoadingPermisosGlobales ||
-    isLoadingEmpresa ||
-    isLoadingSucursales ||
-    isLoadingUsuarios;
-  const error = errorEmpresa || errorPermisosGlobales;
+    isLoadingEmpresa || isLoadingSucursales || isLoadingUsuarios;
+  const error = errorEmpresa;
 
   if (isLoading) {
     return <Spinner1></Spinner1>;
