@@ -5,7 +5,6 @@ import {
   Btn1,
   ConvertirCapitalize,
   useProductosStore,
-  ContainerSelector,
   Switch1,
   Selector,
   useSucursalesStore,
@@ -26,6 +25,7 @@ import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import { useStockStore } from "../../../store/StockStore";
 import { toast } from "sonner";
+import { ContainerSelector } from "./RegistrarInventario";
 
 export function RegistrarProductos({
   onClose,

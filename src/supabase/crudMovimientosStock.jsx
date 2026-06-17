@@ -12,17 +12,18 @@ export async function MostrarMovStock(p) {
     .from(table)
     .select(
       `
-     *, 
+      *, 
       almacenes!inner(
         *, 
-        sucursales!inner(
-        *)
-        )
+        sucursales!inner(*)
+      ),
+      productos(nombre)
     `,
     )
     .eq("almacenes.sucursales.id_empresa", p.id_empresa)
     .eq("id_producto", p.id_producto)
     .order("fecha", { ascending: false });
+
   if (error) {
     throw new Error(error.message);
   }

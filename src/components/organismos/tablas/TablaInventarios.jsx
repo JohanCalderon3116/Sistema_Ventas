@@ -7,6 +7,7 @@ import {
   Icono,
   useAsignacionCajaSucursalesStore,
   useUsuariosStore,
+  useProductosStore,
 } from "../../../index";
 import Swal from "sweetalert2";
 import { v } from "../../../styles/variables";
@@ -33,6 +34,7 @@ export function TablaInventarios({
   const [columnFilters, setColumnFilters] = useState([]);
   const queryClinet = useQueryClient();
   const { eliminarUsuariosAsignados } = useUsuariosStore();
+  const { dataProductos } = useProductosStore();
   function eliminar(p) {
     Swal.fire({
       title: "¿Estás seguro(a)?",
@@ -89,6 +91,17 @@ export function TablaInventarios({
     {
       accessorKey: "almacenes.nombre",
       header: "Almacen",
+      cell: (info) => <span>{info.getValue()}</span>,
+      enableColumnFilter: true,
+      filterFn: (row, columnId, filterStatuses) => {
+        if (filterStatuses.length === 0) return true;
+        const status = row.getValue(columnId);
+        return filterStatuses.includes(status?.id);
+      },
+    },
+    {
+      accessorKey: "productos.nombre",
+      header: "Nomb. Producto",
       cell: (info) => <span>{info.getValue()}</span>,
       enableColumnFilter: true,
       filterFn: (row, columnId, filterStatuses) => {
