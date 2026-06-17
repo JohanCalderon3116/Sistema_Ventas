@@ -1,66 +1,31 @@
 import { Icon } from "@iconify/react/dist/iconify.js";
-import React, { useRef, useState } from "react";
+import React from "react";
 import styled from "styled-components";
 import { InputText2 } from "../formularios/InputText2";
 import { Btn1 } from "../../moleculas/Btn1";
 import { useForm } from "react-hook-form";
 import { useEmpresaStore } from "../../../store/EmpresaStore";
 import { slideBackground } from "../../../styles/Keyframes";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { useUpdatEmpresaMutateStack } from "../../../tanstack/EmpresaStack";
+import { ImageSelector } from "../../../hooks/useImageSelector";
+import { useGlobalStore } from "../../../store/GlobalStore";
 export const BasicosConfig = () => {
-  const [file, setFile] = useState([]);
-  const ref = useRef(null);
-  const [fileurl, setFileurl] = useState("-");
-  const { dataempresa, editarEmpresa } = useEmpresaStore();
-  const queryClient = useQueryClient();
+  const { dataempresa } = useEmpresaStore();
+  const { fileurl } = useGlobalStore();
   const {
     register,
     formState: { errors },
     handleSubmit,
-    watch,
-  } = useForm();
-
-  function abrirImagenes() {
-    ref.current.click();
-  }
-  function prepararImagen(e) {
-    let filelocal = e.target.files;
-    let fileReaderlocal = new FileReader();
-    fileReaderlocal.readAsDataURL(filelocal[0]);
-    const tipoimg = e.target.files[0];
-    setFile(tipoimg);
-    if (fileReaderlocal && filelocal && filelocal.length) {
-      fileReaderlocal.onload = function load() {
-        setFileurl(fileReaderlocal.result);
-      };
-    }
-  }
-
-  const { mutate: doEditar, isPending } = useMutation({
-    mutationKey: ["editar empresa"],
-    mutationFn: editar,
-    onError: (error) => {
-      toast.error("Ocurrio un error" + error.message);
-    },
-    onSuccess: () => {
-      toast.success("Datos guardados, tu empresa se actualizo con exito :p");
-      queryClient.invalidateQueries("mostrar empresa");
+  } = useForm({
+    defaultValues: {
+      nombre: dataempresa?.nombre,
+      direccion: dataempresa?.direccion_fiscal,
+      impuesto: dataempresa?.impuesto,
+      valor_impuesto: dataempresa?.valor_impuesto,
     },
   });
-  const llamadoafuncioneditar = (data) => {
-    doEditar(data);
-  };
-  async function editar(data) {
-    const p = {
-      id: dataempresa?.id,
-      nombre: data.nombre,
-      direccion_fiscal: data.direccion,
-      impuesto: data.impuesto,
-      valor_impuesto: parseFloat(data.valor_impuesto),
-    };
-    await editarEmpresa(p, dataempresa?.logo, file);
-  }
+
+  const { mutate: doEditar, isPending } = useUpdatEmpresaMutateStack();
   return (
     <Container>
       {isPending ? (
@@ -70,39 +35,17 @@ export const BasicosConfig = () => {
           <Title>Básico</Title>
           <Avatar>
             <span className="nombre"> {dataempresa?.nombre} </span>
-            {fileurl != "-" ? (
-              <div className="ContentImage">
-                <AvatarImage src={fileurl} alt="Avatar" />
-              </div>
-            ) : dataempresa?.logo != "-" ? (
-              <div className="ContentImage">
-                <AvatarImage src={dataempresa?.logo} alt="Avatar" />
-              </div>
-            ) : (
-              <AvatarImage
-                src="https://i.ibb.co/HLNmDKRK/administracion-de-empresas.gif"
-                alt="Avatar"
-              />
-            )}
-
-            <EditButton onClick={abrirImagenes}>
-              <Icon className=" icono" icon="lets-icons:edit-fill" />
-            </EditButton>
-            <input
-              accept="image/jpeg, image/png"
-              type="file"
-              ref={ref}
-              onChange={(e) => prepararImagen(e)}
-            ></input>
+            <ImageSelector
+              fileurl={fileurl || dataempresa?.logo}
+            ></ImageSelector>
           </Avatar>
-          <form onSubmit={handleSubmit(llamadoafuncioneditar)}>
+          <form onSubmit={handleSubmit(doEditar)}>
             <Label>Nombre</Label>
             <InputText2>
               <input
                 className="form__field"
                 placeholder="nombre"
                 type="text"
-                defaultValue={dataempresa?.nombre}
                 {...register("nombre", {
                   required: true,
                 })}
@@ -112,7 +55,6 @@ export const BasicosConfig = () => {
             <Label>Dirección</Label>
             <InputText2>
               <input
-                defaultValue={dataempresa?.direccion_fiscal}
                 className="form__field"
                 placeholder="direccion"
                 type="text"
@@ -125,7 +67,6 @@ export const BasicosConfig = () => {
             <Label>Impuesto</Label>
             <InputText2>
               <input
-                defaultValue={dataempresa?.impuesto}
                 className="form__field"
                 placeholder="impuesto"
                 type="text"
@@ -139,7 +80,6 @@ export const BasicosConfig = () => {
             <InputText2>
               <input
                 step="0.01"
-                defaultValue={dataempresa?.valor_impuesto}
                 className="form__field"
                 placeholder="valor impuesto"
                 type="number"
