@@ -60,12 +60,12 @@ export const LoginTemplate = () => {
           <img src={v.logo} alt="" />
           <span>SoftCreate POS v1.0</span>
         </ContentLogo>
+        <Title $paddingBottom="20px">Iniciar sesión</Title>
         <Lottieanimation
           ancho={220}
           alto={220}
           animacion={cart}
         ></Lottieanimation>
-        <Title $paddingBottom="20px">Iniciar sesión</Title>
         {stateModos && (
           <ContentModos>
             <CardModos

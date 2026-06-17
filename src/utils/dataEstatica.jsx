@@ -56,6 +56,12 @@ export const SecondarylinksArray = [
     to: "/configuracion",
     color:"#CE82FF"
   },
+  {
+    label: "Mi perfil",
+    icon:"glyphs-poly:person",
+    to: "/miperfil",
+    color:"#CE82FF"
+  },
   
   
 
