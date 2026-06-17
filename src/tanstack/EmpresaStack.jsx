@@ -29,7 +29,8 @@ export const useUpdatEmpresaMutateStack = () => {
     },
   });
 };
-export const useUpdatEmpresaTicketMutateStack = (file) => {
+export const useUpdatEmpresaTicketMutateStack = () => {
+  const { file } = useGlobalStore();
   const queryClient = useQueryClient();
   const { dataempresa, editarEmpresa } = useEmpresaStore();
   return useMutation({

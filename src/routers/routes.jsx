@@ -22,6 +22,7 @@ import {
 } from "../index";
 import { Usuarios } from "../pages/Usuarios";
 import { Inventario } from "../pages/Inventario";
+import { ConfiguracionTicket } from "../pages/ConfiguracionTicket";
 
 export function Myroutes() {
   return (
@@ -143,6 +144,16 @@ export function Myroutes() {
           <Layout>
             <ProtectedRoute accesby="authenticated">
               <MetodosPago></MetodosPago>
+            </ProtectedRoute>
+          </Layout>
+        }
+      />
+      <Route
+        path="/configuracion/ticket"
+        element={
+          <Layout>
+            <ProtectedRoute accesby="authenticated">
+              <ConfiguracionTicket></ConfiguracionTicket>
             </ProtectedRoute>
           </Layout>
         }
