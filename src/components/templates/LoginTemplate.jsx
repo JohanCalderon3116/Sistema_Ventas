@@ -8,6 +8,7 @@ import {
   Lottieanimation,
   Title,
   useAuthStore,
+  VolverBtn,
 } from "../../index";
 import { v } from "../../styles/variables";
 import { Device } from "../../styles/breakpoints";
@@ -15,7 +16,11 @@ import cart from "../../assets/add to cart.json";
 import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { toast, Toaster } from "sonner";
+import { useState } from "react";
+import { CardModos } from "../organismos/LoginDesing/CardModos";
 export const LoginTemplate = () => {
+  const [stateModos, setStateModos] = useState(true);
+  const [stateModo, setStateModo] = useState("empleado");
   const { loginGoogle, loginEmail, crearUserYLogin } = useAuthStore();
   const { register, handleSubmit } = useForm();
   const { mutate } = useMutation({
@@ -55,56 +60,94 @@ export const LoginTemplate = () => {
           <img src={v.logo} alt="" />
           <span>SoftCreate POS v1.0</span>
         </ContentLogo>
-        <Title $paddingBottom="20px">Iniciar sesión</Title>
-        <form onSubmit={handleSubmit(manejadorEmailSesion)} action="">
-          <InputText2>
-            <input
-              className="form__field"
-              placeholder="Correo"
-              type="text"
-              {...register("email", { required: true })}
-            ></input>
-          </InputText2>
-          <InputText2>
-            <input
-              className="form__field"
-              placeholder="Contraseña"
-              type="password"
-              {...register("password", { required: true })}
-            ></input>
-          </InputText2>
-          <Btn1
-            border="2px"
-            titulo="Ingresar"
-            bgcolor="#1cb0f6"
-            color="255,255,255"
-            width="100%"
-          ></Btn1>
-        </form>
         <Lottieanimation
           ancho={220}
           alto={220}
           animacion={cart}
         ></Lottieanimation>
-        <Linea>
-          <span>0</span>
-        </Linea>
-        <Btn1
-          border="2px"
-          funcion={loginGoogle}
-          titulo="Google"
-          color={(theme) => theme.bgtotal}
-          icono={<v.iconogoogle />}
-        ></Btn1>
-        <Linea>
-          <span>0</span>
-        </Linea>
-        <Btn1
-          border="2px"
-          funcion={manejadorEmailSesionTester}
-          titulo="Invitado"
-          bgcolor="#f6ce1c"
-        ></Btn1>
+        <Title $paddingBottom="20px">Iniciar sesión</Title>
+        {stateModos && (
+          <ContentModos>
+            <CardModos
+              title={"Super admin"}
+              subtitle={"Crea y gestiona tu empresa"}
+              bgcolor={"#601dad"}
+              img={"https://i.ibb.co/v6c45GD9/admin.png"}
+              funcion={() => {
+                setStateModo("superadmin");
+                setStateModos(!stateModos);
+              }}
+            ></CardModos>
+            <CardModos
+              title={"Empleado"}
+              subtitle={"Vende y crece"}
+              bgcolor={"#121b93"}
+              img={"https://i.ibb.co/xqyKYrX6/trabajando.png"}
+              funcion={() => {
+                setStateModo("empleado");
+                setStateModos(!stateModos);
+              }}
+            ></CardModos>
+          </ContentModos>
+        )}
+        {stateModo === "empleado"
+          ? stateModos === false && (
+              <PanelModo>
+                <VolverBtn
+                  funcion={() => setStateModos(!stateModos)}
+                ></VolverBtn>
+                <span>Modo empleado</span>
+                <form onSubmit={handleSubmit(manejadorEmailSesion)} action="">
+                  <InputText2>
+                    <input
+                      className="form__field"
+                      placeholder="Correo"
+                      type="text"
+                      {...register("email", { required: true })}
+                    ></input>
+                  </InputText2>
+                  <InputText2>
+                    <input
+                      className="form__field"
+                      placeholder="Contraseña"
+                      type="password"
+                      {...register("password", { required: true })}
+                    ></input>
+                  </InputText2>
+                  <Btn1
+                    border="2px"
+                    titulo="Ingresar"
+                    bgcolor="#1cb0f6"
+                    color="255,255,255"
+                    width="100%"
+                  ></Btn1>
+                </form>
+              </PanelModo>
+            )
+          : stateModos === false && (
+              <PanelModo>
+                <VolverBtn
+                  funcion={() => setStateModos(!stateModos)}
+                ></VolverBtn>
+                <span>Modo Super Admin</span>
+                <Btn1
+                  border="2px"
+                  funcion={loginGoogle}
+                  titulo="Google"
+                  color={(theme) => theme.bgtotal}
+                  icono={<v.iconogoogle />}
+                ></Btn1>
+                <Linea>
+                  <span>0</span>
+                </Linea>
+                <Btn1
+                  border="2px"
+                  funcion={manejadorEmailSesionTester}
+                  titulo="Invitado"
+                  bgcolor="#f6ce1c"
+                ></Btn1>
+              </PanelModo>
+            )}
       </div>
       <Footer></Footer>
     </Container>
@@ -149,4 +192,14 @@ const ContentLogo = styled.section`
   img {
     width: 10%;
   }
+`;
+const ContentModos = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`;
+const PanelModo = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 `;
