@@ -32,3 +32,12 @@ export async function MostrarStockAlmacenesYProducto(p) {
     throw new Error(error.message);
   }
 }
+export async function EditarStock(p, tipo) {
+  const { error } = await supabase.rpc(
+    tipo === "ingreso" ? "incrementarstock" : "reducirstock",
+    p,
+  );
+  if (error) {
+    throw new Error(error.message);
+  }
+}

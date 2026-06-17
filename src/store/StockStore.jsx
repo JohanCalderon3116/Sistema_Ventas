@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import {
+  EditarStock,
   InsertarStock,
   MostrarStockAlmacenesYProducto,
   MostrarStockAlmacenYProduct,
@@ -25,5 +26,8 @@ export const useStockStore = create((set) => ({
     const response = await MostrarStockAlmacenesYProducto(p);
     set({ dataStockXAlmacenesYProducto: response });
     return response;
+  },
+  editarStock: async (p, tipo) => {
+    await EditarStock(p, tipo);
   },
 }));

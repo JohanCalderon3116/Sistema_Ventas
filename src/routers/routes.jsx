@@ -21,6 +21,7 @@ import {
   Almacenes,
 } from "../index";
 import { Usuarios } from "../pages/Usuarios";
+import { Inventario } from "../pages/Inventario";
 
 export function Myroutes() {
   return (
@@ -39,6 +40,16 @@ export function Myroutes() {
           <Layout>
             <ProtectedRoute accesby="authenticated">
               <Configuraciones></Configuraciones>
+            </ProtectedRoute>
+          </Layout>
+        }
+      />
+      <Route
+        path="/inventario"
+        element={
+          <Layout>
+            <ProtectedRoute accesby="authenticated">
+              <Inventario></Inventario>
             </ProtectedRoute>
           </Layout>
         }
