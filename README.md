@@ -1,187 +1,297 @@
-# 🛒 SoftCreate POS
+<div align="center">
 
-> Sistema de punto de venta moderno, modular y escalable construido con React + Vite, Supabase y arquitectura atómica.
+<img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" />
+<img src="https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white" />
+<img src="https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white" />
+<img src="https://img.shields.io/badge/Zustand-FF6B35?style=for-the-badge&logo=react&logoColor=white" />
+<img src="https://img.shields.io/badge/.NET_8-512BD4?style=for-the-badge&logo=dotnet&logoColor=white" />
 
----
+<br/><br/>
 
-## 📋 Tabla de contenidos
+```
+  ____         __ _   ____                _         ____   ___  ____
+ / ___|  ___  / _| |_/ ___|_ __ ___  __ _| |_ ___  |  _ \ / _ \/ ___|
+ \___ \ / _ \| |_| __| |   | '__/ _ \/ _` | __/ _ \ | |_) | | | \___ \
+  ___) | (_) |  _| |_| |___| | |  __/ (_| | ||  __/ |  __/| |_| |___) |
+ |____/ \___/|_|  \__|\____|_|  \___|\__,_|\__\___| |_|    \___/|____/
+```
 
-- [Descripción general](#descripción-general)
-- [Stack tecnológico](#stack-tecnológico)
-- [Arquitectura del proyecto](#arquitectura-del-proyecto)
-- [Módulos del sistema](#módulos-del-sistema)
-- [Gestión de estado con Zustand](#gestión-de-estado-con-zustand)
-- [Comunicación con Supabase](#comunicación-con-supabase)
-- [Rutas protegidas](#rutas-protegidas)
-- [Servicio de impresión](#servicio-de-impresión)
-- [Instalación y configuración](#instalación-y-configuración)
-- [Variables de entorno](#variables-de-entorno)
+### Sistema de Punto de Venta Moderno · Modular · Escalable
 
----
+*Gestión de ventas, inventario, clientes y cajas desde una sola interfaz web*
 
-## 📌 Descripción general
+<br/>
 
-**SoftCreate POS** es una solución de punto de venta diseñada para pequeñas y medianas empresas. Permite gestionar ventas, productos, clientes, proveedores, sucursales, cajas e impresoras térmicas desde una interfaz web moderna y responsiva.
+[![Estado](https://img.shields.io/badge/Estado-En%20Producción-brightgreen?style=flat-square)](.)
+[![Licencia](https://img.shields.io/badge/Licencia-MIT-blue?style=flat-square)](.)
+[![Versión](https://img.shields.io/badge/Versión-1.0.0-purple?style=flat-square)](.)
 
-El sistema está construido bajo una arquitectura de componentes atómica (Atomic Design), lo que lo hace altamente mantenible, reutilizable y escalable.
-
----
-
-## ⚙️ Stack tecnológico
-
-| Tecnología | Uso |
-|---|---|
-| **React + Vite** | Framework principal y bundler |
-| **Supabase** | Base de datos, autenticación y storage |
-| **Zustand** | Gestión de estado global |
-| **TanStack Query** | Fetching, caché y sincronización de datos |
-| **Styled Components** | Estilos con soporte de temas dinámicos |
-| **React Router DOM** | Enrutamiento con rutas protegidas |
-| **Sonner** | Notificaciones toast |
-| **ASP.NET Core (NET 8)** | Microservicio de impresión térmica |
-| **FreeSpire.PDF** | Impresión directa de PDFs |
+</div>
 
 ---
 
-## 🗂️ Arquitectura del proyecto
+## ✦ ¿Qué es SoftCreate POS?
 
-El proyecto sigue **Atomic Design** combinado con una estructura por responsabilidad:
+**SoftCreate POS** es una solución de punto de venta diseñada para pequeñas y medianas empresas que necesitan control total sobre sus operaciones comerciales. Combina una interfaz web moderna con un microservicio de impresión local, logrando la flexibilidad de la nube con la velocidad de un sistema local.
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                        SOFTCREATE POS                       │
+│                                                             │
+│   ┌──────────┐   ┌──────────┐   ┌──────────┐              │
+│   │   POS    │   │Dashboard │   │Productos │              │
+│   │ Ventas   │   │Métricas  │   │Inventario│              │
+│   └──────────┘   └──────────┘   └──────────┘              │
+│                                                             │
+│   ┌──────────┐   ┌──────────┐   ┌──────────┐              │
+│   │Clientes  │   │Sucursales│   │Impresoras│              │
+│   │Proveed.  │   │  Cajas   │   │ Térmica  │              │
+│   └──────────┘   └──────────┘   └──────────┘              │
+│                                                             │
+│              [ Supabase · Zustand · React ]                 │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## ⚙️ Stack Tecnológico
+
+| Capa | Tecnología | Rol |
+|------|-----------|-----|
+| **Frontend** | React 18 + Vite | UI y bundler de alta velocidad |
+| **Base de datos** | Supabase (PostgreSQL) | DB, Auth y Storage en la nube |
+| **Estado global** | Zustand | Stores por módulo, ligeros y sin boilerplate |
+| **Caché & Fetching** | TanStack Query | Sincronización y caché automática de datos |
+| **Estilos** | Styled Components | Temas dinámicos (claro/oscuro) |
+| **Enrutamiento** | React Router DOM | Rutas protegidas por rol |
+| **Notificaciones** | Sonner | Toast elegantes y no intrusivos |
+| **Impresión** | ASP.NET Core (NET 8) | Microservicio de impresión térmica local |
+| **PDF** | FreeSpire.PDF | Impresión directa sin diálogos del SO |
+
+---
+
+## 🗂️ Arquitectura
+
+El proyecto aplica **Atomic Design** combinado con separación por responsabilidad. Cada capa tiene un rol claro y no invade la siguiente.
+
+```
 src/
-├── assets/                  # Imágenes, íconos y recursos estáticos
+├── assets/                  # Recursos estáticos
 ├── components/
-│   ├── atomos/              # Elementos base: Icono, Título, Línea, Lottie
-│   ├── moleculas/           # Combinaciones simples: Btn1, Spinner, ImageContent
-│   ├── organismos/          # Bloques complejos por módulo:
+│   ├── atomos/              # Icono, Título, Línea — sin dependencias internas
+│   ├── moleculas/           # Btn1, Spinner, ImageContent
+│   ├── organismos/          # Bloques de negocio por módulo
 │   │   ├── DashboardDesign/
-│   │   ├── EmpresaConfigDesign/
-│   │   ├── POSDesing/
+│   │   ├── POSDesign/
 │   │   ├── SucursalesDesign/
 │   │   ├── formularios/
 │   │   ├── sidebar/
 │   │   └── tablas/
 │   ├── templates/           # Layouts de página completos
-│   └── ui/                  # Componentes de UI reutilizables
+│   └── ui/                  # Botones, listas, toggles reutilizables
 │       ├── animated/
 │       ├── buttons/
 │       ├── lists/
-│       └── toogles/
+│       └── toggles/
 ├── context/                 # AuthContext con Supabase Auth
 ├── hooks/                   # Hooks personalizados
-├── pages/                   # Páginas (una por ruta)
-├── reports/                 # Generación de tickets y reportes PDF
-├── routers/                 # Definición de rutas protegidas
-├── store/                   # Stores de Zustand por módulo
-├── styles/                  # Temas, variables, keyframes y estilos globales
-├── supabase/                # Cliente y consultas por tabla
-├── utils/                   # Funciones utilitarias
-├── App.jsx
-├── index.js                 # Barrel de exportaciones
-└── main.jsx
-### Capas de la arquitectura
-
-**Átomos** — el elemento más pequeño e indivisible. No dependen de nada más del sistema.
-
-**Moléculas** — combinan átomos para formar elementos funcionales simples.
-
-**Organismos** — agrupan moléculas y átomos en bloques funcionales de negocio, organizados por módulo.
-
-**Templates** — definen el layout de cada página ensamblando organismos.
-
-**Pages** — componentes de una sola línea que solo invocan su template:
-```jsx
-export const Empresa = () => <EmpresaTemplate />;
+├── pages/                   # Una página = una línea de código
+├── reports/                 # Tickets y reportes PDF
+├── routers/                 # Rutas protegidas
+├── store/                   # Stores Zustand por módulo
+├── styles/                  # Temas, variables, keyframes
+├── supabase/                # Cliente + queries por tabla
+└── utils/                   # Funciones utilitarias
 ```
 
----
-
-## 📦 Módulos del sistema
-
-| Módulo | Descripción |
-|---|---|
-| **POS** | Punto de venta: carrito, pagos, descuentos |
-| **Dashboard** | Resumen de ventas y métricas |
-| **Productos** | CRUD de productos con categorías y marcas |
-| **Clientes / Proveedores** | Gestión de terceros |
-| **Métodos de pago** | Configuración de formas de pago con ícono |
-| **Sucursales y cajas** | Asignación de cajas por sucursal |
-| **Impresoras** | Configuración de impresoras térmicas por caja |
-| **Empresa** | Configuración básica y de moneda |
+> **Pages** son intencionalmente mínimas. Una página = un template:
+> ```jsx
+> export const Empresa = () => <EmpresaTemplate />;
+> ```
 
 ---
 
-## 🐻 Gestión de estado con Zustand
+## 📦 Módulos
 
-Cada módulo tiene su propio store en `src/store/`. Los stores encapsulan las llamadas a Supabase y exponen métodos y estado al resto de la app, combinados con **TanStack Query** para caché e invalidación automática.
+<table>
+<tr>
+<td width="50%">
+
+### 🛒 POS — Punto de Venta
+Carrito de compras, aplicación de descuentos, selección de método de pago e impresión de ticket al instante.
+
+### 📊 Dashboard
+Resumen de ventas del día, métricas por período y acceso rápido a las operaciones más frecuentes.
+
+### 📦 Productos
+CRUD completo con soporte de categorías, marcas, imágenes en Supabase Storage y control de precios.
+
+### 👥 Clientes & Proveedores
+Gestión de terceros con historial de transacciones y datos de contacto centralizados.
+
+</td>
+<td width="50%">
+
+### 💳 Métodos de Pago
+Configuración de formas de pago con nombre, ícono personalizado y estado activo/inactivo.
+
+### 🏢 Sucursales & Cajas
+Asignación de cajas por sucursal, apertura y cierre de turno con registro de movimientos.
+
+### 🖨️ Impresoras Térmicas
+Configuración de impresoras por caja con prueba de impresión y detección automática por red local.
+
+### 🏭 Empresa
+Configuración general: nombre, logo, moneda, datos fiscales y parámetros del sistema.
+
+</td>
+</tr>
+</table>
+
+---
+
+## 🐻 Gestión de Estado — Zustand
+
+Cada módulo tiene su propio store en `src/store/`, desacoplado del resto. Los stores encapsulan las llamadas a Supabase y se combinan con **TanStack Query** para caché e invalidación automática.
 
 ```js
+// Ejemplo: src/store/empresaStore.js
 export const useEmpresaStore = create((set) => ({
   dataempresa: [],
-  mostrarempresa: async (p) => {
-    const response = await MostrarEmpresaXidusuario(p);
+
+  mostrarempresa: async (idUsuario) => {
+    const response = await MostrarEmpresaXidusuario(idUsuario);
     set({ dataempresa: response });
     return response;
   },
-  editarEmpresa: async (p, fileold, filnew) => {
-    await EditarEmpresa(p, fileold, filnew);
+
+  editarEmpresa: async (data, logoAnterior, logoNuevo) => {
+    await EditarEmpresa(data, logoAnterior, logoNuevo);
   },
 }));
 ```
 
 ---
 
-## 🔌 Comunicación con Supabase
+## 🔌 Supabase — Tiempo Real
 
-El cliente se configura en `src/supabase/supabase.config.js`. Cada tabla tiene su propio archivo de consultas.
+El hook `useSupabaseSubscription` escucha cambios en la base de datos e invalida automáticamente la caché de TanStack Query, manteniendo la UI siempre sincronizada sin recargar.
 
-El hook `useSupabaseSubscription` escucha cambios en tiempo real e invalida automáticamente la caché de TanStack Query.
-
-Las imágenes se almacenan en Supabase Storage bajo el bucket `imagenes`, con rutas por módulo: `imagenes/metodospago/{id}`, `imagenes/empresa/{id}`.
+```
+Cliente React
+     │
+     ├──► Supabase Realtime ──► Cambio en DB ──► Invalida caché TanStack Query
+     │
+     └──► Supabase Storage  ──► imagenes/empresa/{id}
+                                imagenes/metodospago/{id}
+```
 
 ---
 
-## 🔐 Rutas protegidas
+## 🖨️ Microservicio de Impresión
 
-`ProtectedRoute` controla el acceso según el estado de autenticación. Soporta dos modos: `authenticated` y `non-authenticated`. La autenticación usa `supabase.auth.onAuthStateChange` con login por Google vía OAuth.
-
----
-
-## 🖨️ Servicio de impresión
-
-Microservicio local en **ASP.NET Core (NET 8)** para impresión directa en impresoras térmicas sin cuadro de diálogo. Corre como Windows Service en el equipo del cajero.
+Servicio local en **ASP.NET Core NET 8** instalado como Windows Service en el equipo del cajero. Permite imprimir tickets en impresoras térmicas **sin ningún diálogo del sistema operativo**.
 
 | Método | Endpoint | Descripción |
-|---|---|---|
-| GET | `/api/list` | Lista las impresoras instaladas |
-| GET | `/api/pc` | Retorna nombre del PC e IP local |
-| POST | `/api/print_ticket` | Recibe un PDF y lo imprime |
+|--------|----------|-------------|
+| `GET` | `/api/list` | Lista impresoras instaladas en el PC |
+| `GET` | `/api/pc` | Retorna nombre del equipo e IP local |
+| `POST` | `/api/print_ticket` | Recibe un PDF base64 y lo imprime directamente |
+
+```
+POS Web App ──► POST /api/print_ticket ──► Windows Service ──► 🖨️ Impresora Térmica
+                      (PDF base64)            (ASP.NET 8)         (sin diálogos)
+```
 
 ---
 
-## 🚀 Instalación y configuración
+## 🔐 Autenticación & Rutas Protegidas
+
+- Login con **Google OAuth** vía Supabase Auth
+- `ProtectedRoute` controla el acceso según estado de sesión
+- Dos modos: `authenticated` y `non-authenticated`
+- Estado de sesión persistido con `supabase.auth.onAuthStateChange`
+
+---
+
+## 🚀 Instalación
+
+### Prerrequisitos
+
+- Node.js 18+
+- Una cuenta en [Supabase](https://supabase.com) con proyecto creado
+
+### Pasos
 
 ```bash
+# 1. Clonar el repositorio
 git clone https://github.com/tu-usuario/softcreate-pos.git
 cd softcreate-pos
+
+# 2. Instalar dependencias
 npm install
+
+# 3. Configurar variables de entorno
 cp .env.example .env.local
+
+# 4. Levantar en desarrollo
 npm run dev
 ```
 
 ---
 
-## 🔑 Variables de entorno
+## 🔑 Variables de Entorno
+
+Crea un archivo `.env.local` en la raíz del proyecto con las siguientes variables:
 
 ```env
+# Supabase
 VITE_SUPABASE_URL=https://xxxxxxxxxxxx.supabase.co
 VITE_SUPABASE_PUBLISHABLE_DEFAULT_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
----
-
-## 🎨 Sistema de temas
-
-Tema claro y oscuro gestionado con Zustand (`ThemeStore`) y aplicado globalmente con `ThemeProvider` de Styled Components. Definido en `src/styles/`.
+> ⚠️ **Nunca** subas tu archivo `.env.local` al repositorio. Está incluido en `.gitignore` por defecto.
 
 ---
 
-<p align="center">Desarrollado con 💜 por el equipo SoftCreate</p>
+## 🎨 Sistema de Temas
+
+Tema claro y oscuro gestionado con Zustand (`ThemeStore`) y aplicado globalmente mediante `ThemeProvider` de Styled Components. Los tokens de color, tipografía y espaciado están centralizados en `src/styles/`.
+
+```js
+// Cambio de tema en cualquier componente
+const { theme, toggleTheme } = useThemeStore();
+```
+
+---
+
+## 📁 Estructura de Storage
+
+Las imágenes se almacenan en Supabase Storage bajo el bucket `imagenes`:
+
+```
+imagenes/
+├── empresa/
+│   └── {id_empresa}/logo.webp
+└── metodospago/
+    └── {id_metodo}/icon.webp
+```
+
+---
+
+<div align="center">
+
+### ¿Encontraste un bug o tienes una idea?
+
+[![Issues](https://img.shields.io/badge/Abrir%20un%20Issue-red?style=for-the-badge&logo=github)](https://github.com/tu-usuario/softcreate-pos/issues)
+[![Pull Requests](https://img.shields.io/badge/Contribuir-blue?style=for-the-badge&logo=github)](https://github.com/tu-usuario/softcreate-pos/pulls)
+
+<br/>
+
+---
+
+Desarrollado con 💜 por el equipo **SoftCreate**
+
+*Hecho en Colombia 🇨🇴 para el mundo*
+
+</div>
