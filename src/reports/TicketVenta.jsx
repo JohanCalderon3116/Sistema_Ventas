@@ -1,72 +1,84 @@
-import { urlToBase64 } from "../utils/Conversiones";
+import { useQuery } from "@tanstack/react-query";
+import { ConvertirCapitalize, urlToBase64 } from "../utils/Conversiones";
 import createPdf from "../utils/CreatePdf";
+import { useVentasStore } from "../store/VentasStore";
+import { useDetalleVentasStore } from "../store/DetalleVentasStore";
+import { FormatearNumeroDinero } from "../utils/Conversiones";
+import writtenNumber from "written-number";
+writtenNumber.defaults.lang = "es";
 const TicketVenta = async (output, data) => {
+  // función fuera del content
+  const filasPago = () => {
+    const filas = [];
+
+    if (data.tipo_de_pago === "Efectivo" || data.tipo_de_pago === "Mixto") {
+      filas.push([
+        { text: "EFECTIVO: $", style: "tTotals", colSpan: 2 },
+        {},
+        {
+          text: `${FormatearNumeroDinero(data.monto_total, "COP", "CO")}`,
+          style: "tTotals",
+          colSpan: 2,
+        },
+        {},
+      ]);
+    }
+
+    if (data.tipo_de_pago === "Credito" || data.tipo_de_pago === "Mixto") {
+      filas.push([
+        { text: "CREDITO: $", style: "tTotals", colSpan: 2 },
+        {},
+        {
+          text: `${FormatearNumeroDinero(data.monto_total, "COP", "CO")}`,
+          style: "tTotals",
+          colSpan: 2,
+        },
+        {},
+      ]);
+    }
+
+    if (data.tipo_de_pago === "Tarjeta" || data.tipo_de_pago === "Mixto") {
+      filas.push([
+        { text: "TARJETA: $", style: "tTotals", colSpan: 2 },
+        {},
+        {
+          text: `${FormatearNumeroDinero(data.monto_total, "COP", "CO")}`,
+          style: "tTotals",
+          colSpan: 2,
+        },
+        {},
+      ]);
+    }
+
+    return filas;
+  };
   const logoempresa = await urlToBase64(data.logo);
   const productTableBody = [
+    // encabezados
     [
-      {
-        text: "CODIGO - DESCRIPCION",
-        colSpan: 4,
-        style: "tProductsHeader",
-      },
-      {},
-      {},
-      {},
+      { text: "CANT.", style: "tProductsHeader" },
+      { text: "DESCRIPCION", style: "tProductsHeader", alignment: "center" },
+      { text: "PRECIO UNIT", style: "tProductsHeader", alignment: "right" },
+      { text: "TOTAL", style: "tProductsHeader", alignment: "right" },
     ],
-    [
+    // productos
+    ...data.productos.map((item) => [
+      { text: `${item.cantidad}`, style: "tProductsBody", alignment: "center" },
       {
-        text: "CANT.",
-        style: "tProductsHeader",
-      },
-      {
-        text: "UM",
-        style: "tProductsHeader",
+        text: `${ConvertirCapitalize(item.descripcion)}`,
+        style: "tProductsBody",
         alignment: "center",
       },
       {
-        text: "PRECIO",
-        style: "tProductsHeader",
+        text: `${FormatearNumeroDinero(item.precio_venta, "COP", "CO")}`,
+        style: "tProductsBody",
         alignment: "right",
       },
       {
-        text: "TOTAL",
-        style: "tProductsHeader",
+        text: `${FormatearNumeroDinero(item.total, "COP", "CO")}`,
+        style: "tProductsBody",
         alignment: "right",
       },
-    ],
-    ...data.productos.flatMap((item) => [
-      [
-        {
-          text: ` "CODIGO" - ${item._descripcion} `,
-          style: "tProductsBody",
-          colSpan: 4,
-        },
-        {},
-        {},
-        {},
-      ],
-      [
-        {
-          text: `${item._cantidad}`,
-          style: "tProductsBody",
-          alignment: "center",
-        },
-        {
-          text: "UNIDAD",
-          style: "tProductsBody",
-          alignment: "center",
-        },
-        {
-          text: `${item._precio_venta}`,
-          style: "tProductsBody",
-          alignment: "right",
-        },
-        {
-          text: `${item._total}`,
-          style: "tProductsBody",
-          alignment: "right",
-        },
-      ],
     ]),
   ];
   const content = [
@@ -82,20 +94,19 @@ const TicketVenta = async (output, data) => {
       margin: [0, 10, 0, 0],
     },
     {
-      text: "DIRECCIÓN",
+      text: `${data.direccion_empresa}`,
       style: "header",
     },
     {
-      text: "RIC EMPRESA",
+      text: `${data.pais}`,
       style: "header",
     },
     {
-      text: "FACTURA ELECTRONICA",
+      text: "# FACTURA",
       style: "header",
-      margin: [0, 10, 0, 2.25],
     },
     {
-      text: "F001-000001",
+      text: `${data.id_venta}`,
       style: "header",
       margin: [0, 2.25, 0, 2.25],
     },
@@ -112,18 +123,7 @@ const TicketVenta = async (output, data) => {
           [
             { text: "CAJERO/A", style: "tHeaderLabel" },
             {
-              text: "NOMBRE CAJERO",
-              style: " tHeaderValue",
-              fontSize: 8,
-              colSpan: 3,
-            },
-            {},
-            {},
-          ],
-          [
-            { text: "VENDEDOR", style: "tHeaderLabel" },
-            {
-              text: "NOMBRE VENDEDOR",
+              text: `${data.nombre_usuario}`,
               style: " tHeaderValue",
               fontSize: 8,
               colSpan: 3,
@@ -161,7 +161,7 @@ const TicketVenta = async (output, data) => {
               style: "tClientLabel",
             },
             {
-              text: "1081274697",
+              text: `${data.cc}`,
               style: "tClientValue",
               colSpan: 3,
             },
@@ -174,7 +174,7 @@ const TicketVenta = async (output, data) => {
               style: "tClientLabel",
             },
             {
-              text: `${data.direccion}`,
+              text: `${data.direccion_cliente}`,
               style: "tClientValue",
               colSpan: 3,
             },
@@ -219,21 +219,7 @@ const TicketVenta = async (output, data) => {
             },
             {},
             {
-              text: "45",
-              style: "tTotals",
-              colSpan: 2,
-            },
-            {},
-          ],
-          [
-            {
-              text: "IVA: $",
-              style: "tTotals",
-              colSpan: 2,
-            },
-            {},
-            {
-              text: "45",
+              text: `${FormatearNumeroDinero(data.monto_total, "COP", "CO")}`,
               style: "tTotals",
               colSpan: 2,
             },
@@ -247,13 +233,13 @@ const TicketVenta = async (output, data) => {
             },
             {},
             {
-              text: `${data.monto_total}`,
+              text: `${FormatearNumeroDinero(data.monto_total, "COP", "CO")}`,
               style: "tTotals",
               colSpan: 2,
             },
             {},
           ],
-          //Total en letras
+          // Total en letras
           [
             {
               text: "IMPORTE LETRAS",
@@ -268,7 +254,7 @@ const TicketVenta = async (output, data) => {
           ],
           [
             {
-              text: "SON CUARENTA Y CINCO",
+              text: `SON ${writtenNumber(data.monto_total).toUpperCase()} PESOS`,
               style: "tProductsBody",
               colSpan: 4,
             },
@@ -301,53 +287,26 @@ const TicketVenta = async (output, data) => {
           ],
           [
             {
-              text: "EFECTIVO: $",
+              text: "FORMA DE PAGO: ",
               style: "tTotals",
               colSpan: 2,
             },
             {},
             {
-              text: `${data.efectivo}`,
+              text: `${data.tipo_de_pago}`,
               style: "tTotals",
               colSpan: 2,
             },
             {},
           ],
-          [
-            {
-              text: "CREDITO: $",
-              style: "tTotals",
-              colSpan: 2,
-            },
-            {},
-            {
-              text: `${data.credito}`,
-              style: "tTotals",
-              colSpan: 2,
-            },
-            {},
-          ],
-          [
-            {
-              text: "TARJETA: $",
-              style: "tTotals",
-              colSpan: 2,
-            },
-            {},
-            {
-              text: `${data.tarjeta}`,
-              style: "tTotals",
-              colSpan: 2,
-            },
-            {},
-          ],
+          ...filasPago(),
         ],
       },
       layout: "noBorders",
     },
     //Pie de pagina
     {
-      text: "¡GRACIAS POR NAVEGAR CON NOSOTROS! EN SURTITODO EL BARCO ENCUENTRAS DE TODO PARA TU HOGAR. CONSERVE ESTE TICKET PARA CUALQUIER CAMBIO O RECLAMACIÓN. LOS CAMBIOS SE REALIZAN DENTRO DE LOS 3 DÍAS SIGUIENTES A LA COMPRA EN PERFECTO ESTADO. ¡VUELVA PRONTO! SOFTCREATE",
+      text: `${data.pie_pagina} SoftCrate POS`,
       style: "text",
       alignment: "justify",
       margin: [0, 5],
@@ -356,8 +315,7 @@ const TicketVenta = async (output, data) => {
     {
       stack: [
         {
-          // Aquí concatenamos los datos de la venta para que el QR sea único
-          qr: `Factura: F001-000001\nCliente: Generico\nTotal: $45`,
+          qr: `Factura: ${data.id_venta}\nCliente: ${data.nombre_cliente}\nTotal: ${FormatearNumeroDinero(data.monto_total, "COP", "CO")}`,
           fit: 130,
           alignment: "center",
           margin: [0, 10, 0, 3],
@@ -370,8 +328,8 @@ const TicketVenta = async (output, data) => {
           margin: [0, 2, 0, 0],
         },
         {
-          text: "\nWhatsApp: https://wa.me/573000000000?text=Hola%20Surtitodo%20El%20Barco!%20Tengo%20una%20duda%20con%20mi%20compra%20F001-000001",
-          link: "\nWhatsApp: https://wa.me/573000000000?text=Hola%20Surtitodo%20El%20Barco!%20Tengo%20una%20duda%20con%20mi%20compra%20F001-000001",
+          text: `WhatsApp: wa.me/573116025328`,
+          link: `https://wa.me/573116025328?text=Hola!%20Tengo%20una%20duda%20con%20mi%20compra%20%23${data.id_venta}`,
           style: "link",
         },
       ],
