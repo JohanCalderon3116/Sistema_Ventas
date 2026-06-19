@@ -24,7 +24,19 @@ import { useCajasStore } from "../../../store/CajaStore";
 import { useMovCajaStore } from "../../../store/MovCajaStore";
 import { useFormattedDate } from "../../../hooks/useFormattedDate";
 import { useAsignacionCajaSucursalesStore } from "../../../store/AsignacionCajaSucursales";
+import { RegistrarInventario } from "../formularios/RegistrarInventario";
+import { RegistrarmovimientocreditoVenta } from "../formularios/RegistrarmovimientocreditoVenta";
+import { InsertarMovimientosCreditos } from "../../../supabase/crudMovimientosCreditos";
+import { Linea } from "../../atomos/Linea";
 export const IngresoCobro = forwardRef((props, ref) => {
+  const [openRegistro, setOpenRegistro] = useState(false);
+  const [dataSelect, setDataSelect] = useState([]);
+  const [isExploding, setIsExploding] = useState(false);
+  function nuevoRegistro() {
+    setOpenRegistro(!openRegistro);
+    setDataSelect([]);
+    setIsExploding(false);
+  }
   const queryClient = useQueryClient();
   const fechaActual = useFormattedDate();
   const {
@@ -146,27 +158,27 @@ export const IngresoCobro = forwardRef((props, ref) => {
         monto_total: total,
       };
 
-        const result = await confirmarVenta(pventas);
-        if (result?.id > 0) {
-          //Insertar movimiento de caja, solo los metodos de pago con mayor a cero
-          for (const [tipo, monto] of Object.entries(valoresPago)) {
-            if (monto > 0) {
-              const metodoPago = dataMetodosPago.find(
-                (item) => item.nombre === tipo,
-              );
-              const pmovcaja = {
-                tipo_movimiento: "ingreso",
-                monto: monto,
-                id_metodo_pago: metodoPago?.id,
-                descripcion: `Pago de venta con ${tipo} `,
-                id_usuario: datausuarios?.id,
-                id_cierre_caja: dataCierreCaja?.id,
-                id_venta: result?.id,
-                vuelto: tipo === "Efectivo" ? vuelto : 0,
-              };
-              await insertarMovcaja(pmovcaja);
-            }
+      const result = await confirmarVenta(pventas);
+      if (result?.id > 0) {
+        //Insertar movimiento de caja, solo los metodos de pago con mayor a cero
+        for (const [tipo, monto] of Object.entries(valoresPago)) {
+          if (monto > 0) {
+            const metodoPago = dataMetodosPago.find(
+              (item) => item.nombre === tipo,
+            );
+            const pmovcaja = {
+              tipo_movimiento: "ingreso",
+              monto: monto,
+              id_metodo_pago: metodoPago?.id,
+              descripcion: `Pago de venta con ${tipo} `,
+              id_usuario: datausuarios?.id,
+              id_cierre_caja: dataCierreCaja?.id,
+              id_venta: result?.id,
+              vuelto: tipo === "Efectivo" ? vuelto : 0,
+            };
+            await insertarMovcaja(pmovcaja);
           }
+        }
       }
     } else {
       toast.warning("Falta completar el pago, el restante tiene que ser cero");
@@ -194,23 +206,38 @@ export const IngresoCobro = forwardRef((props, ref) => {
         <>
           {mutation.isError && <span>Error: {mutation.error.message} </span>}
           <section className="area1">
+            {openRegistro && (
+              <ContentReg>
+                <RegistrarmovimientocreditoVenta
+                  onClose={() => setOpenRegistro(!openRegistro)}
+                ></RegistrarmovimientocreditoVenta>
+              </ContentReg>
+            )}
             <span className="tipocobro"> {tipocobro} </span>
-            <Icon
-              icon="fluent-emoji:smiling-face-with-sunglasses"
-              width="20"
-              height="20"
-            ></Icon>
-            <span>Cliente</span>
-            <EditButton
-              onClick={() => setStateBuscadorClientes(!stateBuscadorClientes)}
-            >
-              <Icon
-                className="icono"
-                icon="line-md:pencil-twotone"
-                width="24"
-                height="24"
-              />
-            </EditButton>
+            {tipocobro !== "Credito" ? (
+              <>
+                <Icon
+                  icon="fluent-emoji:smiling-face-with-sunglasses"
+                  width="20"
+                  height="20"
+                ></Icon>
+                <span>Cliente</span>
+                <EditButton
+                  onClick={() =>
+                    setStateBuscadorClientes(!stateBuscadorClientes)
+                  }
+                >
+                  <Icon
+                    className="icono"
+                    icon="line-md:pencil-twotone"
+                    width="24"
+                    height="24"
+                  />
+                </EditButton>
+              </>
+            ) : (
+              ""
+            )}
             <span className="cliente"> {cliproItemSelect?.nombres} </span>
           </section>
           <section className="area2">
@@ -271,14 +298,36 @@ export const IngresoCobro = forwardRef((props, ref) => {
             </article>
           </section>
           <section className="area4">
-            <Btn1
-              funcion={() => mutation.mutateAsync()}
-              border="2px"
-              titulo="Cobrar (Enter)"
-              bgcolor="#0aca21"
-              color="#ffffff"
-              width="100%"
-            ></Btn1>
+            {tipocobro === "Credito" ? (
+              <>
+                <Btn1
+                  border="2px"
+                  titulo="¿Fiado? Presiona :p"
+                  bgcolor="#ddd319"
+                  color="#ffffff"
+                  width="100%"
+                  funcion={() => setOpenRegistro(!openRegistro)}
+                ></Btn1>
+                <Linea></Linea>
+                <Btn1
+                  funcion={() => mutation.mutateAsync()}
+                  border="2px"
+                  titulo="Cobrar (Enter)"
+                  bgcolor="#0aca21"
+                  color="#ffffff"
+                  width="100%"
+                ></Btn1>
+              </>
+            ) : (
+              <Btn1
+                funcion={() => mutation.mutateAsync()}
+                border="2px"
+                titulo="Cobrar (Enter)"
+                bgcolor="#0aca21"
+                color="#ffffff"
+                width="100%"
+              ></Btn1>
+            )}
           </section>
           {stateBuscadorClientes && (
             <PanelBuscador
@@ -400,4 +449,7 @@ const EditButton = styled.button`
   .icono {
     font-size: 20px;
   }
+`;
+const ContentReg = styled.div`
+  color: ${({ theme }) => theme.color3};
 `;

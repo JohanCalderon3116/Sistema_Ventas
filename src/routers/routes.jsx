@@ -24,6 +24,7 @@ import { Usuarios } from "../pages/Usuarios";
 import { Inventario } from "../pages/Inventario";
 import { ConfiguracionTicket } from "../pages/ConfiguracionTicket";
 import { Perfil } from "../pages/Perfil";
+import { Creditos } from "../pages/Creditos";
 
 export function Myroutes() {
   return (
@@ -82,6 +83,16 @@ export function Myroutes() {
           <Layout>
             <ProtectedRoute accesby="authenticated">
               <Marca></Marca>
+            </ProtectedRoute>
+          </Layout>
+        }
+      />
+      <Route
+        path="/configuracion/creditos"
+        element={
+          <Layout>
+            <ProtectedRoute accesby="authenticated">
+              <Creditos></Creditos>
             </ProtectedRoute>
           </Layout>
         }

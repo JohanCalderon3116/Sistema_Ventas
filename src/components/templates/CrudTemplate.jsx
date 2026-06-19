@@ -15,7 +15,6 @@ export const CrudTemplate = ({
   selectBuscadorList,
   setBuscadorList,
 }) => {
-  const i = 5;
   const [openRegistro, setOpenRegistro] = useState(false);
   const [accion, setAccion] = useState("");
   const [dataSelect, setDataSelect] = useState([]);

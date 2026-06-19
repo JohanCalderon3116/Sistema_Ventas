@@ -35,7 +35,7 @@ export const PantallaAperturaCaja = () => {
       id_cierre_caja: p.id_cierre_caja,
     };
     await insertarMovcaja(pmovcaja);
-    console.log(pmovcaja)
+    console.log(pmovcaja);
   };
 
   const insertar = async () => {
@@ -62,7 +62,7 @@ export const PantallaAperturaCaja = () => {
   });
   return (
     <Container>
-      <Toaster richColors position="top-center"></Toaster>
+      <Toaster richColors></Toaster>
       <section className="area1">
         <span className="title">Aperturar caja con: </span>
         <InputText2>

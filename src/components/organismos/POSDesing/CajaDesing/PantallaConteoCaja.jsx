@@ -82,7 +82,7 @@ export const PantallaConteoCaja = () => {
   const anuncioColor = diferencia === 0 ? "#09bc42" : "#ff3f56";
   return (
     <Container>
-      <Toaster richColors position="top-center"></Toaster>
+      <Toaster richColors></Toaster>
       <VolverBtn funcion={() => setStateConteoCaja(false)}></VolverBtn>
       <span className="title">Efectivo esperado en caja</span>
       <span className="title">
