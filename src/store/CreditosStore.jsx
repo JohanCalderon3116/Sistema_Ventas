@@ -22,7 +22,7 @@ export const useCreditosStore = create((set) => ({
   mostrarCreditos: async (p) => {
     const response = await MostrarCreditos(p);
     set({ datacreditos: response });
-    set({ creditosItemSelect: response[0] });
+    set({ creditosItemSelect: response });
     return response;
   },
   buscarCreditos: async (p) => {

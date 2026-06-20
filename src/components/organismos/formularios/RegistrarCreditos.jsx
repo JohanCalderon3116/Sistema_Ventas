@@ -68,6 +68,7 @@ export function RegistrarCreditos({ onClose, dataSelect, setIsExploding }) {
     const p = {
       id_cliente: cliproItemSelect?.id,
       cupo_maximo: data.cupo_maximo,
+      credito_disponible: data.cupo_maximo,
     };
     await insertarCredito(p);
   }

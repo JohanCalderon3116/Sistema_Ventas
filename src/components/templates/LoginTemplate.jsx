@@ -14,15 +14,35 @@ import { v } from "../../styles/variables";
 import { Device } from "../../styles/breakpoints";
 import cart from "../../assets/add to cart.json";
 import { useForm } from "react-hook-form";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast, Toaster } from "sonner";
 import { useState } from "react";
 import { CardModos } from "../organismos/LoginDesing/CardModos";
+import { useContraseñaStore } from "../../store/ContraseñaStore";
 export const LoginTemplate = () => {
   const [stateModos, setStateModos] = useState(true);
   const [stateModo, setStateModo] = useState("empleado");
+  const [contraseñaOk, setContraseñaOk] = useState(false);
+  const [inputContraseña, setInputContraseña] = useState("");
   const { loginGoogle, loginEmail, crearUserYLogin } = useAuthStore();
+  const { mostrarContraseña, dataContraseña } = useContraseñaStore();
   const { register, handleSubmit } = useForm();
+  useQuery({
+    queryKey: ["mostrar contraseña"],
+    queryFn: mostrarContraseña,
+  });
+
+  const validarContraseña = () => {
+    const data = dataContraseña;
+    const contraseñaReal = data[0]?.contraseña;
+
+    if (Number(inputContraseña) === contraseñaReal) {
+      setContraseñaOk(true);
+      toast.success("Contraseña correcta, entrando al modo SuperAdmin");
+    } else {
+      toast.error("Contraseña incorrecta");
+    }
+  };
   const { mutate } = useMutation({
     mutationKey: ["iniciar sesion con email"],
     mutationFn: loginEmail,
@@ -130,22 +150,43 @@ export const LoginTemplate = () => {
                   funcion={() => setStateModos(!stateModos)}
                 ></VolverBtn>
                 <span>Modo Super Admin</span>
-                <Btn1
-                  border="2px"
-                  funcion={loginGoogle}
-                  titulo="Google"
-                  color={(theme) => theme.bgtotal}
-                  icono={<v.iconogoogle />}
-                ></Btn1>
-                <Linea>
-                  <span>0</span>
-                </Linea>
-                <Btn1
-                  border="2px"
-                  funcion={manejadorEmailSesionTester}
-                  titulo="Invitado"
-                  bgcolor="#f6ce1c"
-                ></Btn1>
+                {!contraseñaOk ? (
+                  <>
+                    <InputText2>
+                      <input
+                        className="form__field"
+                        placeholder="Contraseña de acceso"
+                        type="password"
+                        value={inputContraseña}
+                        onChange={(e) => setInputContraseña(e.target.value)}
+                      />
+                    </InputText2>
+                    <Btn1
+                      titulo="Verificar"
+                      funcion={validarContraseña}
+                      width="100%"
+                    />
+                  </>
+                ) : (
+                  <>
+                    <Btn1
+                      border="2px"
+                      funcion={loginGoogle}
+                      titulo="Google"
+                      color={(theme) => theme.bgtotal}
+                      icono={<v.iconogoogle />}
+                    />
+                    <Linea>
+                      <span>O</span>
+                    </Linea>
+                    <Btn1
+                      border="2px"
+                      funcion={manejadorEmailSesionTester}
+                      titulo="Invitado"
+                      bgcolor="#f6ce1c"
+                    />
+                  </>
+                )}
               </PanelModo>
             )}
       </div>

@@ -35,7 +35,7 @@ export function RegistrarmovimientocreditoVenta({ onClose }) {
     creditosItemSelect,
     setCreditosItemSelect,
     mostrarCreditos,
-    setBuscador: setBuscadorCategorias,
+    setBuscador: setBuscadorCreditos,
     buscarCreditos,
     buscador: buscadorCreditos,
     datacreditos,
@@ -144,7 +144,7 @@ export function RegistrarmovimientocreditoVenta({ onClose }) {
                 data={datacreditos}
                 onSelect={setCreditosItemSelect}
                 itemSelect={creditosItemSelect}
-                setBuscador={setBuscadorCategorias}
+                setBuscador={setBuscadorCreditos}
                 displayField="nombres"
               ></BuscadorList>
               <span>
