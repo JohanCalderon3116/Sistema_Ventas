@@ -1,8 +1,16 @@
 import { create } from "zustand";
-import { InsertarCredito, MostrarCreditos } from "../supabase/crudCreditos";
+import {
+  BuscarCreditos,
+  InsertarCredito,
+  MostrarCreditos,
+} from "../supabase/crudCreditos";
 
 export const useCreditosStore = create((set) => ({
   datacreditos: [],
+  buscador: "",
+  setBuscador: (p) => {
+    set({ buscador: p });
+  },
   creditosItemSelect: null,
   setCreditosItemSelect: (p) => {
     set({ creditosItemSelect: p });
@@ -15,6 +23,11 @@ export const useCreditosStore = create((set) => ({
     const response = await MostrarCreditos(p);
     set({ datacreditos: response });
     set({ creditosItemSelect: response[0] });
+    return response;
+  },
+  buscarCreditos: async (p) => {
+    const response = await BuscarCreditos(p);
+    set({ datacreditos: response });
     return response;
   },
 }));

@@ -19,7 +19,7 @@ import { TablaCreditos } from "../organismos/tablas/TablaCreditos";
 import { useQuery } from "@tanstack/react-query";
 import { useCreditosStore } from "../../store/CreditosStore";
 export const CreditosTemplate = () => {
-  const { dataclipro, setBuscador } = useClientesProveedoresStore();
+  const { setBuscador, buscador, buscarCreditos } = useCreditosStore();
   const [openRegistro, setOpenRegistro] = useState(false);
   const [openRegistroAgregar, setOpenRegistroAgregar] = useState(false);
   const [accion, setAccion] = useState("");
@@ -40,13 +40,20 @@ export const CreditosTemplate = () => {
     setIsExplodingAgregar(false);
   }
   const { dataempresa } = useEmpresaStore();
-  const { data, isLoading } = useQuery({
+  const { isLoading } = useQuery({
     queryKey: ["mostrar creditos", { id_empresa: dataempresa?.id }],
     queryFn: () =>
       mostrarCreditos({
         id_empresa: dataempresa?.id,
       }),
     enabled: !!dataempresa?.id,
+  });
+  useQuery({
+    queryKey: ["buscar creditos", buscador],
+    queryFn: () =>
+      buscarCreditos({ id_empresa: dataempresa?.id, nombres: buscador }),
+    enabled: !!dataempresa,
+    refetchOnWindowFocus: false,
   });
   if (isLoading) {
     return <Spinner1></Spinner1>;
@@ -89,7 +96,7 @@ export const CreditosTemplate = () => {
       <section className="main">
         {isExploding && <Confetti></Confetti>}
         <TablaCreditos
-          data={data || []}
+          data={datacreditos || []}
           SetopenRegistro={setOpenRegistro}
           setdataSelect={setDataSelect}
         ></TablaCreditos>{" "}

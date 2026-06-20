@@ -31,8 +31,16 @@ export function RegistrarmovimientocreditoVenta({ onClose }) {
   const fechaactual = useFormattedDate();
   const { dataempresa } = useEmpresaStore();
   const { insertarMovStock, tipo, setTipo } = useMovStockStore();
-  const { creditosItemSelect, setCreditosItemSelect, mostrarCreditos } =
-    useCreditosStore();
+  const {
+    creditosItemSelect,
+    setCreditosItemSelect,
+    mostrarCreditos,
+    setBuscador: setBuscadorCategorias,
+    buscarCreditos,
+    buscador: buscadorCreditos,
+    datacreditos,
+  } = useCreditosStore();
+  const {} = useCreditosStore();
   const fecha = useFormattedDate();
   const { insertarMovimientosCreditos } = useMovimientosCreditosStore();
   const {
@@ -69,6 +77,16 @@ export function RegistrarmovimientocreditoVenta({ onClose }) {
       mostrarCreditos({
         id_empresa: dataempresa?.id,
       }),
+  });
+  useQuery({
+    queryKey: ["buscar creditos", buscadorCreditos],
+    queryFn: () =>
+      buscarCreditos({
+        id_empresa: dataempresa?.id,
+        nombres: buscadorCreditos,
+      }),
+    enabled: !!dataempresa,
+    refetchOnWindowFocus: false,
   });
 
   const insertar = async (data) => {
@@ -122,12 +140,13 @@ export function RegistrarmovimientocreditoVenta({ onClose }) {
 
           <form className="formulario" onSubmit={handleSubmit(handlesub)}>
             <section className="form-subcontainer">
-              <SelectList
-                data={dataCreditos}
-                itemSelect={creditosItemSelect}
+              <BuscadorList
+                data={datacreditos}
                 onSelect={setCreditosItemSelect}
+                itemSelect={creditosItemSelect}
+                setBuscador={setBuscadorCategorias}
                 displayField="nombres"
-              ></SelectList>
+              ></BuscadorList>
               <span>
                 Nombre:{" "}
                 <strong>

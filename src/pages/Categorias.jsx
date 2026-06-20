@@ -16,7 +16,7 @@ export const Categorias = () => {
     enabled: !!dataempresa,
     refetchOnWindowFocus: false,
   });
-  const {} = useQuery({
+  useQuery({
     queryKey: ["buscar categorias", buscador],
     queryFn: () =>
       buscarCategorias({ id_empresa: dataempresa?.id, descripcion: buscador }),
