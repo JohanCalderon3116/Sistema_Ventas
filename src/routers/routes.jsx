@@ -19,6 +19,7 @@ import {
   SucursalesCaja,
   Impresoras,
   Almacenes,
+  SerializacionComprobantes,
 } from "../index";
 import { Usuarios } from "../pages/Usuarios";
 import { Inventario } from "../pages/Inventario";
@@ -196,6 +197,16 @@ export function Myroutes() {
           <Layout>
             <ProtectedRoute accesby="authenticated">
               <Impresoras></Impresoras>
+            </ProtectedRoute>
+          </Layout>
+        }
+      />
+      <Route
+        path="/configuracion/serealizacion"
+        element={
+          <Layout>
+            <ProtectedRoute accesby="authenticated">
+              <SerializacionComprobantes></SerializacionComprobantes>
             </ProtectedRoute>
           </Layout>
         }

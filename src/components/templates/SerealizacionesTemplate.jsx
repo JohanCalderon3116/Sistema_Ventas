@@ -1,10 +1,11 @@
 import styled from "styled-components";
-import { Btn1, Buscador, Title } from "../../index";
+import { Btn1, Buscador, Title, useGlobalStore } from "../../index";
 import { v } from "../../styles/variables";
 import { useState } from "react";
 import Confetti from "react-confetti-boom";
 import { BuscadorList } from "../ui/lists/Buscador";
-export const CrudTemplate = ({
+import { Toaster } from "sonner";
+export const SerealizacionesTemplate = ({
   Formularioregistro,
   title,
   Table,
@@ -17,24 +18,26 @@ export const CrudTemplate = ({
   stateBtnAdd,
   stateBuscador,
 }) => {
-  const [openRegistro, setOpenRegistro] = useState(false);
-  const [accion, setAccion] = useState("");
-  const [dataSelect, setDataSelect] = useState([]);
-  const [isExploding, setIsExploding] = useState(false);
+  const {
+    stateClose,
+    isExploding,
+    setItemSelect,
+    setAccion,
+    setIsExplonding,
+    setStateClose,
+  } = useGlobalStore();
+
   function nuevoRegistro() {
-    setOpenRegistro(!openRegistro);
+    setStateClose(true);
     setAccion("Nuevo");
-    setDataSelect([]);
-    setIsExploding(false);
+    setItemSelect([]);
+    setIsExplonding(false);
   }
   return (
     <Container>
-      {openRegistro && Formularioregistro && (
+      <Toaster richColors></Toaster>
+      {stateClose && Formularioregistro && (
         <Formularioregistro
-          setIsExploding={setIsExploding}
-          onClose={() => setOpenRegistro(!openRegistro)}
-          dataSelect={dataSelect}
-          accion={accion}
         ></Formularioregistro>
       )}
       <section className="area1">
@@ -64,14 +67,7 @@ export const CrudTemplate = ({
 
       <section className="main">
         {isExploding && <Confetti></Confetti>}
-        {Table && (
-          <Table
-            data={data}
-            SetopenRegistro={setOpenRegistro}
-            setAccion={setAccion}
-            setdataSelect={setDataSelect}
-          ></Table>
-        )}
+        {data.length && Table}
       </section>
     </Container>
   );

@@ -27,7 +27,7 @@ export const Inventario = () => {
     enabled: !!dataempresa,
   });
   const { data, isLoading } = useQuery({
-    queryKey: ["mostrar movimientos de stock"],
+    queryKey: ["mostrar movimientos de stock", ProductosItemSelect?.id],
     queryFn: () =>
       mostrarMovStock({
         id_empresa: dataempresa?.id,
@@ -39,6 +39,8 @@ export const Inventario = () => {
     <Container>
       <Toaster richColors></Toaster>
       <CrudTemplate
+        stateBtnAdd={true}
+        stateBuscador={true}
         Table={TablaInventarios}
         title={"Inventarios"}
         Formularioregistro={RegistrarInventario}
