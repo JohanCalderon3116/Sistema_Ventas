@@ -118,6 +118,35 @@ export const HeaderPos = () => {
   useEffect(() => {
     buscadorRef.current.focus();
   }, []);
+  useEffect(() => {
+    let timeout;
+    const texto = buscador.trim();
+    const isCodigoDeBarras = /^[0-9]{3,}$/.test(texto);
+    if (isCodigoDeBarras) {
+      setStateListaProductos(false);
+      timeout = setTimeout(() => {
+        const productoEncontrado = dataProductos?.find(
+          (p) => p.codigo_barra === texto,
+        );
+        if (productoEncontrado) {
+          selectProductos(productoEncontrado);
+          mutateInsertarVentas();
+          setBuscador("");
+        } else {
+          toast.error("Producto no encontrado");
+          setBuscador("");
+        }
+      }, 100);
+    } else {
+      if (texto.length > 0) {
+        timeout = setTimeout(() => {
+          setStateListaProductos(true);
+        }, 200);
+      } else {
+        setStateListaProductos(false);
+      }
+    }
+  }, [buscador]);
   return (
     <Header>
       <ContentSucursal>
@@ -193,39 +222,7 @@ export const HeaderPos = () => {
             ></ListaDesplegable>
           </InputText2>
         </article>
-        <article className="area2">
-          <Btn1
-            funcion={() => {
-              setStateLector(true);
-              setStateTeclado(false);
-              setStateListaProductos(false);
-              focusclick();
-            }}
-            bgcolor={stateLector ? "#5849fe" : ({ theme }) => theme.bgtotal}
-            color={stateLector ? "#fff" : ({ theme }) => theme.text}
-            border="2px"
-            titulo="Lector"
-            icono={
-              <Icon
-                icon="streamline-cyber-color:barcode-1"
-                width="24"
-                height="24"
-              />
-            }
-          ></Btn1>
-          <Btn1
-            funcion={() => {
-              setStateLector(false);
-              setStateTeclado(true);
-              focusclick();
-            }}
-            bgcolor={stateTeclado ? "#5849fe" : ({ theme }) => theme.bgtotal}
-            color={stateTeclado ? "#fff" : ({ theme }) => theme.text}
-            border="2px"
-            titulo="Teclado"
-            icono={<Icon icon="noto-v1:keyboard" width="30" height="30" />}
-          ></Btn1>
-        </article>
+        <article className="area2"></article>
       </section>
     </Header>
   );
