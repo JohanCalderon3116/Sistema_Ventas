@@ -159,8 +159,8 @@ export const IngresoCobro = forwardRef((props, ref) => {
       };
 
       const result = await confirmarVenta(pventas);
-      if (result?.id > 0) {
-        //Insertar movimiento de caja, solo los metodos de pago con mayor a cero
+      const venta = result?.[0]; 
+      if (venta?.id > 0) {
         for (const [tipo, monto] of Object.entries(valoresPago)) {
           if (monto > 0) {
             const metodoPago = dataMetodosPago.find(
@@ -173,7 +173,7 @@ export const IngresoCobro = forwardRef((props, ref) => {
               descripcion: `Pago de venta con ${tipo} `,
               id_usuario: datausuarios?.id,
               id_cierre_caja: dataCierreCaja?.id,
-              id_venta: result?.id,
+              id_venta: venta?.id, 
               vuelto: tipo === "Efectivo" ? vuelto : 0,
             };
             await insertarMovcaja(pmovcaja);
