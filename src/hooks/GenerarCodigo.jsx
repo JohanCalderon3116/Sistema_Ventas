@@ -1,6 +1,6 @@
 export const GenerarCodigo = (data) => {
   const ultimoIdProducto = data.id + 1;
-  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const characters = "0123456789";
   const codeLength = 4;
   let randomCode = "";
   for (let i = 0; i < codeLength; i++) {

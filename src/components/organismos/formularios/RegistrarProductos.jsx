@@ -360,7 +360,7 @@ export function RegistrarProductos({
                     className="form__field"
                     value={randomCodeBarras}
                     onChange={handleChangebarras}
-                    type="text"
+                    type="number"
                     placeholder="codigo de barras"
                     // {...register("codigo_barra", {})}
                   />
