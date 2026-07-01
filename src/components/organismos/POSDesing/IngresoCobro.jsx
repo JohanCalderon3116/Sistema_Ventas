@@ -28,6 +28,11 @@ import { RegistrarInventario } from "../formularios/RegistrarInventario";
 import { RegistrarmovimientocreditoVenta } from "../formularios/RegistrarmovimientocreditoVenta";
 import { InsertarMovimientosCreditos } from "../../../supabase/crudMovimientosCreditos";
 import { Linea } from "../../atomos/Linea";
+import { useSerealizacionesStore } from "../../../store/SerealizacionesStore";
+import { useImpresorasStore } from "../../../store/ImpresorasStore";
+import { useMostrarImpresorasXCajaQueryStack } from "../../../tanstack/ImpresorasStack";
+import ticket from "../../../reports/TicketVenta";
+import { useProductosStore } from "../../../store/ProductosStore";
 export const IngresoCobro = forwardRef((props, ref) => {
   const [openRegistro, setOpenRegistro] = useState(false);
   const [dataSelect, setDataSelect] = useState([]);
@@ -45,8 +50,17 @@ export const IngresoCobro = forwardRef((props, ref) => {
     resetState,
     setStatePantallaCobro,
     confirmarVenta,
+    dataventas,
   } = useVentasStore();
   const { total, detalleventa } = useDetalleVentasStore();
+  const {
+    dataComprobantes,
+    itemSelectComprobanteSelect,
+    setItemSelectComprobanteSelect,
+  } = useSerealizacionesStore();
+  const { dataImpresorasXCaja } = useImpresorasStore();
+  const { ProductosItemSelect } = useProductosStore();
+  const { mostrardetalleventa } = useDetalleVentasStore();
   const [stateBuscadorClientes, setStateBuscadorClientes] = useState(false);
   //valores a mostrar
   const [vuelto, setVuelto] = useState(0);
@@ -149,42 +163,78 @@ export const IngresoCobro = forwardRef((props, ref) => {
   async function ConfirmarVenta(p) {
     if (restante === 0) {
       const pventas = {
-        id: idventa,
-        fecha: fechaActual,
-        id_usuario: datausuarios?.id,
-        id_cliente: cliproItemSelect?.id,
-        estado: "confirmada",
-        vuelto: vuelto,
-        monto_total: total,
+        _id_venta: idventa,
+        _id_usuario: datausuarios?.id,
+        _vuelto: vuelto,
+        _id_tipo_comprobante: itemSelectComprobanteSelect?.id_tipo_comprobante,
+        _serie: itemSelectComprobanteSelect?.serie,
+        _id_sucursal: dataCierreCaja?.caja?.id_sucursal,
+        _id_cliente: cliproItemSelect?.id ?? null,
+        _fecha: fechaActual,
+        _monto_total: total,
       };
 
-      const result = await confirmarVenta(pventas);
-      const venta = result?.[0]; 
-      if (venta?.id > 0) {
-        for (const [tipo, monto] of Object.entries(valoresPago)) {
-          if (monto > 0) {
-            const metodoPago = dataMetodosPago.find(
-              (item) => item.nombre === tipo,
-            );
-            const pmovcaja = {
-              tipo_movimiento: "ingreso",
-              monto: monto,
-              id_metodo_pago: metodoPago?.id,
-              descripcion: `Pago de venta con ${tipo} `,
-              id_usuario: datausuarios?.id,
-              id_cierre_caja: dataCierreCaja?.id,
-              id_venta: venta?.id, 
-              vuelto: tipo === "Efectivo" ? vuelto : 0,
-            };
-            await insertarMovcaja(pmovcaja);
-          }
+      const responseVentaConfirmada = await confirmarVenta(pventas);
+
+      for (const [tipo, monto] of Object.entries(valoresPago)) {
+        if (monto > 0) {
+          const metodoPago = dataMetodosPago.find(
+            (item) => item.nombre === tipo,
+          );
+          const pmovcaja = {
+            tipo_movimiento: "ingreso",
+            monto: monto,
+            id_metodo_pago: metodoPago?.id,
+            descripcion: `Pago de venta con ${tipo} `,
+            id_usuario: datausuarios?.id,
+            id_cierre_caja: dataCierreCaja?.id,
+            id_venta: idventa,
+            vuelto: tipo === "Efectivo" ? vuelto : 0,
+          };
+          await insertarMovcaja(pmovcaja);
         }
       }
+      dataImpresorasXCaja?.state
+        ? imprimirDirectoTicket()
+        : imprimirConVentanaEmergente(responseVentaConfirmada);
     } else {
       toast.warning("Falta completar el pago, el restante tiene que ser cero");
     }
   }
 
+  const imprimirConVentanaEmergente = async (responseVentaConfirmada) => {
+    const items = await mostrardetalleventa({ id_venta: idventa });
+    const ahora = new Date();
+    const horaFormateada = ahora.toLocaleTimeString("en-US", {
+      hour12: true,
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+    const fechaFormateada = ahora.toLocaleDateString();
+    const dataenv = {
+      hora: horaFormateada,
+      fecha: fechaFormateada,
+      logo: dataempresa.logo,
+      nombre: dataempresa.nombre,
+      direccion_empresa: dataempresa.direccion_fiscal,
+      pais: dataempresa.pais,
+      id_venta: responseVentaConfirmada?.nro_comprobante,
+      nombre_usuario: datausuarios?.nombres,
+      nombre_cliente: cliproItemSelect?.nombres || "-",
+      cc: cliproItemSelect?.identificador_nacional || "-",
+      direccion_cliente: cliproItemSelect.direccion || "-",
+      codigo_producto: ProductosItemSelect?.codigo_barra,
+      productos: items,
+      tipo_de_pago: tipocobro,
+      monto_total: total,
+      pie_pagina: dataempresa?.pie_pagina_ticket,
+      nombre_comprobante: itemSelectComprobanteSelect?.tipo_comprobantes.nombre,
+      telefono: dataempresa?.telefono_celular,
+    };
+    await ticket("print", dataenv);
+  };
+  const imprimirDirectoTicket = () => {};
   //useeffect para calcular cunaod los valores cambian
   useEffect(() => {
     if (tipocobro !== "Mixto" && valoresPago[tipocobro] != total) {
@@ -214,30 +264,43 @@ export const IngresoCobro = forwardRef((props, ref) => {
               </ContentReg>
             )}
             <span className="tipocobro"> {tipocobro} </span>
-            {tipocobro !== "Credito" ? (
-              <>
-                <Icon
-                  icon="fluent-emoji:smiling-face-with-sunglasses"
-                  width="20"
-                  height="20"
-                ></Icon>
-                <span>Cliente</span>
-                <EditButton
-                  onClick={() =>
-                    setStateBuscadorClientes(!stateBuscadorClientes)
-                  }
-                >
-                  <Icon
-                    className="icono"
-                    icon="line-md:pencil-twotone"
-                    width="24"
-                    height="24"
-                  />
-                </EditButton>
-              </>
-            ) : (
-              ""
-            )}
+            <section>
+              <span>
+                {" "}
+                {itemSelectComprobanteSelect?.tipo_comprobantes?.nombre} :{" "}
+                <strong>
+                  {" "}
+                  {itemSelectComprobanteSelect?.serie}-
+                  {itemSelectComprobanteSelect?.correlativos}{" "}
+                </strong>{" "}
+              </span>
+            </section>
+            <section className="areacomprobantes">
+              {dataComprobantes?.map((item, index) => {
+                return (
+                  <article className="box" key={index}>
+                    <Btn1
+                      funcion={() => setItemSelectComprobanteSelect(item)}
+                      border="0"
+                      height={"70px"}
+                      width={"100%"}
+                      titulo={item?.tipo_comprobantes?.nombre}
+                    ></Btn1>
+                  </article>
+                );
+              })}
+            </section>
+            <span>Cliente</span>
+            <EditButton
+              onClick={() => setStateBuscadorClientes(!stateBuscadorClientes)}
+            >
+              <Icon
+                className="icono"
+                icon="line-md:pencil-twotone"
+                width="24"
+                height="24"
+              />
+            </EditButton>
             <span className="cliente"> {cliproItemSelect?.nombres} </span>
           </section>
           <section className="area2">
@@ -357,9 +420,9 @@ const Container = styled.div`
   flex-direction: column;
   background-color: #ffffff;
   color: #000;
-  min-height: 100%;
+  height: auto;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   font-size: 22px;
   input {
     color: #000 !important;
@@ -400,6 +463,17 @@ const Container = styled.div`
     flex-direction: column;
     align-items: center;
     margin-bottom: 5px;
+    .areacomprobantes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 10px;
+      .box {
+        flex: 1 1 40%;
+        display: flex;
+        gap: 10px;
+      }
+    }
     .cliente {
       font-weight: 700;
     }

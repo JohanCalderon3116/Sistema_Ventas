@@ -15,20 +15,48 @@ import {
   PantallaIngresoSalidaDinero,
   Reloj,
   useCierreCajaStore,
+  useMostrarSerealizacionesVentasQueryStack,
   useStockStore,
   useVentasStore,
 } from "../../index";
-import { Toaster } from "sonner";
+import { toast, Toaster } from "sonner";
 import { SelectAlmacen } from "../organismos/POSDesing/SelectAlmacen";
+import { useBuscarproductosQueryStack } from "../../tanstack/ProductosStack";
+import { useMostrarAlmacenesXSucursalQueryStack } from "../../tanstack/AlmacenesStack";
+import { useMostrarStockAlmacenesyProductoQueryStack } from "../../tanstack/StockStack";
+import { useMostrarMetodosDePagoQueryStack } from "../../tanstack/MetodosPagoStack";
+import { BarLoader } from "react-spinners";
+import { useMostrarImpresorasXCajaQueryStack } from "../../tanstack/ImpresorasStack";
 export const POSTemplate = () => {
   const { statePantallaCobro } = useVentasStore();
   const { stateIngresoSalida, stateCierreCaja } = useCierreCajaStore();
   const { stateModal } = useStockStore();
+  const {} = useBuscarproductosQueryStack();
+  const { isLoading: isLoadingAlmacenXSucursal, error: errorAlmacenXSucursal } =
+    useMostrarAlmacenesXSucursalQueryStack();
+  const {
+    isLoading: isLoadingStockPorProductoYAlmacen,
+    error: errorStockPorProductoYAlmacen,
+  } = useMostrarStockAlmacenesyProductoQueryStack();
+  const { isLoading: isLoadingSerealizacionesVentas } =
+    useMostrarSerealizacionesVentasQueryStack();
+  const {} = useMostrarImpresorasXCajaQueryStack();
+  // const isLoading =
+  //   isLoadingAlmacenXSucursal ||
+  //   isLoadingStockPorProductoYAlmacen ||
+  //   isLoadingmetodosPago;
+  // const error =
+  //   errorAlmacenXSucursal || errorMetodosPago || errorStockPorProductoYAlmacen;
+  // if (isLoading) {
+  //   return <BarLoader></BarLoader>;
+  // }
+  // if (error) {
+  //   toast.error("Error al mostrar");
+  // }
   return (
     <Container>
       {stateModal && <SelectAlmacen></SelectAlmacen>}
       {statePantallaCobro && <PantallaCobro></PantallaCobro>}
-
       <HeaderPos></HeaderPos>
       <Main>
         <Toaster richColors position="top-center" />

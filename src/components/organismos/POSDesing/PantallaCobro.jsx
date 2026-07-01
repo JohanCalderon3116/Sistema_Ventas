@@ -30,26 +30,6 @@ export const PantallaCobro = () => {
   return (
     <Container>
       <section className="contentingresocobro">
-        {stateVerticket && (
-          <VisorTicketVenta
-            setState={() => setStateVerticket(!stateVerticket)}
-          ></VisorTicketVenta>
-        )}
-
-        <article
-          className="contentverticket"
-          onClick={() => setStateVerticket(!stateVerticket)}
-        >
-          <span> {stateVerticket ? "Ocultar" : "Mostrar"} ticket </span>
-          {stateVerticket ? (
-            <Icon icon="fluent-emoji:monkey-face" className="icon"></Icon>
-          ) : (
-            <Icon
-              icon="fluent-emoji:see-no-evil-monkey"
-              className="icon"
-            ></Icon>
-          )}
-        </article>
         <IngresoCobro ref={ingresoCobroRef}></IngresoCobro>
         <article
           className="contentverticket"
@@ -77,17 +57,20 @@ const Container = styled.div`
   background-color: ${({ theme }) => theme.bgtotal};
   .contentingresocobro {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start; /* antes: center */
     flex-direction: column;
     align-items: center;
     gap: 20px;
     height: calc(100% - 10rem);
+    overflow-y: auto; /* NUEVO: activa el scroll real aquí */
+    padding: 10px 0; /* opcional, un poco de aire arriba/abajo al scrollear */
     .contentverticket {
       align-self: flex-end;
       cursor: pointer;
       display: flex;
       gap: 10px;
       align-items: center;
+      flex-shrink: 0; /* que "Volver" nunca se comprima */
       span {
         font-weight: 700;
         font-size: 18px;

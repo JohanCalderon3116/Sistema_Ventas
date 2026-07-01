@@ -2,7 +2,9 @@ import { create } from "zustand";
 import {
   AperturarCierreCaja,
   CerrarTurnoCaja,
+  MostrarCierreajaPorEmpresa,
   MostrarCierreCajaAperturada,
+  MostrarCierreCajaXUsuario,
 } from "../supabase/crudCierresCaja";
 
 export const useCierreCajaStore = create((set) => ({
@@ -27,5 +29,18 @@ export const useCierreCajaStore = create((set) => ({
   },
   cerrarTurnoCaja: async (p) => {
     await CerrarTurnoCaja(p);
+  },
+  mostrarCierreajaPorEmpresa: async (p) => {
+    const response = await MostrarCierreajaPorEmpresa(p);
+    return response;
+  },
+  cierreCjaItemSelect: null,
+  setCierreCjaItemSelect: (p) => {
+    set({ cierreCjaItemSelect: p });
+  },
+  mostrarCierreCajaXUsuario: async (p) => {
+    const reponse = await MostrarCierreCajaXUsuario(p);
+    set({ dataCierreCaja: reponse });
+    return reponse;
   },
 }));

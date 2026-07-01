@@ -78,119 +78,119 @@ export const AreaDetalleventaPos = () => {
     queryFn: () => mostrardetalleventa({ id_venta: idventa }),
   });
   return (
-        <AreaDetalleventa className={items?.length > 0 ? "" : "animacion"}>
-    {items?.length > 0 ? (
-      items?.map((item, index) => {
-        return (
-          <Itemventa key={index}>
-            <article className="contentdescripcion">
-              <span className="descripcion">{item.descripcion}</span>
-              <span className="importe">
-                <strong>precio unit:</strong>
-                🪵
-                {FormatearNumeroDinero(
-                  item.precio_venta,
-                  dataempresa?.currency,
-                  dataempresa?.iso
-                )}
-              </span>
-              <ContentTotalResponsive>
-                <span className="importerespo">
+    <AreaDetalleventa className={items?.length > 0 ? "" : "animacion"}>
+      {items?.length > 0 ? (
+        items?.map((item, index) => {
+          return (
+            <Itemventa key={index}>
+              <article className="contentdescripcion">
+                <span className="descripcion">{item.descripcion}</span>
+                <span className="importe">
                   <strong>precio unit:</strong>
                   🪵
                   {FormatearNumeroDinero(
                     item.precio_venta,
                     dataempresa?.currency,
-                    dataempresa?.iso
+                    dataempresa?.iso,
                   )}
                 </span>
-                <article className="contentTotaldetalleventarespon">
-                  <span className="cantidad">
-                    <strong>
-                      {FormatearNumeroDinero(
-                        item.total,
-                        dataempresa?.currency,
-                        dataempresa?.iso
-                      )}
-                    </strong>
+                <ContentTotalResponsive>
+                  <span className="importerespo">
+                    <strong>precio unit:</strong>
+                    🪵
+                    {FormatearNumeroDinero(
+                      item.precio_venta,
+                      dataempresa?.currency,
+                      dataempresa?.iso,
+                    )}
                   </span>
-                  <span
-                    className="delete"
-                    onClick={() => mutateEliminarDV(item)}
-                  >
-                    <Icon icon="weui:delete-filled" width="24" height="24" />
-                  </span>
-                </article>
-              </ContentTotalResponsive>
-            </article>
-            <article className="contentbtn">
-              <Btn1
-                funcion={() =>
-                  mutateEditarCantidadDetalleVenta({
-                    id: item.id,
-                    cantidad: item.cantidad + 1,
-                  })
-                }
-                width="20px"
-                height="35px"
-                icono={<Icon icon="mdi:add-bold" />}
-              ></Btn1>
-              {editIndex === index ? (
-                <InputText2>
-                  <input
-                    type="number"
-                    value={newCantidad}
-                    onChange={handleInputChange}
-                    onBlur={() => handleInputBlur(item)}
-                    onKeyDown={(e) => handleKeyDown(e, item)}
-                    className="form__field"
-                    min="1"
-                  />
-                </InputText2>
-              ) : (
-                <>
-                  <span className="cantidad">{item.cantidad}</span>
-                  <Icon
-                    icon="mdi:pencil"
-                    onClick={() => handleEditClick(index, item.cantidad)}
-                    className="edit-icon"
-                  />
-                </>
-              )}
+                  <article className="contentTotaldetalleventarespon">
+                    <span className="cantidad">
+                      <strong>
+                        {FormatearNumeroDinero(
+                          item.total,
+                          dataempresa?.currency,
+                          dataempresa?.iso,
+                        )}
+                      </strong>
+                    </span>
+                    <span
+                      className="delete"
+                      onClick={() => mutateEliminarDV(item)}
+                    >
+                      <Icon icon="weui:delete-filled" width="24" height="24" />
+                    </span>
+                  </article>
+                </ContentTotalResponsive>
+              </article>
+              <article className="contentbtn">
+                <Btn1
+                  funcion={() =>
+                    mutateEditarCantidadDetalleVenta({
+                      id: item.id,
+                      cantidad: item.cantidad + 1,
+                    })
+                  }
+                  width="20px"
+                  height="35px"
+                  icono={<Icon icon="mdi:add-bold" />}
+                ></Btn1>
+                {editIndex === index ? (
+                  <InputText2>
+                    <input
+                      type="number"
+                      value={newCantidad}
+                      onChange={handleInputChange}
+                      onBlur={() => handleInputBlur(item)}
+                      onKeyDown={(e) => handleKeyDown(e, item)}
+                      className="form__field"
+                      min="1"
+                    />
+                  </InputText2>
+                ) : (
+                  <>
+                    <span className="cantidad">{item.cantidad}</span>
+                    <Icon
+                      icon="mdi:pencil"
+                      onClick={() => handleEditClick(index, item.cantidad)}
+                      className="edit-icon"
+                    />
+                  </>
+                )}
 
-              <Btn1
-                funcion={() =>
-                  mutateEditarCantidadDetalleVenta({
-                    id: item.id,
-                    cantidad: item.cantidad - 1,
-                  })
-                }
-                width="20px"
-                height="35px"
-                icono={<Icon icon="subway:subtraction-1" />}
-              ></Btn1>
-            </article>
-            <article className="contentTotaldetalleventa">
-              <span className="cantidad">
-                <strong>
-                  {FormatearNumeroDinero(
-                    item.total,
-                    dataempresa?.currency,
-                    dataempresa?.iso
-                  )}
-                </strong>
-              </span>
-              <span className="delete" onClick={() => mutateEliminarDV(item)}>
-                <Icon icon="weui:delete-filled" width="24" height="24" />
-              </span>
-            </article>
-          </Itemventa>
-        );
-      })
-    ) : (
-      <Lottieanimation animacion={animaciovacio} alto="200" ancho="200" />
-    )}
-  </AreaDetalleventa>
+                <Btn1
+                  funcion={() =>
+                    mutateEditarCantidadDetalleVenta({
+                      id: item.id,
+                      cantidad: item.cantidad - 1,
+                    })
+                  }
+                  width="20px"
+                  height="35px"
+                  icono={<Icon icon="subway:subtraction-1" />}
+                ></Btn1>
+              </article>
+              <article className="contentTotaldetalleventa">
+                <span className="cantidad">
+                  <strong>
+                    {FormatearNumeroDinero(
+                      item.total,
+                      dataempresa?.currency,
+                      dataempresa?.iso,
+                    )}
+                  </strong>
+                </span>
+                <span className="delete" onClick={() => mutateEliminarDV(item)}>
+                  <Icon icon="weui:delete-filled" width="24" height="24" />
+                </span>
+              </article>
+            </Itemventa>
+          );
+        })
+      ) : (
+        <Lottieanimation animacion={animaciovacio} alto="200" ancho="200" />
+      )}
+    </AreaDetalleventa>
   );
 };
 
@@ -218,7 +218,7 @@ const ContentTotalResponsive = styled.div`
     justify-content: end;
     text-align: end;
     align-items: center;
-gap:8px;
+    gap: 8px;
     width: 100%;
     .delete {
       cursor: pointer;
@@ -233,27 +233,27 @@ const AreaDetalleventa = styled.section`
   margin-top: 10px;
   flex-direction: column;
   gap: 10px;
-  max-height:calc(100vh - 500px);
+  max-height: calc(100vh - 500px);
   overflow-y: auto; /* Activa el scroll solo en Y */
   overflow-x: hidden; /* Oculta el scroll en X */
-      
-  &::-webkit-scrollbar {
-  width: 12px;
-  background: rgba(24, 24, 24, 0.2);
-}
 
-&::-webkit-scrollbar-thumb {
-  background: rgba(148, 148, 148, 0.9);
-  border-radius: 10px;
-  filter: blur(10px);
-}
+  &::-webkit-scrollbar {
+    width: 12px;
+    background: rgba(24, 24, 24, 0.2);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(148, 148, 148, 0.9);
+    border-radius: 10px;
+    filter: blur(10px);
+  }
 
   &.animacion {
     height: 100%;
     justify-content: center;
   }
   @media ${Device.laptop} {
-    max-height:initial;
+    max-height: initial;
   }
 `;
 const Itemventa = styled.section`

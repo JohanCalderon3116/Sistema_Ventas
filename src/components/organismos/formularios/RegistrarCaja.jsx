@@ -5,6 +5,8 @@ import {
   Btn1,
   ConvertirCapitalize,
   useCajasStore,
+  useAsignacionCajaSucursalesStore,
+  useUsuariosStore,
 } from "../../../index";
 import { useForm } from "react-hook-form";
 import { BtnClose } from "../../ui/buttons/BtnClose";
@@ -19,6 +21,8 @@ export function RegistrarCaja() {
     insertarCaja,
     editarCaja,
   } = useCajasStore();
+  const { insertarAsignacionSucusal } = useAsignacionCajaSucursalesStore();
+  const { datausuarios } = useUsuariosStore();
   const {
     register,
     formState: { errors },
@@ -36,7 +40,13 @@ export function RegistrarCaja() {
         descripcion: ConvertirCapitalize(data.descripcion),
         id_sucursal: cajaSelelctItem?.id,
       };
-      await insertarCaja(p);
+      const response = await insertarCaja(p);
+      const pAsignaciones = {
+        id_sucursal: cajaSelelctItem?.id,
+        id_usuario: datausuarios?.id,
+        id_caja: response?.id,
+      };
+      await insertarAsignacionSucusal(pAsignaciones);
     }
   };
   const { isPending, mutate: doInsertar } = useMutation({

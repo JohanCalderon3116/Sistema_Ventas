@@ -8,12 +8,7 @@ export async function InsertarEmpresa(p) {
     .select()
     .maybeSingle();
   if (error) {
-    // Swal.fire({
-    //   icon: "error",
-    //   title: "Oops...",
-    //   text: error.message,
-    // });
-    return;
+    throw new Error(error.message);
   }
   return data;
 }
@@ -23,12 +18,7 @@ export async function MostrarEmpresaXidusuario(p) {
     .rpc("mostrarempresaxiduser", p)
     .maybeSingle();
   if (error) {
-    // Swal.fire({
-    //   icon: "error",
-    //   title: "Oops...",
-    //   text: error.message,
-    // });
-    return;
+    throw new Error(error.message);
   }
   return data;
 }

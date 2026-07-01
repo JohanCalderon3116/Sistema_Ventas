@@ -11,7 +11,8 @@ export async function MostrarDetalleVenta(p) {
   const { data, error } = await supabase
     .from(tabla)
     .select()
-    .eq("id_venta", p.id_venta);
+    .eq("id_venta", p.id_venta)
+    .order("id", { ascending: true });
   if (error) {
     throw new Error(error.message);
   }

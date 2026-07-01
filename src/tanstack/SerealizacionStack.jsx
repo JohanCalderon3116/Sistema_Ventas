@@ -3,20 +3,32 @@ import { useSerealizacionesStore } from "../store/SerealizacionesStore";
 import { useAsignacionCajaSucursalesStore } from "../store/AsignacionCajaSucursales";
 import { useGlobalStore } from "../store/GlobalStore";
 import { toast } from "sonner";
+import { useCierreCajaStore } from "../store/CierreCajaStore";
 
 export const useMostrarSerealizacionesQueryStack = () => {
   const { mostrarSerealizaciones } = useSerealizacionesStore();
-  const { sucursalesItemSelectAsignadas } = useAsignacionCajaSucursalesStore();
+  const { dataCierreCaja } = useCierreCajaStore();
   return useQuery({
     queryKey: ["mostrar serealizaciones"],
     queryFn: () =>
       mostrarSerealizaciones({
-        sucursal_id: sucursalesItemSelectAsignadas?.id_sucursal,
+        sucursal_id: dataCierreCaja?.caja?.id_sucursal,
       }),
-    enabled: !!sucursalesItemSelectAsignadas,
+    enabled: !!dataCierreCaja,
   });
 };
-
+export const useMostrarSerealizacionesVentasQueryStack = () => {
+  const { mostrarSerealizacionesVentas } = useSerealizacionesStore();
+  const { dataCierreCaja } = useCierreCajaStore();
+  return useQuery({
+    queryKey: ["mostrar serealizaciones ventas"],
+    queryFn: () =>
+      mostrarSerealizacionesVentas({
+        sucursal_id: dataCierreCaja?.caja?.id_sucursal,
+      }),
+    enabled: !!dataCierreCaja,
+  });
+};
 export const useEditarSerealizacionDefaultMutationStack = () => {
   const { editarSerealizacionDefaul } = useSerealizacionesStore();
   const { itemSelect } = useGlobalStore();

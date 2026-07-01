@@ -17,7 +17,7 @@ import { Icon } from "@iconify/react";
 
 export const VisorTicketVenta = ({ setState }) => {
   const [base64, setBase64] = useState("");
-  const { items, tipocobro, idventa } = useVentasStore();
+  const { items, tipocobro, idventa, dataventas } = useVentasStore();
   const { dataempresa } = useEmpresaStore();
   const { cliproItemSelect } = useClientesProveedoresStore();
   const { datausuarios } = useUsuariosStore();
@@ -40,7 +40,7 @@ export const VisorTicketVenta = ({ setState }) => {
       nombre: dataempresa.nombre,
       direccion_empresa: dataempresa.direccion_fiscal,
       pais: dataempresa.pais,
-      id_venta: idventa,
+      id_venta: dataventas?.nro_comprobante,
       nombre_usuario: datausuarios?.nombres,
       nombre_cliente: cliproItemSelect?.nombres || "-",
       cc: cliproItemSelect?.identificador_nacional || "-",

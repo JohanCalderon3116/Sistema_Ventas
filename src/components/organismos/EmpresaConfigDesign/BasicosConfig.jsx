@@ -22,6 +22,7 @@ export const BasicosConfig = () => {
       direccion: dataempresa?.direccion_fiscal,
       impuesto: dataempresa?.impuesto,
       valor_impuesto: dataempresa?.valor_impuesto,
+      telefono_celular: dataempresa?.telefono_celular,
     },
   });
 
@@ -88,6 +89,21 @@ export const BasicosConfig = () => {
                 })}
               />
               {errors.valor_impuesto?.type === "required" && (
+                <p>Campo requerido</p>
+              )}
+            </InputText2>
+            <Label>Telefono de la empresa: </Label>
+            <InputText2>
+              <input
+                step="3"
+                className="form__field"
+                placeholder="Telefono"
+                type="number"
+                {...register("telefono_celular", {
+                  required: true,
+                })}
+              />
+              {errors.telefono_celular?.type === "required" && (
                 <p>Campo requerido</p>
               )}
             </InputText2>

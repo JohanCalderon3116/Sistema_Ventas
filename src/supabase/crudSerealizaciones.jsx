@@ -11,7 +11,18 @@ export async function MostrarSerealizaciones(p) {
   }
   return data;
 }
-
+export async function MostrarSerealizacionesVentas(p) {
+  const { data, error } = await supabase
+    .from(table)
+    .select(`*,tipo_comprobantes!inner(*)`)
+    .eq("sucursal_id", p.sucursal_id)
+    .filter("tipo_comprobantes.destino", "eq", "ventas")
+    .order("id", { ascending: true });
+  if (error) {
+    throw Error(error.message);
+  }
+  return data;
+}
 export async function EditarSerealizacionDefault(p) {
   const { error } = await supabase.rpc("setdefaultserializacion", p);
   if (error) {

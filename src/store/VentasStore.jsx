@@ -61,8 +61,9 @@ export const useVentasStore = create((set, get) => ({
     return response;
   },
   confirmarVenta: async (p) => {
-    const result = await ConfirmarVenta(p);
-    return result;
+    const response = await ConfirmarVenta(p);
+    set({ dataventas: response });
+    return response;
   },
   eliminarVenta: async (p) => {
     const { resetState } = get();

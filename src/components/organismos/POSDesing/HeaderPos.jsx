@@ -23,6 +23,7 @@ import { useEffect, useRef, useState } from "react";
 import { useAsignacionCajaSucursalesStore } from "../../../store/AsignacionCajaSucursales";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { useEliminarVentasIncompletasMutateStack } from "../../../tanstack/VentasStack";
 export const HeaderPos = () => {
   const queryClien = useQueryClient();
   const [stateListaProductos, setStateListaProductos] = useState(false);
@@ -64,7 +65,7 @@ export const HeaderPos = () => {
       const pventas = {
         fecha: fechaActual,
         id_usuario: datausuarios?.id,
-        id_sucursal: sucursalesItemSelectAsignadas?.id_sucursal,
+        id_sucursal: dataCierreCaja?.caja?.id_sucursal,
         id_empresa: dataempresa?.id,
         id_cierre_caja: dataCierreCaja?.id,
       };
@@ -89,11 +90,10 @@ export const HeaderPos = () => {
       _descripcion: ProductosItemSelect.nombre,
       _id_producto: ProductosItemSelect.id,
       _precio_compra: ProductosItemSelect.precio_compra,
-      _id_sucursal: sucursalesItemSelectAsignadas.id_sucursal,
+      _id_sucursal: dataCierreCaja?.caja?.id_sucursal,
       _id_almacen: almacenSelelctItem?.id,
     };
     await insertarDetalleVentas(pDetalleventas);
-    console.log(pDetalleventas);
   }
 
   const { mutate: mutateInsertarVentas } = useMutation({
@@ -115,8 +115,10 @@ export const HeaderPos = () => {
     const value = Math.max(0, parseFloat(e.target.value));
     setCantidadInput(value);
   };
+  const { mutate, isPending } = useEliminarVentasIncompletasMutateStack();
   useEffect(() => {
     buscadorRef.current.focus();
+    mutate();
   }, []);
   useEffect(() => {
     let timeout;
@@ -150,9 +152,14 @@ export const HeaderPos = () => {
   return (
     <Header>
       <ContentSucursal>
-        <strong>Sucursal:&nbsp;</strong>
-
-        {sucursalesItemSelectAsignadas?.sucursales.nombre}
+        <div>
+          <strong>Sucursal:&nbsp;</strong>
+          {dataCierreCaja?.caja?.sucursales?.nombre}
+        </div>
+        <div>
+          <strong>Caja:&nbsp;</strong>
+          {dataCierreCaja?.caja?.descripcion}
+        </div>
       </ContentSucursal>
       <section className="contentprincipal">
         <Contentuser className="area1">
@@ -170,15 +177,6 @@ export const HeaderPos = () => {
         <article className="contentlogo area2">
           <img src={v.logo}></img>
           <span>SoftCreate POS</span>
-        </article>
-        <article className="contentlogo1 area2">
-          <span>Almacen: </span>
-          <SelectList
-            data={dataAlmacenesXSucursa}
-            itemSelect={almacenSelelctItem}
-            onSelect={setAlmacenSelelctItem}
-            displayField="nombre"
-          ></SelectList>
         </article>
         <article className="contentfecha area3">
           <Reloj></Reloj>
@@ -348,4 +346,5 @@ const ContentSucursal = styled.section`
   justify-content: center;
   height: 45px;
   border-bottom: 2px solid ${({ theme }) => theme.color2};
+  gap: 8px;
 `;

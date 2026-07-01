@@ -33,15 +33,11 @@ export async function EliminarVentasIncompletas(p) {
   const { error } = await supabase
     .from(tabla)
     .delete()
-    .eq("estado", "nueva")
-    .eq("id_usuario", p.id_usuario);
+    .eq("estado", "pendiente")
+    .eq("id_usuario", p.id_usuario)
+    .eq("id_cierre_caja", p.id_cierre_caja);
   if (error) {
-    // Swal.fire({
-    //   icon: "error",
-    //   title: "Oops...",
-    //   text: error.message,
-    // });
-    return;
+    throw new Error(error.message);
   }
 }
 // export async function EditarProductos(p) {
@@ -58,14 +54,13 @@ export async function EliminarVentasIncompletas(p) {
 
 export async function ConfirmarVenta(p) {
   const { data, error } = await supabase
-    .from(tabla)
-    .update(p)
-    .eq("id", p.id)
-    .select();
-  return data;
+    .rpc("confirmar_venta", p)
+    .select()
+    .maybeSingle();
   if (error) {
     throw new Error(error.message);
   }
+  return data;
 }
 
 export async function EliminarVenta(p) {

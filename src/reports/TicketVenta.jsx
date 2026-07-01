@@ -52,22 +52,27 @@ const TicketVenta = async (output, data) => {
 
     return filas;
   };
-  const logoempresa = await urlToBase64(data.logo);
+  const logoempresa = await urlToBase64(
+    !data.logo || data.logo === "-"
+      ? "https://i.ibb.co/HLNmDKRK/administracion-de-empresas.gif"
+      : data.logo,
+  );
   const productTableBody = [
     // encabezados
     [
-      { text: "CANT.", style: "tProductsHeader" },
+      { text: "CT", style: "tProductsHeader" },
       { text: "DESCRIPCION", style: "tProductsHeader", alignment: "center" },
-      { text: "PRECIO UNIT", style: "tProductsHeader", alignment: "right" },
-      { text: "TOTAL", style: "tProductsHeader", alignment: "right" },
+      { text: "P.UN", style: "tProductsHeader", alignment: "right" },
+      { text: "TOT", style: "tProductsHeader", alignment: "right" },
     ],
+    // productos
     // productos
     ...data.productos.map((item) => [
       { text: `${item.cantidad}`, style: "tProductsBody", alignment: "center" },
       {
         text: `${ConvertirCapitalize(item.descripcion)}`,
-        style: "tProductsBody",
-        alignment: "center",
+        style: "tProductsDescripcion",
+        alignment: "left",
       },
       {
         text: `${FormatearNumeroDinero(item.precio_venta, "COP", "CO")}`,
@@ -83,10 +88,10 @@ const TicketVenta = async (output, data) => {
   ];
   const content = [
     {
-      //Data de la empresa
-      image: logoempresa, //Logo
-      fit: [141.73, 56.692],
+      image: logoempresa,
+      fit: [180, 90],
       alignment: "center",
+      margin: [0, 0, 0, 5],
     },
     {
       text: `${data.nombre}`,
@@ -102,7 +107,7 @@ const TicketVenta = async (output, data) => {
       style: "header",
     },
     {
-      text: "# FACTURA",
+      text: `${data.nombre_comprobante}`,
       style: "header",
     },
     {
@@ -189,7 +194,7 @@ const TicketVenta = async (output, data) => {
     {
       margin: [0, 10, 0, 0],
       table: {
-        widths: ["20%", "20%", "30%", "30%"],
+        widths: ["10%", "42%", "24%", "24%"],
         headerRows: 2,
         body: productTableBody,
       },
@@ -328,8 +333,8 @@ const TicketVenta = async (output, data) => {
           margin: [0, 2, 0, 0],
         },
         {
-          text: `WhatsApp: wa.me/573116025328`,
-          link: `https://wa.me/573116025328?text=Hola!%20Tengo%20una%20duda%20con%20mi%20compra%20%23${data.id_venta}`,
+          text: `WhatsApp: wa.me/57${data.telefono}`,
+          link: `https://wa.me/57${data.telefono}?text=Hola!%20Tengo%20una%20duda%20con%20mi%20compra%20%23${data.id_venta}`,
           style: "link",
         },
       ],
@@ -357,6 +362,9 @@ const TicketVenta = async (output, data) => {
     tProductsBody: {
       fontSize: 8,
     },
+    tProductsDescripcion: {
+      fontSize: 9.5,
+    },
     tTotals: {
       fontSize: 9,
       bold: true,
@@ -381,7 +389,15 @@ const TicketVenta = async (output, data) => {
       alignment: "center",
     },
   };
-  const response = await createPdf({ content, styles }, output);
+  const response = await createPdf(
+    {
+      pageSize: { width: 204.09, height: 841.88 },
+      pageMargins: [2.83, 5.66, 2.83, 5.66],
+      content,
+      styles,
+    },
+    output,
+  );
   return response;
 };
 

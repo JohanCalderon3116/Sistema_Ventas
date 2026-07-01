@@ -21,7 +21,8 @@ export const useCajasStore = create((set) => ({
     return response;
   },
   insertarCaja: async (p) => {
-    await InsertarCaja(p);
+    const response = await InsertarCaja(p);
+    return response;
   },
   editarCaja: async (p) => {
     await EditarCaja(p);

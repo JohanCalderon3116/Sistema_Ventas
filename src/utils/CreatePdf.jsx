@@ -25,7 +25,6 @@ const createPdf = async (props, output = "print") => {
 
       if (output === "b64") {
         const pdfMakeCreatePdf = pdfMake.createPdf(docDefinition);
-        pdfMake.createPdf(docDefinition).open();
         pdfMakeCreatePdf.getBase64((data) => {
           resolve({
             success: true,
@@ -37,7 +36,6 @@ const createPdf = async (props, output = "print") => {
       } else if (output === "print") {
         //Enviar a impresion directa
         const pdfMakeCreatePdf = pdfMake.createPdf(docDefinition);
-        pdfMake.createPdf(docDefinition).print();
         pdfMakeCreatePdf.getBase64((data) => {
           printJS({
             printable: data,

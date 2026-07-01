@@ -5,6 +5,10 @@ export function ConvertirMinusculas(input) {
   return input.toLowerCase();
 }
 
+export function ConvertirMayusculas(input) {
+  return input.toUpperCase();
+}
+
 export function FormatearNumeroDinero(numero, currency, iso) {
   if (currency === undefined) {
     return;

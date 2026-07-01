@@ -11,60 +11,63 @@ import { useFormattedDate } from "../../../../hooks/useFormattedDate";
 import { useMetodosPagoStore } from "../../../../store/MetodosPagoStore";
 import { useMovCajaStore } from "../../../../store/MovCajaStore";
 import { useAsignacionCajaSucursalesStore } from "../../../../store/AsignacionCajaSucursales";
+import { useMostrarSucursalesAsignadsQueryStack } from "../../../../tanstack/AsignacionesSucursal";
+import { CardListCajas } from "./CardListCajas";
+import { Device } from "../../../../styles/breakpoints";
+import { useMostrarCierreCajaPorEmpresaQueryStack } from "../../../../tanstack/CierreCajaStack";
 
 export const PantallaAperturaCaja = () => {
   const fechaActual = useFormattedDate();
   const [montoEfectivo, setMontoEfectivo] = useState(0);
   const queryClient = useQueryClient();
   const { datausuarios } = useUsuariosStore();
-  const { sucursalesItemSelectAsignadas } = useAsignacionCajaSucursalesStore();
+  const { sucursalesItemSelectAsignadas, datSucursalesAsignadas } =
+    useAsignacionCajaSucursalesStore();
   const { aperturarCaja } = useCierreCajaStore();
   const { dataMetodosPago } = useMetodosPagoStore();
   const { insertarMovcaja } = useMovCajaStore();
-  const registrarMovCaja = async (p) => {
-    const id_metodo_pago = dataMetodosPago
-      .filter((item) => item.nombre === "Efectivo")
-      .map((item) => item.id)[0];
-    const pmovcaja = {
-      fecha_movimiento: fechaActual,
-      tipo_movimiento: "apertura",
-      monto: montoEfectivo,
-      id_metodo_pago: id_metodo_pago,
-      descripcion: `Apertura de caja`,
-      id_usuario: datausuarios?.id,
-      id_cierre_caja: p.id_cierre_caja,
-    };
-    await insertarMovcaja(pmovcaja);
-    console.log(pmovcaja);
-  };
+  const { data: dataCierreCajaEmpresa } =
+    useMostrarCierreCajaPorEmpresaQueryStack();
+  const { setCajaSelelctItem } = useCajasStore();
+  const { setCierreCjaItemSelect } = useCierreCajaStore();
 
-  const insertar = async () => {
-    const p = {
-      fechainicio: fechaActual,
-      fechacierre: fechaActual,
-      id_usuario: datausuarios?.id,
-      id_caja: sucursalesItemSelectAsignadas?.id_caja,
-    };
-    const data = await aperturarCaja(p);
-    console.log(data);
-    await registrarMovCaja({ id_cierre_caja: data?.id });
-  };
-  const mutation = useMutation({
-    mutationKey: ["aperturar caja"],
-    mutationFn: insertar,
-    onSuccess: () => {
-      toast.success("Caja aperturada correctamente :v");
-      queryClient.invalidateQueries("mostrar cierre de caja");
-    },
-    onError: () => {
-      toast.error("Error al aperturar caja :'/");
-    },
-  });
   return (
     <Container>
       <Toaster richColors></Toaster>
-      <section className="area1">
-        <span className="title">Aperturar caja con: </span>
+      <ContainerCajas>
+        <span className="title">Seleccione una caja para poder aprturar: </span>
+        {datSucursalesAsignadas?.map((item, index) => {
+          let state = Boolean(false);
+          let aperturaActiva = null;
+          if (Array.isArray(dataCierreCajaEmpresa)) {
+            aperturaActiva = dataCierreCajaEmpresa.find(
+              (a) => a.id_caja === item.id,
+            );
+            state = Boolean(aperturaActiva);
+          }
+          return (
+            <CardListCajas
+              key={index}
+              item={item}
+              state={state}
+              subtitle={
+                state ? `${aperturaActiva?.rol}-${aperturaActiva?.usuario}` : 0
+              }
+              funcion={() => {
+                setCajaSelelctItem(item);
+                if (state) {
+                  setCierreCjaItemSelect(aperturaActiva);
+                }
+              }}
+              sucursal={item?.sucursales?.nombre}
+              title={item?.caja?.descripcion}
+              bgcolor={state ? "#f34a4" : "#58cc02"}
+            ></CardListCajas>
+          );
+        })}
+      </ContainerCajas>
+
+      {/* <section className="area1">
         <InputText2>
           <input
             onChange={(e) => setMontoEfectivo(parseFloat(e.target.value))}
@@ -92,13 +95,13 @@ export const PantallaAperturaCaja = () => {
             border="2px"
           ></Btn1>
         </article>
-      </section>
+      </section> */}
     </Container>
   );
 };
 
 const Container = styled.div`
-  height: 100vh;
+  padding-top: 30px;
   width: 100%;
   background-color: ${({ theme }) => theme.bgtotal};
   align-items: center;
@@ -116,5 +119,19 @@ const Container = styled.div`
       display: flex;
       gap: 12px;
     }
+  }
+`;
+const ContainerCajas = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  margin: 10px;
+  @media ${Device.tablet} {
+    width: 550px;
+  }
+  .title {
+    font-weight: bold;
+    font-size: 18px;
   }
 `;

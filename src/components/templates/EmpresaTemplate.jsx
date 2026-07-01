@@ -11,7 +11,7 @@ export const EmpresaTemplate = () => {
   }
   return (
     <Main>
-      <Toaster richColors position="bottom-center" />
+      <Toaster richColors/>
       <PageContainer>
         <Content>
           <Outlet />

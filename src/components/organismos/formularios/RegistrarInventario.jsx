@@ -135,6 +135,7 @@ export function RegistrarInventario({ onClose }) {
     onSuccess: () => {
       toast.success("Registro guardado correctamente...");
       queryClient.invalidateQueries(["buscar productos"]);
+      onClose();
       resetFuction();
     },
   });

@@ -16,6 +16,7 @@ import {
   ConvertirMinusculas,
   SelectList,
   BtnClose,
+  ConvertirMayusculas,
 } from "../../../index";
 import { useForm } from "react-hook-form";
 import { useEmpresaStore } from "../../../store/EmpresaStore";
@@ -136,7 +137,7 @@ export function RegistrarProductos({
     if (accion === "Editar") {
       const p = {
         _id: dataSelect.id,
-        _nombre: ConvertirMinusculas(data.nombre),
+        _nombre: ConvertirMayusculas(data.nombre),
         _precio_venta: parseFloat(data.precio_venta),
         _precio_compra: parseFloat(data.precio_compra),
         _id_categoria: categoriaItemSelect.id,
@@ -161,7 +162,7 @@ export function RegistrarProductos({
       }
     } else {
       const p = {
-        _nombre: ConvertirMinusculas(data.nombre),
+        _nombre: ConvertirMayusculas(data.nombre),
         _precio_venta: parseFloat(data.precio_venta),
         _precio_compra: parseFloat(data.precio_compra),
         _id_categoria: categoriaItemSelect.id,
@@ -273,7 +274,6 @@ export function RegistrarProductos({
             if (result.isConfirmed) {
               setStateInventarios(false);
               await eliminarAlmacen({ id: dataalmacen.id });
-              await edi;
             }
           });
         } else {

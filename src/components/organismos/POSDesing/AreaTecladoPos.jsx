@@ -34,7 +34,7 @@ export const AreaTecladoPos = () => {
             <article className="box" key={index}>
               <Btn1
                 imagen={item.icono != "-" ? item.icono : null}
-                funcion={() => validarPermisosCobrar( item )}
+                funcion={() => validarPermisosCobrar(item)}
                 border="0"
                 height="70px"
                 width="100%"
@@ -71,21 +71,28 @@ const Container = styled.div`
   bottom: 10px;
   width: calc(100% - 5px);
   border-radius: 15px;
+  max-height: 90vh; 
+  overflow: hidden; 
   @media ${Device.desktop} {
     position: relative;
     width: 450px;
     bottom: initial;
+    max-height: none;
   }
   .areatipopago {
     display: ${({ stateMetodosPago }) => (stateMetodosPago ? "flex" : "none")};
     flex-wrap: wrap;
     gap: 10px;
     padding: 10px;
+    max-height: 45vh; 
+    overflow-y: auto;
     @media ${Device.desktop} {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
       padding: 10px;
+      max-height: 300px; 
+      overflow-y: auto;
     }
     .box {
       flex: 1 1 40%;
@@ -98,6 +105,7 @@ const Container = styled.div`
     flex-direction: column;
     gap: 10px;
     padding: 10px;
+    flex-shrink: 0;
     .subtotal {
       display: none;
       flex-direction: column;

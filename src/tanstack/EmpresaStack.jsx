@@ -15,6 +15,7 @@ export const useUpdatEmpresaMutateStack = () => {
         direccion_fiscal: data.direccion,
         impuesto: data.impuesto,
         valor_impuesto: parseFloat(data.valor_impuesto),
+        telefono_celular: data.telefono_celular,
       };
       await editarEmpresa(p, dataempresa?.logo, file);
     },

@@ -7,6 +7,7 @@ import {
   ConvertirCapitalize,
   useClientesProveedoresStore,
   SelectList,
+  Switch1,
 } from "../../../index";
 import { useForm } from "react-hook-form";
 import { CirclePicker } from "react-color";
@@ -17,6 +18,7 @@ import { toast, Toaster } from "sonner";
 
 export function RegistrarCreditos({ onClose, dataSelect, setIsExploding }) {
   const queryClient = useQueryClient();
+  const [stateCreditos, setStateCreditos] = useState(false);
   const {
     register,
     formState: { errors },
@@ -68,7 +70,8 @@ export function RegistrarCreditos({ onClose, dataSelect, setIsExploding }) {
     const p = {
       id_cliente: cliproItemSelect?.id,
       cupo_maximo: data.cupo_maximo,
-      credito_disponible: data.cupo_maximo,
+      credito_disponible: data.cupo_maximo - (data.saldo_actual || 0),
+      saldo_actual: data.saldo_actual || 0,
     };
     await insertarCredito(p);
   }
@@ -109,11 +112,37 @@ export function RegistrarCreditos({ onClose, dataSelect, setIsExploding }) {
                     })}
                   />
                   <label className="form__label">Cupo Maximo</label>
-                  {errors.nombres?.type === "required" && (
+                  {errors.cupo_maximo?.type === "required" && (
                     <p>Campo requerido</p>
                   )}
                 </InputText>
               </article>
+              <span>
+                {" "}
+                <strong>¿Crédito antiguo?</strong>{" "}
+              </span>
+              <Switch1
+                state={stateCreditos}
+                setState={setStateCreditos}
+              ></Switch1>
+              {stateCreditos && (
+                <article>
+                  <InputText icono={<v.iconoflechaderecha />}>
+                    <input
+                      className="form__field"
+                      type="number"
+                      placeholder="Debe..."
+                      {...register("saldo_actual", {
+                        required: true,
+                      })}
+                    />
+                    <label className="form__label">Debe...</label>
+                    {errors.saldo_actual?.type === "required" && (
+                      <p>Campo requerido</p>
+                    )}
+                  </InputText>
+                </article>
+              )}
               <Btn1
                 icono={<v.iconoguardar />}
                 titulo="Guardar"
