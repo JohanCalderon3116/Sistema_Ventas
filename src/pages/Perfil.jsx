@@ -3,12 +3,11 @@ import styled from "styled-components";
 import { InputText2 } from "../components/organismos/formularios/InputText2";
 import { Btn1 } from "../components/moleculas/Btn1";
 import { useForm } from "react-hook-form";
-
 import { slideBackground } from "../styles/keyframes";
-
 import { Toaster } from "sonner";
 import { useUsuariosStore } from "../store/UsuariosStore";
 import { useEditarUsuarioMutationStack } from "../tanstack/UsuariosStack";
+import { BeatLoader } from "react-spinners";
 export const Perfil = () => {
   const { datausuarios } = useUsuariosStore();
   const { mutate, isPending } = useEditarUsuarioMutationStack();
@@ -27,10 +26,15 @@ export const Perfil = () => {
     <Container>
       <Toaster richColors />
       {isPending ? (
-        <span>guardando...🐖</span>
+        <ConteinerLoader>
+          <span>
+            <strong>Guardando</strong>
+          </span>
+          <BeatLoader color="#FFFFFF" size={8} />
+        </ConteinerLoader>
       ) : (
         <>
-          <Title>Mi Perfil</Title>
+          <Title>Mí Perfil</Title>
 
           <Avatar>
             <ContentRol>
@@ -87,7 +91,7 @@ export const Perfil = () => {
               />
             </InputText2>
             <br></br>
-            <Btn1 bgcolor="#0930bb" color="#fff" titulo="GUARDAR CAMBIOS" />
+            <Btn1 bgcolor="#4f12b1" color="#fff" titulo="GUARDAR CAMBIOS" />
           </form>
         </>
       )}
@@ -105,6 +109,14 @@ const ContentRol = styled.div`
   font-size: 12px;
   font-weight: bold;
   color: #fff;
+`;
+const ConteinerLoader = styled.div`
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  height: 100vh;
+  gap: 8px;
 `;
 const Container = styled.div`
   padding: 20px;
@@ -158,7 +170,7 @@ const Avatar = styled.div`
     word-wrap: break-word; /* Rompe las palabras largas y las envuelve a la siguiente línea */
     color: #fff !important;
   }
-  background-color: #391ebb;
+  background-color: #6d05e5;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 120 120'%3E%3Cpolygon fill='%23000' fill-opacity='0.19' points='120 0 120 60 90 30 60 0 0 0 0 0 60 60 0 120 60 120 90 90 120 60 120 0'/%3E%3C/svg%3E");
 
   background-size: 60px 60px;

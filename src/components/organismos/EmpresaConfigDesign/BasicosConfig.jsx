@@ -32,6 +32,9 @@ export const BasicosConfig = () => {
     <Container>
       {isPending ? (
         <ConteinerLoader>
+          <span>
+            <strong>Guardando</strong>
+          </span>
           <BeatLoader color="#FFFFFF" size={8} />
         </ConteinerLoader>
       ) : (
@@ -129,6 +132,8 @@ const ConteinerLoader = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
+  gap: 8px;
   height: 100vh;
 `;
 const Container = styled.div`

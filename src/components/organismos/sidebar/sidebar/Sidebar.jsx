@@ -129,7 +129,7 @@ const Container = styled.div`
       }
     }
     h2 {
-      color: #f88533;
+      color: #6d05e5;
       display: ${({ $isopen }) => ($isopen === "true" ? `block` : `none`)};
     }
   }

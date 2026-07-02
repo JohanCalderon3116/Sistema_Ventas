@@ -3,7 +3,7 @@ import { useUsuariosStore } from "../store/UsuariosStore";
 import { toast } from "sonner";
 
 export const useEditarUsuarioMutationStack = () => {
-    const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
   const { editarUsuario, datausuarios } = useUsuariosStore();
   return useMutation({
     mutationKey: ["editar perfil usuario"],
@@ -17,13 +17,11 @@ export const useEditarUsuarioMutationStack = () => {
       await editarUsuario(p);
     },
     onError: (error) => {
-      toast.error(
-        `Lo sentimos, no pudimos actualizar tu empresa :/ ${error.message}`,
-      );
+      toast.error(`Aish, algo falló actualizando tu perfil 😩`);
     },
     onSuccess: () => {
-      toast.success("Datos guardados, tu perfil se actualizo con exito :p");
-      queryClient.invalidateQueries(["mostrar usuarios"])
+      toast.success("¡Perfil actualizado sin problema! 😎");
+      queryClient.invalidateQueries(["mostrar usuarios"]);
     },
   });
 };
