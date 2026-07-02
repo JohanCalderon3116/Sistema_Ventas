@@ -90,7 +90,7 @@ export const LoginTemplate = () => {
           <ContentModos>
             <CardModos
               title={"Super admin"}
-              subtitle={"Crea y gestiona tu empresa"}
+              subtitle={"Crea y gestiona tu empresa."}
               bgcolor={"#601dad"}
               img={"https://i.ibb.co/v6c45GD9/admin.png"}
               funcion={() => {
@@ -100,7 +100,7 @@ export const LoginTemplate = () => {
             ></CardModos>
             <CardModos
               title={"Empleado"}
-              subtitle={"Vende y crece"}
+              subtitle={"Vende y haz crecer tu negocio."}
               bgcolor={"#121b93"}
               img={"https://i.ibb.co/xqyKYrX6/trabajando.png"}
               funcion={() => {
@@ -108,6 +108,12 @@ export const LoginTemplate = () => {
                 setStateModos(!stateModos);
               }}
             ></CardModos>
+            {/* <Btn1
+              border="2px"
+              funcion={manejadorEmailSesionTester}
+              titulo="Invitado"
+              bgcolor="#f6ce1c"
+            /> */}
           </ContentModos>
         )}
         {stateModo === "empleado"
@@ -179,12 +185,6 @@ export const LoginTemplate = () => {
                     <Linea>
                       <span>O</span>
                     </Linea>
-                    <Btn1
-                      border="2px"
-                      funcion={manejadorEmailSesionTester}
-                      titulo="Invitado"
-                      bgcolor="#f6ce1c"
-                    />
                   </>
                 )}
               </PanelModo>

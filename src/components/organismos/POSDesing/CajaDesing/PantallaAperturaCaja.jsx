@@ -35,7 +35,9 @@ export const PantallaAperturaCaja = () => {
     <Container>
       <Toaster richColors></Toaster>
       <ContainerCajas>
-        <span className="title">Seleccione una caja para poder aprturar: </span>
+        <span className="title">
+          Seleccione una caja para poder aperturarla.
+        </span>
         {datSucursalesAsignadas?.map((item, index) => {
           let state = Boolean(false);
           let aperturaActiva = null;
@@ -66,36 +68,6 @@ export const PantallaAperturaCaja = () => {
           );
         })}
       </ContainerCajas>
-
-      {/* <section className="area1">
-        <InputText2>
-          <input
-            onChange={(e) => setMontoEfectivo(parseFloat(e.target.value))}
-            type="number"
-            placeholder="0.00"
-            className="form__field"
-          />
-        </InputText2>
-        <span>En efectivo</span>
-        <article className="contentbtn">
-          <Btn1
-            titulo="Omitir"
-            funcion={() => {
-              setMontoEfectivo(0);
-              mutation.mutateAsync();
-            }}
-          ></Btn1>
-          <Btn1
-            funcion={() => {
-              mutation.mutateAsync();
-            }}
-            titulo="Aperturar"
-            color="#ffffff"
-            bgcolor="#1da139"
-            border="2px"
-          ></Btn1>
-        </article>
-      </section> */}
     </Container>
   );
 };

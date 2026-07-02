@@ -20,12 +20,10 @@ export const useUpdatEmpresaMutateStack = () => {
       await editarEmpresa(p, dataempresa?.logo, file);
     },
     onError: (error) => {
-      toast.error(
-        `Lo sentimos, no pudimos actualizar tu empresa :/ ${error.message}`,
-      );
+      toast.error(`Aggg, no pudimos actualizar tu empresa 😖`);
     },
     onSuccess: () => {
-      toast.success("Datos guardados, tu empresa se actualizo con exito :p");
+      toast.success("¡Listo! Tu empresa se actualizó con éxito 🥳");
       queryClient.invalidateQueries(["mostrar empresa"]);
     },
   });

@@ -9,6 +9,7 @@ import { slideBackground } from "../../../styles/Keyframes";
 import { useUpdatEmpresaMutateStack } from "../../../tanstack/EmpresaStack";
 import { ImageSelector } from "../../../hooks/useImageSelector";
 import { useGlobalStore } from "../../../store/GlobalStore";
+import { BeatLoader } from "react-spinners";
 export const BasicosConfig = () => {
   const { dataempresa } = useEmpresaStore();
   const { fileurl } = useGlobalStore();
@@ -30,7 +31,9 @@ export const BasicosConfig = () => {
   return (
     <Container>
       {isPending ? (
-        <span>Guardando...</span>
+        <ConteinerLoader>
+          <BeatLoader color="#FFFFFF" size={8} />
+        </ConteinerLoader>
       ) : (
         <>
           <Title>Básico</Title>
@@ -95,26 +98,25 @@ export const BasicosConfig = () => {
             <Label>Telefono de la empresa: </Label>
             <InputText2>
               <input
-                step="3"
                 className="form__field"
                 placeholder="Telefono"
                 type="number"
-                {...register("telefono_celular", {
-                  required: true,
-                })}
+                {...register("telefono_celular")}
               />
-              {errors.telefono_celular?.type === "required" && (
-                <p>Campo requerido</p>
-              )}
             </InputText2>
             <br></br>
-            <Btn1 bgcolor="#0930bb" color="#fff" titulo="Guardar cambios" />
+            <Btn1
+              color="#FFFFFF"
+              border="2px"
+              bgcolor="#3300E3"
+              titulo="Guardar cambios"
+            />
           </form>
           <br></br>
           <section className="advertencia">
             <Icon className="icono" icon="meteocons:barometer" />
             <span>
-              los cambios de logo se ven reflejados en el lapso de 10 segundos.
+              Espera unos 10 segunditos y ahí verás tu logotipo reflejado 🥱
             </span>
           </section>
         </>
@@ -122,10 +124,18 @@ export const BasicosConfig = () => {
     </Container>
   );
 };
+
+const ConteinerLoader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+`;
 const Container = styled.div`
   padding: 20px;
   border-radius: 10px;
   max-width: 400px;
+  height: 100%;
   margin: 0 auto;
   p {
     color: #f75510;
@@ -177,7 +187,7 @@ const Avatar = styled.div`
     word-wrap: break-word; /* Rompe las palabras largas y las envuelve a la siguiente línea */
     color: #fff !important;
   }
-  background-color: #391ebb;
+  background-color: #6d05e5;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 120 120'%3E%3Cpolygon fill='%23000' fill-opacity='0.19' points='120 0 120 60 90 30 60 0 0 0 0 0 60 60 0 120 60 120 90 90 120 60 120 0'/%3E%3C/svg%3E");
   animation: ${slideBackground} 10s linear infinite;
   background-size: 60px 60px;

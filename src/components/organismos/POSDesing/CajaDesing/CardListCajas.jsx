@@ -102,7 +102,7 @@ export function CardListCajas({
               width="20"
               height="20"
             />
-            <span className="label">caja aperturada por: </span>
+            <span className="label">Caja aperturada por:</span>
             <span className="subtitle">{subtitle} </span>
           </section>
         )}

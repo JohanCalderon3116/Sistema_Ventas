@@ -1,4 +1,3 @@
-import Swal from "sweetalert2";
 import { supabase } from "./supabase.config";
 const tabla = "empresa";
 export async function InsertarEmpresa(p) {
@@ -26,34 +25,19 @@ export async function MostrarEmpresaXidusuario(p) {
 export async function EditarMonedaEmpresa(p) {
   const { error } = await supabase.from(tabla).update(p).eq("id", p.id);
   if (error) {
-    Swal.fire({
-      icon: "error",
-      title: "Oops...editar moneda empresa",
-      text: error.message,
-    });
-    return;
+    throw new Error(error.message);
   }
 }
 export async function EditarLogoEmpresa(p) {
   const { error } = await supabase.from(tabla).update(p).eq("id", p.id);
   if (error) {
-    Swal.fire({
-      icon: "error",
-      title: "Oops...editar logo empresa",
-      text: error.message,
-    });
-    return;
+    throw new Error(error.message);
   }
 }
 export async function EditarEmpresa(p, fileold, filenew) {
   const { error } = await supabase.from(tabla).update(p).eq("id", p.id);
   if (error) {
-    Swal.fire({
-      icon: "error",
-      title: "Oops...editar empresa",
-      text: error.message,
-    });
-    return;
+    throw new Error(error.message);
   }
   if (filenew != "-" && filenew.size != undefined) {
     if (fileold != "-") {
@@ -85,12 +69,7 @@ async function subirImagen(idempresa, file) {
       upsert: true,
     });
   if (error) {
-    Swal.fire({
-      icon: "error",
-      title: "Oops...editar empresa",
-      text: error.message,
-    });
-    return;
+    throw new Error(error.message);
   }
   if (data) {
     const { data: urlimagen } = await supabase.storage
