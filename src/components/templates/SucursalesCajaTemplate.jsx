@@ -21,7 +21,7 @@ export const SucursalesCajaTemplate = () => {
       {stateCaja && <RegistrarCaja></RegistrarCaja>}
       <section className="area1">
         <Header>
-          <Title>Cajas por sucursal</Title>
+          <Title>Cajas por Sucursal</Title>
           <Subtitle>Gestiona tus sucursales y cajas</Subtitle>
           <ButtonDashed
             funcion={() => {

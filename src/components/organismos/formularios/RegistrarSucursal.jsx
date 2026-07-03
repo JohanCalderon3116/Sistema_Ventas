@@ -6,6 +6,9 @@ import {
   useSucursalesStore,
   ConvertirCapitalize,
   useEmpresaStore,
+  useAsignacionCajaSucursalesStore,
+  useUsuariosStore,
+  useCajasStore,
 } from "../../../index";
 import { useForm } from "react-hook-form";
 import { BtnClose } from "../../ui/buttons/BtnClose";
@@ -18,7 +21,10 @@ export function RegistrarSucursal() {
     useSucursalesStore();
   const { insertarSucursal, editarSucursal } = useSucursalesStore();
   const theme = useTheme();
+  const { insertarAsignacionSucusal } = useAsignacionCajaSucursalesStore();
   const { dataempresa } = useEmpresaStore();
+  const { datausuarios } = useUsuariosStore();
+  const { mostrarCajaXSucursal } = useCajasStore();
   const {
     register,
     formState: { errors },
@@ -38,7 +44,15 @@ export function RegistrarSucursal() {
         direccion_fiscal: data.direccion_fiscal,
         id_empresa: dataempresa?.id,
       };
-      await insertarSucursal(p);
+      const response = await insertarSucursal(p);
+      const cajas = await mostrarCajaXSucursal({ id_sucursal: response?.id });
+      const cajaPrincipal = cajas?.[0];
+      const pAsignaciones = {
+        id_sucursal: response?.id,
+        id_usuario: datausuarios?.id,
+        id_caja: cajaPrincipal?.id,
+      };
+      await insertarAsignacionSucusal(pAsignaciones);
     }
   };
   const { isPending, mutate: doInsertar } = useMutation({
@@ -46,7 +60,7 @@ export function RegistrarSucursal() {
     mutationFn: insertar,
     onError: (error) => {
       toast.error(
-        "No pudimos registrar la sucursal, algo falló en el proceso. Revisa la información e inténtalo de nuevo 😟",
+        `No pudimos registrar la sucursal, algo falló en el proceso. ${error.message}  Revisa la información e inténtalo de nuevo 😟`,
       );
     },
     onSuccess: () => {

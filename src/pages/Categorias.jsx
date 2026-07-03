@@ -5,8 +5,11 @@ import {
   useCategroriasStore,
   useEmpresaStore,
 } from "../index";
+import styled, { useTheme } from "styled-components";
+import { BeatLoader } from "react-spinners";
 
 export const Categorias = () => {
+  const theme = useTheme();
   const { mostrarCategorias, buscarCategorias, buscador } =
     useCategroriasStore();
   const { dataempresa } = useEmpresaStore();
@@ -24,10 +27,23 @@ export const Categorias = () => {
     refetchOnWindowFocus: false,
   });
   if (isLoading) {
-    return <Spinner1></Spinner1>;
+    return (
+      <ConteinerLoader>
+        <span>
+          <strong>Cargando</strong>
+        </span>
+        <BeatLoader color={theme.text} size={8} />
+      </ConteinerLoader>
+    );
   }
-  // if (error) {
-  //   return <span>Error...</span>;
-  // }
   return <CategoriasTemplate></CategoriasTemplate>;
 };
+
+const ConteinerLoader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  height: 100vh;
+`;

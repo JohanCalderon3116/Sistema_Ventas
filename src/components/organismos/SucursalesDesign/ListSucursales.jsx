@@ -1,14 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { useSucursalesStore } from "../../../store/SucursalesStore";
 import { useEmpresaStore } from "../../../store/EmpresaStore";
-import { BarLoader } from "react-spinners";
+import { BarLoader, BeatLoader } from "react-spinners";
 import { Icon } from "@iconify/react";
 import { Device } from "../../../styles/breakpoints";
 import { ButtonDashed } from "../../ui/buttons/ButtonDashed";
 import { useCajasStore } from "../../../store/CajaStore";
 import Swal from "sweetalert2";
-import { toast } from "sonner";
+import { toast, Toaster } from "sonner";
 
 export const ListSucursales = () => {
   const queryClient = useQueryClient();
@@ -19,6 +19,7 @@ export const ListSucursales = () => {
     setAccion: setAccionCaja,
     eliminarCaja,
   } = useCajasStore();
+  const theme = useTheme();
   const {
     mostrarCajasPorSucursal,
     setStateSucursal,
@@ -26,7 +27,7 @@ export const ListSucursales = () => {
     selectSucursal,
     eliminarSucursal,
   } = useSucursalesStore();
-  const { isLoading, error, data } = useQuery({
+  const { isLoading, data } = useQuery({
     queryKey: ["mostrar cajas por sucursal"],
     queryFn: () => mostrarCajasPorSucursal({ id_empresa: dataempresa?.id }),
     enabled: !!dataempresa,
@@ -102,6 +103,10 @@ export const ListSucursales = () => {
     mutationKey: ["eliminar sucursal"],
     mutationFn: controladorEliminarSucursal,
     onError: (error) => {
+      if (error.message === "Eliminación cancelada") {
+        toast.info("Eliminacion cancelada");
+        return;
+      }
       toast.error(
         `No pudimos eliminar la sucursal, algo falló en el proceso. Inténtalo de nuevo 😔`,
       );
@@ -113,10 +118,15 @@ export const ListSucursales = () => {
       queryClient.invalidateQueries(["mostrar cajas por sucursal"]);
     },
   });
+
   const { mutate: doDeleteCaja } = useMutation({
     mutationKey: ["eliminar caja"],
     mutationFn: controladorEliminarCaja,
     onError: (error) => {
+      if (error.message === "Eliminación cancelada") {
+        toast.info("Eliminacion cancelada");
+        return;
+      }
       toast.error(
         `No pudimos eliminar la caja, algo falló en el proceso. Inténtalo de nuevo 😖`,
       );
@@ -129,13 +139,18 @@ export const ListSucursales = () => {
     },
   });
   if (isLoading) {
-    <BarLoader></BarLoader>;
-  }
-  if (error) {
-    <span>Error: {error.message} </span>;
+    return (
+      <ConteinerLoader>
+        <span>
+          <strong>Cargando</strong>
+        </span>
+        <BeatLoader color={theme.text} size={8} />
+      </ConteinerLoader>
+    );
   }
   return (
     <Container>
+      <Toaster richColors></Toaster>
       {data?.map((sucursal, index) => {
         return (
           <Sucursal key={index}>
@@ -295,4 +310,11 @@ const CajaDescripcion = styled.span`
   color: ${({ theme }) => theme.text};
   font-weight: bold;
   text-align: center;
+`;
+const ConteinerLoader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
 `;

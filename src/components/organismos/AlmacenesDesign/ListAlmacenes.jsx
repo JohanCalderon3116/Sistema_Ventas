@@ -1,8 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { useSucursalesStore } from "../../../store/SucursalesStore";
 import { useEmpresaStore } from "../../../store/EmpresaStore";
-import { BarLoader } from "react-spinners";
+import { BarLoader, BeatLoader } from "react-spinners";
 import { Icon } from "@iconify/react";
 import { Device } from "../../../styles/breakpoints";
 import { ButtonDashed } from "../../ui/buttons/ButtonDashed";
@@ -14,6 +14,7 @@ import { useAlmacenesStore } from "../../../store/AlmacenesStore";
 export const ListAlmacenes = () => {
   const queryClient = useQueryClient();
   const { dataempresa } = useEmpresaStore();
+  const theme = useTheme();
   const {
     setStateAlmacen,
     setAlmacenSelelctItem,
@@ -103,10 +104,18 @@ export const ListAlmacenes = () => {
     mutationKey: ["eliminar sucursal"],
     mutationFn: controladorEliminarSucursal,
     onError: (error) => {
-      toast.error(`Error: ${error.message}`);
+      if (error.message === "Eliminación cancelada") {
+        toast.info(error.message);
+        return;
+      }
+      toast.error(
+        `No pudimos eliminar la sucursal, algo falló en el proceso. Inténtalo de nuevo 😔`,
+      );
     },
     onSuccess: () => {
-      toast.success("Sucursal eliminada exitosamente");
+      toast.success(
+        "La sucursal se eliminó correctamente y ya no aparecerá en tu lista 😌",
+      );
       queryClient.invalidateQueries(["mostrar cajas por sucursal"]);
     },
   });
@@ -114,15 +123,28 @@ export const ListAlmacenes = () => {
     mutationKey: ["eliminar almacenes"],
     mutationFn: controladorEliminarAlmacen,
     onError: (error) => {
-      toast.error(`Error: ${error.message}`);
+      if (error.message === "Eliminación cancelada") {
+        toast.info(error.message);
+        return;
+      }
+      toast.error(
+        `No pudimos eliminar tu almacén, algo falló en el proceso: ${error.message} 🤨`,
+      );
     },
     onSuccess: () => {
-      toast.success("Almacen eliminado exitosamente");
+      toast.success("Tu almacén se eliminó correctamente 🙃");
       queryClient.invalidateQueries(["mostrar almacenes x empresa"]);
     },
   });
   if (isLoading) {
-    <BarLoader></BarLoader>;
+    return (
+      <ConteinerLoader>
+        <span>
+          <strong>Cargando</strong>
+        </span>
+        <BeatLoader color={theme.text} size={8} />
+      </ConteinerLoader>
+    );
   }
   if (error) {
     <span>Error: {error.message} </span>;
@@ -158,7 +180,10 @@ export const ListAlmacenes = () => {
                 return (
                   <CajaItem key={index}>
                     <CajaInfo>
-                      <FechaCreacion> {almacenes.fecha_creacion_a} </FechaCreacion>
+                      <FechaCreacion>
+                        {" "}
+                        {almacenes.fecha_creacion_a}{" "}
+                      </FechaCreacion>
                     </CajaInfo>
                     <CajaDescripcion> {almacenes.nombre} </CajaDescripcion>
                     <Acciones $right="10px" $bottom="10px">
@@ -288,4 +313,11 @@ const CajaDescripcion = styled.span`
   color: ${({ theme }) => theme.text};
   font-weight: bold;
   text-align: center;
+`;
+const ConteinerLoader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
 `;

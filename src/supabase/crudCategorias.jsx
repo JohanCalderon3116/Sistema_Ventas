@@ -4,12 +4,7 @@ const tabla = "categorias";
 export async function InsertarCategorias(p, file) {
   const { error, data } = await supabase.rpc("insertarcategorias", p);
   if (error) {
-    Swal.fire({
-      icon: "error",
-      title: "Oops...",
-      text: error.message,
-    });
-    return;
+    throw new Error(error.message);
   }
   const img = file.size;
   if (img != undefined) {

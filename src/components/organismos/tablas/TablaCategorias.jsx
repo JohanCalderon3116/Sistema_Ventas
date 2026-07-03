@@ -18,6 +18,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { FaArrowsAltV } from "react-icons/fa";
+import { toast } from "sonner";
 export function TablaCategorias({
   data,
   SetopenRegistro,
@@ -32,12 +33,9 @@ export function TablaCategorias({
   const { eliminarCategorias } = useCategroriasStore();
   function eliminar(p) {
     if (p.nombre === "General") {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Este registro no se permite modificar ya que es valor por defecto.",
-        footer: '<a href="">...</a>',
-      });
+      toast.warning(
+        "La categoría General es obligatoria para el funcionamiento del sistema, no se puede modificar 🚫",
+      );
       return;
     }
     Swal.fire({
@@ -51,17 +49,17 @@ export function TablaCategorias({
     }).then(async (result) => {
       if (result.isConfirmed) {
         await eliminarCategorias({ id: p.id });
+        toast.success("¡Listo! La categoría se eliminó súper bien. 🎉😊");
+      } else {
+        toast.info("Eliminación cancelada. ¡Seguimos adelante! 😌👍");
       }
     });
   }
   function editar(data) {
     if (data.nombre === "General") {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Este registro no se permite modificar ya que es valor por defecto.",
-        footer: '<a href="">...</a>',
-      });
+      toast.warning(
+        "La categoría General es obligatoria para el funcionamiento del sistema, no se puede modificar 🙅",
+      );
       return;
     }
     SetopenRegistro(true);
@@ -90,17 +88,6 @@ export function TablaCategorias({
         return filterStatuses.includes(status?.id);
       },
     },
-    // {
-    //   accessorKey: "id",
-    //   header: "Id",
-    //   cell: (info) => <span>{info.getValue()}</span>,
-    //   enableColumnFilter: true,
-    //   filterFn: (row, columnId, filterStatuses) => {
-    //     if (filterStatuses.length === 0) return true;
-    //     const status = row.getValue(columnId);
-    //     return filterStatuses.includes(status?.id);
-    //   },
-    // },
     {
       accessorKey: "nombre",
       header: "Descripcion",

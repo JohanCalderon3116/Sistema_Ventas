@@ -17,7 +17,7 @@ export const AlmacenesTemplate = () => {
   const { stateAlmacen } = useAlmacenesStore();
   return (
     <Container>
-      <Toaster richColors position="top-center"></Toaster>
+      <Toaster richColors></Toaster>
       {stateSucursal && <RegistrarSucursal></RegistrarSucursal>}
       {stateAlmacen && <RegistrarAlmacen></RegistrarAlmacen>}
       <section className="area1">

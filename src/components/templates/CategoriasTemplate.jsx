@@ -10,6 +10,7 @@ import {
 import { v } from "../../styles/variables";
 import { useState } from "react";
 import Confetti from "react-confetti-boom";
+import { Toaster } from "sonner";
 export const CategoriasTemplate = () => {
   const { datacategorias, setBuscador } = useCategroriasStore();
   const [openRegistro, setOpenRegistro] = useState(false);
@@ -24,6 +25,7 @@ export const CategoriasTemplate = () => {
   }
   return (
     <Container>
+      <Toaster richColors></Toaster>
       {openRegistro && (
         <RegistrarCategorias
           setIsExploding={setIsExploding}
@@ -33,10 +35,10 @@ export const CategoriasTemplate = () => {
         ></RegistrarCategorias>
       )}
       <section className="area1">
-        <Title>Categorias</Title>{" "}
+        <Title>Categorías</Title>{" "}
         <Btn1
           funcion={nuevoRegistro}
-          bgcolor={v.colorPrincipal}
+          bgcolor="#3300E3"
           titulo="Nuevo"
           icono={<v.iconoagregar />}
         ></Btn1>

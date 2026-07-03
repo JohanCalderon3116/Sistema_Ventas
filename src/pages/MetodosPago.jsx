@@ -5,9 +5,12 @@ import {
   useEmpresaStore,
   useMetodosPagoStore,
 } from "../index";
+import styled, { useTheme } from "styled-components";
+import { BeatLoader } from "react-spinners";
 
 export const MetodosPago = () => {
   const { mostrarMetodosPago } = useMetodosPagoStore();
+  const theme = useTheme();
   const { dataempresa } = useEmpresaStore();
   const { isLoading, error } = useQuery({
     queryKey: ["mostrar metodos pago"],
@@ -16,10 +19,23 @@ export const MetodosPago = () => {
     refetchOnWindowFocus: false,
   });
   if (isLoading) {
-    return <Spinner1></Spinner1>;
+    return (
+      <ConteinerLoader>
+        <span>
+          <strong>Cargando</strong>
+        </span>
+        <BeatLoader color={theme.text} size={8} />
+      </ConteinerLoader>
+    );
   }
-  if (error) {
-    return <span>Error: {error.message} </span>;
-  }
-  return <MetodosPagoTemplate></MetodosPagoTemplate>
+  return <MetodosPagoTemplate></MetodosPagoTemplate>;
 };
+
+const ConteinerLoader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  height: 100vh;
+`;

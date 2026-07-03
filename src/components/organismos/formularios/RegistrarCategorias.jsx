@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { v } from "../../../styles/variables";
 import {
   InputText,
@@ -7,11 +7,14 @@ import {
   useCategroriasStore,
   Icono,
   ConvertirCapitalize,
+  BtnClose,
 } from "../../../index";
 import { useForm } from "react-hook-form";
 import { CirclePicker } from "react-color";
 import { useEmpresaStore } from "../../../store/EmpresaStore";
 import { useMutation } from "@tanstack/react-query";
+import { BeatLoader } from "react-spinners";
+import { toast } from "sonner";
 
 export function RegistrarCategorias({
   onClose,
@@ -22,6 +25,7 @@ export function RegistrarCategorias({
   const { insertarCategorias, editarCategorias } = useCategroriasStore();
   const { dataempresa } = useEmpresaStore();
   const [currentColor, setColor] = useState("#F44336");
+  const theme = useTheme();
   const [file, setFile] = useState([]);
   const ref = useRef(null);
   const [fileurl, setFileurl] = useState();
@@ -36,8 +40,15 @@ export function RegistrarCategorias({
   const { isPending, mutate: doInsertar } = useMutation({
     mutationFn: insertar,
     mutationKey: "insertar categorias",
-    onError: (err) => console.log("El error", err.message),
-    onSuccess: () => cerrarFormulario(),
+    onError: () => {
+      toast.error(
+        "No pudimos guardar tu categoría, algo falló en el proceso. Inténtalo de nuevo 😩",
+      );
+    },
+    onSuccess: () => {
+      toast.success("Tu categoría quedó guardada correctamente 😄");
+      cerrarFormulario();
+    },
   });
   const handlesub = (data) => {
     doInsertar(data);
@@ -90,20 +101,25 @@ export function RegistrarCategorias({
   return (
     <Container>
       {isPending ? (
-        <span>...🔼</span>
+        <ConteinerLoader>
+          <span>
+            <strong>Guardando</strong>
+          </span>
+          <BeatLoader color={theme.text} size={8} />
+        </ConteinerLoader>
       ) : (
         <div className="sub-contenedor">
           <div className="headers">
             <section>
               <h1>
                 {accion == "Editar"
-                  ? "Editar categoria"
-                  : "Registrar nueva categoria"}
+                  ? "Editar categoría"
+                  : "Registrar nueva categoría"}
               </h1>
             </section>
 
             <section>
-              <span onClick={onClose}>x</span>
+              <BtnClose funcion={onClose}></BtnClose>
             </section>
           </div>
           <PictureContainer>
@@ -141,7 +157,7 @@ export function RegistrarCategorias({
                       required: true,
                     })}
                   />
-                  <label className="form__label">categoria</label>
+                  <label className="form__label">categoría</label>
                   {errors.descripcion?.type === "required" && (
                     <p>Campo requerido</p>
                   )}
@@ -161,7 +177,7 @@ export function RegistrarCategorias({
               <Btn1
                 icono={<v.iconoguardar />}
                 titulo="Guardar"
-                bgcolor={v.colorPrincipal}
+                bgcolor="#3300E3"
               />
             </section>
           </form>
@@ -264,4 +280,12 @@ const PictureContainer = styled.div`
   input {
     display: none;
   }
+`;
+const ConteinerLoader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  height: 100vh;
 `;

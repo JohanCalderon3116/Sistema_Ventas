@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { v } from "../../../styles/variables";
 import {
   InputText,
@@ -10,6 +10,7 @@ import { useForm } from "react-hook-form";
 import { BtnClose } from "../../ui/buttons/BtnClose";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast, Toaster } from "sonner";
+import { BeatLoader } from "react-spinners";
 export function RegistrarAlmacen() {
   const queryClient = useQueryClient();
   const {
@@ -18,7 +19,8 @@ export function RegistrarAlmacen() {
     setStateAlmacen,
     insertarAlmacenes,
     editarAlmacenes,
-  } = useAlmacenesStore();                                                      
+  } = useAlmacenesStore();
+  const theme = useTheme();
   const {
     register,
     formState: { errors },
@@ -43,10 +45,10 @@ export function RegistrarAlmacen() {
     mutationKey: ["insertar almacen"],
     mutationFn: insertar,
     onError: (error) => {
-      toast.error(`Error: ${error.message}`);
+      toast.error(`No pudimos guardar tu almacén, algo falló en el proceso 😬`);
     },
     onSuccess: () => {
-      toast.success("Almacen registrado correctamenete");
+      toast.success("Tu almacén quedó registrado correctamente 🥹");
       queryClient.invalidateQueries(["mostrar almacenes x empresa"]);
       setStateAlmacen(false);
     },
@@ -58,7 +60,12 @@ export function RegistrarAlmacen() {
   return (
     <Container>
       {isPending ? (
-        <span>Guardando</span>
+        <ConteinerLoader>
+          <span>
+            <strong>Guardando</strong>
+          </span>
+          <BeatLoader color={theme.text} size={8} />
+        </ConteinerLoader>
       ) : (
         <div className="sub-contenedor">
           <div className="headers">
@@ -161,4 +168,12 @@ const Container = styled.div`
       }
     }
   }
+`;
+const ConteinerLoader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  height: 100vh;
 `;

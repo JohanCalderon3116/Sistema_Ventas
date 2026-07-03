@@ -32,10 +32,11 @@ export async function MostrarCajasPorSucursal(p) {
   return data;
 }
 export async function InsertarSucursal(p) {
-  const { error } = await supabase.from(tabla).insert(p);
+  const { error, data } = await supabase.from(tabla).insert(p).select().single();
   if (error) {
     throw new Error(error.message);
   }
+  return data;
 }
 export async function EditarSucursal(p) {
   const { error } = await supabase.from(tabla).update(p).eq("id", p.id);

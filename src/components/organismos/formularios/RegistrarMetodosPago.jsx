@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { v } from "../../../styles/variables";
 import {
   InputText,
@@ -8,12 +8,14 @@ import {
   Icono,
   ConvertirCapitalize,
   useMetodosPagoStore,
+  BtnClose,
 } from "../../../index";
 import { useForm } from "react-hook-form";
 import { CirclePicker } from "react-color";
 import { useEmpresaStore } from "../../../store/EmpresaStore";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { BeatLoader } from "react-spinners";
 
 export function RegistrarMetodosPago({
   onClose,
@@ -22,6 +24,7 @@ export function RegistrarMetodosPago({
   setIsExploding,
 }) {
   const { insertarMetodosPago, editarMetodosPago } = useMetodosPagoStore();
+  const theme = useTheme();
   const queryClient = useQueryClient();
   const { dataempresa } = useEmpresaStore();
   const [file, setFile] = useState([]);
@@ -33,13 +36,17 @@ export function RegistrarMetodosPago({
     handleSubmit,
   } = useForm();
   const { isPending, mutate: doInsertar } = useMutation({
-    mutationFn: insertar,
     mutationKey: "insertar metodos de pago",
+    mutationFn: insertar,
     onError: (error) => {
-      toast.error(`Error: ${error.message} `);
+      toast.error(
+        `No pudimos guardar el método de pago, algo falló en el proceso. Revisa la información e inténtalo de nuevo 😥`,
+      );
     },
     onSuccess: () => {
-      toast.success("Metodo de pago guardado exitosamente");
+      toast.success(
+        "El método de pago quedó guardado correctamente y ya está disponible 🥳",
+      );
       queryClient.invalidateQueries(["mostrar metodos pago"]);
       cerrarFormulario();
     },
@@ -58,7 +65,6 @@ export function RegistrarMetodosPago({
         id: dataSelect.id,
       };
       await editarMetodosPago(p, dataSelect.icono, file);
-      console.log(editarMetodosPago)
     } else {
       const p = {
         nombre: ConvertirCapitalize(data.nombre),
@@ -92,20 +98,25 @@ export function RegistrarMetodosPago({
   return (
     <Container>
       {isPending ? (
-        <span>...🔼</span>
+        <ConteinerLoader>
+          <span>
+            <strong>Guardando</strong>
+          </span>
+          <BeatLoader color={theme.text} size={8} />
+        </ConteinerLoader>
       ) : (
         <div className="sub-contenedor">
           <div className="headers">
             <section>
               <h1>
                 {accion == "Editar"
-                  ? "Editar metodo de pago"
-                  : "Registrar nuevo metodo de pago"}
+                  ? "Editar método de pago"
+                  : "Registrar nuevo método de pago"}
               </h1>
             </section>
 
             <section>
-              <span onClick={onClose}>x</span>
+              <BtnClose funcion={onClose}></BtnClose>
             </section>
           </div>
           <PictureContainer>
@@ -150,7 +161,7 @@ export function RegistrarMetodosPago({
               <Btn1
                 icono={<v.iconoguardar />}
                 titulo="Guardar"
-                bgcolor={v.colorPrincipal}
+                bgcolor="#3300E3"
               />
             </section>
           </form>
@@ -253,4 +264,12 @@ const PictureContainer = styled.div`
   input {
     display: none;
   }
+`;
+const ConteinerLoader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  height: 100vh;
 `;

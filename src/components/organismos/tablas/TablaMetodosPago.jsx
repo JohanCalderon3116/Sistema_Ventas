@@ -50,6 +50,9 @@ export function TablaMetodosPago({
     }).then(async (result) => {
       if (result.isConfirmed) {
         await eliminarMetodosPago({ id: p.id });
+        toast.success(
+          "El método de pago se eliminó correctamente y ya no aparecerá en tu lista 😌",
+        );
         queryClient.invalidateQueries(["mostrar metodos pago"]);
       }
     });

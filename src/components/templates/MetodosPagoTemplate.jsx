@@ -11,7 +11,7 @@ import Confetti from "react-confetti-boom";
 import { Toaster } from "sonner";
 import { TablaMetodosPago } from "../organismos/tablas/TablaMetodosPago";
 export const MetodosPagoTemplate = () => {
-  const {dataMetodosPago} = useMetodosPagoStore()
+  const { dataMetodosPago } = useMetodosPagoStore();
   const [openRegistro, setOpenRegistro] = useState(false);
   const [accion, setAccion] = useState("");
   const [dataSelect, setDataSelect] = useState([]);
@@ -24,20 +24,20 @@ export const MetodosPagoTemplate = () => {
   }
   return (
     <Container>
-      <Toaster richColors position="top-center"></Toaster>
+      <Toaster richColors></Toaster>
       {openRegistro && (
         <RegistrarMetodosPago
           setIsExploding={setIsExploding}
           onClose={() => setOpenRegistro(!openRegistro)}
-          dataSelect={dataSelect} 
+          dataSelect={dataSelect}
           accion={accion}
         ></RegistrarMetodosPago>
       )}
       <section className="area1">
-        <Title>Metodos de pago</Title>{" "}
+        <Title>Métodos de pago</Title>{" "}
         <Btn1
           funcion={nuevoRegistro}
-          bgcolor={v.colorPrincipal}
+          bgcolor="#3300E3"
           titulo="Nuevo"
           icono={<v.iconoagregar />}
         ></Btn1>
