@@ -41,6 +41,37 @@ export async function MostrarTop10ProductosMasVenidosPorMonto(p) {
   );
   return data;
 }
+
+export async function ContarVentasXEmpresa(p) {
+  const { data, error } = await supabase.rpc("contarventasempresa", p);
+  if (error) {
+    throw new Error(error.message);
+  }
+  return data;
+}
+
+export async function SumarTotalVentasXEmpresa(p) {
+  const { data, error } = await supabase.rpc("sumartotalventasempresa", p);
+  if (error) {
+    throw new Error(error.message);
+  }
+  return data[0];
+}
+
+export async function CalcularGananciasXEmpresa(p) {
+  const { data, error } = await supabase.rpc("calcularganallasempresa", p);
+  if (error) {
+    throw new Error(error.message);
+  }
+  return data[0];
+}
+export async function MostrarVentasAgrupadasFecha(p) {
+  const { data, error } = await supabase.rpc("mostrarventasagrupadasfecha", p);
+  if (error) {
+    throw new Error(error.message);
+  }
+  return data;
+}
 export async function EditarCantidadDetalleVenta(p) {
   const { data, error } = await supabase.rpc("editarcantidaddv", p);
   if (error) {

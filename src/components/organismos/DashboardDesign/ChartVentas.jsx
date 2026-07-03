@@ -9,73 +9,56 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { useEmpresaStore } from "../../../store/EmpresaStore";
-import { FormatearNumeroDinero } from "../../../utils/Conversiones";
-import { useVentasStore } from "../../../store/VentasStore";
+import {
+  FormatearNumeroDinero,
+  FormatearNumeroDineroSinIsoYCurrency,
+} from "../../../utils/Conversiones";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { useThemeStore } from "../../../store/ThemeStore";
+import { useQuery } from "@tanstack/react-query";
+import { useDashboardStore, useDetalleVentasStore } from "../../..";
+import { BarLoader } from "react-spinners";
 export const ChartVentas = () => {
   const { dataempresa } = useEmpresaStore();
-  const { porcentajeCambio } = useVentasStore();
-
+  const {
+    mostrarVentasAgrupadasFecha,
+    ventasAgrupadasFecha,
+    totalVentas,
+    porcentajeCambioTotal,
+  } = useDetalleVentasStore();
+  const { fechaInicio, fechaFin } = useDashboardStore();
   const { themeStyle } = useThemeStore();
-  const isPositive = porcentajeCambio > 0;
-  const isNeutral = porcentajeCambio === 0;
+  const isPositive = porcentajeCambioTotal > 0;
+  const isNeutral = porcentajeCambioTotal === 0;
+  const { isLoading } = useQuery({
+    queryKey: [
+      "mostrar ventas agrupadas x fecha",
+      {
+        _id_empresa: dataempresa?.id,
+        _fecha_inicio: fechaInicio,
+        _fecha_fin: fechaFin,
+      },
+    ],
+    queryFn: () =>
+      mostrarVentasAgrupadasFecha({
+        _id_empresa: dataempresa?.id,
+        _fecha_inicio: fechaInicio,
+        _fecha_fin: fechaFin,
+      }),
+  });
 
-  const data = [
-    {
-      name: "Page A",
-      uv: 4000,
-      pv: 2400,
-      amt: 2400,
-    },
-    {
-      name: "Page B",
-      uv: 3000,
-      pv: 1398,
-      amt: 2210,
-    },
-    {
-      name: "Page C",
-      uv: 2000,
-      pv: 9800,
-      amt: 2290,
-    },
-    {
-      name: "Page D",
-      uv: 2780,
-      pv: 3908,
-      amt: 2000,
-    },
-    {
-      name: "Page E",
-      uv: 1890,
-      pv: 4800,
-      amt: 2181,
-    },
-    {
-      name: "Page F",
-      uv: 2390,
-      pv: 3800,
-      amt: 2500,
-    },
-    {
-      name: "Page G",
-      uv: 3490,
-      pv: 4300,
-      amt: 2100,
-    },
-  ];
+  if (isLoading) {
+    return <BarLoader></BarLoader>;
+  }
   return (
     <Container>
       <Header>
         <Title>Total ventas</Title>
       </Header>
       <MainInfo>
-        <Revenue>
-          {FormatearNumeroDinero(1000, dataempresa?.currency, dataempresa?.iso)}
-        </Revenue>
+        <Revenue>{FormatearNumeroDineroSinIsoYCurrency(totalVentas)}</Revenue>
         <Change>
-          <Percentage>
+          <Percentage isPositive={isPositive} isNeutral={isNeutral}>
             <Icon
               width="26"
               height="26"
@@ -87,7 +70,7 @@ export const ChartVentas = () => {
                     : "iconamoon:arrow-down-2-fill"
               }
             ></Icon>
-            56% al periodo anterior
+            {Math.abs(porcentajeCambioTotal).toFixed(1)}% al periodo anterior
           </Percentage>
         </Change>
       </MainInfo>
@@ -95,7 +78,7 @@ export const ChartVentas = () => {
         <AreaChart
           width={500}
           height={400}
-          data={data}
+          data={ventasAgrupadasFecha}
           margin={{
             top: 10,
             right: 0,
@@ -111,7 +94,7 @@ export const ChartVentas = () => {
           </defs>
           <CartesianGrid strokeOpacity={0.2} vertical={false} />
           <XAxis
-            dataKey="name"
+            dataKey="fecha"
             axisLine={false}
             tickLine={false}
             tick={{ fontSize: 12, fill: "#9CA3AF" }}
@@ -121,7 +104,7 @@ export const ChartVentas = () => {
           <Area
             strokeWidth={1.5}
             type="monotone"
-            dataKey="uv"
+            dataKey="total_dia"
             stroke={themeStyle.text}
             fill="url(#colorValue)"
             activeDot={{ r: 6 }}

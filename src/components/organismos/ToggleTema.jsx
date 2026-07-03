@@ -26,7 +26,6 @@ export function ToggleTema() {
     mutationKey: ["editar tema"],
     mutationFn: EditarTemaUser,
     onSuccess: () => {
-      toast.success(`Tema cambiado a ${setTheme}`);
       queryClient.invalidateQueries(["mostrar usuarios"]);
     },
     onError: (error) => {

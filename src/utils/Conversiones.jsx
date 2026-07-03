@@ -21,6 +21,15 @@ export function FormatearNumeroDinero(numero, currency, iso) {
   return numeroconvertido;
 }
 
+export function FormatearNumeroDineroSinIsoYCurrency(numero) {
+  return Number(numero).toLocaleString("es-CO", {
+    style: "currency",
+    currency: "COP",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  });
+}
+
 export const urlToBase64 = async (imageUrl) => {
   const response = await fetch(imageUrl);
   const blob = await response.blob();

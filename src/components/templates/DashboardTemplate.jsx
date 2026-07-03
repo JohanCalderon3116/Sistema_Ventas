@@ -6,6 +6,13 @@ import { ChartVentas } from "../organismos/DashboardDesign/ChartVentas";
 import { ChartProductosTop5 } from "../organismos/DashboardDesign/ChartProductosTop5";
 import { CardMovimientosCajaLive } from "../organismos/DashboardDesign/CardMovimientosCajaLive";
 import { CardMovimientosProductosTopMonto } from "../organismos/DashboardDesign/CardMovimientosProductosTopMonto";
+import { useQuery } from "@tanstack/react-query";
+import { useDetalleVentasStore } from "../../store/DetalleVentasStore";
+import { useDashboardStore, useEmpresaStore } from "../..";
+import { BarLoader } from "react-spinners";
+import { CantidadVentas } from "../organismos/DashboardDesign/CantidadVentas";
+import { SumarVentas } from "../organismos/DashboardDesign/SumarVentas";
+import { Ganacias } from "../organismos/DashboardDesign/Ganancias";
 export const DashboardTemplate = () => {
   return (
     <Container>
@@ -13,28 +20,13 @@ export const DashboardTemplate = () => {
       <MainContent>
         <Area1>
           <ContentTotales>
-            <CardTotales
-              title="Ventas"
-              icon="mdi:dollar"
-              value="45"
-              porcentage="10"
-            ></CardTotales>
+            <CantidadVentas></CantidadVentas>
           </ContentTotales>
           <ContentTotales>
-            <CardTotales
-              title="Ventas"
-              icon="mdi:dollar"
-              value="45"
-              porcentage="10"
-            ></CardTotales>
+            <SumarVentas></SumarVentas>
           </ContentTotales>
           <ContentTotales>
-            <CardTotales
-              title="Ventas"
-              icon="mdi:dollar"
-              value="45"
-              porcentage="10"
-            ></CardTotales>
+            <Ganacias></Ganacias>
           </ContentTotales>
         </Area1>
         <Area2>
@@ -45,8 +37,8 @@ export const DashboardTemplate = () => {
           <ChartProductosTop5></ChartProductosTop5>{" "}
         </Area3>
         <Area4>
-        <CardMovimientosCajaLive></CardMovimientosCajaLive>
-        <CardMovimientosProductosTopMonto></CardMovimientosProductosTopMonto>
+          <CardMovimientosCajaLive></CardMovimientosCajaLive>
+          <CardMovimientosProductosTopMonto></CardMovimientosProductosTopMonto>
         </Area4>
       </MainContent>
     </Container>
@@ -108,11 +100,11 @@ const Area3 = styled.section`
 const Area4 = styled.section`
   grid-area: area4;
 
-  display:flex;
-  gap:20px;
-  flex-wrap:wrap;
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
   @media ${Device.desktop} {
-    flex-wrap:nowrap;
+    flex-wrap: nowrap;
   }
 `;
 const ContentTotales = styled.div`

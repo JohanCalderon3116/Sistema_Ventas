@@ -1,10 +1,11 @@
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { RingLoader } from "react-spinners";
 
 export const Spinner1 = () => {
+  const theme = useTheme();
   return (
     <Container>
-      <RingLoader color="#7f3ceb" size={80}></RingLoader>
+      <RingLoader color={theme.color1} size={80}></RingLoader>
     </Container>
   );
 };

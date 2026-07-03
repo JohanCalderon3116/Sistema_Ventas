@@ -5,6 +5,8 @@ import {
   useEmpresaStore,
 } from "../index";
 import { useLocation } from "react-router-dom";
+import styled from "styled-components";
+import { BeatLoader } from "react-spinners";
 
 export const ClientesProveedores = () => {
   const location = useLocation();
@@ -58,7 +60,23 @@ export const ClientesProveedores = () => {
     refetchOnWindowFocus: false,
   });
   if (isLoading) {
-    return <span>Cargando...</span>;
+    return (
+      <ConteinerLoader>
+        <span>
+          <strong>Cargando</strong>
+        </span>
+        <BeatLoader color="#FFFFFF" size={8} />
+      </ConteinerLoader>
+    );
   }
   return <ClientesProveedoresTemplate></ClientesProveedoresTemplate>;
 };
+
+const ConteinerLoader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  height: 100vh;
+`;

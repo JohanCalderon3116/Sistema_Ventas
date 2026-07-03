@@ -15,7 +15,6 @@ function App() {
   const { setTheme, themeStyle, theme } = useThemeStore();
   const { datausuarios } = useUsuariosStore();
   const location = useLocation();
-  //const themeStyle = datausuarios?.tema === "light" ? Light : Dark;
   useEffect(() => {
     if (location.pathname === "/login") {
       setTheme({
