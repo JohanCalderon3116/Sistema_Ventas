@@ -11,11 +11,12 @@ import { RegistrarCaja } from "../organismos/formularios/RegistrarCaja";
 import { AnimatedGrid } from "../ui/animated/AnimatedGrid";
 
 export const SucursalesCajaTemplate = () => {
-  const { stateSucursal, setStateSucursal } = useSucursalesStore();
+  const { stateSucursal, setStateSucursal, selectSucursal, setAccion } =
+    useSucursalesStore();
   const { stateCaja } = useCajasStore();
   return (
     <Container>
-      <Toaster richColors position="top-center"></Toaster>
+      <Toaster richColors></Toaster>
       {stateSucursal && <RegistrarSucursal></RegistrarSucursal>}
       {stateCaja && <RegistrarCaja></RegistrarCaja>}
       <section className="area1">
@@ -23,7 +24,11 @@ export const SucursalesCajaTemplate = () => {
           <Title>Cajas por sucursal</Title>
           <Subtitle>Gestiona tus sucursales y cajas</Subtitle>
           <ButtonDashed
-            funcion={() => setStateSucursal(true)}
+            funcion={() => {
+              selectSucursal(null);
+              setAccion("Nuevo");
+              setStateSucursal(true);
+            }}
             title="Agregar sucursal"
           ></ButtonDashed>
         </Header>

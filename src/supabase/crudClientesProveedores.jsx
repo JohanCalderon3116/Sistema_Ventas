@@ -4,12 +4,7 @@ const tabla = "clientes_proveedores";
 export async function InsertarClientesProveedores(p) {
   const { error, data } = await supabase.rpc("insertarclientesproveedores", p);
   if (error) {
-    Swal.fire({
-      icon: "error",
-      title: "Oops... editar clientes",
-      text: error.message,
-    });
-    return;
+    throw new Error(error.message);
   }
   return data;
 }
@@ -50,11 +45,6 @@ export async function EliminarClientesProveedores(p) {
 export async function EditarClientesProveedores(p) {
   const { error } = await supabase.rpc("editarclientesproveedores", p);
   if (error) {
-    Swal.fire({
-      icon: "error",
-      title: "Oops... editar clientes",
-      text: error.message,
-    });
-    return;
+    throw new Error(error.message);
   }
 }

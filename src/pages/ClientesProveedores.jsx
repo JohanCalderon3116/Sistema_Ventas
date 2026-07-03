@@ -5,7 +5,7 @@ import {
   useEmpresaStore,
 } from "../index";
 import { useLocation } from "react-router-dom";
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { BeatLoader } from "react-spinners";
 
 export const ClientesProveedores = () => {
@@ -13,6 +13,7 @@ export const ClientesProveedores = () => {
   const { dataempresa } = useEmpresaStore();
   const { tipo, mostrarCliPro, buscarCliPro, buscador } =
     useClientesProveedoresStore();
+  const theme = useTheme();
   const { isLoading } = useQuery({
     queryKey: [
       "mostrar clientes proveedores",
@@ -63,9 +64,9 @@ export const ClientesProveedores = () => {
     return (
       <ConteinerLoader>
         <span>
-          <strong>Cargando</strong>
+          <strong>Cargando...</strong>
         </span>
-        <BeatLoader color="#FFFFFF" size={8} />
+        <BeatLoader color={theme.text} size={8} />
       </ConteinerLoader>
     );
   }

@@ -1,16 +1,19 @@
 import { useEffect, useRef, useState } from "react";
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { v } from "../../../styles/variables";
 import {
   InputText,
   Btn1,
   ConvertirCapitalize,
   useClientesProveedoresStore,
+  BtnClose,
 } from "../../../index";
 import { useForm } from "react-hook-form";
 import { CirclePicker } from "react-color";
 import { useEmpresaStore } from "../../../store/EmpresaStore";
 import { useMutation } from "@tanstack/react-query";
+import { BeatLoader } from "react-spinners";
+import { toast } from "sonner";
 
 export function RegistrarClientesProveedores({
   onClose,
@@ -20,6 +23,7 @@ export function RegistrarClientesProveedores({
 }) {
   const { dataempresa } = useEmpresaStore();
   const { insertarCliPro, editarCliPro, tipo } = useClientesProveedoresStore();
+  const theme = useTheme();
   const {
     register,
     formState: { errors },
@@ -28,8 +32,17 @@ export function RegistrarClientesProveedores({
   const { isPending, mutate: doInsertar } = useMutation({
     mutationFn: insertar,
     mutationKey: "insertar clientes proveedores",
-    onError: (err) => console.log("El error", err.message),
-    onSuccess: () => cerrarFormulario(),
+    onError: (error) => {
+      toast.error(
+        `No pudimos guardar los datos que ingresaste, algo falló en el proceso: ${error.message}. Revisa la información e inténtalo de nuevo 😣`,
+      );
+    },
+    onSuccess: () => {
+      toast.success(
+        "Todo salió bien, la información quedó guardada correctamente y ya está disponible 🤗",
+      );
+      cerrarFormulario();
+    },
   });
   const handlesub = (data) => {
     doInsertar(data);
@@ -67,28 +80,28 @@ export function RegistrarClientesProveedores({
       await insertarCliPro(p);
     }
   }
-
-  useEffect(() => {
-    if (accion === "Editar") {
-    }
-  }, []);
   return (
     <Container>
       {isPending ? (
-        <span>...🔼</span>
+        <ConteinerLoader>
+          <span>
+            <strong>Guardando</strong>
+          </span>
+          <BeatLoader color={theme.text} size={8} />
+        </ConteinerLoader>
       ) : (
         <div className="sub-contenedor">
           <div className="headers">
             <section>
               <h1>
                 {accion == "Editar"
-                  ? "Editar" + tipo
+                  ? "Editar " + tipo
                   : "Registrar nuevo " + tipo}
               </h1>
             </section>
 
             <section>
-              <span onClick={onClose}>x</span>
+              <BtnClose funcion={onClose}></BtnClose>
             </section>
           </div>
           <form className="formulario" onSubmit={handleSubmit(handlesub)}>
@@ -170,7 +183,7 @@ export function RegistrarClientesProveedores({
                       required: true,
                     })}
                   />
-                  <label className="form__label">Indetificador Nacional</label>
+                  <label className="form__label">C.C</label>
                   {errors.identificador_nacional?.type === "required" && (
                     <p>Campo requerido</p>
                   )}
@@ -183,20 +196,17 @@ export function RegistrarClientesProveedores({
                     defaultValue={dataSelect.identificador_fiscal}
                     type="text"
                     placeholder="Identificador_fiscal"
-                    {...register("identificador_fiscal", {
-                      required: true,
-                    })}
+                    {...register("identificador_fiscal")}
                   />
-                  <label className="form__label">Indetificador Fiscal</label>
-                  {errors.identificador_fiscal?.type === "required" && (
-                    <p>Campo requerido</p>
-                  )}
+                  <label className="form__label">
+                    Indentificador Empresa (NIT)
+                  </label>
                 </InputText>
               </article>
               <Btn1
                 icono={<v.iconoguardar />}
                 titulo="Guardar"
-                bgcolor={v.colorPrincipal}
+                bgcolor="#3300E3"
               />
             </section>
           </form>
@@ -299,4 +309,12 @@ const PictureContainer = styled.div`
   input {
     display: none;
   }
+`;
+const ConteinerLoader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  height: 100vh;
 `;

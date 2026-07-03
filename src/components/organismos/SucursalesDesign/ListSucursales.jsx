@@ -62,6 +62,7 @@ export const ListSucursales = () => {
         if (result.isConfirmed) {
           try {
             await eliminarCaja({ id: id });
+
             resolve();
           } catch (error) {
             reject(error);
@@ -101,10 +102,14 @@ export const ListSucursales = () => {
     mutationKey: ["eliminar sucursal"],
     mutationFn: controladorEliminarSucursal,
     onError: (error) => {
-      toast.error(`Error: ${error.message}`);
+      toast.error(
+        `No pudimos eliminar la sucursal, algo falló en el proceso. Inténtalo de nuevo 😔`,
+      );
     },
     onSuccess: () => {
-      toast.success("Sucursal eliminada exitosamente");
+      toast.success(
+        "La sucursal se eliminó correctamente y ya no aparecerá en tu lista 😌",
+      );
       queryClient.invalidateQueries(["mostrar cajas por sucursal"]);
     },
   });
@@ -112,10 +117,14 @@ export const ListSucursales = () => {
     mutationKey: ["eliminar caja"],
     mutationFn: controladorEliminarCaja,
     onError: (error) => {
-      toast.error(`Error: ${error.message}`);
+      toast.error(
+        `No pudimos eliminar la caja, algo falló en el proceso. Inténtalo de nuevo 😖`,
+      );
     },
     onSuccess: () => {
-      toast.success("Caja eliminada exitosamente");
+      toast.success(
+        "La caja se eliminó correctamente y ya no aparecerá en tu lista 🥰",
+      );
       queryClient.invalidateQueries(["mostrar cajas por sucursal"]);
     },
   });

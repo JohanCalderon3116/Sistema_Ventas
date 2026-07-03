@@ -32,19 +32,20 @@ const GridContainer = styled.div`
 const HorizontalLine = styled.div`
   position: absolute;
   left: 0;
-  width: 0; /* Cambiado para que se anime desde 0 */
+  width: 0;
   height: 1px;
   background: transparent;
-  border-top: 1px dashed rgba(255, 255, 255, 0.2);
+  border-top: 1px dashed ${({ theme }) => theme.text};
+  opacity: 0.2;
   animation: drawHorizontalLine 2s ease-in-out forwards;
   animation-delay: calc(var(--line-index, 0) * 0.2s);
 
   @keyframes drawHorizontalLine {
     from {
-      width: 0; /* Inicia desde 0 en las coordenadas X */
+      width: 0;
     }
     to {
-      width: 100%; /* Termina cubriendo toda la anchura */
+      width: 100%;
     }
   }
 `;
@@ -52,19 +53,20 @@ const HorizontalLine = styled.div`
 const VerticalLine = styled.div`
   position: absolute;
   top: 0;
-  height: 0; /* Cambiado para que se anime desde 0 */
+  height: 0;
   width: 1px;
   background: transparent;
-  border-left: 1px dashed rgba(255, 255, 255, 0.2);
+  border-left: 1px dashed ${({ theme }) => theme.text};
+  opacity: 0.2;
   animation: drawVerticalLine 2s ease-in-out forwards;
   animation-delay: calc(var(--line-index, 0) * 0.2s);
 
   @keyframes drawVerticalLine {
     from {
-      height: 0; /* Inicia desde 0 en las coordenadas Y */
+      height: 0;
     }
     to {
-      height: 100%; /* Termina cubriendo toda la altura */
+      height: 100%;
     }
   }
 `;

@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
-import { useModulosStore, usePermisosStore } from "../../index";
+import { AnimatedGrid, useModulosStore, usePermisosStore } from "../../index";
 export function ConfiguracionesTemplate() {
   const { dataPermisosConfiguraciones } = usePermisosStore();
   useEffect(() => {

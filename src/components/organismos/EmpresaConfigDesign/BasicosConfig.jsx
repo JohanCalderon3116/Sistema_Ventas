@@ -1,6 +1,6 @@
 import { Icon } from "@iconify/react/dist/iconify.js";
 import React from "react";
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { InputText2 } from "../formularios/InputText2";
 import { Btn1 } from "../../moleculas/Btn1";
 import { useForm } from "react-hook-form";
@@ -13,6 +13,7 @@ import { BeatLoader } from "react-spinners";
 export const BasicosConfig = () => {
   const { dataempresa } = useEmpresaStore();
   const { fileurl } = useGlobalStore();
+  const theme = useTheme();
   const {
     register,
     formState: { errors },
@@ -35,7 +36,7 @@ export const BasicosConfig = () => {
           <span>
             <strong>Guardando</strong>
           </span>
-          <BeatLoader color="#FFFFFF" size={8} />
+          <BeatLoader color={theme.text} size={8} />
         </ConteinerLoader>
       ) : (
         <>

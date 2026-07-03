@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { v } from "../../../styles/variables";
 import {
   InputText,
@@ -11,11 +11,13 @@ import { useForm } from "react-hook-form";
 import { BtnClose } from "../../ui/buttons/BtnClose";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast, Toaster } from "sonner";
+import { BeatLoader } from "react-spinners";
 export function RegistrarSucursal() {
   const queryClient = useQueryClient();
   const { accion, sucursalesItemSelect, setStateSucursal } =
     useSucursalesStore();
   const { insertarSucursal, editarSucursal } = useSucursalesStore();
+  const theme = useTheme();
   const { dataempresa } = useEmpresaStore();
   const {
     register,
@@ -43,10 +45,14 @@ export function RegistrarSucursal() {
     mutationKey: ["insertar sucursal"],
     mutationFn: insertar,
     onError: (error) => {
-      toast.error(`Error: ${error.message}`);
+      toast.error(
+        "No pudimos registrar la sucursal, algo falló en el proceso. Revisa la información e inténtalo de nuevo 😟",
+      );
     },
     onSuccess: () => {
-      toast.success("Sucursal registrada correctamnete");
+      toast.success(
+        "La sucursal quedó registrada correctamente y ya está lista para usarse 🙂",
+      );
       queryClient.invalidateQueries(["mostrar cajas por sucursal"]);
       setStateSucursal(false);
     },
@@ -58,7 +64,12 @@ export function RegistrarSucursal() {
   return (
     <Container>
       {isPending ? (
-        <span>Guardando</span>
+        <ConteinerLoader>
+          <span>
+            <strong>Guardando</strong>
+          </span>
+          <BeatLoader color={theme.text} size={8} />
+        </ConteinerLoader>
       ) : (
         <div className="sub-contenedor">
           <div className="headers">
@@ -105,8 +116,10 @@ export function RegistrarSucursal() {
                     placeholder="Direccion fiscal"
                     {...register("direccion_fiscal", { required: true })}
                   />
-                  <label className="form__label">Direccion fiscal</label>
-                  {errors.direccion_fiscal?.type === "required" && <p>Campo requerido</p>}
+                  <label className="form__label">Dirección</label>
+                  {errors.direccion_fiscal?.type === "required" && (
+                    <p>Campo requerido</p>
+                  )}
                 </InputText>
               </article>
 
@@ -175,4 +188,12 @@ const Container = styled.div`
       }
     }
   }
+`;
+const ConteinerLoader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  height: 100vh;
 `;

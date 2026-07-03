@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { Btn1 } from "../moleculas/Btn1";
 import { Toaster } from "sonner";
 import { useAuthStore } from "../../store/AuthStore";
+import { AnimatedGrid } from "../ui/animated/AnimatedGrid";
 
 export const EmpresaTemplate = () => {
   const { cerrarSesion } = useAuthStore();

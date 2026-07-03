@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { v } from "../../../styles/variables";
 import {
   InputText,
@@ -12,6 +12,7 @@ import { useForm } from "react-hook-form";
 import { BtnClose } from "../../ui/buttons/BtnClose";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast, Toaster } from "sonner";
+import { BeatLoader } from "react-spinners";
 export function RegistrarCaja() {
   const queryClient = useQueryClient();
   const {
@@ -21,6 +22,7 @@ export function RegistrarCaja() {
     insertarCaja,
     editarCaja,
   } = useCajasStore();
+  const theme = useTheme();
   const { insertarAsignacionSucusal } = useAsignacionCajaSucursalesStore();
   const { datausuarios } = useUsuariosStore();
   const {
@@ -53,10 +55,14 @@ export function RegistrarCaja() {
     mutationKey: ["insertar caja"],
     mutationFn: insertar,
     onError: (error) => {
-      toast.error(`Error: ${error.message}`);
+      toast.error(
+        `No pudimos registrar la caja, algo falló en el proceso. Revisa la información e inténtalo de nuevo 😖`,
+      );
     },
     onSuccess: () => {
-      toast.success("Caja registrada correctamenete");
+      toast.success(
+        "La caja quedó registrada correctamente y ya está lista para usarse 😎",
+      );
       queryClient.invalidateQueries(["mostrar cajas por sucursal"]);
       setStateCaja(false);
     },
@@ -68,7 +74,12 @@ export function RegistrarCaja() {
   return (
     <Container>
       {isPending ? (
-        <span>Guardando</span>
+        <ConteinerLoader>
+          <span>
+            <strong>Guardando</strong>
+          </span>
+          <BeatLoader color={theme.text} size={8} />
+        </ConteinerLoader>
       ) : (
         <div className="sub-contenedor">
           <div className="headers">
@@ -173,4 +184,12 @@ const Container = styled.div`
       }
     }
   }
+`;
+const ConteinerLoader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  height: 100vh;
 `;

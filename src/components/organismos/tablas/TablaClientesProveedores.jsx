@@ -19,6 +19,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { FaArrowsAltV } from "react-icons/fa";
+import { toast } from "sonner";
 export function TablaClientesProveedores({
   data,
   SetopenRegistro,
@@ -30,7 +31,7 @@ export function TablaClientesProveedores({
   const [datas, setData] = useState(data);
   const [columnFilters, setColumnFilters] = useState([]);
 
-  const {eliminarCliPro} = useClientesProveedoresStore()
+  const { eliminarCliPro } = useClientesProveedoresStore();
   function eliminar(p) {
     if (p.nombre === "General") {
       Swal.fire({
@@ -52,6 +53,7 @@ export function TablaClientesProveedores({
     }).then(async (result) => {
       if (result.isConfirmed) {
         await eliminarCliPro({ id: p.id });
+        toast.success("Se eliminó correctamente 🙌");
       }
     });
   }

@@ -11,8 +11,9 @@ import { v } from "../../styles/variables";
 import { useState } from "react";
 import Confetti from "react-confetti-boom";
 import { useLocation } from "react-router-dom";
+import { Toaster } from "sonner";
 export const ClientesProveedoresTemplate = () => {
-  const {dataclipro, setBuscador} = useClientesProveedoresStore()
+  const { dataclipro, setBuscador } = useClientesProveedoresStore();
   const { setTipo } = useClientesProveedoresStore();
   const [openRegistro, setOpenRegistro] = useState(false);
   const [accion, setAccion] = useState("");
@@ -21,9 +22,7 @@ export const ClientesProveedoresTemplate = () => {
   const location = useLocation();
   function nuevoRegistro() {
     const tipo =
-      location.pathname === "/configuracion/clientes"
-        ? "cliente"
-        : "proveedor";
+      location.pathname === "/configuracion/clientes" ? "cliente" : "proveedor";
     setTipo(tipo);
     setOpenRegistro(!openRegistro);
     setAccion("Nuevo");
@@ -32,6 +31,7 @@ export const ClientesProveedoresTemplate = () => {
   }
   return (
     <Container>
+      <Toaster richColors></Toaster>
       {openRegistro && (
         <RegistrarClientesProveedores
           setIsExploding={setIsExploding}
@@ -49,7 +49,7 @@ export const ClientesProveedoresTemplate = () => {
         </Title>{" "}
         <Btn1
           funcion={nuevoRegistro}
-          bgcolor={v.colorPrincipal}
+          bgcolor="#3300E3"
           titulo="Nuevo"
           icono={<v.iconoagregar />}
         ></Btn1>

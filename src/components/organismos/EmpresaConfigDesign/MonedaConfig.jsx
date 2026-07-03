@@ -43,9 +43,14 @@ export const MonedaConfig = () => {
   const mutate = useMutation({
     mutationKey: "editar empresa moneda",
     mutationFn: editar,
+    onError: (error) => {
+      toast.error(
+        "No se pudo actualizar la moneda de tu país, inténtalo de nuevo 😩",
+      );
+    },
     onSuccess: () => {
       queryClient.invalidateQueries("mostrar empresa");
-      toast.success("🎉 Datos guardados, la moneda de tú pais ya se guardo XD");
+      toast.success("La moneda de tu país se actualizó correctamente 😃");
     },
   });
 

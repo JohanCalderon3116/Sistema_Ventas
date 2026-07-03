@@ -1,5 +1,5 @@
 import React from "react";
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { InputText2 } from "../components/organismos/formularios/InputText2";
 import { Btn1 } from "../components/moleculas/Btn1";
 import { useForm } from "react-hook-form";
@@ -11,6 +11,7 @@ import { BeatLoader } from "react-spinners";
 export const Perfil = () => {
   const { datausuarios } = useUsuariosStore();
   const { mutate, isPending } = useEditarUsuarioMutationStack();
+  const theme = useTheme();
   const {
     register,
     formState: { errors },
@@ -30,7 +31,7 @@ export const Perfil = () => {
           <span>
             <strong>Guardando</strong>
           </span>
-          <BeatLoader color="#FFFFFF" size={8} />
+          <BeatLoader color={theme.text} size={8} />
         </ConteinerLoader>
       ) : (
         <>
