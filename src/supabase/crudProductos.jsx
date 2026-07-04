@@ -4,12 +4,7 @@ const tabla = "productos";
 export async function InsertarProductos(p) {
   const { error, data } = await supabase.rpc("insertarproductos", p);
   if (error) {
-    Swal.fire({
-      icon: "error",
-      title: "Oops...",
-      text: error.message,
-    });
-    return;
+    throw new Error(error.message);
   }
   return data;
 }
@@ -54,8 +49,8 @@ export async function MostrarUltimoProducto(p) {
     .from(tabla)
     .select()
     .eq("id_empresa", p.id_empresa)
-    .order("id", { ascending: false }).maybeSingle();
+    .order("id", { ascending: false })
+    .maybeSingle();
 
   return data;
 }
-

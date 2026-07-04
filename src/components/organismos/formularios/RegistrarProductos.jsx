@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { v } from "../../../styles/variables";
 import {
   InputText,
@@ -27,6 +27,7 @@ import Swal from "sweetalert2";
 import { useStockStore } from "../../../store/StockStore";
 import { toast } from "sonner";
 import { ContainerSelector } from "./RegistrarInventario";
+import { BeatLoader } from "react-spinners";
 
 export function RegistrarProductos({
   onClose,
@@ -80,6 +81,7 @@ export function RegistrarProductos({
   const [stateSucursalesLista, setStateSucursalesLista] = useState(false);
   const [stateCategoriasLista, setStateCategoriasLista] = useState(false);
   const { insertarStock, mostrarStockAlmacenYProduct } = useStockStore();
+  const theme = useTheme();
   const {
     data: dataStockXAlamacenYProducto,
     isLoading,
@@ -116,12 +118,13 @@ export function RegistrarProductos({
     handleSubmit,
   } = useForm();
   const { isPending, mutate: doInsertar } = useMutation({
-    mutationFn: insertar,
     mutationKey: "insertar productos",
-    onError: (err) =>
-      toast.error(`Error al insertar producto... ${err.message}`),
+    mutationFn: insertar,
+    onError: (err) => {
+      toast.error(`¡Ups! Hubo un error al guardar. Inténtalo de nuevo. 😅`);
+    },
     onSuccess: () => {
-      toast.success("Producto guardado correctamnete");
+      toast.success("¡Genial! Tu producto se guardó correctamente. ✨😊");
       cerrarFormulario();
     },
   });
@@ -290,7 +293,12 @@ export function RegistrarProductos({
   return (
     <Container>
       {isPending ? (
-        <span>...🔼</span>
+        <ConteinerLoader>
+          <span>
+            <strong>Guardando</strong>
+          </span>
+          <BeatLoader color={theme.text} size={8} />
+        </ConteinerLoader>
       ) : (
         <div className="sub-contenedor">
           <div className="headers">
@@ -513,7 +521,7 @@ export function RegistrarProductos({
             <Btn1
               icono={<v.iconoguardar />}
               titulo="Guardar"
-              bgcolor={v.colorPrincipal}
+              bgcolor="#3300E3"
             />
           </form>
         </div>
@@ -642,4 +650,12 @@ const ContainerMensajeStock = styled.div`
   border-radius: 10px;
   padding: 5px;
   margin: 10px;
+`;
+const ConteinerLoader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  height: 100vh;
 `;

@@ -34,12 +34,7 @@ export async function BuscarClientesProveedores(p) {
 export async function EliminarClientesProveedores(p) {
   const { error } = await supabase.from(tabla).delete().eq("id", p.id);
   if (error) {
-    Swal.fire({
-      icon: "error",
-      title: "Oops...",
-      text: error.message,
-    });
-    return;
+    throw new Error(error.message);
   }
 }
 export async function EditarClientesProveedores(p) {

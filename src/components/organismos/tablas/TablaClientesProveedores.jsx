@@ -33,13 +33,10 @@ export function TablaClientesProveedores({
 
   const { eliminarCliPro } = useClientesProveedoresStore();
   function eliminar(p) {
-    if (p.nombre === "General") {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Este registro no se permite modificar ya que es valor por defecto.",
-        footer: '<a href="">...</a>',
-      });
+    if (p.nombres === "Generico") {
+      toast.error(
+        "Este registro es obligatorio para el sistema y no puedes modificarlo. 🔒😤",
+      );
       return;
     }
     Swal.fire({
@@ -54,17 +51,16 @@ export function TablaClientesProveedores({
       if (result.isConfirmed) {
         await eliminarCliPro({ id: p.id });
         toast.success("Se eliminó correctamente 🙌");
+      } else {
+        toast.info("Eliminación cancelada, no se hizo ningún cambio. 😮✅");
       }
     });
   }
   function editar(data) {
-    if (data.nombre === "General") {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Este registro no se permite modificar ya que es valor por defecto.",
-        footer: '<a href="">...</a>',
-      });
+    if (data.nombres === "Generico") {
+      toast.error(
+        "No puedes modificar este registro porque es el valor por defecto. 🚫🧐",
+      );
       return;
     }
     SetopenRegistro(true);

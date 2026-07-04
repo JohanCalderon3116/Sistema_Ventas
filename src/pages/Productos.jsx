@@ -9,6 +9,8 @@ import {
   useAlmacenesStore,
 } from "../index";
 import Swal from "sweetalert2";
+import styled, { useTheme } from "styled-components";
+import { BeatLoader } from "react-spinners";
 
 export const Productos = () => {
   const { mostrarCategorias } = useCategroriasStore();
@@ -17,6 +19,7 @@ export const Productos = () => {
     useProductosStore();
   const { dataempresa } = useEmpresaStore();
   const { mostrarAlmacenXsucursal } = useAlmacenesStore();
+  const theme = useTheme();
   const {
     isLoading: isLoadingMostrarProductos,
     error,
@@ -41,12 +44,6 @@ export const Productos = () => {
     enabled: !!dataempresa,
     refetchOnWindowFocus: false,
   });
-  // const { isLoading: isLoadingMostrarAlmacenes } = useQuery({
-  //   queryKey: ["mostrar almacen x sucursal", dataempresa?.id],
-  //   queryFn: () => mostrarSucursales({ id_empresa: dataempresa?.id }),
-  //   enabled: !!dataempresa,
-  //   refetchOnWindowFocus: false,
-  // });
 
   const { isLoading: isLoadingMostrarCategorias } = useQuery({
     queryKey: ["mostrar categorias", dataempresa?.id],
@@ -58,17 +55,24 @@ export const Productos = () => {
     isLoadingMostrarCategorias ||
     isLoadingMostrarProductos ||
     isLoadingMostrarSucursales;
-  // isLoadingMostrarAlmacenes;
   if (isLoading) {
-    return <Spinner1></Spinner1>;
-  }
-  if (error) {
-    Swal.fire({
-      icon: "error",
-      title: "Oops...",
-      text: error.message,
-    });
-    return;
+    return (
+      <ConteinerLoader>
+        <span>
+          <strong>Cargando</strong>
+        </span>
+        <BeatLoader color={theme.text} size={8} />
+      </ConteinerLoader>
+    );
   }
   return <ProductosTemplate></ProductosTemplate>;
 };
+
+const ConteinerLoader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  height: 100vh;
+`;

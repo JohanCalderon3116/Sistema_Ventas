@@ -17,6 +17,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { FaArrowsAltV } from "react-icons/fa";
+import { toast } from "sonner";
 export function TablaProductos({
   data,
   SetopenRegistro,
@@ -31,12 +32,9 @@ export function TablaProductos({
   const { eliminarProductos } = useProductosStore();
   function eliminar(p) {
     if (p.nombre === "General") {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Este registro no se permite modificar ya que es valor por defecto.",
-        footer: '<a href="">...</a>',
-      });
+      toast.warning(
+        "El producto 'General' es obligatorio para el sistema, no puedes modificarlo. 🚫🛑",
+      );
       return;
     }
     Swal.fire({
@@ -49,18 +47,18 @@ export function TablaProductos({
       confirmButtonText: "Si, eliminar",
     }).then(async (result) => {
       if (result.isConfirmed) {
+        toast.success("¡Listo! El producto se eliminó correctamente. 😄✨");
         await eliminarProductos({ id: p.id });
+      } else {
+        toast.info("Eliminación cancelada, el registro sigue intacto. 😮✅");
       }
     });
   }
   function editar(data) {
     if (data.nombre === "General") {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Este registro no se permite modificar ya que es valor por defecto.",
-        footer: '<a href="">...</a>',
-      });
+      toast.error(
+        "Este registro es el valor predeterminado y no puedes modificarlo. 🔒😤",
+      );
       return;
     }
     SetopenRegistro(true);
