@@ -8,11 +8,11 @@ import { CardMovimientosCajaLive } from "../organismos/DashboardDesign/CardMovim
 import { CardMovimientosProductosTopMonto } from "../organismos/DashboardDesign/CardMovimientosProductosTopMonto";
 import { useQuery } from "@tanstack/react-query";
 import { useDetalleVentasStore } from "../../store/DetalleVentasStore";
-import { useDashboardStore, useEmpresaStore } from "../..";
+import { Ganacias, useDashboardStore, useEmpresaStore } from "../..";
 import { BarLoader } from "react-spinners";
 import { CantidadVentas } from "../organismos/DashboardDesign/CantidadVentas";
 import { SumarVentas } from "../organismos/DashboardDesign/SumarVentas";
-import { Ganacias } from "../organismos/DashboardDesign/Ganancias";
+
 
 export const DashboardTemplate = () => {
   return (

@@ -21,11 +21,6 @@ export const AreaTecladoPos = () => {
     console.log("tipocobro: ", p.nombre);
     setStatePantallaCobro({ data: detalleventa, tipocobro: p.nombre });
   };
-  // const { data: dataMetodosPago } = useQuery({
-  //   queryKey: ["mostrar metodos de pago"],
-  //   queryFn: () => mostrarMetodosPago({ id_empresa: dataempresa?.id }),
-  //   enabled: !!dataempresa,
-  // });
   return (
     <Container stateMetodosPago={stateMetodosPago}>
       <section className="areatipopago">
@@ -45,17 +40,6 @@ export const AreaTecladoPos = () => {
         })}
       </section>
       <section className="totales">
-        {/* <div className="subtotal">
-          <span>
-            Sub total: <strong> $9.99</strong>{" "}
-          </span>{" "}
-          <span>
-            IGV: <strong> $9.99</strong>{" "}
-          </span>
-          <span>
-            Sub total: <strong>$ 9.99</strong>{" "}
-          </span>
-        </div> */}
         <TotalPos></TotalPos>
       </section>
     </Container>

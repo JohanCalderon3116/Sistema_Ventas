@@ -70,18 +70,20 @@ export function CardListCajas({
     mutationKey: ["aperturar caja"],
     mutationFn: insertar,
     onSuccess: () => {
-      toast.success("Caja aperturada correctamente :v");
+      toast.success("La caja se aperturó correctamente 😌");
       queryClient.invalidateQueries("mostrar cierre de caja");
     },
     onError: (error) => {
-      toast.error(`Error al aperturar caja :'/ ${error.message}`);
+      toast.error(
+        `No pudimos aperturar la caja, algo falló en el proceso 😥`,
+      );
     },
   });
   useEffect(() => {
     if (!dataMetodosPago) {
       mostrarMetodosPago({
         id_empresa: dataempresa?.id,
-      }); // ← pasa el parámetro que necesite, si es id_empresa por ejemplo
+      }); 
     }
   }, [dataempresa?.id]);
   return (

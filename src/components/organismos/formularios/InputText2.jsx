@@ -52,7 +52,7 @@ const Container = styled.div`
   .form__field:focus {
     font-weight: 700;
     border-image-slice: 1;
-    border: 2px solid #1cb0f6;
+    border: 2px solid #6f24be;
   }
   /* reset input */
   .form__field:required,

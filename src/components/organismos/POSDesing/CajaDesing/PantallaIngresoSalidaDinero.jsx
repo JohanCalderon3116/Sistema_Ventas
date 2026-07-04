@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { useCierreCajaStore } from "../../../../store/CierreCajaStore";
 import {
   Btn1,
@@ -17,6 +17,7 @@ import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { filterFns } from "@tanstack/react-table";
+import { BeatLoader } from "react-spinners";
 export const PantallaIngresoSalidaDinero = () => {
   const fechaActual = useFormattedDate();
   const { tipoRegistro, setStateIngresoSalida } = useCierreCajaStore();
@@ -27,6 +28,7 @@ export const PantallaIngresoSalidaDinero = () => {
   const { dataMetodosPago } = useMetodosPagoStore();
   const { datausuarios } = useUsuariosStore();
   const { dataCierreCaja } = useCierreCajaStore();
+  const theme = useTheme();
   const {
     register,
     formState: { errors },
@@ -50,12 +52,14 @@ export const PantallaIngresoSalidaDinero = () => {
     mutationKey: ["insertar ingresos salidas caja"],
     mutationFn: insertar,
     onSuccess: () => {
-      toast.success("Movimiento registrado :p");
-      setStateIngresoSalida(false)
+      toast.success("El movimiento de caja quedó registrado correctamente 🙌");
+      setStateIngresoSalida(false);
       reset();
     },
     onError: () => {
-      toast.error("Error al registrar");
+      toast.error(
+        "No pudimos registrar el movimiento de caja, algo falló en el proceso. Inténtalo de nuevo 😩",
+      );
     },
   });
   const manejadorEnvio = (data) => {
@@ -74,72 +78,78 @@ export const PantallaIngresoSalidaDinero = () => {
   }, [dataMetodosPago]);
   return (
     <Container>
-      <VolverBtn funcion={ () => setStateIngresoSalida(false)}></VolverBtn>
-      <span className="title">
-        {tipoRegistro === "ingreso"
-          ? "Ingresar dinero a caja"
-          : "Retirar dinero de caja"}
-      </span>
-      <section className="areatipopago">
-        {dataMetodosPago
-          ?.filter((item) => item.nombre !== "Mixto")
-          .map((item, index) => {
-            return (
-              <article className="box" key={index}>
+      {isPending ? (
+        <ConteinerLoader>
+          <span>
+            <strong>Guardando</strong>
+          </span>
+          <BeatLoader color={theme.text} size={8} />
+        </ConteinerLoader>
+      ) : (
+        <>
+          <VolverBtn funcion={() => setStateIngresoSalida(false)}></VolverBtn>
+          <span className="title">
+            {tipoRegistro === "ingreso"
+              ? "Ingresar dinero a caja"
+              : "Retirar dinero de caja"}
+          </span>
+          <section className="areatipopago">
+            {dataMetodosPago
+              ?.filter((item) => item.nombre !== "Mixto")
+              .map((item, index) => {
+                return (
+                  <article className="box" key={index}>
+                    <Btn1
+                      funcion={() => handleMetodoClick(item)}
+                      imagen={item.icono != "-" ? item.icono : null}
+                      border="0"
+                      height="70px"
+                      width="100%"
+                      titulo={item.nombre}
+                      bgcolor={
+                        item.id === selectMetodo?.id ? "#ffd700" : "#fff"
+                      }
+                    ></Btn1>
+                  </article>
+                );
+              })}
+          </section>
+          <form action="" onSubmit={handleSubmit(manejadorEnvio)}>
+            <section className="area1">
+              <span>Monto: </span>
+              <InputText2>
+                <input
+                  type="number"
+                  className="form__field"
+                  placeholder="0.00"
+                  {...register("monto", { required: true })}
+                />
+                {errors.monto?.type === "required" && (
+                  <span>Campo requerido</span>
+                )}
+              </InputText2>
+              <span>Motivo (Puede ser blanco)</span>
+              <InputText2>
+                <textarea
+                  type="text"
+                  className="form__field"
+                  rows="3"
+                  placeholder="Motivo"
+                  {...register("motivo")}
+                />
+              </InputText2>
+              <article className="contentbtn">
                 <Btn1
-                  funcion={() => handleMetodoClick(item)}
-                  imagen={item.icono != "-" ? item.icono : null}
-                  border="0"
-                  height="70px"
-                  width="100%"
-                  titulo={item.nombre}
-                  bgcolor={item.id === selectMetodo?.id ? "#ffd700" : "#fff"}
+                  color="#fff"
+                  border="2px"
+                  bgcolor="#1da939"
+                  titulo="Registrar"
                 ></Btn1>
               </article>
-            );
-          })}
-      </section>
-      <form action="" onSubmit={handleSubmit(manejadorEnvio)}>
-        <section className="area1">
-          <span>Monto: </span>
-          <InputText2>
-            <input
-              type="number"
-              className="form__field"
-              placeholder="0.00"
-              {...register("monto", { required: true })}
-            />
-            {errors.monto?.type === "required" && <span>Campo requerido</span>}
-          </InputText2>
-
-          {/* <StyleDataPickerWrapper>
-            <StyleDataPicker
-              selected={startDate}
-              onChange={(date) => setStartDate(date)}
-              dateFormat="dd/MM/yyyy"
-              placeholderText="Seleccionar fecha"
-            ></StyleDataPicker>
-          </StyleDataPickerWrapper> */}
-          <span>Motivo (Puede ser blanco)</span>
-          <InputText2>
-            <textarea
-              type="text"
-              className="form__field"
-              rows="3"
-              placeholder="Motivo"
-              {...register("motivo")}
-            />
-          </InputText2>
-          <article className="contentbtn">
-            <Btn1
-              color="#fff"
-              border="2px"
-              bgcolor="#1da939"
-              titulo="Registrar"
-            ></Btn1>
-          </article>
-        </section>
-      </form>
+            </section>
+          </form>
+        </>
+      )}
     </Container>
   );
 };
@@ -202,4 +212,12 @@ const StyleDataPicker = styled(DatePicker)`
   &::placeholder {
     color: ${({ theme }) => theme.placeholder};
   }
+`;
+const ConteinerLoader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  height: 100vh;
 `;

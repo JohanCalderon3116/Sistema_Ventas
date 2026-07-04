@@ -97,7 +97,7 @@ const Container = styled.div`
   border-right: 2px solid ${({ theme }) => theme.color2};
 
   &::-webkit-scrollbar {
-    width: 6px;
+    width: 2px;
     border-radius: 10px;
   }
   &::-webkit-scrollbar-thumb {
@@ -117,7 +117,7 @@ const Container = styled.div`
       display: flex;
       justify-content: center;
       align-items: center;
-      width: 30px;
+      width: 50px;
       cursor: pointer;
       transition: 0.3s ease;
       transform: ${({ $isopen }) =>

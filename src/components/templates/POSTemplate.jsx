@@ -41,25 +41,13 @@ export const POSTemplate = () => {
   const { isLoading: isLoadingSerealizacionesVentas } =
     useMostrarSerealizacionesVentasQueryStack();
   const {} = useMostrarImpresorasXCajaQueryStack();
-  // const isLoading =
-  //   isLoadingAlmacenXSucursal ||
-  //   isLoadingStockPorProductoYAlmacen ||
-  //   isLoadingmetodosPago;
-  // const error =
-  //   errorAlmacenXSucursal || errorMetodosPago || errorStockPorProductoYAlmacen;
-  // if (isLoading) {
-  //   return <BarLoader></BarLoader>;
-  // }
-  // if (error) {
-  //   toast.error("Error al mostrar");
-  // }
   return (
     <Container>
       {stateModal && <SelectAlmacen></SelectAlmacen>}
       {statePantallaCobro && <PantallaCobro></PantallaCobro>}
       <HeaderPos></HeaderPos>
       <Main>
-        <Toaster richColors position="top-center" />
+        <Toaster richColors/>
         <AreaDetalleventaPos></AreaDetalleventaPos>
         <AreaTecladoPos></AreaTecladoPos>
       </Main>

@@ -103,7 +103,7 @@ const DropdownItem = styled.div`
   transition: background-color 0.2s ease;
 
   &:hover {
-    background-color: ${({ theme }) => theme.bg2};
+    background-color: ${({ theme }) => theme.bg};
   }
 `;
 

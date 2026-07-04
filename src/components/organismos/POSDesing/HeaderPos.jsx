@@ -163,12 +163,6 @@ export const HeaderPos = () => {
       </ContentSucursal>
       <section className="contentprincipal">
         <Contentuser className="area1">
-          <div className="contentimg">
-            <img
-              src="https://i.pinimg.com/736x/b1/34/5f/b1345f9c189de15a86a491c821221085.jpg"
-              alt=""
-            />
-          </div>
           <div className="textos">
             <span className="usuario"> {datausuarios?.nombres} </span>
             <span> {datausuarios?.roles.nombre} </span>

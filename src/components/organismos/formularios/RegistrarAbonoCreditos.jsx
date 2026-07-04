@@ -130,6 +130,7 @@ export function RegistrarAbonoCreditos({
                     {...register("valor", {
                       required: true,
                     })}
+                    color="#fff"
                   />
                   <label className="form__label">Volor Abono: </label>
                   {errors.valor?.type === "required" && <p>Campo requerido</p>}
@@ -168,7 +169,7 @@ const Container = styled.div`
   top: 0;
   left: 0;
   position: fixed;
-  background-color: rgba(10, 9, 9, 0.5);
+  background-color: rgba(255, 255, 255, 0.5);
   display: flex;
   width: 100%;
   min-height: 100vh;

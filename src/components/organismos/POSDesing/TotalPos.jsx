@@ -29,8 +29,8 @@ export const TotalPos = () => {
           <Btn1
             funcion={validarPermisosCobrar}
             border="2px"
-            bgcolor="#3ff563"
-            color="#207c33"
+            bgcolor="#6d05e5"
+            color="#3300E3"
             icono={<Icon icon="emojione:money-bag" width="20" height="20" />}
             titulo="Cobrar"
           ></Btn1>
@@ -56,9 +56,9 @@ const Container = styled.div`
   border-radius: 15px;
   font-weight: 700;
   font-size: 38px;
-  background-color: #3ff563;
+  background-color: #3300E3;
   padding: 10px;
-  color: #207c33;
+  color: ${({ theme }) => theme.bg};
   position: relative;
   overflow: hidden;
   &::after {
@@ -66,7 +66,7 @@ const Container = styled.div`
     display: block;
     width: 100px;
     height: 100px;
-    background-color: #7fff99;
+    background-color: #2f09b9;
     position: absolute;
     border-radius: 50%;
     top: -20px;

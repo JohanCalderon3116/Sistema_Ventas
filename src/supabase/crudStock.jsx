@@ -41,3 +41,10 @@ export async function EditarStock(p, tipo) {
     throw new Error(error.message);
   }
 }
+export async function MostrarAlertasStockXVenta(p) {
+  const { error, data } = await supabase.rpc("mostraralertasstockxventa", p);
+  if (error) {
+    throw new Error(error.message);
+  }
+  return data;
+}

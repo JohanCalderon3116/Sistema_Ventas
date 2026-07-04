@@ -33,6 +33,8 @@ import { useImpresorasStore } from "../../../store/ImpresorasStore";
 import { useMostrarImpresorasXCajaQueryStack } from "../../../tanstack/ImpresorasStack";
 import ticket from "../../../reports/TicketVenta";
 import { useProductosStore } from "../../../store/ProductosStore";
+import { useStockStore } from "../../../store/StockStore";
+import Swal from "sweetalert2";
 export const IngresoCobro = forwardRef((props, ref) => {
   const [openRegistro, setOpenRegistro] = useState(false);
   const [dataSelect, setDataSelect] = useState([]);
@@ -53,6 +55,7 @@ export const IngresoCobro = forwardRef((props, ref) => {
     dataventas,
   } = useVentasStore();
   const { total, detalleventa } = useDetalleVentasStore();
+  const { mostrarAlertasStockXVenta } = useStockStore();
   const {
     dataComprobantes,
     itemSelectComprobanteSelect,
@@ -151,9 +154,34 @@ export const IngresoCobro = forwardRef((props, ref) => {
   const mutation = useMutation({
     mutationKey: ["insertar ventas"],
     mutationFn: ConfirmarVenta,
-    onSuccess: () => {
+    onSuccess: async () => {
       if (restante != 0) {
         return;
+      }
+      const alertas = await mostrarAlertasStockXVenta({
+        _id_venta: idventa,
+      });
+      const alertasUnicas = Object.values(
+        alertas?.reduce((acc, item) => {
+          acc[item.id_producto] = item;
+          return acc;
+        }, {}) || {},
+      );
+
+      if (alertasUnicas.length > 0) {
+        const listaHtml = alertasUnicas
+          .map(
+            (item) =>
+              `<li><strong>${item.nombre_producto}</strong>: ${item.stock_actual} unidades (mínimo: ${item.stock_minimo})</li>`,
+          )
+          .join("");
+
+        Swal.fire({
+          icon: "warning",
+          title: "Stock bajo",
+          html: `Los siguientes productos quedaron con poco stock: <ul style="text-align:left;">${listaHtml}</ul>`,
+          confirmButtonText: "Entendido",
+        });
       }
       resetState();
       queryClient.invalidateQueries(["mostrar detalle venta"]);
@@ -424,10 +452,6 @@ const Container = styled.div`
   align-items: center;
   justify-content: flex-start;
   font-size: 22px;
-  input {
-    color: #000 !important;
-    font-weight: 700;
-  }
   &::before,
   &::after {
     content: "";
@@ -492,6 +516,8 @@ const Container = styled.div`
   .area2 {
     margin-top: 5px;
     input {
+      color: #000 !important; /* 👈 se mueve aquí, ya scoped solo a .area2 */
+      font-weight: 700;
       font-size: 30px;
     }
   }

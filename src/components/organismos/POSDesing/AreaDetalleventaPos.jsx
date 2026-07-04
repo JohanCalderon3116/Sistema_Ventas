@@ -86,8 +86,8 @@ export const AreaDetalleventaPos = () => {
               <article className="contentdescripcion">
                 <span className="descripcion">{item.descripcion}</span>
                 <span className="importe">
-                  <strong>precio unit:</strong>
-                  🪵
+                  <strong>Precio unit:</strong>
+                  😎
                   {FormatearNumeroDinero(
                     item.precio_venta,
                     dataempresa?.currency,

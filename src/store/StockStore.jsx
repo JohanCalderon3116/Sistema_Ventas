@@ -2,6 +2,7 @@ import { create } from "zustand";
 import {
   EditarStock,
   InsertarStock,
+  MostrarAlertasStockXVenta,
   MostrarStockAlmacenesYProducto,
   MostrarStockAlmacenYProduct,
 } from "../supabase/crudStock";
@@ -29,5 +30,9 @@ export const useStockStore = create((set) => ({
   },
   editarStock: async (p, tipo) => {
     await EditarStock(p, tipo);
+  },
+  mostrarAlertasStockXVenta: async (p) => {
+    const response = await MostrarAlertasStockXVenta(p);
+    return response;
   },
 }));

@@ -1,15 +1,16 @@
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { CrudTemplate, useEmpresaStore, useProductosStore } from "..";
 import { RegistrarInventario } from "../components/organismos/formularios/RegistrarInventario";
 import { TablaInventarios } from "../components/organismos/tablas/TablaInventarios";
 import { useQuery } from "@tanstack/react-query";
 import { useMovStockStore } from "../store/MovStockStore";
-import { BarLoader } from "react-spinners";
+import { BarLoader, BeatLoader } from "react-spinners";
 import { Toaster } from "sonner";
 
 export const Inventario = () => {
   const { dataempresa } = useEmpresaStore();
   const { mostrarMovStock } = useMovStockStore();
+  const theme = useTheme();
   const {
     ProductosItemSelect,
     buscador,
@@ -35,6 +36,16 @@ export const Inventario = () => {
       }),
     enabled: !!dataempresa,
   });
+  if (isLoading) {
+    return (
+      <ConteinerLoader>
+        <span>
+          <strong>Cargando</strong>
+        </span>
+        <BeatLoader color={theme.text} size={8} />
+      </ConteinerLoader>
+    );
+  }
   return (
     <Container>
       <Toaster richColors></Toaster>
@@ -55,3 +66,11 @@ export const Inventario = () => {
 };
 
 const Container = styled.div``;
+const ConteinerLoader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  height: 100vh;
+`;

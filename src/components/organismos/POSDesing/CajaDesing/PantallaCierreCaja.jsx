@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { VolverBtn } from "../../../moleculas/VolverBtn";
 import { Btn1 } from "../../../moleculas/Btn1";
 import { Device } from "../../../../styles/breakpoints";
@@ -10,6 +10,7 @@ import { useMovCajaStore } from "../../../../store/MovCajaStore";
 import { FormatearNumeroDinero } from "../../../../utils/Conversiones";
 import { useEmpresaStore } from "../../../../store/EmpresaStore";
 import { PantallaConteoCaja } from "./PantallaConteoCaja";
+import { BeatLoader } from "react-spinners";
 export const PantallaCierreCaja = () => {
   const {
     setStateCierreCaja,
@@ -18,6 +19,7 @@ export const PantallaCierreCaja = () => {
     setStateConteoCaja,
   } = useCierreCajaStore();
   const fechaActual = useFormattedDate();
+  const theme = useTheme();
   const {
     mostrarEfectivoSinVentasMovCierreCaja,
     mostrarVentasMetodoPagoMovCaja,
@@ -61,15 +63,19 @@ export const PantallaCierreCaja = () => {
   const isError = isError1 || isError2;
   const error = error1 || error2;
   if (isLoading) {
-    return <span>Cargando datos...</span>;
-  }
-  if (isError) {
-    return <span>Error... {error.message} </span>;
+    return (
+      <ConteinerLoader>
+        <span>
+          <strong>Cargando</strong>
+        </span>
+        <BeatLoader color={theme.text} size={8} />
+      </ConteinerLoader>
+    );
   }
   console.log("Datos de empresa:", dataempresa);
   return (
     <Container>
-      <VolverBtn funcion={ () => setStateCierreCaja(false)} />
+      <VolverBtn funcion={() => setStateCierreCaja(false)} />
 
       <Fechas>
         Corte de caja desde: {fechaInicioFormateada} Hasta: {fechaActual}
@@ -336,4 +342,12 @@ const Tabla = styled.div`
     display: flex;
     justify-content: flex-end;
   }
+`;
+const ConteinerLoader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  height: 100vh;
 `;

@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { v } from "../../../styles/variables";
 import {
   InputText,
@@ -19,7 +19,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast, Toaster } from "sonner";
 import { useMovStockStore } from "../../../store/MovStockStore";
 import { BuscadorList } from "../../ui/lists/Buscador";
-import { BarLoader } from "react-spinners";
+import { BarLoader, BeatLoader } from "react-spinners";
 import { RadioChecks } from "../../ui/toogles/RadioChecks";
 export function RegistrarInventario({ onClose }) {
   const queryClient = useQueryClient();
@@ -32,6 +32,7 @@ export function RegistrarInventario({ onClose }) {
     editarCaja,
   } = useCajasStore();
   const { dataempresa } = useEmpresaStore();
+  const theme = useTheme();
   const { insertarMovStock, tipo, setTipo } = useMovStockStore();
   const {
     buscador,
@@ -130,10 +131,12 @@ export function RegistrarInventario({ onClose }) {
     mutationKey: ["insertar movimiento stock"],
     mutationFn: insertar,
     onError: (error) => {
-      toast.error(`Error: ${error.message}`);
+      toast.error(
+        `No pudimos registrar el movimiento de stock, algo falló en el proceso 😓`,
+      );
     },
     onSuccess: () => {
-      toast.success("Registro guardado correctamente...");
+      toast.success("El movimiento de stock quedó registrado correctamente 🫡");
       queryClient.invalidateQueries(["buscar productos"]);
       onClose();
       resetFuction();
@@ -154,16 +157,25 @@ export function RegistrarInventario({ onClose }) {
     errorMostrarSucursales ||
     errormostraralmacenesxsucursales;
   if (isLoading) {
-    return <BarLoader color="#6d6d6d"></BarLoader>;
-  }
-  if (error) {
-    toast.error(`error: ${error.message}`);
+    return (
+      <ConteinerLoader>
+        <span>
+          <strong>Cargando</strong>
+        </span>
+        <BeatLoader color={theme.text} size={8} />
+      </ConteinerLoader>
+    );
   }
   return (
     <Container>
       <Toaster richColors></Toaster>
       {isPending ? (
-        <span>Guardando...</span>
+        <ConteinerLoader>
+          <span>
+            <strong>Guardando</strong>
+          </span>
+          <BeatLoader color={theme.text} size={8} />
+        </ConteinerLoader>
       ) : (
         <div className="sub-contenedor">
           <RadioChecks></RadioChecks>
@@ -248,7 +260,7 @@ export function RegistrarInventario({ onClose }) {
                 disabled={!ProductosItemSelect?.nombre}
                 icono={<v.iconoguardar />}
                 titulo="Guardar"
-                bgcolor="#F9D70B"
+                bgcolor="#3300E3"
               />
             </section>
           </form>
@@ -317,4 +329,11 @@ export const ContainerSelector = styled.div`
   gap: 10px;
   align-items: center;
   position: relative;
+`;
+const ConteinerLoader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
 `;

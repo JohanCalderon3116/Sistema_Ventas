@@ -42,7 +42,7 @@ export const CrudTemplate = ({
         {stateBtnAdd && (
           <Btn1
             funcion={nuevoRegistro}
-            bgcolor={v.colorPrincipal}
+            bgcolor="#3300E3"
             titulo="Nuevo"
             icono={<v.iconoagregar />}
           ></Btn1>
