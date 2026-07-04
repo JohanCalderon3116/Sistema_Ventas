@@ -26,7 +26,11 @@ export async function InsertarUsuarios(p) {
   return data;
 }
 export async function EditarUsuario(p) {
-  const { error, data } = await supabase.from(tabla).update(p).eq("id", p.id);
+  const { error, data } = await supabase
+    .from(tabla)
+    .update(p)
+    .select()
+    .eq("id", p.id);
   if (error) {
     throw new Error(error.message);
   }

@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { v } from "../../../styles/variables";
 import {
   InputText,
@@ -12,13 +12,14 @@ import {
   PermisosUser,
   useUsuariosStore,
   useRolesStore,
+  usePermisosStore,
 } from "../../../index";
 import { useForm } from "react-hook-form";
 import { BtnClose } from "../../ui/buttons/BtnClose";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast, Toaster } from "sonner";
 import { Icon } from "@iconify/react";
-import { BarLoader } from "react-spinners";
+import { BarLoader, BeatLoader } from "react-spinners";
 export function RegistrarUsuarios({ accion, dataSelect, onClose }) {
   const queryClient = useQueryClient();
   const {
@@ -32,8 +33,10 @@ export function RegistrarUsuarios({ accion, dataSelect, onClose }) {
   const { dataempresa } = useEmpresaStore();
   const { mostrarSucursales, sucursalesItemSelect, selectSucursal } =
     useSucursalesStore();
-  const { insertarUsuarios } = useUsuariosStore();
+  const theme = useTheme();
+  const { insertarUsuarios, editarUsuario } = useUsuariosStore();
   const { rolesItemSelect } = useRolesStore();
+  const { selectModules, actualizarPermisos } = usePermisosStore();
   const { data: dataSucursales, isLoading: isLoadingSucursales } = useQuery({
     queryKey: [
       "mostrar sucursales",
@@ -67,22 +70,35 @@ export function RegistrarUsuarios({ accion, dataSelect, onClose }) {
     handleSubmit,
   } = useForm();
   const insertar = async (data) => {
-    const p = {
-      id: accion === "Editar" ? dataSelect?.id : null,
-      nombres: data.nombres,
-      nro_doc: data.nro_doc,
-      telefono: data.telefono,
-      id_rol: rolesItemSelect?.id,
-      correo: data.email,
-      // datos asignacion caja y sucursal
-      id_sucursal: sucursalesItemSelect?.id,
-      id_caja: cajaSelelctItem?.id,
-      //datos credenciales
-      email: data.email,
-      pass: data.pass,
-    };
     if (accion === "Editar") {
+      const p = {
+        id: dataSelect?.id_usuario,
+        nombres: data.nombres,
+        nro_doc: data.nro_doc,
+        telefono: data.telefono,
+        correo: data.email,
+      };
+      await editarUsuario(p);
+      await actualizarPermisos({
+        id_usuario: dataSelect?.id_usuario,
+        modulos: selectModules,
+      });
     } else {
+      const p = {
+        id: accion === "Editar" ? dataSelect?.id : null,
+        nombres: data.nombres,
+        nro_doc: data.nro_doc,
+        telefono: data.telefono,
+        id_rol: rolesItemSelect?.id,
+        correo: data.email,
+        // datos asignacion caja y sucursal
+        id_sucursal: sucursalesItemSelect?.id,
+        id_caja: cajaSelelctItem?.id,
+        //datos credenciales
+        email: data.email,
+        pass: data.pass,
+      };
+
       await insertarUsuarios(p);
     }
   };
@@ -90,10 +106,12 @@ export function RegistrarUsuarios({ accion, dataSelect, onClose }) {
     mutationKey: ["insertar usuarios"],
     mutationFn: insertar,
     onError: (error) => {
-      toast.error(`Error: ${error.message}`);
+      toast.error(
+        `No se pudo guardar, inténtalo otra vez. 😵‍💫⚠️ ${error.message}`,
+      );
     },
     onSuccess: () => {
-      toast.success("Usuario registrado correctamenete");
+      toast.success("¡Hecho! Ya quedó registrado. ✌️😎");
       queryClient.invalidateQueries(["mostrar usuarios asignados"]);
       onClose();
     },
@@ -104,12 +122,26 @@ export function RegistrarUsuarios({ accion, dataSelect, onClose }) {
   };
   const isLoading = isLoadingSucursales || isLoadingSCaja;
   if (isLoading) {
-    return <BarLoader color="#6d6d6d"></BarLoader>;
+    return (
+      <Container>
+        <ConteinerLoader>
+          <span>
+            <strong>Cargando</strong>
+          </span>
+          <BeatLoader color={theme.text} size={8} />
+        </ConteinerLoader>
+      </Container>
+    );
   }
   return (
     <Container>
       {isPending ? (
-        <span>Guardando</span>
+        <ConteinerLoader>
+          <span>
+            <strong>Guardando</strong>
+          </span>
+          <BeatLoader color={theme.text} size={8} />
+        </ConteinerLoader>
       ) : (
         <Form onSubmit={handleSubmit(manejadorInsertar)}>
           <Header>
@@ -126,7 +158,7 @@ export function RegistrarUsuarios({ accion, dataSelect, onClose }) {
                 >
                   <input
                     className="form__field"
-                    defaultValue={accion === "Editar" ? dataSelect?.correo : ""}
+                    defaultValue={accion === "Editar" ? dataSelect?.email : ""}
                     type="text"
                     placeholder="Correo"
                     {...register("email", {
@@ -145,13 +177,11 @@ export function RegistrarUsuarios({ accion, dataSelect, onClose }) {
                 >
                   <input
                     className="form__field"
-                    defaultValue={
-                      accion === "Editar" ? dataSelect?.password : ""
-                    }
+                    defaultValue=""
                     type="password"
                     placeholder="Contraseña"
                     {...register("pass", {
-                      required: true,
+                      required: accion === "Editar" ? false : true,
                     })}
                   />
                   <label className="form__label">Contraseña</label>
@@ -167,7 +197,7 @@ export function RegistrarUsuarios({ accion, dataSelect, onClose }) {
                   <input
                     className="form__field"
                     defaultValue={
-                      accion === "Editar" ? dataSelect?.nombres : ""
+                      accion === "Editar" ? dataSelect?.usuario : ""
                     }
                     type="text"
                     placeholder="Nombres"
@@ -297,4 +327,12 @@ const Header = styled.div`
 const Title = styled.span`
   font-size: 30px;
   font-weight: bold;
+`;
+
+const ConteinerLoader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
 `;

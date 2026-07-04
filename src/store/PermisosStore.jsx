@@ -32,8 +32,15 @@ export const usePermisosStore = create((set, get) => ({
     await EliminarPermisos(p);
   },
   actualizarPermisos: async (p) => {
-    // await EliminarPermisos(p);
-    // await InsertarPermisos(p);
+    await EliminarPermisos({ id_usuario: p.id_usuario });
+
+    if (p.modulos.length > 0) {
+      const permisosParaInsertar = p.modulos.map((id_modulo) => ({
+        id_usuario: p.id_usuario,
+        id_modulo: id_modulo,
+      }));
+      await InsertarPermisos(permisosParaInsertar);
+    }
   },
   dataPermisosGlobales: [],
   mostrarPermisosGlobales: async (p) => {

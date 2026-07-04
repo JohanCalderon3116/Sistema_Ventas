@@ -2,8 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import { UsuariosTemplate } from "../components/templates/UsuariosTemplate";
 import { useEmpresaStore } from "../store/EmpresaStore";
 import { useAsignacionCajaSucursalesStore } from "../store/AsignacionCajaSucursales";
-import { BarLoader } from "react-spinners";
-import { useTheme } from "styled-components";
+import { BarLoader, BeatLoader } from "react-spinners";
+import styled, { useTheme } from "styled-components";
 
 export const Usuarios = () => {
   const { dataempresa } = useEmpresaStore();
@@ -18,10 +18,7 @@ export const Usuarios = () => {
       }),
     enabled: !!dataempresa,
   });
-  const {
-    isLoading: buscarUsuariosAsignados,
-    error: errorBuscarusuariosAsignados,
-  } = useQuery({
+  useQuery({
     queryKey: [
       "buscar usuarios asignados",
       { id_empresa: dataempresa?.id, buscador: buscador },
@@ -34,10 +31,24 @@ export const Usuarios = () => {
     enabled: !!dataempresa,
   });
   if (isLoading) {
-    return <BarLoader color={theme.text}></BarLoader>;
-  }
-  if (error) {
-    return <span>Error... {error.message} </span>;
+    return (
+      <ConteinerLoader>
+        <span>
+          <strong>Cargando</strong>
+        </span>
+        <BeatLoader color={theme.text} size={8} />
+      </ConteinerLoader>
+    );
   }
   return <UsuariosTemplate></UsuariosTemplate>;
 };
+
+const ConteinerLoader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  height: 100vh;
+`;
+

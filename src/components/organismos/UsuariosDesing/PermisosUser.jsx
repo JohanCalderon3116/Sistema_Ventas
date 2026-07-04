@@ -59,6 +59,12 @@ export const PermisosUser = () => {
       setSelectModules(permisosPorRol);
     }
   }, [rolesItemSelect, setRolesItemSelect, dataPermisosDefault]);
+  useEffect(() => {
+    if (accion === "Editar" && dataPermisos) {
+      const permisosUsuario = dataPermisos.map((permiso) => permiso.id_modulo);
+      setSelectModules(permisosUsuario);
+    }
+  }, [accion, dataPermisos]);
   const isLoading =
     isLadingModulos ||
     isLadingRoles ||

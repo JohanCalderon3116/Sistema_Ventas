@@ -21,6 +21,7 @@ import {
 } from "@tanstack/react-table";
 import { FaArrowsAltV } from "react-icons/fa";
 import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 export function TablaUsuarios({
   data,
   SetopenRegistro,
@@ -33,6 +34,7 @@ export function TablaUsuarios({
   const [columnFilters, setColumnFilters] = useState([]);
   const queryClinet = useQueryClient();
   const { eliminarUsuariosAsignados } = useUsuariosStore();
+  const { setSelectItem } = useAsignacionCajaSucursalesStore();
   function eliminar(p) {
     Swal.fire({
       title: "¿Estás seguro(a)?",
@@ -45,23 +47,18 @@ export function TablaUsuarios({
     }).then(async (result) => {
       if (result.isConfirmed) {
         await eliminarUsuariosAsignados({ id: p.id_usuario });
+        toast.success("El usuario se eliminó correctamente 🫠");
         queryClinet.invalidateQueries(["mostrar usuarios asignados"]);
+      } else {
+        toast.info("No eliminaste el usuario, quedó como estaba 🙂‍↔️");
       }
     });
   }
   function editar(data) {
-    if (data.nombre === "General") {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Este registro no se permite modificar ya que es valor por defecto.",
-        footer: '<a href="">...</a>',
-      });
-      return;
-    }
     SetopenRegistro(true);
     setdataSelect(data);
     setAccion("Editar");
+    setSelectItem(data);
   }
   const columns = [
     {

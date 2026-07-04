@@ -31,12 +31,6 @@ export function TablaProductos({
 
   const { eliminarProductos } = useProductosStore();
   function eliminar(p) {
-    if (p.nombre === "General") {
-      toast.warning(
-        "El producto 'General' es obligatorio para el sistema, no puedes modificarlo. 🚫🛑",
-      );
-      return;
-    }
     Swal.fire({
       title: "¿Estás seguro(a)?",
       text: "Una vez eliminado, ¡no podrá recuperar este registro!",
@@ -55,12 +49,6 @@ export function TablaProductos({
     });
   }
   function editar(data) {
-    if (data.nombre === "General") {
-      toast.error(
-        "Este registro es el valor predeterminado y no puedes modificarlo. 🔒😤",
-      );
-      return;
-    }
     SetopenRegistro(true);
     setdataSelect(data);
     setAccion("Editar");

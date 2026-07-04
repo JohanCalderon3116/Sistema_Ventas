@@ -16,12 +16,19 @@ export const UsuariosTemplate = () => {
   const [openRegistro, setOpenRegistro] = useState(false);
   const [dataSelect, setDataSelect] = useState([]);
   const [isExploding, setIsExploding] = useState(false);
-  const {accion, setAccion, dataUsuariosAsignados, setBuscador} = useAsignacionCajaSucursalesStore()
+  const {
+    accion,
+    setAccion,
+    dataUsuariosAsignados,
+    setBuscador,
+    setSelectItem,
+  } = useAsignacionCajaSucursalesStore();
   function nuevoRegistro() {
     setOpenRegistro(!openRegistro);
     setAccion("Nuevo");
     setDataSelect([]);
     setIsExploding(false);
+    setSelectItem(null);
   }
   return (
     <Container>
@@ -39,7 +46,7 @@ export const UsuariosTemplate = () => {
         <Title>Usuarios</Title>{" "}
         <Btn1
           funcion={nuevoRegistro}
-          bgcolor={v.colorPrincipal}
+          bgcolor="#3300E3"
           titulo="Nuevo"
           icono={<v.iconoagregar />}
         ></Btn1>
