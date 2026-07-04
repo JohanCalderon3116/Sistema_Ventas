@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { v } from "../../../styles/variables";
 import {
   InputText,
@@ -9,6 +9,7 @@ import {
   SelectList,
   InsertarMovimientosCreditos,
   useFormattedDate,
+  BtnClose,
 } from "../../../index";
 import { useForm } from "react-hook-form";
 import { CirclePicker } from "react-color";
@@ -16,6 +17,7 @@ import { useEmpresaStore } from "../../../store/EmpresaStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCreditosStore } from "../../../store/CreditosStore";
 import { toast, Toaster } from "sonner";
+import { BeatLoader } from "react-spinners";
 
 export function RegistrarAbonoCreditos({
   onClose,
@@ -43,6 +45,7 @@ export function RegistrarAbonoCreditos({
     creditosItemSelect,
     setCreditosItemSelect,
   } = useCreditosStore();
+  const theme = useTheme();
 
   const { data: dataclipro, isLoading } = useQuery({
     queryKey: [
@@ -61,11 +64,12 @@ export function RegistrarAbonoCreditos({
     mutationFn: insertar,
     onError: (error) => {
       toast.error(
-        `Tuvimos un problema al intentar insertar el abono a credito: ${error.message}`,
+        `No pudimos registrar el abono al crédito, algo falló en el proceso ${error.message} 😯`,
       );
     },
     onSuccess: () => {
-      (toast.success("Abono a crédito creado con exito"), cerrarFormulario());
+      (toast.success("El abono al crédito quedó registrado correctamente 🫶"),
+        cerrarFormulario());
       queryClient.invalidateQueries(["mostrar creditos"]);
     },
   });
@@ -90,7 +94,12 @@ export function RegistrarAbonoCreditos({
     <Container>
       <Toaster richColors></Toaster>
       {isPending ? (
-        <span>...🔼</span>
+        <ConteinerLoader>
+          <span>
+            <strong>Guardando</strong>
+          </span>
+          <BeatLoader color={theme.text} size={8} />
+        </ConteinerLoader>
       ) : (
         <div className="sub-contenedor">
           <div className="headers">
@@ -98,7 +107,7 @@ export function RegistrarAbonoCreditos({
               <h1>Regitrar abono de crédito</h1>
             </section>
             <section>
-              <span onClick={onClose}>x</span>
+              <BtnClose funcion={onClose}></BtnClose>
             </section>
           </div>
           <form className="formulario" onSubmit={handleSubmit(handlesub)}>
@@ -145,7 +154,7 @@ export function RegistrarAbonoCreditos({
               <Btn1
                 icono={<v.iconoguardar />}
                 titulo="Guardar"
-                bgcolor={v.colorPrincipal}
+                bgcolor="#3300E3"
               />
             </section>
           </form>
@@ -254,4 +263,11 @@ export const ContainerSelector = styled.div`
   gap: 10px;
   align-items: center;
   position: relative;
+`;
+const ConteinerLoader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
 `;

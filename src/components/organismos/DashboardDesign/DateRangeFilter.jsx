@@ -138,7 +138,7 @@ const ButtonGroup = styled.div``;
 const TimeRangeButton = styled.button`
   color: ${({ theme }) => theme.text};
   background-color: ${({ isActive, theme }) =>
-    isActive ? theme.bg : "transparent"};
+    isActive ? theme.bg2 : "transparent"};
   border: none;
   border-radius: 8px;
   padding: 8px 16px;
@@ -146,7 +146,7 @@ const TimeRangeButton = styled.button`
   cursor: pointer;
 `;
 const StyleRangePicker = styled(RangePicker)`
-  background-color: ${({ theme }) => theme.bg};
+  background-color: ${({ theme }) => theme.bg2};
   border: 2px dashed ${({ theme }) => theme.body};
   .ant-picker-input > input {
     color: ${({ theme }) => theme.text};
@@ -164,11 +164,11 @@ const StyleRangePicker = styled(RangePicker)`
   }
   &:focus,
   &.ant-picker-focused {
-    background-color: ${({ theme }) => theme.bg};
+    background-color: ${({ theme }) => theme.bg2};
   }
 `;
 const StyleDatePicker = styled(DatePicker)`
-  background-color: ${({ theme }) => theme.bg};
+  background-color: ${({ theme }) => theme.bg2};
   border: 2px dashed ${({ theme }) => theme.body};
   .ant-picker-input > input {
     color: ${({ theme }) => theme.text};
@@ -186,6 +186,6 @@ const StyleDatePicker = styled(DatePicker)`
   }
   &:focus,
   &.ant-picker-focused {
-    background-color: ${({ theme }) => theme.bg};
+    background-color: ${({ theme }) => theme.bg2};
   }
 `;

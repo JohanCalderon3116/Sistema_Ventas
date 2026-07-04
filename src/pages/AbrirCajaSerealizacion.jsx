@@ -20,7 +20,7 @@ export const AbrirCajaSerealizacion = ({ onClose }) => {
         </p>
         <Btn1
           titulo="De acuerdo"
-          bgcolor={v.colorPrincipal}
+          bgcolor="#3300E3"
           width="100%"
           funcion={onClose}
         ></Btn1>
@@ -34,7 +34,7 @@ const Container = styled.div`
   top: 0;
   left: 0;
   position: fixed;
-  background-color: rgba(10, 9, 9, 0.5);
+  background-color: rgba(0, 0, 0, 0);
   display: flex;
   width: 100%;
   min-height: 100vh;
@@ -43,22 +43,25 @@ const Container = styled.div`
   z-index: 1000;
 
   .sub-contenedor {
+    content: "";
     position: relative;
     width: 400px;
     max-width: 85%;
     border-radius: 20px;
-    background: ${({ theme }) => theme.bgtotal};
-    box-shadow: -10px 15px 30px rgba(10, 9, 9, 0.4);
+    background: "#fff";
+    background-color: ${({ theme }) => theme.bg2};
+    /* box-shadow: -10px 15px 30px rgba(255, 255, 255, 0.4); */
     padding: 30px 36px;
     z-index: 100;
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
+    border: 2px solid ${({ theme }) => theme.color1};
     gap: 15px;
 
     .icono-alerta {
-      color: #ddd319;
+      color: #6d05e5;
     }
 
     h2 {

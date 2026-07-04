@@ -59,10 +59,12 @@ export const CreditosTemplate = () => {
       setInputContraseña("");
       setOpenRegistro(true);
       toast.success(
-        "Contraseña de verificaion correcta, entrando al moduo Créditos",
+        "Contraseña de verificación correcta, entrando al módulo Créditos 🔓",
       );
     } else {
-      toast.error("Contraseña incorrecta");
+      toast.error(
+        "La contraseña de verificación es incorrecta, inténtalo de nuevo 😧",
+      );
     }
   };
   const { isLoading } = useQuery({
@@ -127,14 +129,14 @@ export const CreditosTemplate = () => {
         <Title>Créditos</Title>
         <Btn1
           funcion={() => setOpenModalContraseña(true)}
-          bgcolor={v.colorPrincipal}
+          bgcolor="#6d05e5"
           titulo="Nuevo"
           icono={<v.iconoagregar />}
         ></Btn1>
 
         <Btn1
           funcion={nuevoRegistroAgregar}
-          bgcolor={v.colorPrincipal}
+          bgcolor="#3300E3"
           titulo="Abonos"
           icono={<v.iconoagregar />}
         ></Btn1>
@@ -192,13 +194,14 @@ const ModalContraseña = styled.div`
   backdrop-filter: blur(5px);
 
   .card {
-    background: ${({ theme }) => theme.bg};
+    background: ${({ theme }) => theme.body2};
     padding: 30px;
     border-radius: 20px;
     display: flex;
     flex-direction: column;
     gap: 15px;
     width: 300px;
+    border: 1px solid #7c7c7c;
     span {
       font-weight: 700;
       font-size: 1.1rem;

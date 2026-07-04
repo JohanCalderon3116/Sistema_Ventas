@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { v } from "../../../styles/variables";
 import {
   InputText,
@@ -8,6 +8,7 @@ import {
   useClientesProveedoresStore,
   SelectList,
   Switch1,
+  BtnClose,
 } from "../../../index";
 import { useForm } from "react-hook-form";
 import { CirclePicker } from "react-color";
@@ -15,6 +16,7 @@ import { useEmpresaStore } from "../../../store/EmpresaStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCreditosStore } from "../../../store/CreditosStore";
 import { toast, Toaster } from "sonner";
+import { BeatLoader } from "react-spinners";
 
 export function RegistrarCreditos({ onClose, dataSelect, setIsExploding }) {
   const queryClient = useQueryClient();
@@ -31,6 +33,7 @@ export function RegistrarCreditos({ onClose, dataSelect, setIsExploding }) {
     cliproItemSelect,
     selectCliPro,
   } = useClientesProveedoresStore();
+  const theme = useTheme();
   const { dataempresa } = useEmpresaStore();
   const { insertarCredito } = useCreditosStore();
 
@@ -51,12 +54,13 @@ export function RegistrarCreditos({ onClose, dataSelect, setIsExploding }) {
     mutationFn: insertar,
     onError: (error) => {
       toast.error(
-        `Tuvimos un problema al intentar insertar el credito: ${error.message}`,
+        `No pudimos guardar el crédito, algo falló en el proceso: ${error.message} 😑`,
       );
     },
     onSuccess: () => {
-      (toast.success("Credito creado con exito"), cerrarFormulario());
+      toast.success("El crédito quedó registrado correctamente 🙌");
       queryClient.invalidateQueries(["mostrar creditos"]);
+      cerrarFormulario();
     },
   });
   const handlesub = (data) => {
@@ -79,15 +83,20 @@ export function RegistrarCreditos({ onClose, dataSelect, setIsExploding }) {
     <Container>
       <Toaster richColors></Toaster>
       {isPending ? (
-        <span>...🔼</span>
+        <ConteinerLoader>
+          <span>
+            <strong>Guardando</strong>
+          </span>
+          <BeatLoader color={theme.text} size={8} />
+        </ConteinerLoader>
       ) : (
         <div className="sub-contenedor">
           <div className="headers">
             <section>
-              <h1>Regitrar nuevo credito</h1>
+              <h1>Regitrar nuevo crédito</h1>
             </section>
             <section>
-              <span onClick={onClose}>x</span>
+              <BtnClose funcion={onClose}></BtnClose>
             </section>
           </div>
           <form className="formulario" onSubmit={handleSubmit(handlesub)}>
@@ -146,7 +155,7 @@ export function RegistrarCreditos({ onClose, dataSelect, setIsExploding }) {
               <Btn1
                 icono={<v.iconoguardar />}
                 titulo="Guardar"
-                bgcolor={v.colorPrincipal}
+                bgcolor="#3300E3"
               />
             </section>
           </form>
@@ -255,4 +264,11 @@ export const ContainerSelector = styled.div`
   gap: 10px;
   align-items: center;
   position: relative;
+`;
+const ConteinerLoader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
 `;

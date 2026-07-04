@@ -69,10 +69,10 @@ export function Sidebar({ state, setState }) {
               <Icon
                 color="#CE82FF"
                 className="Linkicon"
-                icon="heroicons:ellipsis-horizontal-circle-solid"
+                icon="streamline-pixel:interface-essential-signout-logout"
               />
               <span className={state ? "label_ver" : "label_oculto"}>
-                Salir
+                Cerrar sesión
               </span>
             </section>
           </div>
