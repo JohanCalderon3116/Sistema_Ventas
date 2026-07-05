@@ -21,7 +21,7 @@ import { Device } from "../../../styles/breakpoints";
 import { Icon } from "@iconify/react";
 import { useEffect, useRef, useState } from "react";
 import { useAsignacionCajaSucursalesStore } from "../../../store/AsignacionCajaSucursales";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useEliminarVentasIncompletasMutateStack } from "../../../tanstack/VentasStack";
 export const HeaderPos = () => {
@@ -30,8 +30,13 @@ export const HeaderPos = () => {
   const [stateTeclado, setStateTeclado] = useState(false);
   const [stateLector, setStateLector] = useState(true);
   const [catidadInput, setCantidadInput] = useState(1);
-  const { setBuscador, dataProductos, selectProductos, buscador } =
-    useProductosStore();
+  const {
+    setBuscador,
+    dataProductos,
+    selectProductos,
+    buscador,
+    resultadosBusqueda,
+  } = useProductosStore();
   const { sucursalesItemSelectAsignadas } = useAsignacionCajaSucursalesStore();
   const { idventa, insertarVentas } = useVentasStore();
   const { dataempresa } = useEmpresaStore();
@@ -43,6 +48,14 @@ export const HeaderPos = () => {
   const { datausuarios } = useUsuariosStore();
   const { dataStockXAlmacenesYProducto, setStateModal } = useStockStore();
   const buscadorRef = useRef(null);
+  const { mostrarProductos } = useProductosStore();
+  const {} = useQuery({
+    queryKey: ["mostrar productos", dataempresa?.id],
+    queryFn: () =>
+      mostrarProductos({ id_empresa: dataempresa?.id }),
+    enabled: !!dataempresa,
+    refetchOnWindowFocus: false,
+  });
   function focusclick() {
     buscadorRef.current.focus();
     if (buscadorRef.current.value.trim() === "") {
@@ -121,33 +134,32 @@ export const HeaderPos = () => {
     mutate();
   }, []);
   useEffect(() => {
-    let timeout;
     const texto = buscador.trim();
     const isCodigoDeBarras = /^[0-9]{3,}$/.test(texto);
-    if (isCodigoDeBarras) {
-      setStateListaProductos(false);
-      timeout = setTimeout(() => {
-        const productoEncontrado = dataProductos?.find(
-          (p) => p.codigo_barra === texto,
-        );
-        if (productoEncontrado) {
-          selectProductos(productoEncontrado);
-          mutateInsertarVentas();
-          setBuscador("");
+
+    const timeout = setTimeout(
+      () => {
+        if (isCodigoDeBarras) {
+          setStateListaProductos(false);
+          const productoEncontrado = dataProductos?.find(
+            (p) => String(p.codigo_barra).trim() === texto,
+          );
+          if (productoEncontrado) {
+            selectProductos(productoEncontrado);
+            mutateInsertarVentas();
+            setBuscador("");
+          } else {
+            toast.error("Producto no encontrado");
+            setBuscador("");
+          }
         } else {
-          toast.error("Producto no encontrado");
-          setBuscador("");
+          setStateListaProductos(texto.length > 0);
         }
-      }, 100);
-    } else {
-      if (texto.length > 0) {
-        timeout = setTimeout(() => {
-          setStateListaProductos(true);
-        }, 200);
-      } else {
-        setStateListaProductos(false);
-      }
-    }
+      },
+      texto.length > 0 && isCodigoDeBarras ? 100 : 200,
+    );
+
+    return () => clearTimeout(timeout); 
   }, [buscador]);
   return (
     <Header>
@@ -209,7 +221,7 @@ export const HeaderPos = () => {
               funcioncrud={mutateInsertarVentas}
               funcion={selectProductos}
               setState={() => setStateListaProductos(!stateListaProductos)}
-              data={dataProductos}
+              data={resultadosBusqueda}
               state={stateListaProductos}
             ></ListaDesplegable>
           </InputText2>

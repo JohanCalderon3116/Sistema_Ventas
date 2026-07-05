@@ -17,6 +17,7 @@ export const useProductosStore = create((set, get) => ({
   dataProductos: [],
   ProductosItemSelect: [],
   parametros: {},
+  resultadosBusqueda: [],
   mostrarProductos: async (p) => {
     const response = await MostrarProductos(p);
     set({ parametros: p });
@@ -49,7 +50,7 @@ export const useProductosStore = create((set, get) => ({
   },
   buscarProductos: async (p) => {
     const response = await BuscarProductos(p);
-    set({ dataProductos: response });
+    set({ resultadosBusqueda: response });
     return response;
   },
   codigogenerado: 0,
