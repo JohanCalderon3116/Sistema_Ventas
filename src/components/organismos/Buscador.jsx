@@ -19,8 +19,8 @@ const Container = styled.div`
   height: 60px;
   align-items: center;
   display: flex;
-  color: ${(props) => props.theme.text};
-  border: 2px solid ${({ theme }) => theme.color2};
+  color: ${(props) => props.theme.bg23};
+  border: 2px solid ${({ theme }) => theme.bg23};
   .content {
     padding: 15px;
     gap: 10px;
@@ -37,7 +37,7 @@ const Container = styled.div`
       outline: none;
       background: none;
       border: 0;
-      color: ${(props) => props.theme.text};
+      color: ${(props) => props.theme.bg23};
     }
   }
 `;
