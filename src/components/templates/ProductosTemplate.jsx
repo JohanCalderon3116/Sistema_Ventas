@@ -12,18 +12,24 @@ import { useEffect, useState } from "react";
 import Confetti from "react-confetti-boom";
 import { Toaster } from "sonner";
 export const ProductosTemplate = () => {
-  const { dataProductos, setBuscador, generarCodigo } = useProductosStore();
+  const {
+    dataProductos,
+    setBuscador,
+    generarCodigo,
+    buscador,
+    resultadosBusqueda,
+  } = useProductosStore();
   const [openRegistro, setOpenRegistro] = useState(false);
   const [accion, setAccion] = useState("");
   const [dataSelect, setdataSelect] = useState([]);
   const [isExploding, setIsExploding] = useState(false);
+  const dataAMostrar = buscador.trim() ? resultadosBusqueda : dataProductos;
   function nuevoRegistro() {
     setOpenRegistro(!openRegistro);
     setAccion("Nuevo");
     setdataSelect([]);
     setIsExploding(false);
     generarCodigo();
-    console.log(dataSelect);
   }
   return (
     <Container>
@@ -51,7 +57,7 @@ export const ProductosTemplate = () => {
       <section className="main">
         {isExploding && <Confetti></Confetti>}
         <TablaProductos
-          data={dataProductos}
+          data={dataAMostrar}
           SetopenRegistro={setOpenRegistro}
           setAccion={setAccion}
           setdataSelect={setdataSelect}
