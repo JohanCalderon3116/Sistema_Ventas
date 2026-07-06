@@ -60,7 +60,7 @@ const TicketVenta = async (output, data) => {
   const productTableBody = [
     // encabezados
     [
-      { text: "CT", style: "tProductsHeader" },
+      { text: "C", style: "tProductsHeader" },
       { text: "DESCRIPCION", style: "tProductsHeader", alignment: "center" },
       { text: "P.UN", style: "tProductsHeader", alignment: "right" },
       { text: "TOT", style: "tProductsHeader", alignment: "right" },
@@ -117,7 +117,7 @@ const TicketVenta = async (output, data) => {
     },
     {
       table: {
-        widths: ["25%", "35%", "15%", "25%"],
+        widths: ["20%", "30%", "20%", "30%"],
         body: [
           [
             { text: "FECHA", style: "tHeaderLabel" },
@@ -126,7 +126,7 @@ const TicketVenta = async (output, data) => {
             { text: `${data.hora}`, style: "tHeaderLabel" },
           ],
           [
-            { text: "CAJERO/A", style: "tHeaderLabel" },
+            { text: "CAJERO", style: "tHeaderLabel" },
             {
               text: `${data.nombre_usuario}`,
               style: " tHeaderValue",
@@ -391,7 +391,7 @@ const TicketVenta = async (output, data) => {
   };
   const response = await createPdf(
     {
-      pageSize: { width: 204.09, height: 841.88 },
+      pageSize: { width: 190.09, height: "auto" },
       pageMargins: [2.83, 5.66, 2.83, 5.66],
       content,
       styles,
