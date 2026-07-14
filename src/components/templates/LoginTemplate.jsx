@@ -21,7 +21,7 @@ import { CardModos } from "../organismos/LoginDesing/CardModos";
 import { useContraseñaStore } from "../../store/ContraseñaStore";
 export const LoginTemplate = () => {
   const [stateModos, setStateModos] = useState(true);
-  const [stateModo, setStateModo] = useState("empleado");
+  const [stateModo, setStateModo] = useState(null);
   const [contraseñaOk, setContraseñaOk] = useState(false);
   const [inputContraseña, setInputContraseña] = useState("");
   const { loginGoogle, loginEmail, crearUserYLogin } = useAuthStore();
@@ -108,87 +108,98 @@ export const LoginTemplate = () => {
                 setStateModos(!stateModos);
               }}
             ></CardModos>
-            {/* <Btn1
+            <CardModos
+              title={"Invitado"}
+              subtitle={"Obten una prueba de 30 días gratis."}
+              bgcolor={"#d30d0d"}
+              img={"https://i.ibb.co/SDphqvqL/damas-de-honor.png"}
+              funcion={() => {
+                setStateModo("invitado");
+                setStateModos(!stateModos);
+              }}
+            ></CardModos>
+          </ContentModos>
+        )}
+        {stateModo === "empleado" && stateModos === false && (
+          <PanelModo>
+            <VolverBtn funcion={() => setStateModos(!stateModos)}></VolverBtn>
+            <span>Modo empleado</span>
+            <form onSubmit={handleSubmit(manejadorEmailSesion)} action="">
+              <InputText2>
+                <input
+                  className="form__field"
+                  placeholder="Correo"
+                  type="text"
+                  {...register("email", { required: true })}
+                ></input>
+              </InputText2>
+              <InputText2>
+                <input
+                  className="form__field"
+                  placeholder="Contraseña"
+                  type="password"
+                  {...register("password", { required: true })}
+                ></input>
+              </InputText2>
+              <Btn1
+                border="2px"
+                titulo="Ingresar"
+                bgcolor="#1cb0f6"
+                color="255,255,255"
+                width="100%"
+              ></Btn1>
+            </form>
+          </PanelModo>
+        )}
+        {stateModo === "superadmin" && stateModos === false && (
+          <PanelModo>
+            <VolverBtn funcion={() => setStateModos(!stateModos)}></VolverBtn>
+            <span>Modo Super Admin</span>
+            {!contraseñaOk ? (
+              <>
+                <InputText2>
+                  <input
+                    className="form__field"
+                    placeholder="Contraseña de acceso"
+                    type="password"
+                    value={inputContraseña}
+                    onChange={(e) => setInputContraseña(e.target.value)}
+                  />
+                </InputText2>
+                <Btn1
+                  titulo="Verificar"
+                  funcion={validarContraseña}
+                  width="100%"
+                />
+              </>
+            ) : (
+              <>
+                <Btn1
+                  border="2px"
+                  funcion={loginGoogle}
+                  titulo="Google"
+                  color={(theme) => theme.bgtotal}
+                  icono={<v.iconogoogle />}
+                />
+                <Linea>
+                  <span>O</span>
+                </Linea>
+              </>
+            )}
+          </PanelModo>
+        )}
+        {stateModo === "invitado" && stateModos === false && (
+          <PanelModo>
+            <VolverBtn funcion={() => setStateModos(!stateModos)}></VolverBtn>
+            <span>Modo Invitado</span>
+            <Btn1
               border="2px"
               funcion={manejadorEmailSesionTester}
               titulo="Invitado"
               bgcolor="#f6ce1c"
-            /> */}
-          </ContentModos>
+            />
+          </PanelModo>
         )}
-        {stateModo === "empleado"
-          ? stateModos === false && (
-              <PanelModo>
-                <VolverBtn
-                  funcion={() => setStateModos(!stateModos)}
-                ></VolverBtn>
-                <span>Modo empleado</span>
-                <form onSubmit={handleSubmit(manejadorEmailSesion)} action="">
-                  <InputText2>
-                    <input
-                      className="form__field"
-                      placeholder="Correo"
-                      type="text"
-                      {...register("email", { required: true })}
-                    ></input>
-                  </InputText2>
-                  <InputText2>
-                    <input
-                      className="form__field"
-                      placeholder="Contraseña"
-                      type="password"
-                      {...register("password", { required: true })}
-                    ></input>
-                  </InputText2>
-                  <Btn1
-                    border="2px"
-                    titulo="Ingresar"
-                    bgcolor="#1cb0f6"
-                    color="255,255,255"
-                    width="100%"
-                  ></Btn1>
-                </form>
-              </PanelModo>
-            )
-          : stateModos === false && (
-              <PanelModo>
-                <VolverBtn
-                  funcion={() => setStateModos(!stateModos)}
-                ></VolverBtn>
-                <span>Modo Super Admin</span>
-                {!contraseñaOk ? (
-                  <>
-                    <InputText2>
-                      <input
-                        className="form__field"
-                        placeholder="Contraseña de acceso"
-                        type="password"
-                        value={inputContraseña}
-                        onChange={(e) => setInputContraseña(e.target.value)}
-                      />
-                    </InputText2>
-                    <Btn1
-                      titulo="Verificar"
-                      funcion={validarContraseña}
-                      width="100%"
-                    />
-                  </>
-                ) : (
-                  <>
-                    <Btn1
-                      border="2px"
-                      funcion={loginGoogle}
-                      titulo="Google"
-                      color={(theme) => theme.bgtotal}
-                      icono={<v.iconogoogle />}
-                    />
-                    <Linea>
-                      <span>O</span>
-                    </Linea>
-                  </>
-                )}
-              </PanelModo>
-            )}
       </div>
       <Footer></Footer>
     </Container>
