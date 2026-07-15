@@ -132,7 +132,7 @@ export function RegistrarCreditos({ onClose, dataSelect, setIsExploding }) {
               </span>
               <Switch1
                 state={stateCreditos}
-                setState={setStateCreditos}
+                setState={() => setStateCreditos(!stateCreditos)}
               ></Switch1>
               {stateCreditos && (
                 <article>

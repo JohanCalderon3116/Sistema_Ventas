@@ -48,7 +48,7 @@ export const ProtectedRoute = ({ children, accesby }) => {
     });
 
     if (!hasPermission) {
-      return <Navigate to="/404"></Navigate>;
+      return <Navigate to="/sin-permiso"></Navigate>;
     }
 
     return children;

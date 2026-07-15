@@ -146,6 +146,7 @@ export * from './pages/POS';
 export * from './pages/Perfil';
 export * from './pages/Productos';
 export * from './pages/SerializacionComprobantes';
+export * from './pages/SinPermiso';
 export * from './pages/SucursalesCaja';
 export * from './pages/Usuarios';
 export { default as TicketPrueba } from './reports/TicketPrueba';

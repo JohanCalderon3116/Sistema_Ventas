@@ -20,6 +20,7 @@ import {
   Impresoras,
   Almacenes,
   SerializacionComprobantes,
+  SinPermiso,
 } from "../index";
 import { Usuarios } from "../pages/Usuarios";
 import { Inventario } from "../pages/Inventario";
@@ -248,6 +249,14 @@ export function Myroutes() {
             <ProtectedRoute accesby="authenticated">
               <Dashboard></Dashboard>
             </ProtectedRoute>
+          </Layout>
+        }
+      />
+      <Route
+        path="/sin-permiso"
+        element={
+          <Layout>
+            <SinPermiso></SinPermiso>
           </Layout>
         }
       />
