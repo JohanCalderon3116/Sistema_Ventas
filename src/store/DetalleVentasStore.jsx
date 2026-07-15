@@ -30,11 +30,12 @@ export const useDetalleVentasStore = create((set, get) => ({
   total: 0,
   mostrardetalleventa: async (p) => {
     const response = await MostrarDetalleVenta(p);
+    const items = response ?? []; 
     set({
-      detalleventa: response,
+      detalleventa: items,
+      total: calcularTotal(items),
     });
-    set({ total: calcularTotal(response) });
-    return response;
+    return items;
   },
   insertarDetalleVentas: async (p) => {
     await InsertarDetalleVentas(p);

@@ -25,6 +25,7 @@ export const CantidadVentas = () => {
         _fecha_inicio: fechaInicio,
         _fecha_fin: fechaFin,
       }),
+    enabled: !!dataempresa?.id && !!fechaInicio && !!fechaFin,
   });
   if (isLoading) {
     return <BarLoader></BarLoader>;
