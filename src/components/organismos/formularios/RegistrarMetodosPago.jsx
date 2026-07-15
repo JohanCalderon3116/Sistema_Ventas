@@ -40,7 +40,7 @@ export function RegistrarMetodosPago({
     mutationFn: insertar,
     onError: (error) => {
       toast.error(
-        `No pudimos guardar el método de pago, algo falló en el proceso. Revisa la información e inténtalo de nuevo 😥`,
+        `No pudimos guardar el método de pago, ${error.message} algo falló en el proceso. Revisa la información e inténtalo de nuevo 😥`,
       );
     },
     onSuccess: () => {

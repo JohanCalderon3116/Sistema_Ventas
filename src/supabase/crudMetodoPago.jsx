@@ -70,12 +70,25 @@ export async function EditarMetodosPago(p, fileold, filenew) {
   }
   if (filenew != "-" && filenew.size != undefined) {
     if (fileold != "-") {
-      await EditarIconoStorage(p._id, filenew);
-    } else {
-      const dataImagen = await subirImagen(p._id, filenew);
+
+      await EditarIconoStorage(p.id, filenew);
+
+
+      const ruta = "metodospago/" + p.id;
+      const { data: urlImagen } = supabase.storage
+        .from("imagenes")
+        .getPublicUrl(ruta);
+
       const piconoeditar = {
-        icono: dataImagen.publicUrl,
-        id: p._id,
+        icono: `${urlImagen.publicUrl}?t=${Date.now()}`, 
+        id: p.id,
+      };
+      await EditarIconoMetodosPago(piconoeditar);
+    } else {
+      const dataImagen = await subirImagen(p.id, filenew);
+      const piconoeditar = {
+        icono: `${dataImagen.publicUrl}?t=${Date.now()}`, 
+        id: p.id,
       };
       await EditarIconoMetodosPago(piconoeditar);
     }

@@ -161,6 +161,7 @@ export function RegistrarUsuarios({ accion, dataSelect, onClose }) {
                     defaultValue={accion === "Editar" ? dataSelect?.email : ""}
                     type="text"
                     placeholder="Correo"
+                    disabled={accion === "Editar"}
                     {...register("email", {
                       required: true,
                     })}
@@ -180,6 +181,7 @@ export function RegistrarUsuarios({ accion, dataSelect, onClose }) {
                     defaultValue=""
                     type="password"
                     placeholder="Contraseña"
+                    disabled={accion === "Editar"}
                     {...register("pass", {
                       required: accion === "Editar" ? false : true,
                     })}

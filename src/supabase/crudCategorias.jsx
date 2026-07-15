@@ -98,10 +98,21 @@ export async function EditarCategorias(p, fileold, filenew) {
   if (filenew != "-" && filenew.size != undefined) {
     if (fileold != "-") {
       await EditarIconoStorage(p._id, filenew);
+
+      const ruta = "categorias/" + p._id;
+      const { data: urlImagen } = supabase.storage
+        .from("imagenes")
+        .getPublicUrl(ruta);
+
+      const piconoeditar = {
+        icono: `${urlImagen.publicUrl}?t=${Date.now()}`,
+        id: p._id, // ojo: aquí sí debe ser "id" porque EditarIconoCategorias usa .update(p).eq("id", p.id) directo, no rpc
+      };
+      await EditarIconoCategorias(piconoeditar);
     } else {
       const dataImagen = await subirImagen(p._id, filenew);
       const piconoeditar = {
-        icono: dataImagen.publicUrl,
+        icono: `${dataImagen.publicUrl}?t=${Date.now()}`,
         id: p._id,
       };
       await EditarIconoCategorias(piconoeditar);

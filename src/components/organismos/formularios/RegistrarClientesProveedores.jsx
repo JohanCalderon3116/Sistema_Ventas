@@ -61,7 +61,7 @@ export function RegistrarClientesProveedores({
         _telefono: data.telefono,
         _email: data.email,
         _identificador_nacional: data.identificador_nacional,
-        _identificador_fiscal: data.identificador_fiscal,
+        _identificador_fiscal: data.identificador_fiscal || "-",
         _tipo: tipo,
       };
       await editarCliPro(p);
@@ -73,7 +73,7 @@ export function RegistrarClientesProveedores({
         _telefono: data.telefono,
         _email: data.email,
         _identificador_nacional: data.identificador_nacional,
-        _identificador_fiscal: data.identificador_fiscal,
+        _identificador_fiscal: data.identificador_fiscal || "-",
         _tipo: tipo,
       };
 
