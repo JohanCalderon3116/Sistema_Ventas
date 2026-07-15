@@ -95,7 +95,7 @@ export const PantallaIngresoSalidaDinero = () => {
           </span>
           <section className="areatipopago">
             {dataMetodosPago
-              ?.filter((item) => item.nombre !== "Mixto")
+              ?.filter((item) => item.nombre === "Efectivo")
               .map((item, index) => {
                 return (
                   <article className="box" key={index}>
