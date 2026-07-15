@@ -92,7 +92,7 @@ export function TablaClientesProveedores({
     },
     {
       accessorKey: "identificador_nacional",
-      header: "Id Nacional",
+      header: "C.C",
       cell: (info) => <span>{info.getValue()}</span>,
       enableColumnFilter: true,
       filterFn: (row, columnId, filterStatuses) => {
@@ -103,7 +103,7 @@ export function TablaClientesProveedores({
     },
     {
       accessorKey: "identificador_fiscal",
-      header: "Id Fiscal",
+      header: "Identificador de empresa",
       cell: (info) => <span>{info.getValue()}</span>,
       enableColumnFilter: true,
       filterFn: (row, columnId, filterStatuses) => {

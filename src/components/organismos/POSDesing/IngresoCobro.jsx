@@ -210,7 +210,8 @@ export const IngresoCobro = forwardRef((props, ref) => {
             (item) => item.nombre === tipo,
           );
           const pmovcaja = {
-            tipo_movimiento: "ingreso",
+            fecha_movimiento: fechaActual,
+            tipo_movimiento: "venta_ingreso",
             monto: monto,
             id_metodo_pago: metodoPago?.id,
             descripcion: `Pago de venta con ${tipo} `,
