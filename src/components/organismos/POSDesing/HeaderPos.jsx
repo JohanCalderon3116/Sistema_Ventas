@@ -128,10 +128,9 @@ export const HeaderPos = () => {
     const value = Math.max(0, parseFloat(e.target.value));
     setCantidadInput(value);
   };
-  const { mutate, isPending } = useEliminarVentasIncompletasMutateStack();
+  
   useEffect(() => {
     buscadorRef.current.focus();
-    mutate();
   }, []);
   useEffect(() => {
     const texto = buscador.trim();

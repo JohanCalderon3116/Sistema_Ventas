@@ -45,6 +45,8 @@ export const ChartVentas = () => {
         _fecha_inicio: fechaInicio,
         _fecha_fin: fechaFin,
       }),
+
+    enabled: !!dataempresa?.id && !!fechaInicio && !!fechaFin,
   });
 
   if (isLoading) {

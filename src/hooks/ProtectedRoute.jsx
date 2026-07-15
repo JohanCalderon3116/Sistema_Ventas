@@ -20,27 +20,39 @@ export const ProtectedRoute = ({ children, accesby }) => {
     queryFn: () => mostrarPermisosGlobales({ id_usuario: datausuarios?.id }),
     enabled: !!datausuarios,
   });
-  if (isLoadingPermisosGlobales) {
-    return (
-      <SpinnerSecundario texto={"Cargando permisos :p"}></SpinnerSecundario>
-    );
-  }
-  const hasPermission = dataPermisosGlobales?.some((item) => {
-    return item.modulos?.link === location.pathname;
-  });
+
+  // 👇 clave: considerar "cargando" también mientras datausuarios no exista
+  const isLoading = !datausuarios || isLoadingPermisosGlobales;
+
   if (accesby === "non-authenticated") {
     if (!user) {
       return children;
     } else {
       return <Navigate to="/"></Navigate>;
     }
-  } else if (accesby === "authenticated") {
-    if (user) {
-      if (!hasPermission) {
-        return <Navigate to="/404"></Navigate>;
-      }
-      return children;
-    }
   }
+
+  if (accesby === "authenticated") {
+    if (!user) {
+      return <Navigate to="/login"></Navigate>;
+    }
+
+    if (isLoading) {
+      return (
+        <SpinnerSecundario texto={"Cargando permisos :p"}></SpinnerSecundario>
+      );
+    }
+
+    const hasPermission = dataPermisosGlobales?.some((item) => {
+      return item.modulos?.link === location.pathname;
+    });
+
+    if (!hasPermission) {
+      return <Navigate to="/404"></Navigate>;
+    }
+
+    return children;
+  }
+
   return <Navigate to="/login"></Navigate>;
 };

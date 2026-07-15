@@ -4,13 +4,15 @@ import {
   Sidebar,
   Spinner1,
   Toogle,
+  useCierreCajaStore,
+  useEliminarVentasIncompletasMutateStack,
   useEmpresaStore,
   usePermisosStore,
   userAuth,
   useSucursalesStore,
   useUsuariosStore,
 } from "../index";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Device } from "../styles/breakpoints";
 import { useQuery } from "@tanstack/react-query";
 import { useAsignacionCajaSucursalesStore } from "../store/AsignacionCajaSucursales";
@@ -23,6 +25,7 @@ export const Layout = ({ children }) => {
   const id_auth = user?.id;
   const { mostrarPermisosGlobales } = usePermisosStore();
   const [stateMenu, setStateMenu] = useState(false);
+  const { dataCierreCaja } = useCierreCajaStore();
 
   const {
     refetch: refetchUsuarios,
@@ -38,6 +41,7 @@ export const Layout = ({ children }) => {
     refetchOnWindowFocus: false,
     enabled: !!id_auth,
   });
+  const { mutate, isPending } = useEliminarVentasIncompletasMutateStack();
   const {
     data: dataSucursales,
     isLoading: isLoadingSucursales,
@@ -55,6 +59,11 @@ export const Layout = ({ children }) => {
     enabled: !!datausuarios,
     refetchOnWindowFocus: false,
   });
+  useEffect(() => {
+    if (datausuarios?.id && dataCierreCaja?.id) {
+      mutate();
+    }
+  }, [datausuarios?.id, dataCierreCaja?.id]);
 
   if (datausuarios == null) {
     refetchUsuarios();
@@ -63,7 +72,6 @@ export const Layout = ({ children }) => {
   const isLoading =
     isLoadingEmpresa || isLoadingSucursales || isLoadingUsuarios;
   const error = errorEmpresa;
-
   if (isLoading) {
     return <Spinner1></Spinner1>;
   }
