@@ -1,4 +1,3 @@
-import Swal from "sweetalert2";
 import { supabase } from "./supabase.config";
 const tabla = "categorias";
 export async function InsertarCategorias(p, file) {
@@ -17,7 +16,6 @@ export async function InsertarCategorias(p, file) {
     await EditarIconoCategorias(piconoeditar);
   }
 }
-
 async function subirImagen(idcategoria, file) {
   const ruta = "categorias/" + idcategoria;
   const { data, error } = await supabase.storage
@@ -27,12 +25,7 @@ async function subirImagen(idcategoria, file) {
       upsert: true,
     });
   if (error) {
-    Swal.fire({
-      icon: "error",
-      title: "Oops...",
-      text: error.message,
-    });
-    return;
+    throw new Error(error.message);
   }
   if (data) {
     const { data: urlImagen } = supabase.storage
@@ -41,25 +34,21 @@ async function subirImagen(idcategoria, file) {
     return urlImagen;
   }
 }
-
 async function EditarIconoCategorias(p) {
   const { error } = await supabase.from(tabla).update(p).eq("id", p.id);
   if (error) {
-    Swal.fire({
-      icon: "error",
-      title: "Oops...",
-      text: error.message,
-    });
-    return;
+    throw new Error(error.message);
   }
 }
-
 export async function MostrarCategorias(p) {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from(tabla)
     .select()
     .eq("id_empresa", p.id_empresa)
     .order("id", { ascending: false });
+  if (error) {
+    throw new Error(error.message);
+  }
   return data;
 }
 export async function BuscarCategorias(p) {
@@ -73,12 +62,7 @@ export async function BuscarCategorias(p) {
 export async function EliminarCategorias(p) {
   const { error } = await supabase.from(tabla).delete().eq("id", p.id);
   if (error) {
-    Swal.fire({
-      icon: "error",
-      title: "Oops...",
-      text: error.message,
-    });
-    return;
+    throw new Error(error.message);
   }
   if (p.icono != "-") {
     const ruta = "categorias/" + p.id;
@@ -88,12 +72,7 @@ export async function EliminarCategorias(p) {
 export async function EditarCategorias(p, fileold, filenew) {
   const { error } = await supabase.rpc("editarcategorias", p);
   if (error) {
-    Swal.fire({
-      icon: "error",
-      title: "Oops...",
-      text: error.message,
-    });
-    return;
+    throw new Error(error.message);
   }
   if (filenew != "-" && filenew.size != undefined) {
     if (fileold != "-") {
@@ -106,7 +85,7 @@ export async function EditarCategorias(p, fileold, filenew) {
 
       const piconoeditar = {
         icono: `${urlImagen.publicUrl}?t=${Date.now()}`,
-        id: p._id, // ojo: aquí sí debe ser "id" porque EditarIconoCategorias usa .update(p).eq("id", p.id) directo, no rpc
+        id: p._id, 
       };
       await EditarIconoCategorias(piconoeditar);
     } else {

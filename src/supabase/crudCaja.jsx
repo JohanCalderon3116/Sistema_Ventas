@@ -2,13 +2,15 @@ import { supabase } from "./supabase.config";
 
 const tabla = "caja";
 export async function MostrarCajaXSucursal(p) {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from(tabla)
     .select()
     .eq("id_sucursal", p.id_sucursal);
+  if (error) {
+    throw new Error(error.message);
+  }
   return data;
 }
-
 export async function InsertarCaja(p) {
   const { error, data } = await supabase
     .from(tabla)
