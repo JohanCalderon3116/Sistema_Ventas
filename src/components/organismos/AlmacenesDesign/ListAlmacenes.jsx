@@ -30,7 +30,7 @@ export const ListAlmacenes = () => {
     eliminarSucursal,
   } = useSucursalesStore();
   const { isLoading, error, data } = useQuery({
-    queryKey: ["mostrar almacenes x empresa"],
+    queryKey: ["mostrar almacenes x empresa", { id_empresa: dataempresa?.id }],
     queryFn: () => mostrarAlmacenesXEmpresa({ id_empresa: dataempresa?.id }),
     enabled: !!dataempresa,
   });

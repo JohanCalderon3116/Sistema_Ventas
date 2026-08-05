@@ -108,13 +108,6 @@ export function CardListCajas({
             <span className="subtitle">{subtitle} </span>
           </section>
         )}
-        {state && (
-          <Btn1
-            titulo="TOMAR TURNO"
-            funcion={() => mutationEditarUserCierreCaja.mutate()}
-          />
-        )}
-
         {!state && (
           <section className="contentInputs">
             <span className="title">Aperturar caja con:</span>

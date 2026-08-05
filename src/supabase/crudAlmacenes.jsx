@@ -1,6 +1,6 @@
 import { supabase } from "./supabase.config";
-
 const tabla = "almacenes";
+
 export async function MostrarAlmacenXSucursal(p) {
   const { data, error } = await supabase
     .from(tabla)
@@ -13,7 +13,7 @@ export async function MostrarAlmacenXSucursal(p) {
   return data;
 }
 export async function MostrarAlmacenesXEmpresa(p) {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("sucursales")
     .select(`*, almacenes(*)`)
     .eq("id_empresa", p.id_empresa);

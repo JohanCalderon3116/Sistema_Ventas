@@ -43,7 +43,7 @@ export const PantallaAperturaCaja = () => {
           let aperturaActiva = null;
           if (Array.isArray(dataCierreCajaEmpresa)) {
             aperturaActiva = dataCierreCajaEmpresa.find(
-              (a) => a.id_caja === item.id,
+              (a) => a.id_caja === item.caja.id, 
             );
             state = Boolean(aperturaActiva);
           }
@@ -63,7 +63,7 @@ export const PantallaAperturaCaja = () => {
               }}
               sucursal={item?.sucursales?.nombre}
               title={item?.caja?.descripcion}
-              bgcolor={state ? "#f34a4" : "#58cc02"}
+              bgcolor={state ? "#d51d1d" : "#58cc02"}
             ></CardListCajas>
           );
         })}

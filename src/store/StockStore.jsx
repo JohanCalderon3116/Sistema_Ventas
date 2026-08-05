@@ -6,7 +6,6 @@ import {
   MostrarStockAlmacenesYProducto,
   MostrarStockAlmacenYProducto,
 } from "../supabase/crudStock";
-import {} from "../supabase/crudAlmacenes";
 
 export const useStockStore = create((set) => ({
   stateModal: false,
