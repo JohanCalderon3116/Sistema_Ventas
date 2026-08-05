@@ -3,7 +3,6 @@ import { supabase } from "../supabase/supabase.config";
 import {
   InsertarAdmin,
   InsertarEmpresa,
-  MostrarRolesXnombre,
   MostrarTipoDocumentos,
   MostrarUsuarios,
 } from "../index";

@@ -1,4 +1,3 @@
-import Swal from "sweetalert2";
 import { supabase } from "./supabase.config";
 const tabla = "clientes_proveedores";
 export async function InsertarClientesProveedores(p) {
@@ -15,20 +14,17 @@ export async function MostrarClientesProveedores(p) {
     .eq("id_empresa", p.id_empresa)
     .eq("tipo", p.tipo);
   if (error) {
-    return;
+    throw new Error(error.message);
   }
   return data;
 }
 export async function BuscarClientesProveedores(p) {
-  const { data, error } = await supabase
+  const { data } = await supabase
     .from(tabla)
     .select()
     .eq("id_empresa", p.id_empresa)
     .eq("tipo", p.tipo)
     .ilike("nombres", "%" + p.buscador + "%");
-  if (error) {
-    return;
-  }
   return data;
 }
 export async function EliminarClientesProveedores(p) {

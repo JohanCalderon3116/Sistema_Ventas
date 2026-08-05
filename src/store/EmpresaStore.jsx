@@ -4,13 +4,13 @@ import {
   EditarMonedaEmpresa,
   InsertarCategorias,
   InsertarEmpresa,
-  MostrarEmpresaXidusuario,
+  MostrarEmpresaXIdUsuario,
 } from "../index";
 
 export const useEmpresaStore = create((set) => ({
   dataempresa: [],
   mostrarempresa: async (p) => {
-    const response = await MostrarEmpresaXidusuario(p);
+    const response = await MostrarEmpresaXIdUsuario(p);
     set({ dataempresa: response });
     return response;
   },

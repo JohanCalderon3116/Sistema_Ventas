@@ -11,8 +11,7 @@ export async function InsertarEmpresa(p) {
   }
   return data;
 }
-
-export async function MostrarEmpresaXidusuario(p) {
+export async function MostrarEmpresaXIdUsuario(p) {
   const { data, error } = await supabase
     .rpc("mostrarempresaxiduser", p)
     .maybeSingle();
@@ -21,7 +20,6 @@ export async function MostrarEmpresaXidusuario(p) {
   }
   return data;
 }
-
 export async function EditarMonedaEmpresa(p) {
   const { error } = await supabase.from(tabla).update(p).eq("id", p.id);
   if (error) {
@@ -52,7 +50,6 @@ export async function EditarEmpresa(p, fileold, filenew) {
     }
   }
 }
-
 export async function EditarIconoStorage(id, file) {
   const ruta = "empresa/" + id;
   await supabase.storage.from("imagenes").update(ruta, file, {

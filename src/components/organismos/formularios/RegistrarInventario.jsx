@@ -48,7 +48,7 @@ export function RegistrarInventario({ onClose }) {
     almacenSelelctItem,
     setAlmacenSelelctItem,
   } = useAlmacenesStore();
-  const { mostrarStockAlmacenYProduct, editarStock } = useStockStore();
+  const { mostrarStockAlmacenYProducto, editarStock } = useStockStore();
   const {
     register,
     formState: { errors },
@@ -104,7 +104,7 @@ export function RegistrarInventario({ onClose }) {
       },
     ],
     queryFn: () =>
-      mostrarStockAlmacenYProduct({
+      mostrarStockAlmacenYProducto({
         id_almacen: almacenSelelctItem?.id,
         id_producto: ProductosItemSelect?.id,
       }),

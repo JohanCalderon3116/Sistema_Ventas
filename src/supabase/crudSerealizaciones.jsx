@@ -29,7 +29,6 @@ export async function EditarSerealizacionDefault(p) {
     throw new Error(error.message);
   }
 }
-
 export async function EditarSerealizacion(p) {
   const { error } = await supabase.from(table).update(p).eq("id", p.id);
   if (error) {

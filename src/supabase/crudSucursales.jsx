@@ -1,4 +1,3 @@
-import Swal from "sweetalert2";
 import { supabase } from "../index";
 const tabla = "sucursales";
 export async function MostrarSucursales(p) {
@@ -7,32 +6,26 @@ export async function MostrarSucursales(p) {
     .select()
     .eq("id_empresa", p.id_empresa);
   if (error) {
-    // Swal.fire({
-    //   icon: "error",
-    //   title: "Oops...",
-    //   text: error.message,
-    // });
-    return;
+    throw new Error(error.message);
   }
   return data;
 }
-export async function MostrarSucursalesAsignadasXuser(p) {
-  const { data } = await supabase.rpc("mostrarsucursalesasignadas", {
-    _id_usuario: p.id_usuario,
-  });
-
-  return data;
-}
-
 export async function MostrarCajasPorSucursal(p) {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from(tabla)
     .select(`*, caja(*)`)
     .eq("id_empresa", p.id_empresa);
+  if (error) {
+    throw new Error(error.message);
+  }
   return data;
 }
 export async function InsertarSucursal(p) {
-  const { error, data } = await supabase.from(tabla).insert(p).select().single();
+  const { error, data } = await supabase
+    .from(tabla)
+    .insert(p)
+    .select()
+    .single();
   if (error) {
     throw new Error(error.message);
   }

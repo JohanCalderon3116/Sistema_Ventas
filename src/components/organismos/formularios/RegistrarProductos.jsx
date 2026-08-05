@@ -80,7 +80,7 @@ export function RegistrarProductos({
     useSucursalesStore();
   const [stateSucursalesLista, setStateSucursalesLista] = useState(false);
   const [stateCategoriasLista, setStateCategoriasLista] = useState(false);
-  const { insertarStock, mostrarStockAlmacenYProduct } = useStockStore();
+  const { insertarStock, mostrarStockAlmacenYProducto } = useStockStore();
   const theme = useTheme();
   const {
     data: dataStockXAlamacenYProducto,
@@ -93,7 +93,7 @@ export function RegistrarProductos({
       { id_producto: dataSelect.id, id_almacen: almacenSelelctItem?.id },
     ],
     queryFn: () =>
-      mostrarStockAlmacenYProduct({
+      mostrarStockAlmacenYProducto({
         id_almacen: almacenSelelctItem?.id,
         id_producto: dataSelect?.id,
       }),

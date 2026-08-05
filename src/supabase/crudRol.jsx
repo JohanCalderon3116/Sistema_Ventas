@@ -1,14 +1,12 @@
 import { supabase } from "./supabase.config";
 const tabla = "roles";
-export async function MostrarRolesXnombre(p) {
-  const { data } = await supabase
+export async function MostrarRoles(p) {
+  const { data, error } = await supabase
     .from(tabla)
     .select()
-    .eq("nombre", p.nombre)
-    .maybeSingle();
-  return data;
-}
-export async function MostrarRoles(p) {
-  const { data } = await supabase.from(tabla).select().neq("nombre", "superadmin");
+    .neq("nombre", "superadmin");
+  if (error) {
+    throw new Error(error.message);
+  }
   return data;
 }

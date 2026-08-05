@@ -4,7 +4,6 @@ import {
   Configuraciones,
   Home,
   Login,
-  Marca,
   Productos,
   ProtectedRoute,
   POS,
@@ -75,16 +74,6 @@ export function Myroutes() {
           <Layout>
             <ProtectedRoute accesby="authenticated">
               <Categorias></Categorias>
-            </ProtectedRoute>
-          </Layout>
-        }
-      />
-      <Route
-        path="/configuracion/marca"
-        element={
-          <Layout>
-            <ProtectedRoute accesby="authenticated">
-              <Marca></Marca>
             </ProtectedRoute>
           </Layout>
         }

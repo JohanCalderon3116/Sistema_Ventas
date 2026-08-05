@@ -6,7 +6,6 @@ export async function InsertarMovStock(p) {
     throw new Error(error.message);
   }
 }
-
 export async function MostrarMovStock(p) {
   const { data, error } = await supabase
     .from(table)
@@ -23,7 +22,6 @@ export async function MostrarMovStock(p) {
     .eq("almacenes.sucursales.id_empresa", p.id_empresa)
     .eq("id_producto", p.id_producto)
     .order("fecha", { ascending: false });
-
   if (error) {
     throw new Error(error.message);
   }

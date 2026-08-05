@@ -1,4 +1,3 @@
-import Swal from "sweetalert2";
 import { supabase } from "./supabase.config";
 const tabla = "ventas";
 export async function InsertarVentas(p) {
@@ -13,22 +12,6 @@ export async function InsertarVentas(p) {
   }
   return data;
 }
-export async function MostrarVentasXsucursal(p) {
-  const { data } = await supabase
-    .from(tabla)
-    .select()
-    .eq("id_sucursal", p.id_sucursal)
-    .eq("estado", "nueva")
-    .maybeSingle();
-  return data;
-}
-// export async function BuscarProductos(p) {
-//   const { data } = await supabase.rpc("buscarproductos", {
-//     _id_empresa: p.id_empresa,
-//     buscador: p.buscador,
-//   });
-//   return data;
-// }
 export async function EliminarVentasIncompletas(p) {
   const { error } = await supabase
     .from(tabla)
@@ -40,18 +23,6 @@ export async function EliminarVentasIncompletas(p) {
     throw new Error(error.message);
   }
 }
-// export async function EditarProductos(p) {
-//   const { error } = await supabase.rpc("editarproductos", p);
-//   if (error) {
-//     Swal.fire({
-//       icon: "error",
-//       title: "Oops...",
-//       text: error.message,
-//     });
-//     return;
-//   }
-// }
-
 export async function ConfirmarVenta(p) {
   const { data, error } = await supabase
     .rpc("confirmar_venta", p)
@@ -62,7 +33,6 @@ export async function ConfirmarVenta(p) {
   }
   return data;
 }
-
 export async function EliminarVenta(p) {
   const { error } = await supabase.from(tabla).delete().eq("id", p.id);
   if (error) {

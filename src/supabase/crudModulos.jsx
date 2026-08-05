@@ -1,4 +1,3 @@
-import Swal from "sweetalert2";
 import { supabase } from "./supabase.config";
 const tabla = "modulos";
 export async function MostrarModulos() {

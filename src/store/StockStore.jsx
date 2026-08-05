@@ -4,7 +4,7 @@ import {
   InsertarStock,
   MostrarAlertasStockXVenta,
   MostrarStockAlmacenesYProducto,
-  MostrarStockAlmacenYProduct,
+  MostrarStockAlmacenYProducto,
 } from "../supabase/crudStock";
 import {} from "../supabase/crudAlmacenes";
 
@@ -17,8 +17,8 @@ export const useStockStore = create((set) => ({
     await InsertarStock(p);
   },
   dataStockXAlmacenYProducto: [],
-  mostrarStockAlmacenYProduct: async (p) => {
-    const response = await MostrarStockAlmacenYProduct(p);
+  mostrarStockAlmacenYProducto: async (p) => {
+    const response = await MostrarStockAlmacenYProducto(p);
     set({ dataStockXAlmacenYProducto: response });
     return response;
   },

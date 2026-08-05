@@ -23,7 +23,7 @@ export function POS() {
   const isLoading = isLoadingCierreCaja;
   const error = errorCiereCaja;
   if (isLoading) {
-    return <Spinner1 texto="Verificando apertiras de caja"></Spinner1>;
+    return <Spinner1 texto="Verificando aperturas de caja"></Spinner1>;
   }
   if (error) {
     toast.error("Error al mostrar la apertura de caja...");

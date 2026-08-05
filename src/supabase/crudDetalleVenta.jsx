@@ -1,4 +1,3 @@
-import Swal from "sweetalert2";
 import { supabase } from "./supabase.config";
 const tabla = "detalle_venta";
 export async function InsertarDetalleVentas(p) {
@@ -18,30 +17,32 @@ export async function MostrarDetalleVenta(p) {
   }
   return data;
 }
-
 export async function EliminarDetalleVentas(p) {
   const { error } = await supabase.from(tabla).delete().eq("id", p.id);
   if (error) {
     throw new Error(error.message);
   }
 }
-
 export async function MostrarTop5ProductosMasVenidosPorCantidad(p) {
-  const { data } = await supabase.rpc(
+  const { data, error } = await supabase.rpc(
     "mostrartop5productosmasvenidosporcantidad",
     p,
   );
+  if (error) {
+    throw new Error(error.message);
+  }
   return data;
 }
-
 export async function MostrarTop10ProductosMasVenidosPorMonto(p) {
-  const { data } = await supabase.rpc(
+  const { data, error } = await supabase.rpc(
     "mostrartop10productosmasvenidospormonto",
     p,
   );
+  if (error) {
+    throw new Error(error.message);
+  }
   return data;
 }
-
 export async function ContarVentasXEmpresa(p) {
   const { data, error } = await supabase.rpc("contarventasempresa", p);
   if (error) {
@@ -49,7 +50,6 @@ export async function ContarVentasXEmpresa(p) {
   }
   return data;
 }
-
 export async function SumarTotalVentasXEmpresa(p) {
   const { data, error } = await supabase.rpc("sumartotalventasempresa", p);
   if (error) {
@@ -57,7 +57,6 @@ export async function SumarTotalVentasXEmpresa(p) {
   }
   return data[0];
 }
-
 export async function CalcularGananciasXEmpresa(p) {
   const { data, error } = await supabase.rpc("calcularganallasempresa", p);
   if (error) {

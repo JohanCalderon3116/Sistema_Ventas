@@ -43,7 +43,6 @@ export const POSTemplate = () => {
   const {} = useMostrarImpresorasXCajaQueryStack();
   return (
     <Container>
-      {/* {stateModal && <SelectAlmacen></SelectAlmacen>} */}
       {statePantallaCobro && <PantallaCobro></PantallaCobro>}
       <HeaderPos></HeaderPos>
       <Main>

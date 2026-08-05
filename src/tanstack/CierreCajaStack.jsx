@@ -6,7 +6,7 @@ import { useCierreCajaStore } from "../store/CierreCajaStore";
 import { useEmpresaStore } from "../store/EmpresaStore";
 
 export const useMostrarCierreCajaPorEmpresaQueryStack = () => {
-  const { mostrarCierreajaPorEmpresa } = useCierreCajaStore();
+  const { mostrarCierreCajaPorEmpresa } = useCierreCajaStore();
   const { dataempresa } = useEmpresaStore();
   return useQuery({
     queryKey: [
@@ -14,7 +14,7 @@ export const useMostrarCierreCajaPorEmpresaQueryStack = () => {
       { _id_empresa: dataempresa?.id },
     ],
     queryFn: () =>
-      mostrarCierreajaPorEmpresa({
+      mostrarCierreCajaPorEmpresa({
         _id_empresa: dataempresa?.id,
       }),
     enabled: !!dataempresa,

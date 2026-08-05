@@ -1,11 +1,14 @@
 import { supabase } from "./supabase.config";
 const tabla = "usuarios";
 export async function MostrarUsuarios(p) {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from(tabla)
     .select(`*, roles(*)`)
     .eq("id_auth", p.id_auth)
     .maybeSingle();
+  if (error) {
+    throw new Error(error.message);
+  }
   return data;
 }
 export async function InsertarAdmin(p) {
@@ -43,7 +46,6 @@ export async function InsertarCreadencialesUser(p) {
   }
   return data;
 }
-
 export async function ObtenerIdAuthSupabase() {
   const {
     data: { session },

@@ -1,6 +1,4 @@
-import Swal from "sweetalert2";
 import { supabase } from "./supabase.config";
-
 const tabla = "movimientos_caja";
 
 export async function InsertarMovCaja(p) {
@@ -9,20 +7,30 @@ export async function InsertarMovCaja(p) {
     throw Error(error.message);
   }
 }
-
 export async function MostrarEfectivoSinVentasMovCierreCaja(p) {
-  const { data } = await supabase
-    .rpc("sumarefectivosinventasmovcierrecaja", p);
+  const { data, error } = await supabase.rpc(
+    "sumarefectivosinventasmovcierrecaja",
+    p,
+  );
+  if (error) {
+    throw new Error(error.message);
+  }
   return data;
 }
-
 export async function MostrarVentasMetodoPagoMovCaja(p) {
-  const { data } = await supabase
-    .rpc("sumarventasmetodopagomovcierrecaja", p);
+  const { data, error } = await supabase.rpc(
+    "sumarventasmetodopagomovcierrecaja",
+    p,
+  );
+  if (error) {
+    throw new Error(error.message);
+  }
   return data;
 }
 export async function MostrarMovimientosCajaLive(p) {
-  const { data } = await supabase
-    .rpc("mostrarmovimientoscajalive", p);
+  const { data, error } = await supabase.rpc("mostrarmovimientoscajalive", p);
+  if (error) {
+    throw new Error(error.message);
+  }
   return data;
 }

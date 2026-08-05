@@ -1,5 +1,4 @@
 import { supabase } from "./supabase.config";
-
 const tabla = "stock";
 export async function InsertarStock(p) {
   const { error } = await supabase.from(tabla).insert(p);
@@ -7,19 +6,18 @@ export async function InsertarStock(p) {
     throw new Error(error.message);
   }
 }
-export async function MostrarStockAlmacenYProduct(p) {
+export async function MostrarStockAlmacenYProducto(p) {
   const { data, error } = await supabase
     .from(tabla)
     .select()
     .eq("id_almacen", p.id_almacen)
     .eq("id_producto", p.id_producto)
     .maybeSingle();
-  return data;
   if (error) {
     throw new Error(error.message);
   }
+  return data;
 }
-
 export async function MostrarStockAlmacenesYProducto(p) {
   const { data, error } = await supabase
     .from(tabla)
@@ -27,10 +25,10 @@ export async function MostrarStockAlmacenesYProducto(p) {
     .eq("id_almacen", p.id_almacen)
     .eq("id_producto", p.id_producto)
     .gt("stock", 0);
-  return data;
   if (error) {
     throw new Error(error.message);
   }
+  return data;
 }
 export async function EditarStock(p, tipo) {
   const { error } = await supabase.rpc(

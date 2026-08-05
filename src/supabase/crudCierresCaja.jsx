@@ -1,14 +1,16 @@
-import Swal from "sweetalert2";
 import { supabase } from "./supabase.config";
 
 const tabla = "cierrecaja";
 export async function MostrarCierreCajaAperturada(p) {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from(tabla)
     .select()
     .eq("id_caja", p.id_caja)
     .eq("estado", 0)
     .maybeSingle();
+  if (error) {
+    throw new Error(error.message);
+  }
   return data;
 }
 export async function AperturarCierreCaja(p) {
@@ -22,7 +24,6 @@ export async function AperturarCierreCaja(p) {
   }
   return data;
 }
-
 export async function CerrarTurnoCaja(p) {
   const { data, error } = await supabase.from(tabla).update(p).eq("id", p.id);
   if (error) {
@@ -30,7 +31,7 @@ export async function CerrarTurnoCaja(p) {
   }
   return data;
 }
-export async function MostrarCierreajaPorEmpresa(p) {
+export async function MostrarCierreCajaPorEmpresa(p) {
   const { data, error } = await supabase.rpc(
     "mostrarcajasabiertasporempresa",
     p,

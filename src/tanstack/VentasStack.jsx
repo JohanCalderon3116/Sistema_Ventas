@@ -25,18 +25,3 @@ export const useEliminarVentasIncompletasMutateStack = () => {
     },
   });
 };
-
-export const useMostrarVentasXSucursalQueryStack = () => {
-  const { mostrarventasxsucursal } = useVentasStore();
-  const { dataCierreCaja } = useCierreCajaStore();
-  return useQuery({
-    queryKey: [
-      "mostrar ventas x sucursal",
-      { id_sucursal: dataCierreCaja?.caja?.id_sucursal },
-    ],
-    queryFn: () =>
-      mostrarventasxsucursal({
-        id_sucursal: dataCierreCaja?.caja?.id_sucursal,
-      }),
-  });
-};

@@ -2,13 +2,15 @@ import { supabase } from "./supabase.config";
 
 const table = "metodos_pago";
 export async function MostrarMetodosPago(p) {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from(table)
     .select()
     .eq("id_empresa", p.id_empresa);
+  if (error) {
+    throw new Error(error.message);
+  }
   return data;
 }
-
 export async function InsertarMetodosPago(p, file) {
   const { error, data } = await supabase
     .from(table)
@@ -29,7 +31,6 @@ export async function InsertarMetodosPago(p, file) {
     await EditarIconoMetodosPago(piconoeditar);
   }
 }
-
 async function subirImagen(idmetodopago, file) {
   const ruta = "metodospago/" + idmetodopago;
   const { data, error } = await supabase.storage
@@ -48,7 +49,6 @@ async function subirImagen(idmetodopago, file) {
     return urlImagen;
   }
 }
-
 async function EditarIconoMetodosPago(p) {
   const { error } = await supabase.from(table).update(p).eq("id", p.id);
   if (error) {
@@ -62,7 +62,6 @@ export async function EditarIconoStorage(id, file) {
     upsert: true,
   });
 }
-
 export async function EditarMetodosPago(p, fileold, filenew) {
   const { error } = await supabase.from(table).update(p).eq("id", p.id);
   if (error) {
@@ -70,9 +69,7 @@ export async function EditarMetodosPago(p, fileold, filenew) {
   }
   if (filenew != "-" && filenew.size != undefined) {
     if (fileold != "-") {
-
       await EditarIconoStorage(p.id, filenew);
-
 
       const ruta = "metodospago/" + p.id;
       const { data: urlImagen } = supabase.storage
@@ -80,21 +77,20 @@ export async function EditarMetodosPago(p, fileold, filenew) {
         .getPublicUrl(ruta);
 
       const piconoeditar = {
-        icono: `${urlImagen.publicUrl}?t=${Date.now()}`, 
+        icono: `${urlImagen.publicUrl}?t=${Date.now()}`,
         id: p.id,
       };
       await EditarIconoMetodosPago(piconoeditar);
     } else {
       const dataImagen = await subirImagen(p.id, filenew);
       const piconoeditar = {
-        icono: `${dataImagen.publicUrl}?t=${Date.now()}`, 
+        icono: `${dataImagen.publicUrl}?t=${Date.now()}`,
         id: p.id,
       };
       await EditarIconoMetodosPago(piconoeditar);
     }
   }
 }
-
 export async function EliminarMetodosPago(p) {
   const { error } = await supabase.from(table).delete().eq("id", p.id);
   if (error) {

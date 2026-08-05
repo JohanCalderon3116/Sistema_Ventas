@@ -2,7 +2,7 @@ import { supabase } from "./supabase.config";
 
 const table = "creditos";
 export async function InsertarCredito(p) {
-  const { data, error } = await supabase.from(table).insert([p]);
+  const { data, error } = await supabase.from(table).insert(p);
   if (error) {
     throw new Error(error.message);
   }
@@ -32,7 +32,6 @@ export async function MostrarCreditos(p) {
     nombres: item.clientes_proveedores?.nombres || "Sin nombre",
   }));
 }
-
 export async function BuscarCreditos(p) {
   const { data, error } = await supabase
     .from(table)

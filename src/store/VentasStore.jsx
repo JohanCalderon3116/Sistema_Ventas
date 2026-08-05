@@ -4,7 +4,6 @@ import {
   EliminarVenta,
   EliminarVentasIncompletas,
   InsertarVentas,
-  MostrarVentasXsucursal,
   useClientesProveedoresStore,
 } from "../index";
 import { toast } from "sonner";
@@ -53,12 +52,6 @@ export const useVentasStore = create((set, get) => ({
   },
   eliminarventasIncompletas: async (p) => {
     await EliminarVentasIncompletas(p);
-  },
-  mostrarventasxsucursal: async (p) => {
-    const response = await MostrarVentasXsucursal(p);
-    set({ dataventas: response });
-    set({ idventa: response?.id ? response?.id : 0 });
-    return response;
   },
   confirmarVenta: async (p) => {
     const response = await ConfirmarVenta(p);
