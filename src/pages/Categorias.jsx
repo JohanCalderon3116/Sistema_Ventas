@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import {
   CategoriasTemplate,
   Spinner1,
-  useCategroriasStore,
+  useCategoriasStore,
   useEmpresaStore,
 } from "../index";
 import styled, { useTheme } from "styled-components";
@@ -11,7 +11,7 @@ import { BeatLoader } from "react-spinners";
 export const Categorias = () => {
   const theme = useTheme();
   const { mostrarCategorias, buscarCategorias, buscador } =
-    useCategroriasStore();
+    useCategoriasStore();
   const { dataempresa } = useEmpresaStore();
   const { isLoading, error } = useQuery({
     queryKey: ["mostrar categorias", dataempresa?.id],

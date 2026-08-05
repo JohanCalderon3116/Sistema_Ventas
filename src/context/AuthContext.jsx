@@ -2,13 +2,14 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "../supabase/supabase.config";
 import {
   InsertarAdmin,
-  InsertarEmpresa,
   MostrarTipoDocumentos,
   MostrarUsuarios,
+  useEmpresaStore,
 } from "../index";
 const AuthContext = createContext();
 
 export const AuthContextProvider = ({ children }) => {
+  const { insertarEmpresa } = useEmpresaStore();
   const [user, setUser] = useState([]);
   useEffect(() => {
     const { data } = supabase.auth.onAuthStateChange(async (value, session) => {
@@ -17,7 +18,7 @@ export const AuthContextProvider = ({ children }) => {
       } else {
         setUser(session?.user);
       }
-      insertarDatos(session?.user.id, session?.user.email);
+      insertarDatos(session?.user?.id, session?.user?.email);
     });
     return () => {
       data.subscription;
@@ -28,7 +29,7 @@ export const AuthContextProvider = ({ children }) => {
     if (response) {
       return;
     } else {
-      await InsertarEmpresa({
+      await insertarEmpresa({
         id_auth: id_auth,
         correo: correo,
       });

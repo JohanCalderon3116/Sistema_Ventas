@@ -6,7 +6,6 @@ import {
   TablaUsuarios,
   Title,
   useAsignacionCajaSucursalesStore,
-  useCategroriasStore,
 } from "../../index";
 import { v } from "../../styles/variables";
 import { useState } from "react";

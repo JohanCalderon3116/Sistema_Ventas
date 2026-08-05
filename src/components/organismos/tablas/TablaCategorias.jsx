@@ -1,10 +1,10 @@
 import styled from "styled-components";
 import {
   ContentAccionesTabla,
-  useCategroriasStore,
   Paginacion,
   ImageContent,
   Icono,
+  useCategoriasStore,
 } from "../../../index";
 import Swal from "sweetalert2";
 import { v } from "../../../styles/variables";
@@ -30,7 +30,7 @@ export function TablaCategorias({
   const [datas, setData] = useState(data);
   const [columnFilters, setColumnFilters] = useState([]);
 
-  const { eliminarCategorias } = useCategroriasStore();
+  const { eliminarCategorias } = useCategoriasStore();
   function eliminar(p) {
     if (p.nombre === "General") {
       toast.warning(

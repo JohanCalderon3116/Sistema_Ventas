@@ -5,14 +5,14 @@ import {
   RegistrarCategorias,
   TablaCategorias,
   Title,
-  useCategroriasStore,
+  useCategoriasStore,
 } from "../../index";
 import { v } from "../../styles/variables";
 import { useState } from "react";
 import Confetti from "react-confetti-boom";
 import { Toaster } from "sonner";
 export const CategoriasTemplate = () => {
-  const { datacategorias, setBuscador } = useCategroriasStore();
+  const { datacategorias, setBuscador } = useCategoriasStore();
   const [openRegistro, setOpenRegistro] = useState(false);
   const [accion, setAccion] = useState("");
   const [dataSelect, setDataSelect] = useState([]);

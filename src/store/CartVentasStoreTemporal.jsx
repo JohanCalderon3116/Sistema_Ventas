@@ -10,14 +10,12 @@ const initialState = {
   tipocobro: "",
   stateMetodosPago: false,
 };
-
 function calcularTotal(items) {
   return items.reduce(
     (total, item) => total + item._precio_venta * item._cantidad,
     0,
   );
 }
-
 export const useCartVentasStoreTemporal = create(
   persist(
     (set) => ({

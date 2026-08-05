@@ -4,10 +4,10 @@ import { v } from "../../../styles/variables";
 import {
   InputText,
   Btn1,
-  useCategroriasStore,
   Icono,
   ConvertirCapitalize,
   BtnClose,
+  useCategoriasStore,
 } from "../../../index";
 import { useForm } from "react-hook-form";
 import { CirclePicker } from "react-color";
@@ -22,7 +22,7 @@ export function RegistrarCategorias({
   accion,
   setIsExploding,
 }) {
-  const { insertarCategorias, editarCategorias } = useCategroriasStore();
+  const { insertarCategorias, editarCategorias } = useCategoriasStore();
   const { dataempresa } = useEmpresaStore();
   const [currentColor, setColor] = useState("#F44336");
   const theme = useTheme();

@@ -9,7 +9,6 @@ import {
   Selector,
   useSucursalesStore,
   ListaDesplegable,
-  useCategroriasStore,
   Checkbox1,
   Btngenerarcodigo,
   useAlmacenesStore,
@@ -17,6 +16,7 @@ import {
   SelectList,
   BtnClose,
   ConvertirMayusculas,
+  useCategoriasStore,
 } from "../../../index";
 import { useForm } from "react-hook-form";
 import { useEmpresaStore } from "../../../store/EmpresaStore";
@@ -75,7 +75,7 @@ export function RegistrarProductos({
   const [stateInventarios, setStateInventarios] = useState(false);
   const [stateEnabledStock, setstatEEnabledStock] = useState(false);
   const { datacategorias, selectCategoria, categoriaItemSelect } =
-    useCategroriasStore();
+    useCategoriasStore();
   const { sucursalesItemSelect, dataSucursales, selectSucursal } =
     useSucursalesStore();
   const [stateSucursalesLista, setStateSucursalesLista] = useState(false);

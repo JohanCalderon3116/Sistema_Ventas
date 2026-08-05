@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import {
   ContentAccionesTabla,
-  useCategroriasStore,
   Paginacion,
   ImageContent,
   Icono,

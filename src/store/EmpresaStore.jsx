@@ -2,7 +2,6 @@ import { create } from "zustand";
 import {
   EditarEmpresa,
   EditarMonedaEmpresa,
-  InsertarCategorias,
   InsertarEmpresa,
   MostrarEmpresaXIdUsuario,
 } from "../index";
@@ -16,7 +15,7 @@ export const useEmpresaStore = create((set) => ({
   },
   insertarEmpresa: async (p) => {
     const response = await InsertarEmpresa(p);
-    console.log("respuesta de empresa", response);
+    return response;
   },
   editarEmpresa: async (p, fileold, filnew) => {
     await EditarEmpresa(p, fileold, filnew);

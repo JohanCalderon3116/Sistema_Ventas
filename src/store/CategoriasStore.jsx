@@ -7,7 +7,7 @@ import {
   MostrarCategorias,
 } from "../index";
 
-export const useCategroriasStore = create((set, get) => ({
+export const useCategoriasStore = create((set, get) => ({
   buscador: "",
   setBuscador: (p) => {
     set({ buscador: p });

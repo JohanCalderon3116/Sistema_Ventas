@@ -5,15 +5,15 @@ import {
   ProductosTemplate,
   useProductosStore,
   useSucursalesStore,
-  useCategroriasStore,
   useAlmacenesStore,
+  useCategoriasStore,
 } from "../index";
 import Swal from "sweetalert2";
 import styled, { useTheme } from "styled-components";
 import { BeatLoader } from "react-spinners";
 
 export const Productos = () => {
-  const { mostrarCategorias } = useCategroriasStore();
+  const { mostrarCategorias } = useCategoriasStore();
   const { mostrarSucursales } = useSucursalesStore();
   const { mostrarProductos, buscarProductos, buscador, setRefetch } =
     useProductosStore();
