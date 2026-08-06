@@ -1,35 +1,16 @@
 import { useQuery } from "@tanstack/react-query";
 import { UsuariosTemplate } from "../components/templates/UsuariosTemplate";
-import { useEmpresaStore } from "../store/EmpresaStore";
-import { useAsignacionCajaSucursalesStore } from "../store/AsignacionCajaSucursales";
 import { BarLoader, BeatLoader } from "react-spinners";
 import styled, { useTheme } from "styled-components";
+import {
+  useBuscarUsuariosAsignados,
+  useMostrarUsuariosAsignadosQueryStack,
+} from "../tanstack/UsuariosStack";
 
 export const Usuarios = () => {
-  const { dataempresa } = useEmpresaStore();
-  const { mostrarUsariosAsignados, buscarUsariosAsignados, buscador } =
-    useAsignacionCajaSucursalesStore();
   const theme = useTheme();
-  const { isLoading, error } = useQuery({
-    queryKey: ["mostrar usuarios asignados", { id_empresa: dataempresa?.id }],
-    queryFn: () =>
-      mostrarUsariosAsignados({
-        _id_empresa: dataempresa?.id,
-      }),
-    enabled: !!dataempresa,
-  });
-  useQuery({
-    queryKey: [
-      "buscar usuarios asignados",
-      { id_empresa: dataempresa?.id, buscador: buscador },
-    ],
-    queryFn: () =>
-      buscarUsariosAsignados({
-        _id_empresa: dataempresa?.id,
-        buscador: buscador,
-      }),
-    enabled: !!dataempresa,
-  });
+  const { isLoading, error } = useMostrarUsuariosAsignadosQueryStack();
+  useBuscarUsuariosAsignados();
   if (isLoading) {
     return (
       <ConteinerLoader>
@@ -51,4 +32,3 @@ const ConteinerLoader = styled.div`
   gap: 8px;
   height: 100vh;
 `;
-

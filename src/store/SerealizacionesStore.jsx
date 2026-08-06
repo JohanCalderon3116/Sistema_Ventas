@@ -18,7 +18,8 @@ export const useSerealizacionesStore = create((set) => ({
   mostrarSerealizacionesVentas: async (p) => {
     const response = await MostrarSerealizacionesVentas(p);
     set({ dataComprobantes: response });
-    set({ itemSelectComprobanteSelect: response[0] });
+    const porDefault = response?.find((item) => item.por_default === true);
+    set({ itemSelectComprobanteSelect: porDefault ?? response?.[0] ?? null });
     return response;
   },
   editarSerealizacionDefaul: async (p) => {

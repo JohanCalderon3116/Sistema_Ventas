@@ -1,10 +1,6 @@
-import styled from "styled-components";
-import {
-  useEditarSerealizacionDefaultMutationStack,
-  useMostrarSerealizacionesQueryStack,
-} from "../tanstack/SerealizacionStack";
-import { BarLoader } from "react-spinners";
-import { CrudTemplate } from "../components/templates/CrudTemplate";
+import styled, { useTheme } from "styled-components";
+import { useMostrarSerealizacionesQueryStack } from "../tanstack/SerealizacionStack";
+import { BeatLoader } from "react-spinners";
 import { useGlobalStore } from "../store/GlobalStore";
 import { TablaSerializaciones } from "../components/organismos/tablas/TablaSerealizaciones";
 import { SerealizacionesTemplate } from "../components/templates/SerealizacionesTemplate";
@@ -12,25 +8,32 @@ import { RegistrarSerializacion } from "../components/organismos/formularios/Reg
 import { useCierreCajaStore } from "../store/CierreCajaStore";
 import { AbrirCajaSerealizacion } from "./AbrirCajaSerealizacion";
 import { useNavigate } from "react-router-dom";
+import { toast, Toaster } from "sonner";
 
 export const SerializacionComprobantes = () => {
   const navigate = useNavigate();
+  const theme = useTheme();
   const { dataCierreCaja } = useCierreCajaStore();
   const { data, isLoading, error } = useMostrarSerealizacionesQueryStack();
-  const { isPending, mutate } = useEditarSerealizacionDefaultMutationStack();
   const { setItemSelect, setStateClose, stateClose } = useGlobalStore();
-  const editardefailt = (item) => {
-    setItemSelect(item);
-    mutate();
-  };
   if (isLoading) {
-    return <BarLoader></BarLoader>;
+    return (
+      <ConteinerLoader>
+        <span>
+          <strong>Cargando</strong>
+        </span>
+        <BeatLoader color={theme.text} size={8} />
+      </ConteinerLoader>
+    );
   }
   if (error) {
-    return <span> `Error: ${error.message}` </span>;
+    return toast.error(
+      "Tuvimos un error al tratar de cargar las serializaciones 😑​",
+    );
   }
   return (
     <Container>
+      <Toaster richColors></Toaster>
       {dataCierreCaja ? (
         <SerealizacionesTemplate
           data={data}
@@ -46,7 +49,14 @@ export const SerializacionComprobantes = () => {
     </Container>
   );
 };
-
+const ConteinerLoader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  height: 100vh;
+`;
 const Container = styled.div`
   display: flex;
   justify-content: center;

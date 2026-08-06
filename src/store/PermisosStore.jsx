@@ -45,7 +45,6 @@ export const usePermisosStore = create((set, get) => ({
   dataPermisosGlobales: [],
   mostrarPermisosGlobales: async (p) => {
     const response = await MostrarPermisosGlobales(p);
-    console.log("respuesta cruda supabase:", JSON.stringify(response[0]));
     set({ dataPermisosGlobales: response });
     return response;
   },
