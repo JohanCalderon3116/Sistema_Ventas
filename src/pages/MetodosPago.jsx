@@ -1,23 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import {
   MetodosPagoTemplate,
-  Spinner1,
-  useEmpresaStore,
-  useMetodosPagoStore,
+  useMostrarMetodosDePagoQueryStack,
 } from "../index";
 import styled, { useTheme } from "styled-components";
 import { BeatLoader } from "react-spinners";
 
 export const MetodosPago = () => {
-  const { mostrarMetodosPago } = useMetodosPagoStore();
   const theme = useTheme();
-  const { dataempresa } = useEmpresaStore();
-  const { isLoading, error } = useQuery({
-    queryKey: ["mostrar metodos pago"],
-    queryFn: () => mostrarMetodosPago({ id_empresa: dataempresa?.id }),
-    enabled: !!dataempresa,
-    refetchOnWindowFocus: false,
-  });
+  const { isLoading, error, refetch } = useMostrarMetodosDePagoQueryStack();
   if (isLoading) {
     return (
       <ConteinerLoader>

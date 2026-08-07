@@ -166,9 +166,9 @@ const Avatar = styled.div`
     align-self: center;
 
     font-size: 25px;
-    overflow: hidden; /* Para asegurarse de que el contenido adicional esté oculto */
-    white-space: normal; /* Permite el salto de línea */
-    word-wrap: break-word; /* Rompe las palabras largas y las envuelve a la siguiente línea */
+    overflow: hidden; 
+    white-space: normal; 
+    word-wrap: break-word; 
     color: #fff !important;
   }
   background-color: #6d05e5;

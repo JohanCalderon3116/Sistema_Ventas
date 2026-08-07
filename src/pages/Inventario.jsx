@@ -1,41 +1,24 @@
 import styled, { useTheme } from "styled-components";
-import { CrudTemplate, useEmpresaStore, useProductosStore } from "..";
+import {
+  CrudTemplate,
+  useBuscarProductosQueryStack,
+  useProductosStore,
+} from "..";
 import { RegistrarInventario } from "../components/organismos/formularios/RegistrarInventario";
 import { TablaInventarios } from "../components/organismos/tablas/TablaInventarios";
-import { useQuery } from "@tanstack/react-query";
-import { useMovStockStore } from "../store/MovStockStore";
-import { BarLoader, BeatLoader } from "react-spinners";
+import { BeatLoader } from "react-spinners";
 import { Toaster } from "sonner";
+import { useMostrarMovimientosStockQueryStack } from "../tanstack/MovimientosStock";
 
 export const Inventario = () => {
-  const { dataempresa } = useEmpresaStore();
-  const { mostrarMovStock } = useMovStockStore();
   const theme = useTheme();
   const {
-    ProductosItemSelect,
-    buscador,
-    buscarProductos,
     setBuscador,
     selectProductos,
   } = useProductosStore();
-  const { data: dataProductos, error: errorBuscar } = useQuery({
-    queryKey: ["buscar productos", buscador],
-    queryFn: () =>
-      buscarProductos({
-        id_empresa: dataempresa?.id,
-        buscador: buscador,
-      }),
-    enabled: !!dataempresa,
-  });
-  const { data, isLoading } = useQuery({
-    queryKey: ["mostrar movimientos de stock", ProductosItemSelect?.id],
-    queryFn: () =>
-      mostrarMovStock({
-        id_empresa: dataempresa?.id,
-        id_producto: ProductosItemSelect?.id,
-      }),
-    enabled: !!dataempresa,
-  });
+  const { data: dataProductos, error: errorBuscar } =
+    useBuscarProductosQueryStack();
+  const { data, isLoading } = useMostrarMovimientosStockQueryStack();
   if (isLoading) {
     return (
       <ConteinerLoader>

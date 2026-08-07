@@ -4,7 +4,7 @@ import { useEmpresaStore } from "../store/EmpresaStore";
 import { useForm } from "react-hook-form";
 import { Toaster } from "sonner";
 import { SpinnerSecundario } from "../components/moleculas/SpinnerSecundario";
-import { useUpdatEmpresaMutateStack, useUpdatEmpresaTicketMutateStack } from "../tanstack/EmpresaStack";
+import { useUpdatEmpresaTicketMutateStack } from "../tanstack/EmpresaStack";
 import { ImageSelector } from "../hooks/useImageSelector";
 import { useGlobalStore } from "../store/GlobalStore";
 
@@ -38,7 +38,6 @@ export const ConfiguracionTicket = () => {
             <span className="format-title">
               puedes modificar detalles de tu ticket
             </span>
-            {/* <Btn1 bgcolor={"#fad43c"} titulo={"Guardar"} /> */}
           </Contentguia>
 
           <ImageSelector fileurl={fileurl || dataempresa?.logo} />
@@ -847,7 +846,6 @@ const Container = styled.div`
 
   /* Mobile tooltips */
   @media (max-width: 768px) {
-    /* Add margin to all elements that have tooltips to make space */
     .company-name,
     .company-details,
     .ticket-number,
@@ -864,7 +862,6 @@ const Container = styled.div`
       margin-bottom: 30px;
     }
 
-    /* Position tooltips below elements */
     .tech-label {
       top: 100%;
       left: 0;
@@ -876,7 +873,6 @@ const Container = styled.div`
       justify-content: center;
     }
 
-    /* Position connector lines */
     .connector-line {
       top: 100%;
       left: 50%;
@@ -885,12 +881,10 @@ const Container = styled.div`
       margin-top: 0;
     }
 
-    /* Ensure tooltips don't overlap */
     .receipt-content {
       padding-bottom: 40px;
     }
 
-    /* Make inputs more touch-friendly */
     input {
       padding: 10px !important;
       font-size: 16px !important;

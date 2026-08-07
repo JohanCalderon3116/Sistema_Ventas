@@ -1,29 +1,40 @@
-import styled from "styled-components";
-import {
-  ConfiguracionesTemplate,
-  Spinner1,
-  useAsignacionCajaSucursalesStore,
-  useModulosStore,
-  usePermisosStore,
-  useUsuariosStore,
-} from "../index";
-import { useQuery } from "@tanstack/react-query";
+import styled, { useTheme } from "styled-components";
+import { ConfiguracionesTemplate, Spinner1 } from "../index";
+import { useMostrarPermisosConfiguracionesQueryStack } from "../tanstack/PermisosStack";
+import { BeatLoader } from "react-spinners";
+import { toast, Toaster } from "sonner";
 
 export const Configuraciones = () => {
-  const { datausuarios } = useUsuariosStore();
-  const { mostrarPermisosConfiguraciones } = usePermisosStore();
-  const { isLoading, error } = useQuery({
-    queryKey: "mostrar permisos configuracion",
-    queryFn: () =>
-      mostrarPermisosConfiguraciones({
-        id_usuario: datausuarios?.id,
-      }),
-  });
+  const { isLoading, error } = useMostrarPermisosConfiguracionesQueryStack();
+  const theme = useTheme();
   if (isLoading) {
-    return <Spinner1></Spinner1>;
+    return (
+      <ConteinerLoader>
+        <span>
+          <strong>Cargando</strong>
+        </span>
+        <BeatLoader color={theme.text} size={8} />
+      </ConteinerLoader>
+    );
   }
   if (error) {
-    return <span>Error XD</span>;
+    return toast.error(
+      "Tuvimos un error al tratar de cargar las serializaciones 😑​",
+    );
   }
-  return <ConfiguracionesTemplate></ConfiguracionesTemplate>;
+  return (
+    <>
+      <Toaster richColors></Toaster>
+      <ConfiguracionesTemplate></ConfiguracionesTemplate>
+    </>
+  );
 };
+
+const ConteinerLoader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  height: 100vh;
+`;

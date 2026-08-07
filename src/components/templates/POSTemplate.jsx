@@ -14,6 +14,7 @@ import {
   PantallaCobro,
   PantallaIngresoSalidaDinero,
   Reloj,
+  useBuscarProductosCodigoQueryStack,
   useCierreCajaStore,
   useMostrarSerealizacionesVentasQueryStack,
   useStockStore,
@@ -21,7 +22,6 @@ import {
 } from "../../index";
 import { toast, Toaster } from "sonner";
 import { SelectAlmacen } from "../organismos/POSDesing/SelectAlmacen";
-import { useBuscarproductosQueryStack } from "../../tanstack/ProductosStack";
 import { useMostrarAlmacenesXSucursalQueryStack } from "../../tanstack/AlmacenesStack";
 import { useMostrarStockAlmacenesyProductoQueryStack } from "../../tanstack/StockStack";
 import { useMostrarMetodosDePagoQueryStack } from "../../tanstack/MetodosPagoStack";
@@ -31,7 +31,7 @@ export const POSTemplate = () => {
   const { statePantallaCobro } = useVentasStore();
   const { stateIngresoSalida, stateCierreCaja } = useCierreCajaStore();
   const { stateModal } = useStockStore();
-  const {} = useBuscarproductosQueryStack();
+  const {} = useBuscarProductosCodigoQueryStack();
   const { isLoading: isLoadingAlmacenXSucursal, error: errorAlmacenXSucursal } =
     useMostrarAlmacenesXSucursalQueryStack();
   const {
@@ -46,7 +46,7 @@ export const POSTemplate = () => {
       {statePantallaCobro && <PantallaCobro></PantallaCobro>}
       <HeaderPos></HeaderPos>
       <Main>
-        <Toaster richColors/>
+        <Toaster richColors />
         <AreaDetalleventaPos></AreaDetalleventaPos>
         <AreaTecladoPos></AreaTecladoPos>
       </Main>

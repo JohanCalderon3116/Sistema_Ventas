@@ -4,13 +4,8 @@ import {
   POSTemplate,
   Spinner1,
   useCierreCajaStore,
-  useEmpresaStore,
   useMostrarAperturaCajaPorUsuarioQueryStack,
-  useProductosStore,
 } from "../index";
-import { useCajasStore } from "../store/CajaStore";
-import { useAsignacionCajaSucursalesStore } from "../store/AsignacionCajaSucursales";
-import { BarLoader } from "react-spinners";
 import { toast } from "sonner";
 import { useMostrarMetodosDePagoQueryStack } from "../tanstack/MetodosPagoStack";
 
