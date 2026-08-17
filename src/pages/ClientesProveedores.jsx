@@ -1,65 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
 import {
   ClientesProveedoresTemplate,
-  useClientesProveedoresStore,
-  useEmpresaStore,
 } from "../index";
-import { useLocation } from "react-router-dom";
 import styled, { useTheme } from "styled-components";
 import { BeatLoader } from "react-spinners";
+import {
+  useBuscarClientesProveedoresQueryStack,
+  useMostrarClientesProveedoresQueryStack,
+} from "../tanstack/ClientesProveedores";
 
 export const ClientesProveedores = () => {
-  const location = useLocation();
-  const { dataempresa } = useEmpresaStore();
-  const { tipo, mostrarCliPro, buscarCliPro, buscador } =
-    useClientesProveedoresStore();
   const theme = useTheme();
-  const { isLoading } = useQuery({
-    queryKey: [
-      "mostrar clientes proveedores",
-      {
-        dataempresa: dataempresa?.id,
-        tipo:
-          location.pathname === "/configuracion/clientes"
-            ? "cliente"
-            : "proveedor",
-      },
-    ],
-    queryFn: () =>
-      mostrarCliPro({
-        id_empresa: dataempresa?.id,
-        tipo:
-          location.pathname === "/configuracion/clientes"
-            ? "cliente"
-            : "proveedor",
-      }),
-    enabled: !!dataempresa,
-    refetchOnWindowFocus: false,
-  });
-  useQuery({
-    queryKey: [
-      "buscar clientes proveedores",
-      {
-        dataempresa: dataempresa?.id,
-        tipo:
-          location.pathname === "/configuracion/clientes"
-            ? "cliente"
-            : "proveedor",
-        buscador: buscador,
-      },
-    ],
-    queryFn: () =>
-      buscarCliPro({
-        id_empresa: dataempresa?.id,
-        tipo:
-          location.pathname === "/configuracion/clientes"
-            ? "cliente"
-            : "proveedor",
-        buscador: buscador,
-      }),
-    enabled: !!dataempresa,
-    refetchOnWindowFocus: false,
-  });
+  const { isLoading } = useMostrarClientesProveedoresQueryStack();
+  useBuscarClientesProveedoresQueryStack();
   if (isLoading) {
     return (
       <ConteinerLoader>

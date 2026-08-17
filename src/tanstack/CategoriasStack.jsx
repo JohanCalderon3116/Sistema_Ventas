@@ -12,3 +12,14 @@ export const useMostrarCategoriasQueryStack = () => {
     refetchOnWindowFocus: false,
   });
 };
+export const useBuscarCategoriasQueryStack = () => {
+  const { buscador, buscarCategorias } = useCategoriasStore();
+  const { dataempresa } = useEmpresaStore();
+  return useQuery({
+    queryKey: ["buscar categorias", buscador],
+    queryFn: () =>
+      buscarCategorias({ id_empresa: dataempresa?.id, descripcion: buscador }),
+    enabled: !!dataempresa,
+    refetchOnWindowFocus: false,
+  });
+};

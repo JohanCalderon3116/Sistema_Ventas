@@ -1,31 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
 import {
   CategoriasTemplate,
-  Spinner1,
-  useCategoriasStore,
-  useEmpresaStore,
 } from "../index";
 import styled, { useTheme } from "styled-components";
 import { BeatLoader } from "react-spinners";
+import {
+  useBuscarCategoriasQueryStack,
+  useMostrarCategoriasQueryStack,
+} from "../tanstack/CategoriasStack";
 
 export const Categorias = () => {
   const theme = useTheme();
-  const { mostrarCategorias, buscarCategorias, buscador } =
-    useCategoriasStore();
-  const { dataempresa } = useEmpresaStore();
-  const { isLoading, error } = useQuery({
-    queryKey: ["mostrar categorias", dataempresa?.id],
-    queryFn: () => mostrarCategorias({ id_empresa: dataempresa?.id }),
-    enabled: !!dataempresa,
-    refetchOnWindowFocus: false,
-  });
-  useQuery({
-    queryKey: ["buscar categorias", buscador],
-    queryFn: () =>
-      buscarCategorias({ id_empresa: dataempresa?.id, descripcion: buscador }),
-    enabled: !!dataempresa,
-    refetchOnWindowFocus: false,
-  });
+  const { isLoading, error } = useMostrarCategoriasQueryStack();
+  useBuscarCategoriasQueryStack();
   if (isLoading) {
     return (
       <ConteinerLoader>

@@ -30,7 +30,7 @@ export const ConfiguracionTicket = () => {
     <Container>
       <Toaster richColors />
       {isPending ? (
-        <SpinnerSecundario texto={"guardando..."} />
+        <SpinnerSecundario texto={"Guardando..."} />
       ) : (
         <div className="left-section">
           <Contentguia>
