@@ -17,7 +17,7 @@ import { toast, Toaster } from "sonner";
 import { Icon } from "@iconify/react";
 import { BeatLoader } from "react-spinners";
 import {
-  useMostrarCajasPorSucursalQueryStack,
+  useMostrarCajaPorSucursalQueryStack,
   useMostrarSucursalesXEmpresaStack,
 } from "../../../tanstack/SucursalesStack";
 export function RegistrarUsuarios({ accion, dataSelect, onClose }) {
@@ -28,7 +28,7 @@ export function RegistrarUsuarios({ accion, dataSelect, onClose }) {
   const { data: dataSucursales, isLoading: isLoadingSucursales } =
     useMostrarSucursalesXEmpresaStack();
   const { data: dataCaja, isLoading: isLoadingSCaja } =
-    useMostrarCajasPorSucursalQueryStack();
+    useMostrarCajaPorSucursalQueryStack();
   const {
     register,
     formState: { errors },

@@ -6,68 +6,23 @@ import {
   ConvertirCapitalize,
   useCajasStore,
   useAsignacionCajaSucursalesStore,
-  useUsuariosStore,
 } from "../../../index";
 import { useForm } from "react-hook-form";
 import { BtnClose } from "../../ui/buttons/BtnClose";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast, Toaster } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
+import { Toaster } from "sonner";
 import { BeatLoader } from "react-spinners";
+import { useInsertarCajasMutationStack } from "../../../tanstack/CajasStack";
 export function RegistrarCaja() {
   const queryClient = useQueryClient();
-  const {
-    accion: accionCaja,
-    cajaSelelctItem,
-    setStateCaja,
-    insertarCaja,
-    editarCaja,
-  } = useCajasStore();
+  const { accion: accionCaja, cajaSelelctItem, setStateCaja } = useCajasStore();
   const theme = useTheme();
-  const { insertarAsignacionSucusal } = useAsignacionCajaSucursalesStore();
-  const { datausuarios } = useUsuariosStore();
   const {
     register,
     formState: { errors },
     handleSubmit,
   } = useForm();
-  const insertar = async (data) => {
-    if (accionCaja == "Editar") {
-      const p = {
-        id: cajaSelelctItem?.id,
-        descripcion: ConvertirCapitalize(data.descripcion),
-      };
-      await editarCaja(p);
-    } else {
-      const p = {
-        descripcion: ConvertirCapitalize(data.descripcion),
-        id_sucursal: cajaSelelctItem?.id,
-      };
-      const response = await insertarCaja(p);
-      const pAsignaciones = {
-        id_sucursal: cajaSelelctItem?.id,
-        id_usuario: datausuarios?.id,
-        id_caja: response?.id,
-      };
-      await insertarAsignacionSucusal(pAsignaciones);
-    }
-  };
-  const { isPending, mutate: doInsertar } = useMutation({
-    mutationKey: ["insertar caja"],
-    mutationFn: insertar,
-    onError: (error) => {
-      toast.error(
-        `No pudimos registrar la caja, algo falló en el proceso. Revisa la información e inténtalo de nuevo 😖`,
-      );
-    },
-    onSuccess: () => {
-      toast.success(
-        "La caja quedó registrada correctamente y ya está lista para usarse 😎",
-      );
-      queryClient.invalidateQueries(["mostrar cajas por sucursal"]);
-      setStateCaja(false);
-    },
-  });
-
+  const { isPending, mutate: doInsertar } = useInsertarCajasMutationStack();
   const handlesub = (data) => {
     doInsertar(data);
   };

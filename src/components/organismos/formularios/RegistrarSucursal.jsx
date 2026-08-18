@@ -4,74 +4,27 @@ import {
   InputText,
   Btn1,
   useSucursalesStore,
-  ConvertirCapitalize,
-  useEmpresaStore,
-  useAsignacionCajaSucursalesStore,
   useUsuariosStore,
-  useCajasStore,
 } from "../../../index";
 import { useForm } from "react-hook-form";
 import { BtnClose } from "../../ui/buttons/BtnClose";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast, Toaster } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
+import { Toaster } from "sonner";
 import { BeatLoader } from "react-spinners";
+import { useInsertarSucursalesMutationStack } from "../../../tanstack/SucursalesStack";
 export function RegistrarSucursal() {
   const queryClient = useQueryClient();
   const { accion, sucursalesItemSelect, setStateSucursal } =
     useSucursalesStore();
   const { insertarSucursal, editarSucursal } = useSucursalesStore();
   const theme = useTheme();
-  const { insertarAsignacionSucusal } = useAsignacionCajaSucursalesStore();
-  const { dataempresa } = useEmpresaStore();
-  const { datausuarios } = useUsuariosStore();
-  const { mostrarCajaXSucursal } = useCajasStore();
   const {
     register,
     formState: { errors },
     handleSubmit,
   } = useForm();
-  const insertar = async (data) => {
-    if (accion == "Editar") {
-      const p = {
-        id: sucursalesItemSelect?.id,
-        nombre: ConvertirCapitalize(data.nombre),
-        direccion_fiscal: data.direccion_fiscal,
-      };
-      await editarSucursal(p);
-    } else {
-      const p = {
-        nombre: ConvertirCapitalize(data.nombre),
-        direccion_fiscal: data.direccion_fiscal,
-        id_empresa: dataempresa?.id,
-      };
-      const response = await insertarSucursal(p);
-      const cajas = await mostrarCajaXSucursal({ id_sucursal: response?.id });
-      const cajaPrincipal = cajas?.[0];
-      const pAsignaciones = {
-        id_sucursal: response?.id,
-        id_usuario: datausuarios?.id,
-        id_caja: cajaPrincipal?.id,
-      };
-      await insertarAsignacionSucusal(pAsignaciones);
-    }
-  };
-  const { isPending, mutate: doInsertar } = useMutation({
-    mutationKey: ["insertar sucursal"],
-    mutationFn: insertar,
-    onError: (error) => {
-      toast.error(
-        `No pudimos registrar la sucursal, algo falló en el proceso. ${error.message}  Revisa la información e inténtalo de nuevo 😟`,
-      );
-    },
-    onSuccess: () => {
-      toast.success(
-        "La sucursal quedó registrada correctamente y ya está lista para usarse 🙂",
-      );
-      queryClient.invalidateQueries(["mostrar cajas por sucursal"]);
-      setStateSucursal(false);
-    },
-  });
-
+  const { isPending, mutate: doInsertar } =
+    useInsertarSucursalesMutationStack();
   const handlesub = (data) => {
     doInsertar(data);
   };
