@@ -8,6 +8,7 @@ import {
   useUsuariosStore,
 } from "..";
 import { toast } from "sonner";
+import Swal from "sweetalert2";
 
 export const useMostrarSucursalesXEmpresaStack = () => {
   const { dataempresa } = useEmpresaStore();
@@ -34,6 +35,15 @@ export const useMostrarCajaPorSucursalQueryStack = () => {
         id_sucursal: sucursalesItemSelect?.id,
       }),
     enabled: !!sucursalesItemSelect,
+  });
+};
+export const useMostrarCajasPorSucursalQueryStack = () => {
+  const { mostrarCajasPorSucursal } = useSucursalesStore();
+  const { dataempresa } = useEmpresaStore();
+  return useQuery({
+    queryKey: ["mostrar cajas por sucursal"],
+    queryFn: () => mostrarCajasPorSucursal({ id_empresa: dataempresa?.id }),
+    enabled: !!dataempresa,
   });
 };
 export const useInsertarSucursalesMutationStack = () => {
@@ -88,6 +98,53 @@ export const useInsertarSucursalesMutationStack = () => {
       );
       queryClient.invalidateQueries(["mostrar cajas por sucursal"]);
       setStateSucursal(false);
+    },
+  });
+};
+export const useEliminarSucursalesMutationStack = () => {
+  const queryClient = useQueryClient();
+  const { eliminarSucursal } = useSucursalesStore();
+  const controladorEliminarSucursal = (id) => {
+    return new Promise((resolve, reject) => {
+      Swal.fire({
+        title: "¿Estás seguro(a)(o)?",
+        text: "Una vez eliminado, se eliminaran todas las ventas relacionadas",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sí, eliminar",
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            await eliminarSucursal({ id: id });
+            resolve();
+          } catch (error) {
+            reject(error);
+          }
+        } else {
+          reject(new Error("Eliminación cancelada"));
+        }
+      });
+    });
+  };
+  return useMutation({
+    mutationKey: ["eliminar sucursal"],
+    mutationFn: controladorEliminarSucursal,
+    onError: (error) => {
+      if (error.message === "Eliminación cancelada") {
+        toast.info("Eliminacion cancelada");
+        return;
+      }
+      toast.error(
+        `No pudimos eliminar la sucursal, algo falló en el proceso. Inténtalo de nuevo 😔`,
+      );
+    },
+    onSuccess: () => {
+      toast.success(
+        "La sucursal se eliminó correctamente y ya no aparecerá en tu lista 😌",
+      );
+      queryClient.invalidateQueries(["mostrar cajas por sucursal"]);
     },
   });
 };

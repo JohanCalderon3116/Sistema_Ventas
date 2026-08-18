@@ -1,44 +1,31 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import styled, { useTheme } from "styled-components";
 import { useSucursalesStore } from "../../../store/SucursalesStore";
-import { useEmpresaStore } from "../../../store/EmpresaStore";
-import { BarLoader, BeatLoader } from "react-spinners";
+import { BeatLoader } from "react-spinners";
 import { Icon } from "@iconify/react";
 import { Device } from "../../../styles/breakpoints";
 import { ButtonDashed } from "../../ui/buttons/ButtonDashed";
 import { useCajasStore } from "../../../store/CajaStore";
-import Swal from "sweetalert2";
-import { toast, Toaster } from "sonner";
+import { Toaster } from "sonner";
+import {
+  useEliminarSucursalesMutationStack,
+  useMostrarCajasPorSucursalQueryStack,
+} from "../../../tanstack/SucursalesStack";
+import { useElimarCajasMutationStack } from "../../../tanstack/CajasStack";
 
 export const ListSucursales = () => {
-  const queryClient = useQueryClient();
-  const { dataempresa } = useEmpresaStore();
   const {
     setStateCaja,
     setCajaSelelctItem,
     setAccion: setAccionCaja,
-    eliminarCaja,
   } = useCajasStore();
   const theme = useTheme();
-  const {
-    mostrarCajasPorSucursal,
-    setStateSucursal,
-    setAccion,
-    selectSucursal,
-    eliminarSucursal,
-  } = useSucursalesStore();
-  const { isLoading, data } = useQuery({
-    queryKey: ["mostrar cajas por sucursal"],
-    queryFn: () => mostrarCajasPorSucursal({ id_empresa: dataempresa?.id }),
-    enabled: !!dataempresa,
-  });
-
+  const { setStateSucursal, setAccion, selectSucursal } = useSucursalesStore();
+  const { isLoading, data } = useMostrarCajasPorSucursalQueryStack();
   const editarSucursal = (p) => {
     selectSucursal(p);
     setStateSucursal(true);
     setAccion("Editar");
   };
-
   const agregarCaja = (p) => {
     setAccionCaja("Nuevo");
     setStateCaja(true);
@@ -49,95 +36,8 @@ export const ListSucursales = () => {
     setAccionCaja("Editar");
     setCajaSelelctItem(p);
   };
-  const controladorEliminarCaja = (id) => {
-    return new Promise((resolve, reject) => {
-      Swal.fire({
-        title: "¿Estás seguro(a)(o)?",
-        text: "Una vez eliminado, se eliminaran todas las ventas relacionadas",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Sí, eliminar",
-      }).then(async (result) => {
-        if (result.isConfirmed) {
-          try {
-            await eliminarCaja({ id: id });
-
-            resolve();
-          } catch (error) {
-            reject(error);
-          }
-        } else {
-          reject(new Error("Eliminación cancelada"));
-        }
-      });
-    });
-  };
-  const controladorEliminarSucursal = (id) => {
-    return new Promise((resolve, reject) => {
-      Swal.fire({
-        title: "¿Estás seguro(a)(o)?",
-        text: "Una vez eliminado, se eliminaran todas las ventas relacionadas",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Sí, eliminar",
-      }).then(async (result) => {
-        if (result.isConfirmed) {
-          try {
-            await eliminarSucursal({ id: id });
-            resolve();
-          } catch (error) {
-            reject(error);
-          }
-        } else {
-          reject(new Error("Eliminación cancelada"));
-        }
-      });
-    });
-  };
-
-  const { mutate: doDeleteSucursal } = useMutation({
-    mutationKey: ["eliminar sucursal"],
-    mutationFn: controladorEliminarSucursal,
-    onError: (error) => {
-      if (error.message === "Eliminación cancelada") {
-        toast.info("Eliminacion cancelada");
-        return;
-      }
-      toast.error(
-        `No pudimos eliminar la sucursal, algo falló en el proceso. Inténtalo de nuevo 😔`,
-      );
-    },
-    onSuccess: () => {
-      toast.success(
-        "La sucursal se eliminó correctamente y ya no aparecerá en tu lista 😌",
-      );
-      queryClient.invalidateQueries(["mostrar cajas por sucursal"]);
-    },
-  });
-
-  const { mutate: doDeleteCaja } = useMutation({
-    mutationKey: ["eliminar caja"],
-    mutationFn: controladorEliminarCaja,
-    onError: (error) => {
-      if (error.message === "Eliminación cancelada") {
-        toast.info("Eliminacion cancelada");
-        return;
-      }
-      toast.error(
-        `No pudimos eliminar la caja, algo falló en el proceso. Inténtalo de nuevo 😖`,
-      );
-    },
-    onSuccess: () => {
-      toast.success(
-        "La caja se eliminó correctamente y ya no aparecerá en tu lista 🥰",
-      );
-      queryClient.invalidateQueries(["mostrar cajas por sucursal"]);
-    },
-  });
+  const { mutate: doDeleteSucursal } = useEliminarSucursalesMutationStack();
+  const { mutate: doDeleteCaja } = useElimarCajasMutationStack();
   if (isLoading) {
     return (
       <ConteinerLoader>
@@ -215,7 +115,6 @@ export const ListSucursales = () => {
     </Container>
   );
 };
-
 const Container = styled.div`
   column-count: 1;
   column-gap: 20px;

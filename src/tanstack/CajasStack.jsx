@@ -4,6 +4,7 @@ import { ConvertirCapitalize } from "../utils/Conversiones";
 import { useUsuariosStore } from "../store/UsuariosStore";
 import { useAsignacionCajaSucursalesStore } from "../store/AsignacionCajaSucursales";
 import { toast } from "sonner";
+import Swal from "sweetalert2";
 
 export const useInsertarCajasMutationStack = () => {
   const queryClient = useQueryClient();
@@ -51,6 +52,53 @@ export const useInsertarCajasMutationStack = () => {
       );
       queryClient.invalidateQueries(["mostrar cajas por sucursal"]);
       setStateCaja(false);
+    },
+  });
+};
+export const useElimarCajasMutationStack = () => {
+  const queryClient = useQueryClient();
+  const { eliminarCaja } = useCajasStore();
+  const controladorEliminarCaja = (id) => {
+    return new Promise((resolve, reject) => {
+      Swal.fire({
+        title: "¿Estás seguro(a)(o)?",
+        text: "Una vez eliminado, se eliminaran todas las ventas relacionadas",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sí, eliminar",
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            await eliminarCaja({ id: id });
+            resolve();
+          } catch (error) {
+            reject(error);
+          }
+        } else {
+          reject(new Error("Eliminación cancelada"));
+        }
+      });
+    });
+  };
+  return useMutation({
+    mutationKey: ["eliminar caja"],
+    mutationFn: controladorEliminarCaja,
+    onError: (error) => {
+      if (error.message === "Eliminación cancelada") {
+        toast.info("Eliminacion cancelada");
+        return;
+      }
+      toast.error(
+        `No pudimos eliminar la caja, algo falló en el proceso. Inténtalo de nuevo 😖`,
+      );
+    },
+    onSuccess: () => {
+      toast.success(
+        "La caja se eliminó correctamente y ya no aparecerá en tu lista 🥰",
+      );
+      queryClient.invalidateQueries(["mostrar cajas por sucursal"]);
     },
   });
 };

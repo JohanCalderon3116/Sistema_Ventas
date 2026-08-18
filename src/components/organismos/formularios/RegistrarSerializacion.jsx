@@ -19,7 +19,6 @@ export const RegistrarSerializacion = () => {
   );
   const [correlativo, setCorrelativo] = useState(itemSelect?.correlativos);
   const [serie, setSerie] = useState(itemSelect?.serie);
-
   // Función para formatear el correlativo con ceros a la izquierda
   const formatearCorrelativo = (numero, longitud) => {
     return String(numero).padStart(longitud, "0");
@@ -51,7 +50,6 @@ export const RegistrarSerializacion = () => {
             <span>{formatearCorrelativo(correlativo, cantidadNumeros)}</span>
           </div>
         </div>
-
         <form className="form" onSubmit={handleSubmit(mutate)}>
           <article>
             <InputText icono={<v.iconoflechaderecha />}>
@@ -112,7 +110,6 @@ export const RegistrarSerializacion = () => {
               )}
             </InputText>
           </article>
-
           <div className="buttons">
             <Btn1 titulo={"Guardar"} bgcolor={"#fff"} />
           </div>
@@ -122,7 +119,6 @@ export const RegistrarSerializacion = () => {
   );
 };
 
-/* Styled Components Anidado */
 const Container = styled.div`
   transition: 0.5s;
   top: 0;
@@ -199,18 +195,15 @@ const Container = styled.div`
       }
     }
   }
-
   .checkbox {
     display: flex;
     align-items: center;
     gap: 10px;
   }
-
   .buttons {
     display: flex;
     margin-top: 20px;
     gap: 10px;
-
     .guardar {
       background: #ffcc00;
       color: black;
@@ -221,7 +214,6 @@ const Container = styled.div`
       border-radius: 4px;
       cursor: pointer;
     }
-
     .volver {
       background: #777;
       color: white;

@@ -64,7 +64,6 @@ export const SerealizacionesTemplate = ({
           )}
         </section>
       )}
-
       <section className="main">
         {isExploding && <Confetti></Confetti>}
         {data.length && Table}

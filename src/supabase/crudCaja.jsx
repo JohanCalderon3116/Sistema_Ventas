@@ -36,7 +36,6 @@ export async function EliminarCaja(p) {
   if (errorAsignacion) {
     throw new Error(errorAsignacion.message);
   }
-
   const { error } = await supabase.from(tabla).delete().eq("id", p.id);
   if (error) {
     throw new Error(error.message);

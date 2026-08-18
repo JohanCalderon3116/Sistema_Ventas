@@ -6,7 +6,6 @@ import {
   useEditarSerealizacionDefaultMutationStack,
   useGlobalStore,
 } from "../../../index";
-
 import { v } from "../../../styles/variables";
 import { useState } from "react";
 import {
@@ -27,12 +26,10 @@ export function TablaSerializaciones({ data }) {
   const { setStateClose, setItemSelect, setAccion } = useGlobalStore();
   const { mutate: mutateEditarPorDefault } =
     useEditarSerealizacionDefaultMutationStack();
-
   function editarPorDefault(data) {
     setItemSelect(data);
     mutateEditarPorDefault();
   }
-
   function editar(data) {
     setStateClose(true);
     setItemSelect(data);
