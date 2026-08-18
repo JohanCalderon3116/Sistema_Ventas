@@ -40,7 +40,6 @@ export const UsuariosTemplate = () => {
           accion={accion}
         ></RegistrarUsuarios>
       )}
-
       <section className="area1">
         <Title>Usuarios</Title>{" "}
         <Btn1

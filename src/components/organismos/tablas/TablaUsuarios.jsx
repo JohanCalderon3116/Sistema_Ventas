@@ -2,8 +2,6 @@ import styled from "styled-components";
 import {
   ContentAccionesTabla,
   Paginacion,
-  ImageContent,
-  Icono,
   useAsignacionCajaSucursalesStore,
   useUsuariosStore,
 } from "../../../index";
@@ -28,10 +26,10 @@ export function TablaUsuarios({
   setAccion,
 }) {
   if (data == null) return;
+  const queryClinet = useQueryClient();
   const [pagina, setPagina] = useState(1);
   const [datas, setData] = useState(data);
   const [columnFilters, setColumnFilters] = useState([]);
-  const queryClinet = useQueryClient();
   const { eliminarUsuariosAsignados } = useUsuariosStore();
   const { setSelectItem } = useAsignacionCajaSucursalesStore();
   function eliminar(p) {

@@ -6,117 +6,36 @@ import {
   ConvertirCapitalize,
   useCajasStore,
   SelectList,
-  useEmpresaStore,
   useSucursalesStore,
-  Spinner1,
   PermisosUser,
-  useUsuariosStore,
-  useRolesStore,
-  usePermisosStore,
+  useInsertarUsuariosPorEmpresaMutationStack,
 } from "../../../index";
 import { useForm } from "react-hook-form";
 import { BtnClose } from "../../ui/buttons/BtnClose";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast, Toaster } from "sonner";
 import { Icon } from "@iconify/react";
-import { BarLoader, BeatLoader } from "react-spinners";
+import { BeatLoader } from "react-spinners";
+import {
+  useMostrarCajasPorSucursalQueryStack,
+  useMostrarSucursalesXEmpresaStack,
+} from "../../../tanstack/SucursalesStack";
 export function RegistrarUsuarios({ accion, dataSelect, onClose }) {
   const queryClient = useQueryClient();
-  const {
-    cajaSelelctItem,
-    setStateCaja,
-    insertarCaja,
-    editarCaja,
-    mostrarCajaXSucursal,
-    setCajaSelelctItem,
-  } = useCajasStore();
-  const { dataempresa } = useEmpresaStore();
-  const { mostrarSucursales, sucursalesItemSelect, selectSucursal } =
-    useSucursalesStore();
+  const { cajaSelelctItem, setCajaSelelctItem } = useCajasStore();
+  const { sucursalesItemSelect, selectSucursal } = useSucursalesStore();
   const theme = useTheme();
-  const { insertarUsuarios, editarUsuario } = useUsuariosStore();
-  const { rolesItemSelect } = useRolesStore();
-  const { selectModules, actualizarPermisos } = usePermisosStore();
-  const { data: dataSucursales, isLoading: isLoadingSucursales } = useQuery({
-    queryKey: [
-      "mostrar sucursales",
-      {
-        id_empresa: dataempresa?.id,
-      },
-    ],
-    queryFn: () =>
-      mostrarSucursales({
-        id_empresa: dataempresa?.id,
-      }),
-    enabled: !!dataempresa,
-  });
-
-  const { data: dataCaja, isLoading: isLoadingSCaja } = useQuery({
-    queryKey: [
-      "mostrar caja por sucursal",
-      {
-        id_sucursal: sucursalesItemSelect?.id,
-      },
-    ],
-    queryFn: () =>
-      mostrarCajaXSucursal({
-        id_sucursal: sucursalesItemSelect?.id,
-      }),
-    enabled: !!sucursalesItemSelect,
-  });
+  const { data: dataSucursales, isLoading: isLoadingSucursales } =
+    useMostrarSucursalesXEmpresaStack();
+  const { data: dataCaja, isLoading: isLoadingSCaja } =
+    useMostrarCajasPorSucursalQueryStack();
   const {
     register,
     formState: { errors },
     handleSubmit,
   } = useForm();
-  const insertar = async (data) => {
-    if (accion === "Editar") {
-      const p = {
-        id: dataSelect?.id_usuario,
-        nombres: data.nombres,
-        nro_doc: data.nro_doc,
-        telefono: data.telefono,
-        correo: data.email,
-      };
-      await editarUsuario(p);
-      await actualizarPermisos({
-        id_usuario: dataSelect?.id_usuario,
-        modulos: selectModules,
-      });
-    } else {
-      const p = {
-        id: accion === "Editar" ? dataSelect?.id : null,
-        nombres: data.nombres,
-        nro_doc: data.nro_doc,
-        telefono: data.telefono,
-        id_rol: rolesItemSelect?.id,
-        correo: data.email,
-        // datos asignacion caja y sucursal
-        id_sucursal: sucursalesItemSelect?.id,
-        id_caja: cajaSelelctItem?.id,
-        //datos credenciales
-        email: data.email,
-        pass: data.pass,
-      };
-
-      await insertarUsuarios(p);
-    }
-  };
-  const { isPending, mutate: doInsertar } = useMutation({
-    mutationKey: ["insertar usuarios"],
-    mutationFn: insertar,
-    onError: (error) => {
-      toast.error(
-        `No se pudo guardar, inténtalo otra vez. 😵‍💫⚠️ ${error.message}`,
-      );
-    },
-    onSuccess: () => {
-      toast.success("¡Hecho! Ya quedó registrado. ✌️😎");
-      queryClient.invalidateQueries(["mostrar usuarios asignados"]);
-      onClose();
-    },
-  });
-
+  const { isPending, mutate: doInsertar } =
+    useInsertarUsuariosPorEmpresaMutationStack({ accion, dataSelect, onClose });
   const manejadorInsertar = (data) => {
     doInsertar(data);
   };
@@ -159,7 +78,7 @@ export function RegistrarUsuarios({ accion, dataSelect, onClose }) {
                   <input
                     className="form__field"
                     defaultValue={accion === "Editar" ? dataSelect?.email : ""}
-                    type="text"
+                    type="email"
                     placeholder="Correo"
                     disabled={accion === "Editar"}
                     {...register("email", {
@@ -220,7 +139,7 @@ export function RegistrarUsuarios({ accion, dataSelect, onClose }) {
                     defaultValue={
                       accion === "Editar" ? dataSelect?.nro_doc : ""
                     }
-                    type="text"
+                    type="number"
                     placeholder="C.C"
                     {...register("nro_doc", {
                       required: true,
@@ -241,7 +160,7 @@ export function RegistrarUsuarios({ accion, dataSelect, onClose }) {
                     defaultValue={
                       accion === "Editar" ? dataSelect?.telefono : ""
                     }
-                    type="text"
+                    type="number"
                     placeholder="telefono"
                     {...register("telefono", {
                       required: true,
