@@ -18,6 +18,22 @@ export const useProductosStore = create((set, get) => ({
   ProductosItemSelect: [],
   parametros: {},
   resultadosBusqueda: [],
+  randomCodeInterno: "",
+  setRandomCodeInterno: (p) => {
+    set({ randomCodeInterno: p });
+  },
+  randomCodeBarras: "",
+  setRandomCodeBarras: (p) => {
+    set({ randomCodeBarras: p });
+  },
+  sevendePor: "Unidad",
+  setSevendePor: (p) => {
+    set({ sevendePor: p });
+  },
+  stateInventarios: false,
+  setStateInventarios: (p) => {
+    set({ stateInventarios: p });
+  },
   mostrarProductos: async (p) => {
     const response = await MostrarProductos(p);
     set({ parametros: p });

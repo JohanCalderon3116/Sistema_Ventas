@@ -41,7 +41,6 @@ export const ProductosTemplate = () => {
         accion={accion}
         state={openRegistro}
       ></RegistrarProductos>
-
       <section className="area1">
         <Title>Productos</Title>{" "}
         <Btn1
@@ -66,7 +65,6 @@ export const ProductosTemplate = () => {
     </Container>
   );
 };
-
 const Container = styled.div`
   height: calc(100vh - 30px);
   padding: 15px;

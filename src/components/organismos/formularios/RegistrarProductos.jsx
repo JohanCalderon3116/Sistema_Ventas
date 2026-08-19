@@ -3,29 +3,23 @@ import { v } from "../../../styles/variables";
 import {
   InputText,
   Btn1,
-  ConvertirCapitalize,
   useProductosStore,
   Switch1,
-  Selector,
   useSucursalesStore,
-  ListaDesplegable,
   Checkbox1,
   Btngenerarcodigo,
   useAlmacenesStore,
-  ConvertirMinusculas,
   SelectList,
   BtnClose,
-  ConvertirMayusculas,
   useCategoriasStore,
+  useMostrarStckAlmacenYProductoQueryStack,
+  useInsertarProductosMutationStack,
 } from "../../../index";
 import { useForm } from "react-hook-form";
-import { useEmpresaStore } from "../../../store/EmpresaStore";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Device } from "../../../styles/breakpoints";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
-import { useStockStore } from "../../../store/StockStore";
-import { toast } from "sonner";
 import { ContainerSelector } from "./RegistrarInventario";
 import { BeatLoader } from "react-spinners";
 
@@ -41,7 +35,6 @@ export function RegistrarProductos({
   }
   const [isCheked1, setIsCheked1] = useState(true);
   const [isCheked2, setIsCheked2] = useState(false);
-  const [sevendePor, setSevendePor] = useState("Unidad");
   const [stockMinimo, setStockMinimo] = useState("");
   const [stock, setStock] = useState("");
   const [ubicacion, setUbicacion] = useState("");
@@ -57,13 +50,17 @@ export function RegistrarProductos({
     }
   };
   const {
-    insertarProductos,
-    editarProductos,
     generarCodigo,
     codigogenerado,
     refetchs,
+    setRandomCodeInterno,
+    randomCodeInterno,
+    randomCodeBarras,
+    setRandomCodeBarras,
+    setSevendePor,
+    stateInventarios,
+    setStateInventarios,
   } = useProductosStore();
-  const { dataempresa } = useEmpresaStore();
   const {
     mostrarAlmacen,
     dataalmacen,
@@ -72,122 +69,49 @@ export function RegistrarProductos({
     almacenSelelctItem,
     setAlmacenSelelctItem,
   } = useAlmacenesStore();
-  const [stateInventarios, setStateInventarios] = useState(false);
   const [stateEnabledStock, setstatEEnabledStock] = useState(false);
   const { datacategorias, selectCategoria, categoriaItemSelect } =
     useCategoriasStore();
   const { sucursalesItemSelect, dataSucursales, selectSucursal } =
     useSucursalesStore();
-  const [stateSucursalesLista, setStateSucursalesLista] = useState(false);
-  const [stateCategoriasLista, setStateCategoriasLista] = useState(false);
-  const { insertarStock, mostrarStockAlmacenYProducto } = useStockStore();
   const theme = useTheme();
   const {
     data: dataStockXAlamacenYProducto,
     isLoading,
     error,
     refetch,
-  } = useQuery({
-    queryKey: [
-      "mostrar stock almacen y producto",
-      { id_producto: dataSelect.id, id_almacen: almacenSelelctItem?.id },
-    ],
-    queryFn: () =>
-      mostrarStockAlmacenYProducto({
-        id_almacen: almacenSelelctItem?.id,
-        id_producto: dataSelect?.id,
-      }),
-  });
-  const {
-    data: dataAlmacenes,
-    isLoading: isLoadingAlmacenes,
-    error: errorAlmacenes,
-  } = useQuery({
-    queryKey: [
-      "mostrar almacenes x sucursal",
-      { id_producto: dataSelect.id, id_sucursal: sucursalesItemSelect.id },
-    ],
-    queryFn: () =>
-      mostrarAlmacenesXSucursal({
-        id_sucursal: sucursalesItemSelect.id,
-      }),
-  });
+  } = useMostrarStckAlmacenYProductoQueryStack({ dataSelect });
+    const {
+      data: dataAlmacenes,
+      isLoading: isLoadingAlmacenes,
+      error: errorAlmacenes,
+    } = useQuery({
+      queryKey: [
+        "mostrar almacenes x sucursal",
+        { id_producto: dataSelect.id, id_sucursal: sucursalesItemSelect.id },
+      ],
+      queryFn: () =>
+        mostrarAlmacenesXSucursal({
+          id_sucursal: sucursalesItemSelect.id,
+        }),
+    });
   const {
     register,
     formState: { errors },
     handleSubmit,
   } = useForm();
-  const { isPending, mutate: doInsertar } = useMutation({
-    mutationKey: "insertar productos",
-    mutationFn: insertar,
-    onError: (err) => {
-      toast.error(`¡Ups! Hubo un error al guardar. Inténtalo de nuevo. 😅`);
-    },
-    onSuccess: () => {
-      toast.success("¡Genial! Tu producto se guardó correctamente. ✨😊");
-      cerrarFormulario();
-    },
+  const { isPending, mutate: doInsertar } = useInsertarProductosMutationStack({
+    accion,
+    dataSelect,
+    validarVacios,
+    cerrarFormulario,
   });
   const handlesub = (data) => {
     doInsertar(data);
   };
-  const cerrarFormulario = () => {
+  function cerrarFormulario() {
     onClose();
     setIsExploding(true);
-  };
-  async function insertar(data) {
-    validarVacios(data);
-    if (accion === "Editar") {
-      const p = {
-        _id: dataSelect.id,
-        _nombre: ConvertirMayusculas(data.nombre),
-        _precio_venta: parseFloat(data.precio_venta),
-        _precio_compra: parseFloat(data.precio_compra),
-        _id_categoria: categoriaItemSelect.id,
-        _codigo_barra: randomCodeBarras ? randomCodeBarras : codigogenerado,
-        _codigo_interno: randomCodeInterno ? randomCodeInterno : codigogenerado,
-        _id_empresa: dataempresa.id,
-        _sevende_por: sevendePor,
-        _maneja_inventarios: stateInventarios,
-      };
-      await editarProductos(p);
-      if (stateInventarios) {
-        if (!dataStockXAlamacenYProducto) {
-          const pstock = {
-            id_almacen: almacenSelelctItem.id,
-            id_producto: dataSelect.id,
-            stock: parseFloat(data.stock),
-            stock_minimo: parseFloat(data.stock_minimo),
-            ubicacion: data.ubicacion,
-          };
-          await insertarStock(pstock);
-        }
-      }
-    } else {
-      const p = {
-        _nombre: ConvertirMayusculas(data.nombre),
-        _precio_venta: parseFloat(data.precio_venta),
-        _precio_compra: parseFloat(data.precio_compra),
-        _id_categoria: categoriaItemSelect.id,
-        _codigo_barra: randomCodeBarras ? randomCodeBarras : codigogenerado,
-        _codigo_interno: randomCodeInterno ? randomCodeInterno : codigogenerado,
-        _id_empresa: dataempresa.id,
-        _sevende_por: sevendePor,
-        _maneja_inventarios: stateInventarios,
-        _maneja_multiprecios: false,
-      };
-      const id_producto_nuevo = await insertarProductos(p);
-      if (stateInventarios) {
-        const pstock = {
-          id_almacen: almacenSelelctItem.id,
-          id_producto: id_producto_nuevo,
-          stock: parseFloat(data.stock),
-          stock_minimo: parseFloat(data.stock_minimo),
-          ubicacion: data.ubicacion,
-        };
-        await insertarStock(pstock);
-      }
-    }
   }
   //#region validar vacios
   function validarVacios(data) {
@@ -216,8 +140,6 @@ export function RegistrarProductos({
   }
   //#endregion
   //#region generarcodigo
-  const [randomCodeInterno, setRandomCodeInterno] = useState("");
-  const [randomCodeBarras, setRandomCodeBarras] = useState("");
   function generarCodigoInterno() {
     generarCodigo();
     setRandomCodeInterno(codigogenerado);

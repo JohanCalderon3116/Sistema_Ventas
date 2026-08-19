@@ -24,3 +24,18 @@ export const useMostrarStockAlmacenesyProductoQueryStack = () => {
       }),
   });
 };
+export const useMostrarStckAlmacenYProductoQueryStack = ({ dataSelect }) => {
+  const { almacenSelelctItem } = useAlmacenesStore();
+  const { mostrarStockAlmacenYProducto } = useStockStore();
+  return useQuery({
+    queryKey: [
+      "mostrar stock almacen y producto",
+      { id_producto: dataSelect.id, id_almacen: almacenSelelctItem?.id },
+    ],
+    queryFn: () =>
+      mostrarStockAlmacenYProducto({
+        id_almacen: almacenSelelctItem?.id,
+        id_producto: dataSelect?.id,
+      }),
+  });
+};
