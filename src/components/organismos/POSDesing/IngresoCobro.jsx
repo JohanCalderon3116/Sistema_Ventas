@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { Icon } from "@iconify/react";
 import { InputText } from "../formularios/InputText";
 import { FormatearNumeroDinero } from "../../../utils/Conversiones";
@@ -24,6 +24,7 @@ import ticket from "../../../reports/TicketVenta";
 import { useProductosStore } from "../../../store/ProductosStore";
 import { useBuscarClientesQueryStack } from "../../../tanstack/ClientesProveedoresStack";
 import { useConfirmarVentasMutationStack } from "../../../tanstack/VentasStack";
+import { BeatLoader } from "react-spinners";
 export const IngresoCobro = forwardRef((props, ref) => {
   const queryClient = useQueryClient();
   const [openRegistro, setOpenRegistro] = useState(false);
@@ -61,6 +62,7 @@ export const IngresoCobro = forwardRef((props, ref) => {
   const { ProductosItemSelect } = useProductosStore();
   const { datausuarios } = useUsuariosStore();
   const { dataMetodosPago } = useMetodosPagoStore();
+  const theme = useTheme();
   const { dataempresa } = useEmpresaStore();
   const { setBuscador, selectCliPro, cliproItemSelect } =
     useClientesProveedoresStore();
@@ -149,7 +151,12 @@ export const IngresoCobro = forwardRef((props, ref) => {
   return (
     <Container>
       {mutation.isPending ? (
-        <span>Guardando...</span>
+        <ConteinerLoader>
+          <span>
+            <strong>Guardando</strong>
+          </span>
+          <BeatLoader color={theme.text} size={8} />
+        </ConteinerLoader>
       ) : (
         <>
           {mutation.isError && <span>Error: {mutation.error.message} </span>}
@@ -263,7 +270,7 @@ export const IngresoCobro = forwardRef((props, ref) => {
               <>
                 <Btn1
                   border="2px"
-                  titulo="¿Fiado? Presiona :p"
+                  titulo="¿Fiado? Presiona"
                   bgcolor="#ddd319"
                   color="#ffffff"
                   width="100%"
@@ -306,18 +313,20 @@ export const IngresoCobro = forwardRef((props, ref) => {
     </Container>
   );
 });
-
 const Container = styled.div`
   position: relative;
   box-sizing: border-box;
   width: 400px;
   padding: 20px;
   border-radius: 10px;
-  box-shadow: 2px 2px 15px 0px #e2e2e2;
+  box-shadow: ${({ theme }) =>
+    theme.body === "#fff"
+      ? "0px 10px 25px rgba(0, 0, 0, 0.08)"
+      : "0px 10px 30px rgba(0, 0, 0, 0.5)"};
   display: flex;
   flex-direction: column;
-  background-color: #ffffff;
-  color: #000;
+  background-color: ${({ theme }) => theme.bg2};
+  color: ${({ theme }) => theme.text};
   height: auto;
   align-items: center;
   justify-content: flex-start;
@@ -336,10 +345,10 @@ const Container = styled.div`
         circle,
         transparent,
         transparent 50%,
-        #fbfbfb 50%,
-        #fbfbfb 100%
-      ) -7px -8px /16px
-      16px repeat-x;
+        ${({ theme }) => theme.bg2} 50%,
+        ${({ theme }) => theme.bg2} 100%
+      ) -7px -8px /
+      16px 16px repeat-x;
   }
   &::after {
     bottom: -5px;
@@ -347,10 +356,10 @@ const Container = styled.div`
         circle,
         transparent,
         transparent 50%,
-        #fbfbfb 50%,
-        #fbfbfb 100%
-      ) -7px -2px /16px
-      16px repeat-x;
+        ${({ theme }) => theme.bg2} 50%,
+        ${({ theme }) => theme.bg2} 100%
+      ) -7px -2px /
+      16px 16px repeat-x;
   }
   .area1 {
     display: flex;
@@ -366,18 +375,38 @@ const Container = styled.div`
         flex: 1 1 40%;
         display: flex;
         gap: 10px;
+        button {
+          background-color: ${({ theme }) =>
+            theme.body === "#fff"
+              ? "#e0e0e0"
+              : "rgba(255, 255, 255, 0.08)"} !important;
+          color: ${({ theme }) => theme.text} !important;
+          border: 1px solid
+            ${({ theme }) =>
+              theme.body === "#fff"
+                ? "#ccc"
+                : "rgba(255, 255, 255, 0.1)"} !important;
+
+          &:hover {
+            background-color: ${({ theme }) =>
+              theme.body === "#fff"
+                ? "#d4d4d4"
+                : "rgba(255, 255, 255, 0.15)"} !important;
+          }
+        }
       }
     }
     .cliente {
       font-weight: 700;
+      color: ${({ theme }) => theme.text};
     }
     .tipocobro {
       position: absolute;
       right: 6px;
       top: 6px;
-      background-color: rgba(233, 6, 184, 0.2);
+      background-color: rgba(233, 6, 184, 0.15);
       padding: 5px;
-      color: #e61eb1;
+      color: ${({ theme }) => (theme.body === "#fff" ? "#c20f96" : "#ff66d8")};
       border-radius: 5px;
       font-size: 15px;
       font-weight: 650;
@@ -386,23 +415,40 @@ const Container = styled.div`
   .area2 {
     margin-top: 5px;
     input {
-      color: #000 !important; /* 👈 se mueve aquí, ya scoped solo a .area2 */
+      color: ${({ theme }) => theme.text} !important;
       font-weight: 700;
       font-size: 30px;
+      background: transparent;
+      border-bottom: 2px solid
+        ${({ theme }) =>
+          theme.body === "#fff"
+            ? "rgba(0, 0, 0, 0.2)"
+            : "rgba(255, 255, 255, 0.2)"};
+    }
+    .form__label {
+      color: ${({ theme }) => theme.text} !important;
+      opacity: 0.7;
     }
   }
   .area3 {
-    margin-top: 5px;
+    margin-top: 15px;
     display: flex;
     justify-content: space-between;
     width: 100%;
+    color: ${({ theme }) => theme.text};
     article {
       display: flex;
       flex-direction: column;
+      gap: 4px;
     }
     .total {
       font-weight: 700;
+      color: ${({ theme }) => (theme.body === "#fff" ? "#088f17" : "#0aca21")};
     }
+  }
+  .area4 {
+    width: 100%;
+    margin-top: 15px;
   }
 `;
 const EditButton = styled.button`
@@ -422,4 +468,12 @@ const EditButton = styled.button`
 `;
 const ContentReg = styled.div`
   color: ${({ theme }) => theme.color3};
+`;
+const ConteinerLoader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  height: 100vh;
 `;

@@ -125,7 +125,7 @@ export const useConfirmarVentasMutationStack = ({
       }
       resetState();
       queryClient.invalidateQueries(["mostrar detalle venta"]);
-      toast.success("😁🎉 Venta generada correctamente :p");
+      toast.success("😁🎉 Venta generada correctamente");
     },
     onError: (error) => {
       toast.error("Tuvimos un error al insertar la venta");

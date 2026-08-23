@@ -1,143 +1,67 @@
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { v } from "../../../styles/variables";
-import {
-  InputText,
-  Btn1,
-  ConvertirCapitalize,
-  useCajasStore,
-  useEmpresaStore,
-  useProductosStore,
-  SelectList,
-  useSucursalesStore,
-  useAlmacenesStore,
-  useFormattedDate,
-  useStockStore,
-  useVentasStore,
-  useDetalleVentasStore,
-} from "../../../index";
+import { InputText, Btn1, useFormattedDate } from "../../../index";
 import { useForm } from "react-hook-form";
 import { BtnClose } from "../../ui/buttons/BtnClose";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast, Toaster } from "sonner";
-import { useMovStockStore } from "../../../store/MovStockStore";
 import { BuscadorList } from "../../ui/lists/Buscador";
-import { BarLoader } from "react-spinners";
-import { RadioChecks } from "../../ui/toogles/RadioChecks";
+import { BarLoader, BeatLoader } from "react-spinners";
 import { useCreditosStore } from "../../../store/CreditosStore";
 import { FormatearNumeroDinero } from "../../../utils/Conversiones";
-import { useMovimientosCreditosStore } from "../../../store/MovimientosCreditosStore";
+import {
+  useBuscarCreditsoQueryStack,
+  useInsertarMovimientoCreditoMutationStack,
+  useMostrarCreditosQueryStack,
+} from "../../../tanstack/CreditosStack";
 export function RegistrarmovimientocreditoVenta({ onClose }) {
   const queryClient = useQueryClient();
-  const fechaactual = useFormattedDate();
-  const { dataempresa } = useEmpresaStore();
-  const { insertarMovStock, tipo, setTipo } = useMovStockStore();
   const {
     creditosItemSelect,
     setCreditosItemSelect,
-    mostrarCreditos,
     setBuscador: setBuscadorCreditos,
-    buscarCreditos,
-    buscador: buscadorCreditos,
     datacreditos,
   } = useCreditosStore();
-  const {} = useCreditosStore();
+  const theme = useTheme();
   const fecha = useFormattedDate();
-  const { insertarMovimientosCreditos } = useMovimientosCreditosStore();
-  const {
-    buscador,
-    buscarProductos,
-    selectProductos,
-    setBuscador,
-    ProductosItemSelect,
-  } = useProductosStore();
-  const { idventa } = useVentasStore();
-  const { total } = useDetalleVentasStore();
-  const { mostrarSucursales, selectSucursal, sucursalesItemSelect } =
-    useSucursalesStore();
-  const {
-    mostrarAlmacenesXSucursal,
-    almacenSelelctItem,
-    setAlmacenSelelctItem,
-  } = useAlmacenesStore();
-  const { mostrarStockAlmacenYProduct, editarStock } = useStockStore();
   const {
     register,
     formState: { errors },
     handleSubmit,
     reset,
   } = useForm();
-  const { data: dataCreditos, error } = useQuery({
-    queryKey: [
-      "mostrar creditos",
-      {
-        id_empresa: dataempresa?.id,
-      },
-    ],
-    queryFn: () =>
-      mostrarCreditos({
-        id_empresa: dataempresa?.id,
-      }),
-  });
-  useQuery({
-    queryKey: ["buscar creditos", buscadorCreditos],
-    queryFn: () =>
-      buscarCreditos({
-        id_empresa: dataempresa?.id,
-        nombres: buscadorCreditos,
-      }),
-    enabled: !!dataempresa,
-    refetchOnWindowFocus: false,
-  });
-
-  const insertar = async (data) => {
-    const p = {
-      id_credito: creditosItemSelect?.id,
-      id_venta: idventa,
-      tipo_movimiento: "venta",
-      valor: total,
-      observacion: data.observacion,
-      fecha_movimiento: fecha,
-    };
-    await insertarMovimientosCreditos(p);
-  };
-  const { isPending, mutate: doInsertar } = useMutation({
-    mutationKey: ["insertar movimiento creditos"],
-    mutationFn: insertar,
-    onError: (error) => {
-      toast.error(`Error: ${error.message}`);
-    },
-    onSuccess: () => {
-      toast.success("Registro guardado correctamente...");
-      resetFuction();
-      onClose();
-    },
-  });
-
+  const { data: dataCreditos, error } = useMostrarCreditosQueryStack();
+  useBuscarCreditsoQueryStack();
+  const { isPending, mutate: doInsertar } =
+    useInsertarMovimientoCreditoMutationStack({ onClose, resetFuction });
   const handlesub = (data) => {
     doInsertar(data);
   };
-  const resetFuction = () => {
+  function resetFuction() {
     reset();
-  };
+  }
   if (error) {
     toast.error(`error: ${error.message}`);
   }
   return (
     <Container>
       {isPending ? (
-        <span>Guardando...</span>
+        <ConteinerLoader>
+          <span>
+            <strong>Guardando</strong>
+          </span>
+          <BeatLoader color={theme.text} size={8} />
+        </ConteinerLoader>
       ) : (
         <div className="sub-contenedor">
           <div className="headers">
             <section>
               <h1>Registrar fiado</h1>
             </section>
-
             <section>
               <BtnClose funcion={onClose} />
             </section>
           </div>
-
           <form className="formulario" onSubmit={handleSubmit(handlesub)}>
             <section className="form-subcontainer">
               <BuscadorList
@@ -169,24 +93,32 @@ export function RegistrarmovimientocreditoVenta({ onClose }) {
                     : "-"}{" "}
                 </strong>
               </span>
+              <span>
+                Credito disponible:
+                <strong>
+                  {" "}
+                  {creditosItemSelect?.credito_disponible
+                    ? FormatearNumeroDinero(
+                        creditosItemSelect?.credito_disponible,
+                        "COP",
+                        "CO",
+                      )
+                    : "-"}{" "}
+                </strong>
+              </span>
               <article>
                 <InputText icono={<v.iconoflechaderecha />}>
                   <input
                     className="form__field"
                     type="text"
-                    placeholder="Observacion"
-                    {...register("observacion", {
-                      required: true,
-                    })}
+                    placeholder="Observacion (opcional)"
+                    {...register("observacion")}
                   />
-                  <label className="form__label">Observacion</label>
-                  {errors.cantidad?.type === "required" && (
-                    <p>Campo requerido</p>
-                  )}
+                  <label className="form__label">Observacion (Opcional)</label>
                 </InputText>
               </article>
               <Btn1
-                disabled={!ProductosItemSelect?.nombre}
+                disabled={!creditosItemSelect?.nombres}
                 icono={<v.iconoguardar />}
                 titulo="Guardar"
                 bgcolor="#F9D70B"
@@ -215,7 +147,7 @@ const Container = styled.div`
     width: 500px;
     max-width: 85%;
     border-radius: 20px;
-    background: ${({ theme }) => theme.body};
+    background: ${({ theme }) => theme.bg2};
     box-shadow: -10px 15px 30px rgba(10, 9, 9, 0.4);
     padding: 13px 36px 20px 36px;
     z-index: 100;
@@ -258,4 +190,12 @@ export const ContainerSelector = styled.div`
   gap: 10px;
   align-items: center;
   position: relative;
+`;
+const ConteinerLoader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  height: 100vh;
 `;
