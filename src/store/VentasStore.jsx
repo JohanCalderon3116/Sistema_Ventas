@@ -60,7 +60,6 @@ export const useVentasStore = create((set, get) => ({
   },
   insertarVentas: async (p) => {
     const result = await InsertarVentas(p);
-    console.log("resultado insertarVentas:", result);
     set({ idventa: result?.id });
     return result;
   },
