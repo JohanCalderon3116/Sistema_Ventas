@@ -44,6 +44,20 @@ export const useVentasStore = create((set, get) => ({
     }),
   setStateMetodosPago: () =>
     set((state) => ({ stateMetodosPago: !state.stateMetodosPago })),
+  restante: 0,
+  setRestante: (p) => {
+    set({ restante: p });
+  },
+  vuelto: 0,
+  setVuelto: (p) => {
+    set({ vuelto: p });
+  },
+  valoresPago: {},
+  setValoresPago: (p) => {
+    set((state) => ({
+      valoresPago: typeof p === "function" ? p(state.valoresPago) : p,
+    }));
+  },
   insertarVentas: async (p) => {
     const result = await InsertarVentas(p);
     console.log("resultado insertarVentas:", result);

@@ -5,73 +5,43 @@ import { FormatearNumeroDinero } from "../../../utils/Conversiones";
 import { useEffect, useState, forwardRef, useImperativeHandle } from "react";
 import { Btn1 } from "../../moleculas/Btn1";
 import { useUsuariosStore } from "../../../store/UsuariosStore";
-import { useSucursalesStore } from "../../../store/SucursalesStore";
 import { useEmpresaStore } from "../../../store/EmpresaStore";
 import { useVentasStore } from "../../../store/VentasStore";
 import { useDetalleVentasStore } from "../../../store/DetalleVentasStore";
-import { toast } from "sonner";
 import {
   QueryClient,
   useMutation,
-  useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
 import { PanelBuscador } from "./PanelBuscador";
 import { useClientesProveedoresStore } from "../../../store/ClientesProveedoresStore";
 import { useMetodosPagoStore } from "../../../store/MetodosPagoStore";
-import { useCierreCajaStore } from "../../../store/CierreCajaStore";
-import { useCajasStore } from "../../../store/CajaStore";
-import { useMovCajaStore } from "../../../store/MovCajaStore";
 import { useFormattedDate } from "../../../hooks/useFormattedDate";
-import { useAsignacionCajaSucursalesStore } from "../../../store/AsignacionCajaSucursales";
-import { RegistrarInventario } from "../formularios/RegistrarInventario";
 import { RegistrarmovimientocreditoVenta } from "../formularios/RegistrarmovimientocreditoVenta";
-import { InsertarMovimientosCreditos } from "../../../supabase/crudMovimientosCreditos";
 import { Linea } from "../../atomos/Linea";
 import { useSerealizacionesStore } from "../../../store/SerealizacionesStore";
-import { useImpresorasStore } from "../../../store/ImpresorasStore";
-import { useMostrarImpresorasXCajaQueryStack } from "../../../tanstack/ImpresorasStack";
 import ticket from "../../../reports/TicketVenta";
 import { useProductosStore } from "../../../store/ProductosStore";
-import { useStockStore } from "../../../store/StockStore";
-import Swal from "sweetalert2";
+import { useBuscarClientesQueryStack } from "../../../tanstack/ClientesProveedoresStack";
+import { useConfirmarVentasMutationStack } from "../../../tanstack/VentasStack";
 export const IngresoCobro = forwardRef((props, ref) => {
+  const queryClient = useQueryClient();
   const [openRegistro, setOpenRegistro] = useState(false);
   const [dataSelect, setDataSelect] = useState([]);
   const [isExploding, setIsExploding] = useState(false);
-  function nuevoRegistro() {
-    setOpenRegistro(!openRegistro);
-    setDataSelect([]);
-    setIsExploding(false);
-  }
-  const queryClient = useQueryClient();
+  const [stateBuscadorClientes, setStateBuscadorClientes] = useState(false);
   const fechaActual = useFormattedDate();
   const {
     tipocobro,
     items,
-    resetState,
-    setStatePantallaCobro,
-    confirmarVenta,
-    dataventas,
+    restante,
+    setRestante,
+    valoresPago,
+    setValoresPago,
+    idventa,
+    setVuelto,
+    vuelto,
   } = useVentasStore();
-  const { total, detalleventa } = useDetalleVentasStore();
-  const { mostrarAlertasStockXVenta } = useStockStore();
-  const {
-    dataComprobantes,
-    itemSelectComprobanteSelect,
-    setItemSelectComprobanteSelect,
-  } = useSerealizacionesStore();
-  const { dataImpresorasXCaja } = useImpresorasStore();
-  const { ProductosItemSelect } = useProductosStore();
-  const { mostrardetalleventa } = useDetalleVentasStore();
-  const [stateBuscadorClientes, setStateBuscadorClientes] = useState(false);
-  //valores a mostrar
-  const [vuelto, setVuelto] = useState(0);
-  const [restante, setRestante] = useState(0);
-
-  const [valoresPago, setValoresPago] = useState({});
-  //valores a calcular
-  const [precioVenta, setPrecioVenta] = useState(total);
   const [valorTarjeta, setValorTarjeta] = useState(
     tipocobro === "tarjeta" ? total : 0,
   );
@@ -81,157 +51,60 @@ export const IngresoCobro = forwardRef((props, ref) => {
   const [valorCredito, setValorCredito] = useState(
     tipocobro === "credito" ? total : 0,
   );
-
+  const { total, mostrardetalleventa } = useDetalleVentasStore();
+  const [precioVenta, setPrecioVenta] = useState(total);
+  const {
+    dataComprobantes,
+    itemSelectComprobanteSelect,
+    setItemSelectComprobanteSelect,
+  } = useSerealizacionesStore();
+  const { ProductosItemSelect } = useProductosStore();
   const { datausuarios } = useUsuariosStore();
   const { dataMetodosPago } = useMetodosPagoStore();
-  const { sucursalesItemSelectAsignadas } = useAsignacionCajaSucursalesStore();
   const { dataempresa } = useEmpresaStore();
-  //#region Clientes
-  const {
-    buscarCliPro,
-    setBuscador,
-    buscador,
-    selectCliPro,
-    cliproItemSelect,
-  } = useClientesProveedoresStore();
-  const { data: databuscadorcliente, isLoading: isloadingbuscadorcliento } =
-    useQuery({
-      queryKey: ["buscar cliente", dataempresa?.id, "cliente", buscador],
-      queryFn: () =>
-        buscarCliPro({
-          id_empresa: dataempresa?.id,
-          tipo: "cliente",
-          buscador: buscador,
-        }),
-      enabled: !!dataempresa,
-      refetchOnWindowFocus: false,
-    });
-  //#endregion
-  //Mostrar cierres de caja
-  const { dataCierreCaja } = useCierreCajaStore();
-  //Movimientos de caja
-  const { idventa, insertarVentas, resetarventas } = useVentasStore();
-  const { insertarMovcaja } = useMovCajaStore();
-  const { insertarDetalleVentas } = useDetalleVentasStore();
-  //funcion para calcular vueltoas y restante
-
+  const { setBuscador, selectCliPro, cliproItemSelect } =
+    useClientesProveedoresStore();
+  function nuevoRegistro() {
+    setOpenRegistro(!openRegistro);
+    setDataSelect([]);
+    setIsExploding(false);
+  }
   const calcularVueltoYRestante = () => {
     const totalPagado = Object.values(valoresPago).reduce(
       (acc, curr) => acc + curr,
       0,
     );
     const totalSinEfectivo = totalPagado - (valoresPago["Efectivo"] || 0);
-    //Si el total sin efectivo excede el precio de venta , no permitir el exceso
     if (totalSinEfectivo > precioVenta) {
       setVuelto(0);
-      setRestante(precioVenta - totalSinEfectivo); //restante negativo para indicar que se excede sin efectivo
+      setRestante(precioVenta - totalSinEfectivo);
     } else {
-      //Permitir el exceso solo si es efectivo
       if (totalPagado >= precioVenta) {
         const exceso = totalPagado - precioVenta;
         setVuelto(valoresPago["Efectivo"] ? exceso : 0);
         setRestante(0);
       } else {
-        //Si el total pagado no cubre el precio de venta, calcular el restante
         setVuelto(0);
         setRestante(precioVenta - totalPagado);
       }
     }
   };
-
-  //Manjeador de cambio
+  const { data: databuscadorcliente, isLoading: isloadingbuscadorcliento } =
+    useBuscarClientesQueryStack();
+  const mutation = useConfirmarVentasMutationStack({
+    imprimirDirectoTicket,
+    imprimirConVentanaEmergente,
+  });
   const handleChangePago = (tipo, valor) => {
     setValoresPago((prev) => ({
       ...prev,
       [tipo]: parseFloat(valor) || 0,
     }));
   };
-  // exponiendo la funcion mutation a travez de ref
   useImperativeHandle(ref, () => ({
     mutateAsync: mutation.mutateAsync,
   }));
-  //funcion para realizar venta
-  const mutation = useMutation({
-    mutationKey: ["insertar ventas"],
-    mutationFn: ConfirmarVenta,
-    onSuccess: async () => {
-      if (restante != 0) {
-        return;
-      }
-      const alertas = await mostrarAlertasStockXVenta({
-        _id_venta: idventa,
-      });
-      const alertasUnicas = Object.values(
-        alertas?.reduce((acc, item) => {
-          acc[item.id_producto] = item;
-          return acc;
-        }, {}) || {},
-      );
-
-      if (alertasUnicas.length > 0) {
-        const listaHtml = alertasUnicas
-          .map(
-            (item) =>
-              `<li><strong>${item.nombre_producto}</strong>: ${item.stock_actual} unidades (mínimo: ${item.stock_minimo})</li>`,
-          )
-          .join("");
-
-        Swal.fire({
-          icon: "warning",
-          title: "Stock bajo",
-          html: `Los siguientes productos quedaron con poco stock: <ul style="text-align:left;">${listaHtml}</ul>`,
-          confirmButtonText: "Entendido",
-        });
-      }
-      resetState();
-      queryClient.invalidateQueries(["mostrar detalle venta"]);
-      toast.success("😁🎉 Venta generada correctamente :p");
-    },
-  });
-  async function ConfirmarVenta(p) {
-    if (restante === 0) {
-      const pventas = {
-        _id_venta: idventa,
-        _id_usuario: datausuarios?.id,
-        _vuelto: vuelto,
-        _id_tipo_comprobante: itemSelectComprobanteSelect?.id_tipo_comprobante,
-        _serie: itemSelectComprobanteSelect?.serie,
-        _id_sucursal: dataCierreCaja?.caja?.id_sucursal,
-        _id_cliente: cliproItemSelect?.id ?? null,
-        _fecha: fechaActual,
-        _monto_total: total,
-      };
-
-      const responseVentaConfirmada = await confirmarVenta(pventas);
-
-      for (const [tipo, monto] of Object.entries(valoresPago)) {
-        if (monto > 0) {
-          const metodoPago = dataMetodosPago.find(
-            (item) => item.nombre === tipo,
-          );
-          const pmovcaja = {
-            fecha_movimiento: fechaActual,
-            tipo_movimiento: "venta_ingreso",
-            monto: monto,
-            id_metodo_pago: metodoPago?.id,
-            descripcion: `Pago de venta con ${tipo} `,
-            id_usuario: datausuarios?.id,
-            id_cierre_caja: dataCierreCaja?.id,
-            id_venta: idventa,
-            vuelto: tipo === "Efectivo" ? vuelto : 0,
-          };
-          await insertarMovcaja(pmovcaja);
-        }
-      }
-      dataImpresorasXCaja?.state
-        ? imprimirDirectoTicket()
-        : imprimirConVentanaEmergente(responseVentaConfirmada);
-    } else {
-      toast.warning("Falta completar el pago, el restante tiene que ser cero");
-    }
-  }
-
-  const imprimirConVentanaEmergente = async (responseVentaConfirmada) => {
+  async function imprimirConVentanaEmergente(responseVentaConfirmada) {
     const items = await mostrardetalleventa({ id_venta: idventa });
     const ahora = new Date();
     const horaFormateada = ahora.toLocaleTimeString("en-US", {
@@ -262,15 +135,11 @@ export const IngresoCobro = forwardRef((props, ref) => {
       telefono: dataempresa?.telefono_celular,
     };
     await ticket("print", dataenv);
-  };
-  const imprimirDirectoTicket = () => {};
-  //useeffect para calcular cunaod los valores cambian
+  }
+  function imprimirDirectoTicket() {}
   useEffect(() => {
     if (tipocobro !== "Mixto" && valoresPago[tipocobro] != total) {
-      setValoresPago((prev) => ({
-        ...prev,
-        [tipocobro]: total,
-      }));
+      setValoresPago({ [tipocobro]: total });
     }
   }, [tipocobro, total]);
 

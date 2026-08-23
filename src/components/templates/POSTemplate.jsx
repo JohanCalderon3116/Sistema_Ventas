@@ -5,33 +5,28 @@ import { blur_in } from "../../styles/Keyframes";
 import {
   AreaDetalleventaPos,
   AreaTecladoPos,
-  Btn1,
   FooterPos,
   HeaderPos,
-  InputText2,
   MenuFlotante,
   PantallaCierreCaja,
   PantallaCobro,
   PantallaIngresoSalidaDinero,
-  Reloj,
   useBuscarProductosCodigoQueryStack,
   useCierreCajaStore,
   useMostrarSerealizacionesVentasQueryStack,
   useStockStore,
   useVentasStore,
 } from "../../index";
-import { toast, Toaster } from "sonner";
-import { SelectAlmacen } from "../organismos/POSDesing/SelectAlmacen";
+import { Toaster } from "sonner";
 import { useMostrarAlmacenesXSucursalQueryStack } from "../../tanstack/AlmacenesStack";
 import { useMostrarStockAlmacenesyProductoQueryStack } from "../../tanstack/StockStack";
 import { useMostrarMetodosDePagoQueryStack } from "../../tanstack/MetodosPagoStack";
-import { BarLoader } from "react-spinners";
 import { useMostrarImpresorasXCajaQueryStack } from "../../tanstack/ImpresorasStack";
 export const POSTemplate = () => {
   const { statePantallaCobro } = useVentasStore();
   const { stateIngresoSalida, stateCierreCaja } = useCierreCajaStore();
   const { stateModal } = useStockStore();
-  const {} = useBuscarProductosCodigoQueryStack();
+  useBuscarProductosCodigoQueryStack();
   const { isLoading: isLoadingAlmacenXSucursal, error: errorAlmacenXSucursal } =
     useMostrarAlmacenesXSucursalQueryStack();
   const {
@@ -40,7 +35,7 @@ export const POSTemplate = () => {
   } = useMostrarStockAlmacenesyProductoQueryStack();
   const { isLoading: isLoadingSerealizacionesVentas } =
     useMostrarSerealizacionesVentasQueryStack();
-  const {} = useMostrarImpresorasXCajaQueryStack();
+  useMostrarImpresorasXCajaQueryStack();
   return (
     <Container>
       {statePantallaCobro && <PantallaCobro></PantallaCobro>}
@@ -59,7 +54,6 @@ export const POSTemplate = () => {
     </Container>
   );
 };
-
 const Container = styled.div`
   height: calc(100vh - 60px);
   padding: 10px;
@@ -78,17 +72,14 @@ const Container = styled.div`
       "footer footer" 60px;
   }
 `;
-
 const Main = styled.div`
   grid-area: main;
-  /* background-color: rgba(228, 20, 20, 0.5); */
   display: flex;
   flex-direction: column;
   width: 100%;
   position: relative;
   overflow: hidden;
   gap: 10px;
-
   @media ${Device.desktop} {
     flex-direction: row;
   }

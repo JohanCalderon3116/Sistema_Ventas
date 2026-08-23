@@ -5,14 +5,14 @@ import {
 import styled, { useTheme } from "styled-components";
 import { BeatLoader } from "react-spinners";
 import {
-  useBuscarClientesProveedoresQueryStack,
+  useBuscarClientesProveedoresLocationQueryStack,
   useMostrarClientesProveedoresQueryStack,
-} from "../tanstack/ClientesProveedores";
+} from "../tanstack/ClientesProveedoresStack";
 
 export const ClientesProveedores = () => {
   const theme = useTheme();
   const { isLoading } = useMostrarClientesProveedoresQueryStack();
-  useBuscarClientesProveedoresQueryStack();
+  useBuscarClientesProveedoresLocationQueryStack();
   if (isLoading) {
     return (
       <ConteinerLoader>

@@ -31,7 +31,7 @@ export const useMostrarClientesProveedoresQueryStack = () => {
   });
 };
 
-export const useBuscarClientesProveedoresQueryStack = () => {
+export const useBuscarClientesProveedoresLocationQueryStack = () => {
   const { dataempresa } = useEmpresaStore();
   const location = useLocation();
   const { buscador, buscarCliPro } = useClientesProveedoresStore();
@@ -54,6 +54,21 @@ export const useBuscarClientesProveedoresQueryStack = () => {
           location.pathname === "/configuracion/clientes"
             ? "cliente"
             : "proveedor",
+        buscador: buscador,
+      }),
+    enabled: !!dataempresa,
+    refetchOnWindowFocus: false,
+  });
+};
+export const useBuscarClientesQueryStack = () => {
+  const { dataempresa } = useEmpresaStore();
+  const { buscador, buscarCliPro } = useClientesProveedoresStore();
+  return useQuery({
+    queryKey: ["buscar cliente", dataempresa?.id, "cliente", buscador],
+    queryFn: () =>
+      buscarCliPro({
+        id_empresa: dataempresa?.id,
+        tipo: "cliente",
         buscador: buscador,
       }),
     enabled: !!dataempresa,
