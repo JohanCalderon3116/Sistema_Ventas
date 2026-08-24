@@ -76,6 +76,7 @@ export const AreaDetalleventaPos = () => {
   const { data: items } = useQuery({
     queryKey: ["mostrar detalle venta", { id_vanta: idventa }],
     queryFn: () => mostrardetalleventa({ id_venta: idventa }),
+    enabled: idventa > 0,
   });
   return (
     <AreaDetalleventa className={items?.length > 0 ? "" : "animacion"}>

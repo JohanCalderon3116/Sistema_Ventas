@@ -24,6 +24,7 @@ export const FooterPos = () => {
     onSuccess: () => {
       queryClient.invalidateQueries(["mostrar detalle venta"]);
       toast.success("Venta eliminada correctamente :3");
+      document.getElementById("input-buscador-pos")?.focus();
     },
   });
   return (

@@ -46,7 +46,7 @@ export const useConfirmarVentasMutationStack = ({
   const { dataCierreCaja } = useCierreCajaStore();
   const { cliproItemSelect } = useClientesProveedoresStore();
   const fechaActual = useFormattedDate();
-  const { total } = useDetalleVentasStore();
+  const { total, resetDetalleVenta } = useDetalleVentasStore();
   const { dataMetodosPago } = useMetodosPagoStore();
   const { insertarMovcaja } = useMovCajaStore();
   const { dataImpresorasXCaja } = useImpresorasStore();
@@ -85,8 +85,8 @@ export const useConfirmarVentasMutationStack = ({
         }
       }
       dataImpresorasXCaja?.state
-        ? imprimirDirectoTicket()
-        : imprimirConVentanaEmergente(responseVentaConfirmada);
+        ? await imprimirDirectoTicket()
+        : await imprimirConVentanaEmergente(responseVentaConfirmada);
     } else {
       toast.warning("Falta completar el pago, el restante tiene que ser cero");
     }
@@ -123,9 +123,14 @@ export const useConfirmarVentasMutationStack = ({
           confirmButtonText: "Entendido",
         });
       }
+      resetDetalleVenta();
       resetState();
-      queryClient.invalidateQueries(["mostrar detalle venta"]);
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar detalle venta"],
+        refetchType: "none", 
+      });
       toast.success("😁🎉 Venta generada correctamente");
+      document.getElementById("input-buscador-pos")?.focus();
     },
     onError: (error) => {
       toast.error("Tuvimos un error al insertar la venta");

@@ -28,9 +28,12 @@ export const useDetalleVentasStore = create((set, get) => ({
   porcentajeCambioGanancias: 0,
   ventasAgrupadasFecha: 0,
   total: 0,
+  resetDetalleVenta: () => {
+    set({ detalleventa: [], total: 0 });
+  },
   mostrardetalleventa: async (p) => {
     const response = await MostrarDetalleVenta(p);
-    const items = response ?? []; 
+    const items = response ?? [];
     set({
       detalleventa: items,
       total: calcularTotal(items),

@@ -1,10 +1,8 @@
 import styled from "styled-components";
 import {
-  Btn1,
   InputText2,
   ListaDesplegable,
   Reloj,
-  SelectList,
   useAlmacenesStore,
   useCierreCajaStore,
   useDetalleVentasStore,
@@ -12,23 +10,17 @@ import {
   useFormattedDate,
   useProductosStore,
   useStockStore,
-  useSucursalesStore,
   useUsuariosStore,
   useVentasStore,
 } from "../../../index";
 import { v } from "../../../styles/variables";
 import { Device } from "../../../styles/breakpoints";
-import { Icon } from "@iconify/react";
 import { useEffect, useRef, useState } from "react";
-import { useAsignacionCajaSucursalesStore } from "../../../store/AsignacionCajaSucursales";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { useEliminarVentasIncompletasMutateStack } from "../../../tanstack/VentasStack";
 export const HeaderPos = () => {
   const queryClien = useQueryClient();
   const [stateListaProductos, setStateListaProductos] = useState(false);
-  const [stateTeclado, setStateTeclado] = useState(false);
-  const [stateLector, setStateLector] = useState(true);
   const [catidadInput, setCantidadInput] = useState(1);
   const {
     setBuscador,
@@ -37,7 +29,6 @@ export const HeaderPos = () => {
     buscador,
     resultadosBusqueda,
   } = useProductosStore();
-  const { sucursalesItemSelectAsignadas } = useAsignacionCajaSucursalesStore();
   const { idventa, insertarVentas } = useVentasStore();
   const { dataempresa } = useEmpresaStore();
   const fechaActual = useFormattedDate();
@@ -51,27 +42,12 @@ export const HeaderPos = () => {
   const { mostrarProductos } = useProductosStore();
   const {} = useQuery({
     queryKey: ["mostrar productos", dataempresa?.id],
-    queryFn: () =>
-      mostrarProductos({ id_empresa: dataempresa?.id }),
+    queryFn: () => mostrarProductos({ id_empresa: dataempresa?.id }),
     enabled: !!dataempresa,
     refetchOnWindowFocus: false,
   });
-  function focusclick() {
-    buscadorRef.current.focus();
-    if (buscadorRef.current.value.trim() === "") {
-      setStateListaProductos(false);
-    } else {
-      setStateListaProductos(true);
-    }
-  }
   function buscar(e) {
     setBuscador(e.target.value);
-    let texto = e.target.value;
-    if (texto.trim() === "" || stateLector) {
-      setStateListaProductos(false);
-    } else {
-      setStateListaProductos(true);
-    }
   }
   async function insertarventa() {
     if (idventa === 0) {
@@ -128,7 +104,7 @@ export const HeaderPos = () => {
     const value = Math.max(0, parseFloat(e.target.value));
     setCantidadInput(value);
   };
-  
+
   useEffect(() => {
     buscadorRef.current.focus();
   }, []);
@@ -158,7 +134,7 @@ export const HeaderPos = () => {
       texto.length > 0 && isCodigoDeBarras ? 100 : 200,
     );
 
-    return () => clearTimeout(timeout); 
+    return () => clearTimeout(timeout);
   }, [buscador]);
   return (
     <Header>
@@ -203,6 +179,7 @@ export const HeaderPos = () => {
           </div>
           <InputText2>
             <input
+              id="input-buscador-pos"
               value={buscador}
               ref={buscadorRef}
               onChange={buscar}
