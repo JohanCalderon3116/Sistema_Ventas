@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import { Device } from "../../styles/breakpoints";
-import { v } from "../../styles/variables";
 import { blur_in } from "../../styles/Keyframes";
 import {
   AreaDetalleventaPos,
@@ -14,27 +13,19 @@ import {
   useBuscarProductosCodigoQueryStack,
   useCierreCajaStore,
   useMostrarSerealizacionesVentasQueryStack,
-  useStockStore,
   useVentasStore,
 } from "../../index";
 import { Toaster } from "sonner";
 import { useMostrarAlmacenesXSucursalQueryStack } from "../../tanstack/AlmacenesStack";
 import { useMostrarStockAlmacenesyProductoQueryStack } from "../../tanstack/StockStack";
-import { useMostrarMetodosDePagoQueryStack } from "../../tanstack/MetodosPagoStack";
 import { useMostrarImpresorasXCajaQueryStack } from "../../tanstack/ImpresorasStack";
 export const POSTemplate = () => {
   const { statePantallaCobro } = useVentasStore();
   const { stateIngresoSalida, stateCierreCaja } = useCierreCajaStore();
-  const { stateModal } = useStockStore();
   useBuscarProductosCodigoQueryStack();
-  const { isLoading: isLoadingAlmacenXSucursal, error: errorAlmacenXSucursal } =
-    useMostrarAlmacenesXSucursalQueryStack();
-  const {
-    isLoading: isLoadingStockPorProductoYAlmacen,
-    error: errorStockPorProductoYAlmacen,
-  } = useMostrarStockAlmacenesyProductoQueryStack();
-  const { isLoading: isLoadingSerealizacionesVentas } =
-    useMostrarSerealizacionesVentasQueryStack();
+  useMostrarAlmacenesXSucursalQueryStack();
+  useMostrarStockAlmacenesyProductoQueryStack();
+  useMostrarSerealizacionesVentasQueryStack();
   useMostrarImpresorasXCajaQueryStack();
   return (
     <Container>

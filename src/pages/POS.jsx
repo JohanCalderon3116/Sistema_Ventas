@@ -15,8 +15,8 @@ export function POS() {
     useMostrarMetodosDePagoQueryStack();
   const { isLoading: isLoadingCierreCaja, error: errorCiereCaja } =
     useMostrarAperturaCajaPorUsuarioQueryStack();
-  const isLoading = isLoadingCierreCaja;
-  const error = errorCiereCaja;
+  const isLoading = isLoadingCierreCaja || isLoadingmetodosPago;
+  const error = errorCiereCaja || errorMetodosPago;
   if (isLoading) {
     return <Spinner1 texto="Verificando aperturas de caja"></Spinner1>;
   }

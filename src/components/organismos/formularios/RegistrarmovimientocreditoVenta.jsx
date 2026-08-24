@@ -3,10 +3,9 @@ import { v } from "../../../styles/variables";
 import { InputText, Btn1, useFormattedDate } from "../../../index";
 import { useForm } from "react-hook-form";
 import { BtnClose } from "../../ui/buttons/BtnClose";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast, Toaster } from "sonner";
 import { BuscadorList } from "../../ui/lists/Buscador";
-import { BarLoader, BeatLoader } from "react-spinners";
+import { BeatLoader } from "react-spinners";
 import { useCreditosStore } from "../../../store/CreditosStore";
 import { FormatearNumeroDinero } from "../../../utils/Conversiones";
 import {
@@ -15,7 +14,6 @@ import {
   useMostrarCreditosQueryStack,
 } from "../../../tanstack/CreditosStack";
 export function RegistrarmovimientocreditoVenta({ onClose }) {
-  const queryClient = useQueryClient();
   const {
     creditosItemSelect,
     setCreditosItemSelect,
@@ -23,14 +21,13 @@ export function RegistrarmovimientocreditoVenta({ onClose }) {
     datacreditos,
   } = useCreditosStore();
   const theme = useTheme();
-  const fecha = useFormattedDate();
   const {
     register,
     formState: { errors },
     handleSubmit,
     reset,
   } = useForm();
-  const { data: dataCreditos, error } = useMostrarCreditosQueryStack();
+  const { error } = useMostrarCreditosQueryStack();
   useBuscarCreditsoQueryStack();
   const { isPending, mutate: doInsertar } =
     useInsertarMovimientoCreditoMutationStack({ onClose, resetFuction });
@@ -45,6 +42,7 @@ export function RegistrarmovimientocreditoVenta({ onClose }) {
   }
   return (
     <Container>
+      <Toaster richColors></Toaster>
       {isPending ? (
         <ConteinerLoader>
           <span>

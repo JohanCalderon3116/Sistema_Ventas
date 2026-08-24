@@ -8,15 +8,9 @@ import { useUsuariosStore } from "../../../store/UsuariosStore";
 import { useEmpresaStore } from "../../../store/EmpresaStore";
 import { useVentasStore } from "../../../store/VentasStore";
 import { useDetalleVentasStore } from "../../../store/DetalleVentasStore";
-import {
-  QueryClient,
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
 import { PanelBuscador } from "./PanelBuscador";
 import { useClientesProveedoresStore } from "../../../store/ClientesProveedoresStore";
 import { useMetodosPagoStore } from "../../../store/MetodosPagoStore";
-import { useFormattedDate } from "../../../hooks/useFormattedDate";
 import { RegistrarmovimientocreditoVenta } from "../formularios/RegistrarmovimientocreditoVenta";
 import { Linea } from "../../atomos/Linea";
 import { useSerealizacionesStore } from "../../../store/SerealizacionesStore";
@@ -26,15 +20,10 @@ import { useBuscarClientesQueryStack } from "../../../tanstack/ClientesProveedor
 import { useConfirmarVentasMutationStack } from "../../../tanstack/VentasStack";
 import { BeatLoader } from "react-spinners";
 export const IngresoCobro = forwardRef((props, ref) => {
-  const queryClient = useQueryClient();
   const [openRegistro, setOpenRegistro] = useState(false);
-  const [dataSelect, setDataSelect] = useState([]);
-  const [isExploding, setIsExploding] = useState(false);
   const [stateBuscadorClientes, setStateBuscadorClientes] = useState(false);
-  const fechaActual = useFormattedDate();
   const {
     tipocobro,
-    items,
     restante,
     setRestante,
     valoresPago,
@@ -43,15 +32,6 @@ export const IngresoCobro = forwardRef((props, ref) => {
     setVuelto,
     vuelto,
   } = useVentasStore();
-  const [valorTarjeta, setValorTarjeta] = useState(
-    tipocobro === "tarjeta" ? total : 0,
-  );
-  const [valorEfectivo, setValorEfectivo] = useState(
-    tipocobro === "efectivo" ? total : 0,
-  );
-  const [valorCredito, setValorCredito] = useState(
-    tipocobro === "credito" ? total : 0,
-  );
   const { total, mostrardetalleventa } = useDetalleVentasStore();
   const [precioVenta, setPrecioVenta] = useState(total);
   const {
@@ -66,11 +46,6 @@ export const IngresoCobro = forwardRef((props, ref) => {
   const { dataempresa } = useEmpresaStore();
   const { setBuscador, selectCliPro, cliproItemSelect } =
     useClientesProveedoresStore();
-  function nuevoRegistro() {
-    setOpenRegistro(!openRegistro);
-    setDataSelect([]);
-    setIsExploding(false);
-  }
   const calcularVueltoYRestante = () => {
     const totalPagado = Object.values(valoresPago).reduce(
       (acc, curr) => acc + curr,
@@ -91,7 +66,7 @@ export const IngresoCobro = forwardRef((props, ref) => {
       }
     }
   };
-  const { data: databuscadorcliente, isLoading: isloadingbuscadorcliento } =
+  const { data: databuscadorcliente} =
     useBuscarClientesQueryStack();
   const mutation = useConfirmarVentasMutationStack({
     imprimirDirectoTicket,
@@ -139,11 +114,16 @@ export const IngresoCobro = forwardRef((props, ref) => {
     await ticket("print", dataenv);
   }
   function imprimirDirectoTicket() {}
+
   useEffect(() => {
-    if (tipocobro !== "Mixto" && valoresPago[tipocobro] != total) {
+    setValoresPago(tipocobro === "Mixto" ? {} : { [tipocobro]: total });
+  }, [tipocobro]);
+
+  useEffect(() => {
+    if (tipocobro !== "Mixto") {
       setValoresPago({ [tipocobro]: total });
     }
-  }, [tipocobro, total]);
+  }, [total]);
 
   useEffect(() => {
     calcularVueltoYRestante();
