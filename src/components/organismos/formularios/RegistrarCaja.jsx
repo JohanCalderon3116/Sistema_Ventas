@@ -3,18 +3,14 @@ import { v } from "../../../styles/variables";
 import {
   InputText,
   Btn1,
-  ConvertirCapitalize,
   useCajasStore,
-  useAsignacionCajaSucursalesStore,
 } from "../../../index";
 import { useForm } from "react-hook-form";
 import { BtnClose } from "../../ui/buttons/BtnClose";
-import { useQueryClient } from "@tanstack/react-query";
 import { Toaster } from "sonner";
 import { BeatLoader } from "react-spinners";
 import { useInsertarCajasMutationStack } from "../../../tanstack/CajasStack";
 export function RegistrarCaja() {
-  const queryClient = useQueryClient();
   const { accion: accionCaja, cajaSelelctItem, setStateCaja } = useCajasStore();
   const theme = useTheme();
   const {
@@ -28,6 +24,7 @@ export function RegistrarCaja() {
   };
   return (
     <Container>
+      <Toaster richColors></Toaster>
       {isPending ? (
         <ConteinerLoader>
           <span>

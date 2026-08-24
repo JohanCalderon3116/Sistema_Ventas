@@ -1,6 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSerealizacionesStore } from "../store/SerealizacionesStore";
-import { useAsignacionCajaSucursalesStore } from "../store/AsignacionCajaSucursales";
 import { useGlobalStore } from "../store/GlobalStore";
 import { toast } from "sonner";
 import { useCierreCajaStore } from "../store/CierreCajaStore";

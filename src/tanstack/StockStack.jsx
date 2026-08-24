@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import { useEmpresaStore } from "../store/EmpresaStore";
 import { useProductosStore } from "../store/ProductosStore";
 import { useAlmacenesStore } from "../store/AlmacenesStore";
 import { useCierreCajaStore } from "../store/CierreCajaStore";

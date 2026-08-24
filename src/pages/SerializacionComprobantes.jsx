@@ -1,7 +1,6 @@
 import styled, { useTheme } from "styled-components";
 import { useMostrarSerealizacionesQueryStack } from "../tanstack/SerealizacionStack";
 import { BeatLoader } from "react-spinners";
-import { useGlobalStore } from "../store/GlobalStore";
 import { TablaSerializaciones } from "../components/organismos/tablas/TablaSerealizaciones";
 import { SerealizacionesTemplate } from "../components/templates/SerealizacionesTemplate";
 import { RegistrarSerializacion } from "../components/organismos/formularios/RegistrarSerializacion";
@@ -15,7 +14,6 @@ export const SerializacionComprobantes = () => {
   const theme = useTheme();
   const { dataCierreCaja } = useCierreCajaStore();
   const { data, isLoading, error } = useMostrarSerealizacionesQueryStack();
-  const { setItemSelect, setStateClose, stateClose } = useGlobalStore();
   if (isLoading) {
     return (
       <ConteinerLoader>

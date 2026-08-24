@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import { useCajasStore } from "../store/CajaStore";
 import { useAsignacionCajaSucursalesStore } from "../store/AsignacionCajaSucursales";
 import { useUsuariosStore } from "../store/UsuariosStore";
 

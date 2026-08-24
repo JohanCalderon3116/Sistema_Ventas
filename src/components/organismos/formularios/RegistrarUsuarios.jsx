@@ -1,9 +1,7 @@
 import styled, { useTheme } from "styled-components";
-import { v } from "../../../styles/variables";
 import {
   InputText,
   Btn1,
-  ConvertirCapitalize,
   useCajasStore,
   SelectList,
   useSucursalesStore,
@@ -12,8 +10,7 @@ import {
 } from "../../../index";
 import { useForm } from "react-hook-form";
 import { BtnClose } from "../../ui/buttons/BtnClose";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast, Toaster } from "sonner";
+import { Toaster } from "sonner";
 import { Icon } from "@iconify/react";
 import { BeatLoader } from "react-spinners";
 import {
@@ -21,7 +18,6 @@ import {
   useMostrarSucursalesXEmpresaStack,
 } from "../../../tanstack/SucursalesStack";
 export function RegistrarUsuarios({ accion, dataSelect, onClose }) {
-  const queryClient = useQueryClient();
   const { cajaSelelctItem, setCajaSelelctItem } = useCajasStore();
   const { sucursalesItemSelect, selectSucursal } = useSucursalesStore();
   const theme = useTheme();
@@ -43,6 +39,7 @@ export function RegistrarUsuarios({ accion, dataSelect, onClose }) {
   if (isLoading) {
     return (
       <Container>
+        <Toaster richColors></Toaster>
         <ConteinerLoader>
           <span>
             <strong>Cargando</strong>

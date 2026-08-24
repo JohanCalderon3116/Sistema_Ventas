@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { v } from "../../../styles/variables";
 import styled from "styled-components";
 import { useForm } from "react-hook-form";
@@ -6,7 +6,6 @@ import {
   InputText,
   Btn1,
   useGlobalStore,
-  useEditarSerealizacionDefaultMutationStack,
   useAsignacionCajaSucursalesStore,
   useEditarSerealizaciontMutationStack,
 } from "../../../index";
@@ -105,7 +104,7 @@ export const RegistrarSerializacion = () => {
                 onChange={(e) => setSerie(e.target.value.toUpperCase())}
               />
               <label className="form__label">Serie</label>
-              {errors.correlativo?.type === "required" && (
+              {errors.serie?.type === "required" && (
                 <p>Campo requerido</p>
               )}
             </InputText>

@@ -1,22 +1,14 @@
 import styled, { useTheme } from "styled-components";
 import { v } from "../../../styles/variables";
-import {
-  InputText,
-  Btn1,
-  useSucursalesStore,
-  useUsuariosStore,
-} from "../../../index";
+import { InputText, Btn1, useSucursalesStore } from "../../../index";
 import { useForm } from "react-hook-form";
 import { BtnClose } from "../../ui/buttons/BtnClose";
-import { useQueryClient } from "@tanstack/react-query";
 import { Toaster } from "sonner";
 import { BeatLoader } from "react-spinners";
 import { useInsertarSucursalesMutationStack } from "../../../tanstack/SucursalesStack";
 export function RegistrarSucursal() {
-  const queryClient = useQueryClient();
   const { accion, sucursalesItemSelect, setStateSucursal } =
     useSucursalesStore();
-  const { insertarSucursal, editarSucursal } = useSucursalesStore();
   const theme = useTheme();
   const {
     register,
@@ -30,6 +22,7 @@ export function RegistrarSucursal() {
   };
   return (
     <Container>
+      <Toaster richColors></Toaster>
       {isPending ? (
         <ConteinerLoader>
           <span>

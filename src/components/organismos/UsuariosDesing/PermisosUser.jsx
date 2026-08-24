@@ -22,7 +22,6 @@ export const PermisosUser = () => {
   } = usePermisosStore();
   const {
     accion,
-    setAccion,
     selectItem: selectItemAsignaciones,
   } = useAsignacionCajaSucursalesStore();
   const { data: dataModulos, isLoading: isLadingModulos } = useQuery({

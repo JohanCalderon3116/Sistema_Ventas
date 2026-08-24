@@ -1,4 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
 import {
   ProductosTemplate,
   useMostrarProductosQueryStack,
@@ -13,8 +12,6 @@ export const Productos = () => {
   const theme = useTheme();
   const {
     isLoading: isLoadingMostrarProductos,
-    error,
-    refetch,
   } = useMostrarProductosQueryStack();
   useBuscarProductosQueryStack();
   const { isLoading: isLoadingMostrarSucursales } =

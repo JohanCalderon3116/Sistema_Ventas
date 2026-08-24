@@ -8,7 +8,7 @@ import {
   useProductosStore,
 } from "../../index";
 import { v } from "../../styles/variables";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Confetti from "react-confetti-boom";
 import { Toaster } from "sonner";
 export const ProductosTemplate = () => {

@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { Welcome } from "../../index";
 import { LandingPagesWelcome } from "../organismos/LandingPages/LandingPagesWelcome";
 export const HomeTemplate = () => {
   return (

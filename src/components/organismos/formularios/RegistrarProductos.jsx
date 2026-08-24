@@ -77,14 +77,9 @@ export function RegistrarProductos({
   const theme = useTheme();
   const {
     data: dataStockXAlamacenYProducto,
-    isLoading,
-    error,
-    refetch,
   } = useMostrarStckAlmacenYProductoQueryStack({ dataSelect });
     const {
       data: dataAlmacenes,
-      isLoading: isLoadingAlmacenes,
-      error: errorAlmacenes,
     } = useQuery({
       queryKey: [
         "mostrar almacenes x sucursal",
