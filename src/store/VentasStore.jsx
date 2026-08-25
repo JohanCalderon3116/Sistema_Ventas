@@ -21,6 +21,10 @@ export const useVentasStore = create((set, get) => ({
   ...initialState,
   porcentajeCambio: 0,
   dataventas: [],
+  catidadInput: 1,
+  setCantidadInput: (p) => {
+    set({ catidadInput: p });
+  },
   resetState: () => {
     const { selectCliPro } = useClientesProveedoresStore.getState();
     selectCliPro([]);

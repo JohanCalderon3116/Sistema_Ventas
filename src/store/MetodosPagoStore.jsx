@@ -8,6 +8,10 @@ import {
 
 export const useMetodosPagoStore = create((set) => ({
   dataMetodosPago: null,
+  selectMetodo: null,
+  setSelectMetodo: (p) => {
+    set({ selectMetodo: p });
+  },
   mostrarMetodosPago: async (p) => {
     const response = await MostrarMetodosPago(p);
     set({ dataMetodosPago: response });

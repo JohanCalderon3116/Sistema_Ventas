@@ -12,6 +12,9 @@ import { useMovCajaStore } from "../store/MovCajaStore";
 import { useImpresorasStore } from "../store/ImpresorasStore";
 import { useStockStore } from "../store/StockStore";
 import Swal from "sweetalert2";
+import { useEmpresaStore } from "../store/EmpresaStore";
+import { useProductosStore } from "../store/ProductosStore";
+import { useAlmacenesStore } from "../store/AlmacenesStore";
 
 export const useEliminarVentasIncompletasMutateStack = () => {
   const { eliminarventasIncompletas } = useVentasStore();
@@ -127,13 +130,97 @@ export const useConfirmarVentasMutationStack = ({
       resetState();
       queryClient.invalidateQueries({
         queryKey: ["mostrar detalle venta"],
-        refetchType: "none", 
+        refetchType: "none",
       });
       toast.success("😁🎉 Venta generada correctamente");
       document.getElementById("input-buscador-pos")?.focus();
     },
     onError: (error) => {
       toast.error("Tuvimos un error al insertar la venta");
+    },
+  });
+};
+export const useInsertarVentasConDetalleVentasMutationStack = (buscadorRef) => {
+  const { dataStockXAlmacenesYProducto, setStateModal } = useStockStore();
+  const queryClien = useQueryClient();
+  const { idventa, insertarVentas, catidadInput, setCantidadInput } =
+    useVentasStore();
+  const { almacenSelelctItem } = useAlmacenesStore();
+  const fechaActual = useFormattedDate();
+  const { datausuarios } = useUsuariosStore();
+  const { dataCierreCaja } = useCierreCajaStore();
+  const { dataempresa } = useEmpresaStore();
+  const { insertarDetalleVentas } = useDetalleVentasStore();
+  const { setBuscador } = useProductosStore();
+  async function insertarDVentas(p) {
+    const ProductosItemSelect =
+      useProductosStore.getState().ProductosItemSelect;
+    const pDetalleventas = {
+      _id_venta: p,
+      _cantidad: parseFloat(catidadInput) || 1,
+      _precio_venta: ProductosItemSelect.precio_venta,
+      _descripcion: ProductosItemSelect.nombre,
+      _id_producto: ProductosItemSelect.id,
+      _precio_compra: ProductosItemSelect.precio_compra,
+      _id_sucursal: dataCierreCaja?.caja?.id_sucursal,
+      _id_almacen: almacenSelelctItem?.id,
+    };
+    await insertarDetalleVentas(pDetalleventas);
+  }
+  async function insertarventa() {
+    if (idventa === 0) {
+      const pventas = {
+        fecha: fechaActual,
+        id_usuario: datausuarios?.id,
+        id_sucursal: dataCierreCaja?.caja?.id_sucursal,
+        id_empresa: dataempresa?.id,
+        id_cierre_caja: dataCierreCaja?.id,
+      };
+      const result = await insertarVentas(pventas);
+      if (result?.id > 0) {
+        await insertarDVentas(result?.id);
+      }
+    } else {
+      await insertarDVentas(idventa);
+    }
+    setBuscador("");
+    buscadorRef.current.focus();
+    setCantidadInput(1);
+  }
+  return useMutation({
+    mutationKey: ["insertar ventas"],
+    mutationFn: insertarventa,
+    onError: (error) => {
+      toast.error(`Error al insertar la venta ${error.message}`);
+      queryClien.invalidateQueries(["mostrar Stock Almacenes y Producto"]);
+      if (dataStockXAlmacenesYProducto) {
+        setStateModal(true);
+      }
+    },
+    onSuccess: () => {
+      queryClien.invalidateQueries(["mostrar detalle venta"]);
+    },
+  });
+};
+export const useEliminarVentasMutationStack = () => {
+  const { eliminarVenta, idventa } = useVentasStore();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationKey: ["elminar venta"],
+    mutationFn: () => {
+      if (idventa > 0) {
+        return eliminarVenta({ id: idventa });
+      } else {
+        return Promise.reject(new Error("🛒 No tienes ninguna venta activa para eliminar"));
+      }
+    },
+    onError: (error) => {
+      toast.error(`❌ Ups, algo falló: ${error.message}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["mostrar detalle venta"]);
+      toast.success("🗑️ Listo, eliminaste la venta correctamente, ya limpiaste el carrito 🧹");
+      document.getElementById("input-buscador-pos")?.focus();
     },
   });
 };

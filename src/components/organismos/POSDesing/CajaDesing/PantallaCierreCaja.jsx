@@ -5,12 +5,15 @@ import { Device } from "../../../../styles/breakpoints";
 import { useCierreCajaStore } from "../../../../store/CierreCajaStore";
 import { useFormattedDate } from "../../../../hooks/useFormattedDate";
 import { format } from "date-fns";
-import { useQuery } from "@tanstack/react-query";
 import { useMovCajaStore } from "../../../../store/MovCajaStore";
 import { FormatearNumeroDinero } from "../../../../utils/Conversiones";
 import { useEmpresaStore } from "../../../../store/EmpresaStore";
 import { PantallaConteoCaja } from "./PantallaConteoCaja";
 import { BeatLoader } from "react-spinners";
+import {
+  useMostrarEfectivoSinVentasMovCajasQueryStack,
+  useMostrarVentasMetodoPagoMovCajaQueryStack,
+} from "../../../../tanstack/MovimientosCajaStack";
 export const PantallaCierreCaja = () => {
   const {
     setStateCierreCaja,
@@ -21,14 +24,11 @@ export const PantallaCierreCaja = () => {
   const fechaActual = useFormattedDate();
   const theme = useTheme();
   const {
-    mostrarEfectivoSinVentasMovCierreCaja,
-    mostrarVentasMetodoPagoMovCaja,
     totalVentasMetodoPago,
     totalVentasEfectivo,
     totalAperturaCaja,
     totalGastosVariosCaja,
     totalIngresosVariosCaja,
-    totalEfectivoCajaSinVentas,
     totalEfectivoTotalCaja,
   } = useMovCajaStore();
   const { dataempresa } = useEmpresaStore();
@@ -38,30 +38,12 @@ export const PantallaCierreCaja = () => {
   );
   const {
     isLoading: isLoading1,
-    isError: isError1,
-    error: error1,
-  } = useQuery({
-    queryKey: ["mostrar efectivo sin ventas movCaja"],
-    queryFn: () =>
-      mostrarEfectivoSinVentasMovCierreCaja({
-        _id_cierre_caja: dataCierreCaja?.id,
-      }),
-  });
+  } = useMostrarEfectivoSinVentasMovCajasQueryStack();
   const {
     isLoading: isLoading2,
-    isError: isError2,
-    error: error2,
     data: dataventasmetodospago,
-  } = useQuery({
-    queryKey: ["mostrar ventas metodoPago movCaja"],
-    queryFn: () =>
-      mostrarVentasMetodoPagoMovCaja({
-        _id_cierre_caja: dataCierreCaja?.id,
-      }),
-  });
+  } = useMostrarVentasMetodoPagoMovCajaQueryStack();
   const isLoading = isLoading1 || isLoading2;
-  const isError = isError1 || isError2;
-  const error = error1 || error2;
   if (isLoading) {
     return (
       <ConteinerLoader>
@@ -72,11 +54,9 @@ export const PantallaCierreCaja = () => {
       </ConteinerLoader>
     );
   }
-  console.log("Datos de empresa:", dataempresa);
   return (
     <Container>
       <VolverBtn funcion={() => setStateCierreCaja(false)} />
-
       <Fechas>
         Corte de caja desde: {fechaInicioFormateada} Hasta: {fechaActual}
       </Fechas>
@@ -132,15 +112,6 @@ export const PantallaCierreCaja = () => {
                   )}{" "}
                 </span>
               </li>
-              {/* <li>
-                Cobros en efectivo: <span>0</span>
-              </li>
-              <li>
-                Cobros con Tarjeta: <span>0</span>
-              </li>
-              <li>
-                Pagos en efectivo: <span>0</span>
-              </li> */}
               <li>
                 Entradas:{" "}
                 <span>
@@ -202,17 +173,6 @@ export const PantallaCierreCaja = () => {
             </ul>
           </Tabla>
           <DivisionY />
-          {/* <Tabla>
-            <h4>Créditos Aperturados</h4>
-            <ul>
-              <li>
-                Por Cobrar: <span>0</span>
-              </li>
-              <li>
-                Por Pagar: <span>0</span>
-              </li>
-            </ul>
-          </Tabla> */}
         </Tablas>
       </Resumen>
       <Btn1
@@ -256,7 +216,6 @@ const Division = styled.span`
   display: block;
   width: 95%;
 `;
-// Styled Components
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -269,11 +228,6 @@ const Container = styled.div`
   justify-content: center;
   z-index: 10;
 `;
-
-const VolverWrapper = styled.div`
-  align-self: flex-start;
-`;
-
 const Fechas = styled.p`
   font-size: 14px;
 
@@ -281,7 +235,6 @@ const Fechas = styled.p`
     text-align: center;
   }
 `;
-
 const Resumen = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -294,23 +247,19 @@ const Resumen = styled.div`
     align-items: center;
   }
 `;
-
 const Datos = styled.div`
   display: flex;
   gap: 8px;
   justify-content: space-around;
   width: 100%;
 `;
-
 const Tablas = styled.div`
   display: flex;
   gap: 20px;
-
   @media (max-width: 768px) {
     flex-direction: column;
   }
 `;
-
 const Tabla = styled.div`
   display: flex;
   flex-direction: column;
@@ -321,21 +270,18 @@ const Tabla = styled.div`
     font-weight: bold;
     margin-bottom: 8px;
   }
-
   ul {
     list-style: none;
     padding: 0;
     margin: 0;
     width: 100%;
   }
-
   li {
     display: flex;
     justify-content: space-between;
     font-size: 14px;
     margin-bottom: 4px;
   }
-
   .total {
     font-weight: bold;
     margin-top: 8px;

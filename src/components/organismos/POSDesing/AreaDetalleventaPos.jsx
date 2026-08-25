@@ -5,57 +5,25 @@ import {
   Btn1,
   InputText2,
   Lottieanimation,
-  useDetalleVentasStore,
   useEmpresaStore,
-  useVentasStore,
 } from "../../../index";
 import animaciovacio from "../../../assets/vacioanimation.json.json";
 import { Device } from "../../../styles/breakpoints";
 import { Icon } from "@iconify/react";
 import { useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+import {
+  useEditarCantidadDetalleVentaMutationStack,
+  useEliminarCantidadDetalleVentaMutationStack,
+  useMostrarDetalleVentaQueryStack,
+} from "../../../tanstack/DetallesVentaStack";
 export const AreaDetalleventaPos = () => {
   const { dataempresa } = useEmpresaStore();
-  const {
-    mostrardetalleventa,
-    editarCantidadDetalleVenta,
-    eliminardetalleventa,
-  } = useDetalleVentasStore();
-  const { idventa } = useVentasStore();
   const [editIndex, setEditIndex] = useState(null);
   const [newCantidad, setNewCantidad] = useState(1);
-  const queryClient = useQueryClient();
-  const EditarCantidadDv = async (data) => {
-    const p = {
-      _id: data.id,
-      _cantidad: data.cantidad,
-    };
-    await editarCantidadDetalleVenta(p);
-  };
-  const { mutate: mutateEditarCantidadDetalleVenta } = useMutation({
-    mutationKey: ["editar cantidad detalle venta"],
-    mutationFn: EditarCantidadDv,
-    onError: (error) => {
-      toast.error(`Error: ${error.message}`);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries(["mostrar detalle venta"]);
-    },
-  });
-  const EliminarDV = async (p) => {
-    await eliminardetalleventa({ id: p.id });
-  };
-  const { mutate: mutateEliminarDV } = useMutation({
-    mutationKey: ["elminar cantidad detalle venta"],
-    mutationFn: EliminarDV,
-    onError: (error) => {
-      toast.error(`Error: ${error.message}`);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries(["mostrar detalle venta"]);
-    },
-  });
+  const { mutate: mutateEditarCantidadDetalleVenta } =
+    useEditarCantidadDetalleVentaMutationStack();
+  const { mutate: mutateEliminarDV } =
+    useEliminarCantidadDetalleVentaMutationStack();
   const handleEditClick = (index, cantidad) => {
     setEditIndex(index);
     setNewCantidad(cantidad);
@@ -73,11 +41,7 @@ export const AreaDetalleventaPos = () => {
       handleInputBlur(item);
     }
   };
-  const { data: items } = useQuery({
-    queryKey: ["mostrar detalle venta", { id_vanta: idventa }],
-    queryFn: () => mostrardetalleventa({ id_venta: idventa }),
-    enabled: idventa > 0,
-  });
+  const { data: items } = useMostrarDetalleVentaQueryStack();
   return (
     <AreaDetalleventa className={items?.length > 0 ? "" : "animacion"}>
       {items?.length > 0 ? (
@@ -235,8 +199,8 @@ const AreaDetalleventa = styled.section`
   flex-direction: column;
   gap: 10px;
   max-height: calc(100vh - 500px);
-  overflow-y: auto; /* Activa el scroll solo en Y */
-  overflow-x: hidden; /* Oculta el scroll en X */
+  overflow-y: auto; 
+  overflow-x: hidden;
 
   &::-webkit-scrollbar {
     width: 12px;

@@ -3,31 +3,18 @@ import { useCierreCajaStore } from "../../../../store/CierreCajaStore";
 import {
   Btn1,
   InputText2,
-  useCajasStore,
-  useFormattedDate,
   useMetodosPagoStore,
-  useMovCajaStore,
-  useUsuariosStore,
   VolverBtn,
 } from "../../../../index";
 import "react-datepicker/dist/react-datepicker.css";
-import DatePicker from "react-datepicker";
-import { useEffect, useState } from "react";
-import { useMutation } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { filterFns } from "@tanstack/react-table";
 import { BeatLoader } from "react-spinners";
+import { useInsertarIngresosSalidasCajasMutationStack } from "../../../../tanstack/MovimientosCajaStack";
 export const PantallaIngresoSalidaDinero = () => {
-  const fechaActual = useFormattedDate();
   const { tipoRegistro, setStateIngresoSalida } = useCierreCajaStore();
-  const [startDate, setStartDate] = useState(new Date());
-  const [selectMetodo, setSelectMetodo] = useState(null);
-  const { insertarMovcaja } = useMovCajaStore();
-  const { dataCaja } = useCajasStore();
-  const { dataMetodosPago } = useMetodosPagoStore();
-  const { datausuarios } = useUsuariosStore();
-  const { dataCierreCaja } = useCierreCajaStore();
+  const { dataMetodosPago, selectMetodo, setSelectMetodo } =
+    useMetodosPagoStore();
   const theme = useTheme();
   const {
     register,
@@ -35,33 +22,8 @@ export const PantallaIngresoSalidaDinero = () => {
     handleSubmit,
     reset,
   } = useForm();
-  const insertar = async (data) => {
-    const pmovcaja = {
-      fecha_movimiento: fechaActual,
-      tipo_movimiento: tipoRegistro,
-      monto: parseFloat(data.monto),
-      id_metodo_pago: selectMetodo?.id,
-      descripcion: ` ${tipoRegistro === "ingreso" ? "Ingreso" : "Salida"} de dinero con ${selectMetodo?.nombre} ${data.motivo ? ` - Detalle: ${data.motivo}` : ""} `,
-      id_usuario: datausuarios?.id,
-      id_cierre_caja: dataCierreCaja?.id,
-    };
-    await insertarMovcaja(pmovcaja);
-  };
-
-  const { isPending, mutate: doInsertar } = useMutation({
-    mutationKey: ["insertar ingresos salidas caja"],
-    mutationFn: insertar,
-    onSuccess: () => {
-      toast.success("El movimiento de caja quedó registrado correctamente 🙌");
-      setStateIngresoSalida(false);
-      reset();
-    },
-    onError: () => {
-      toast.error(
-        "No pudimos registrar el movimiento de caja, algo falló en el proceso. Inténtalo de nuevo 😩",
-      );
-    },
-  });
+  const { isPending, mutate: doInsertar } =
+    useInsertarIngresosSalidasCajasMutationStack(reset);
   const manejadorEnvio = (data) => {
     doInsertar(data);
   };
@@ -187,30 +149,6 @@ const Container = styled.div`
   .title {
     font-size: 25px;
     font-weight: bold;
-  }
-`;
-
-const StyleDataPickerWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-`;
-const StyleDataPicker = styled(DatePicker)`
-  width: 100%;
-  padding: 10px;
-  font-size: 16px;
-  border-radius: 5px;
-  border: 1px solid ${({ theme }) => theme.color2};
-  background-color: ${({ theme }) => theme.bgtotal};
-  color: ${({ theme }) => theme.text};
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-  &:focus {
-    outline: none;
-    border-color: ${({ theme }) => theme.primary};
-    box-shadow: 0px 0px 5px ${({ theme }) => theme.primary};
-  }
-  &::placeholder {
-    color: ${({ theme }) => theme.placeholder};
   }
 `;
 const ConteinerLoader = styled.div`

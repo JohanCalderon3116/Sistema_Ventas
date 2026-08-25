@@ -3,41 +3,17 @@ import styled, { keyframes } from "styled-components";
 import { useCierreCajaStore } from "../../../store/CierreCajaStore";
 import { Device } from "../../../styles/breakpoints";
 import { Icon } from "@iconify/react";
-import { useVentasStore } from "../../../store/VentasStore";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { useEliminarVentasMutationStack } from "../../../tanstack/VentasStack";
 export const MenuFlotante = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { eliminarVenta, idventa } = useVentasStore();
   const { setStateIngresoSalida, setTipoRegistro, setStateCierreCaja } =
     useCierreCajaStore();
-  const queryClient = useQueryClient();
-  const { mutate: mutateEliminarVenta, isPending } = useMutation({
-    mutationKey: ["elminar venta"],
-    mutationFn: () => {
-      if (idventa > 0) {
-        return eliminarVenta({ id: idventa });
-      } else {
-        return Promise.reject(new Error("Sin registro de venta para eliminar"));
-      }
-    },
-    onError: (error) => {
-      toast.error(`Error: ${error.message}`);
-    },
-    onSuccess: () => {
-      toggleMenu();
-      queryClient.invalidateQueries(["mostrar detalle venta"]);
-      toast.success("Venta eliminada correctamente :3");
-    },
-  });
-
+  const { mutate: mutateEliminarVenta } = useEliminarVentasMutationStack();
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
-
   return (
     <Container>
-      {/* Menú flotante que se expande al hacer clic */}
       <MenuItems isOpen={isOpen}>
         <MenuItem
           isOpen={isOpen}
@@ -74,11 +50,10 @@ export const MenuFlotante = () => {
           <Icon icon="fxemoji:closedmailboxraised" />
           <Text>Cerrar caja</Text>
         </MenuItem>
-
-        <MenuItem isOpen={isOpen} delay="0.4s">
+        {/* <MenuItem isOpen={isOpen} delay="0.4s">
           <Icon icon="icon-park:preview-open" />
           <Text>Ver ventas del día</Text>
-        </MenuItem>
+        </MenuItem> */}
         <MenuItem isOpen={isOpen} delay="0.3s" onClick={mutateEliminarVenta}>
           <Icon icon="flat-color-icons:delete-row" />
           <Text>Eliminar venta</Text>
@@ -101,7 +76,6 @@ const slideUp = keyframes`
     opacity: 1;
   }
 `;
-
 const Container = styled.div`
   position: fixed;
   bottom: 95px;
@@ -109,14 +83,11 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-
   gap: 10px;
   @media ${Device.desktop} {
     display: none;
   }
-  /* background-color: ${({ theme }) => theme.text}; */
 `;
-
 const FloatingButton = styled.button`
   border: none;
   border-radius: 50%;
@@ -128,12 +99,10 @@ const FloatingButton = styled.button`
   cursor: pointer;
   box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.3);
   transition: transform 0.3s ease-in-out;
-
   &:hover {
     transform: rotate(90deg);
   }
 `;
-
 const MenuItems = styled.div`
   margin-top: 10px;
   display: flex;
@@ -142,7 +111,6 @@ const MenuItems = styled.div`
   gap: 15px;
   ${({ isOpen }) => !isOpen && "display: none;"}
 `;
-
 const MenuItem = styled.div`
   background-color: #ffffff;
   border: none;
@@ -157,12 +125,10 @@ const MenuItem = styled.div`
   opacity: 0;
   animation: ${({ isOpen }) => (isOpen ? slideUp : "none")} 0.4s ease forwards;
   animation-delay: ${({ delay }) => delay};
-
   &:hover {
     background-color: #c7c7c7;
   }
 `;
-
 const Text = styled.span`
   font-size: 16px;
   color: #000;

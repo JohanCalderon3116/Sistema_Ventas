@@ -3,25 +3,19 @@ import {
   InputText2,
   ListaDesplegable,
   Reloj,
-  useAlmacenesStore,
   useCierreCajaStore,
-  useDetalleVentasStore,
-  useEmpresaStore,
-  useFormattedDate,
+  useInsertarVentasConDetalleVentasMutationStack,
+  useMostrarProductosQueryStack,
   useProductosStore,
-  useStockStore,
   useUsuariosStore,
   useVentasStore,
 } from "../../../index";
 import { v } from "../../../styles/variables";
 import { Device } from "../../../styles/breakpoints";
 import { useEffect, useRef, useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 export const HeaderPos = () => {
-  const queryClien = useQueryClient();
   const [stateListaProductos, setStateListaProductos] = useState(false);
-  const [catidadInput, setCantidadInput] = useState(1);
   const {
     setBuscador,
     dataProductos,
@@ -29,77 +23,16 @@ export const HeaderPos = () => {
     buscador,
     resultadosBusqueda,
   } = useProductosStore();
-  const { idventa, insertarVentas } = useVentasStore();
-  const { dataempresa } = useEmpresaStore();
-  const fechaActual = useFormattedDate();
+  const { catidadInput, setCantidadInput } = useVentasStore();
   const { dataCierreCaja } = useCierreCajaStore();
-  const { almacenSelelctItem, dataAlmacenesXSucursa, setAlmacenSelelctItem } =
-    useAlmacenesStore();
-  const { insertarDetalleVentas } = useDetalleVentasStore();
   const { datausuarios } = useUsuariosStore();
-  const { dataStockXAlmacenesYProducto, setStateModal } = useStockStore();
   const buscadorRef = useRef(null);
-  const { mostrarProductos } = useProductosStore();
-  const {} = useQuery({
-    queryKey: ["mostrar productos", dataempresa?.id],
-    queryFn: () => mostrarProductos({ id_empresa: dataempresa?.id }),
-    enabled: !!dataempresa,
-    refetchOnWindowFocus: false,
-  });
+  useMostrarProductosQueryStack();
   function buscar(e) {
     setBuscador(e.target.value);
   }
-  async function insertarventa() {
-    if (idventa === 0) {
-      const pventas = {
-        fecha: fechaActual,
-        id_usuario: datausuarios?.id,
-        id_sucursal: dataCierreCaja?.caja?.id_sucursal,
-        id_empresa: dataempresa?.id,
-        id_cierre_caja: dataCierreCaja?.id,
-      };
-      const result = await insertarVentas(pventas);
-      if (result?.id > 0) {
-        await insertarDVentas(result?.id);
-      }
-    } else {
-      await insertarDVentas(idventa);
-    }
-    setBuscador("");
-    buscadorRef.current.focus();
-    setCantidadInput(1);
-  }
-  async function insertarDVentas(p) {
-    const ProductosItemSelect =
-      useProductosStore.getState().ProductosItemSelect;
-    const pDetalleventas = {
-      _id_venta: p,
-      _cantidad: parseFloat(catidadInput) || 1,
-      _precio_venta: ProductosItemSelect.precio_venta,
-      _descripcion: ProductosItemSelect.nombre,
-      _id_producto: ProductosItemSelect.id,
-      _precio_compra: ProductosItemSelect.precio_compra,
-      _id_sucursal: dataCierreCaja?.caja?.id_sucursal,
-      _id_almacen: almacenSelelctItem?.id,
-    };
-    await insertarDetalleVentas(pDetalleventas);
-  }
-
-  const { mutate: mutateInsertarVentas } = useMutation({
-    mutationKey: ["insertar ventas"],
-    mutationFn: insertarventa,
-    onError: (error) => {
-      toast.error(`Error al insertar la venta ${error.message}`);
-      queryClien.invalidateQueries(["mostrar Stock Almacenes y Producto"]);
-      if (dataStockXAlmacenesYProducto) {
-        setStateModal(true);
-      }
-    },
-    onSuccess: () => {
-      queryClien.invalidateQueries(["mostrar detalle venta"]);
-    },
-  });
-  //validar cantidad
+  const { mutate: mutateInsertarVentas } =
+    useInsertarVentasConDetalleVentasMutationStack(buscadorRef);
   const ValidarCantidad = (e) => {
     const value = Math.max(0, parseFloat(e.target.value));
     setCantidadInput(value);
@@ -111,7 +44,6 @@ export const HeaderPos = () => {
   useEffect(() => {
     const texto = buscador.trim();
     const isCodigoDeBarras = /^[0-9]{3,}$/.test(texto);
-
     const timeout = setTimeout(
       () => {
         if (isCodigoDeBarras) {

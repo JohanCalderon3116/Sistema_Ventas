@@ -3,12 +3,10 @@ import {
   Btn1,
   TotalPos,
   useDetalleVentasStore,
-  useEmpresaStore,
   useMetodosPagoStore,
   useVentasStore,
 } from "../../../index";
 import { Device } from "../../../styles/breakpoints";
-import { useQuery } from "@tanstack/react-query";
 import { useValidarPermisosOpertivos } from "../../../hooks/UseValidarPermisosOpertivos";
 export const AreaTecladoPos = () => {
   const { setStatePantallaCobro, stateMetodosPago } = useVentasStore();
@@ -18,7 +16,6 @@ export const AreaTecladoPos = () => {
   const validarPermisosCobrar = (p) => {
     const response = validarPermiso("Cobrar venta");
     if (!response) return;
-    console.log("tipocobro: ", p.nombre);
     setStatePantallaCobro({ data: detalleventa, tipocobro: p.nombre });
   };
   return (
