@@ -4,77 +4,37 @@ import { InputText2 } from "../../formularios/InputText2";
 import {
   Btn1,
   FormatearNumeroDinero,
-  useAuthStore,
   useCierreCajaStore,
   useEmpresaStore,
-  useFormattedDate,
   useMovCajaStore,
-  useUsuariosStore,
 } from "../../../../index";
 import { BarLoader } from "react-spinners";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
-import { set } from "date-fns";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast, Toaster } from "sonner";
+import { Toaster } from "sonner";
+import { useTerminarTurnoMutationStack } from "../../../../tanstack/MovimientosCajaStack";
 
 export const PantallaConteoCaja = () => {
-  const { cerrarSesion } = useAuthStore();
   const { totalEfectivoTotalCaja } = useMovCajaStore();
   const { dataempresa } = useEmpresaStore();
   const [montoEfectivo, setMontoEfectivo] = useState(0);
   const {
-    cerrarTurnoCaja,
-    dataCierreCaja,
     setStateConteoCaja,
-    setStateCierreCaja,
   } = useCierreCajaStore();
-  const queryClient = useQueryClient();
-  const fechaActual = useFormattedDate();
-  const { datausuarios } = useUsuariosStore();
   const {
     register,
     formState: { errors },
     handleSubmit,
     reset,
   } = useForm();
-  const insertar = async (data) => {
-    const p = {
-      id: dataCierreCaja.id,
-      fechacierre: fechaActual,
-      id_usuario: datausuarios?.id,
-      total_efectivo_calculado: parseFloat(totalEfectivoTotalCaja),
-      total_efectivo_real: parseFloat(data.montoreal),
-      estado: 1,
-      diferencia_efectivo: diferencia,
-    };
-    await cerrarTurnoCaja(p);
-  };
-
-  const { isPending, mutate: doInsertar } = useMutation({
-    mutationKey: ["cerrar turno caja"],
-    mutationFn: insertar,
-
-    onSuccess: () => {
-      toast.success("🎉 Caja cerrada correctamente 🎉");
-      setStateConteoCaja(false);
-      setStateCierreCaja(false);
-      reset();
-      queryClient.invalidateQueries(["mostrar cierre de caja"]);
-      cerrarSesion();
-    },
-    onError: (error) => {
-      toast.error(`Error al cerrar caja: ${error.message} `);
-    },
-  });
-
+  const diferencia = montoEfectivo - totalEfectivoTotalCaja;
+  const { isPending, mutate: doInsertar } = useTerminarTurnoMutationStack(
+    diferencia,
+    reset,
+  );
   const handleSub = (data) => {
     doInsertar(data);
   };
-
-  //Calcular al diferencia de total esperado menos total real
-  const diferencia = montoEfectivo - totalEfectivoTotalCaja;
-  //Define el mensaje ye l color del anuncio basado en la diferencia
   const anuncioMensaje =
     diferencia === 0
       ? "¡Excelente trabajo! La caja ha cuadrado perfectamente. Gracias por tu honestidad y orden."
@@ -131,7 +91,6 @@ export const PantallaConteoCaja = () => {
           </section>
         </form>
       )}
-
       <span style={{ color: anuncioColor, textAlign: "center" }}>
         {" "}
         {anuncioMensaje}:{" "}

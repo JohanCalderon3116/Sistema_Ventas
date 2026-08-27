@@ -85,7 +85,6 @@ export const PantallaCierreCaja = () => {
         </section>
       </Datos>
       <Division></Division>
-
       <Resumen>
         <Tablas>
           <Tabla>

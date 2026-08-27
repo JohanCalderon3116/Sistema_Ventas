@@ -1,10 +1,11 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCierreCajaStore } from "../store/CierreCajaStore";
 import { useMetodosPagoStore } from "../store/MetodosPagoStore";
 import { useUsuariosStore } from "../store/UsuariosStore";
 import { useMovCajaStore } from "../store/MovCajaStore";
 import { toast } from "sonner";
 import { useFormattedDate } from "../hooks/useFormattedDate";
+import { useAuthStore } from "../store/AuthStore";
 
 export const useInsertarIngresosSalidasCajasMutationStack = (reset) => {
   const fechaActual = useFormattedDate();
@@ -60,5 +61,45 @@ export const useMostrarVentasMetodoPagoMovCajaQueryStack = () => {
       mostrarVentasMetodoPagoMovCaja({
         _id_cierre_caja: dataCierreCaja?.id,
       }),
+  });
+};
+export const useTerminarTurnoMutationStack = (diferencia, reset) => {
+  const {
+    dataCierreCaja,
+    cerrarTurnoCaja,
+    setStateConteoCaja,
+    setStateCierreCaja,
+  } = useCierreCajaStore();
+  const fechaActual = useFormattedDate();
+  const { datausuarios } = useUsuariosStore();
+  const { totalEfectivoTotalCaja } = useMovCajaStore();
+  const { cerrarSesion } = useAuthStore();
+  const queryClient = useQueryClient();
+  const insertar = async (data) => {
+    const p = {
+      id: dataCierreCaja.id,
+      fechacierre: fechaActual,
+      id_usuario: datausuarios?.id,
+      total_efectivo_calculado: parseFloat(totalEfectivoTotalCaja),
+      total_efectivo_real: parseFloat(data.montoreal),
+      estado: 1,
+      diferencia_efectivo: diferencia,
+    };
+    await cerrarTurnoCaja(p);
+  };
+  return useMutation({
+    mutationKey: ["cerrar turno caja"],
+    mutationFn: insertar,
+    onSuccess: () => {
+      toast.success("🎉 Caja cerrada correctamente 🎉");
+      setStateConteoCaja(false);
+      setStateCierreCaja(false);
+      reset();
+      queryClient.invalidateQueries(["mostrar cierre de caja"]);
+      cerrarSesion();
+    },
+    onError: (error) => {
+      toast.error(`Error al cerrar caja: ${error.message} `);
+    },
   });
 };
