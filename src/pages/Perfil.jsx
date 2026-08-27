@@ -1,4 +1,3 @@
-import React from "react";
 import styled, { useTheme } from "styled-components";
 import { InputText2 } from "../components/organismos/formularios/InputText2";
 import { Btn1 } from "../components/moleculas/Btn1";
@@ -36,7 +35,6 @@ export const Perfil = () => {
       ) : (
         <>
           <Title>Mí Perfil</Title>
-
           <Avatar>
             <ContentRol>
               <span>{datausuarios?.roles?.nombre} </span>
@@ -145,12 +143,10 @@ const Container = styled.div`
     }
   }
 `;
-
 const Title = styled.h1`
   font-size: 24px;
   margin-bottom: 20px;
 `;
-
 const Avatar = styled.div`
   display: flex;
   align-items: center;
@@ -161,10 +157,8 @@ const Avatar = styled.div`
   padding: 10px;
   .nombre {
     font-weight: 700;
-
     text-align: center;
     align-self: center;
-
     font-size: 25px;
     overflow: hidden; 
     white-space: normal; 
@@ -173,7 +167,6 @@ const Avatar = styled.div`
   }
   background-color: #6d05e5;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 120 120'%3E%3Cpolygon fill='%23000' fill-opacity='0.19' points='120 0 120 60 90 30 60 0 0 0 0 0 60 60 0 120 60 120 90 90 120 60 120 0'/%3E%3C/svg%3E");
-
   background-size: 60px 60px;
   animation: ${slideBackground} 10s linear infinite;
   img {
@@ -183,7 +176,6 @@ const Avatar = styled.div`
     display: none;
   }
 `;
-
 const Label = styled.label`
   display: block;
   margin: 10px 0 5px;

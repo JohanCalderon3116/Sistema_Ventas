@@ -5,15 +5,11 @@ import {
   InputText,
   Btn1,
   Icono,
-  ConvertirCapitalize,
   useMetodosPagoStore,
   BtnClose,
+  useInsertarMetodosPagoMutationStack,
 } from "../../../index";
 import { useForm } from "react-hook-form";
-import { CirclePicker } from "react-color";
-import { useEmpresaStore } from "../../../store/EmpresaStore";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
 import { BeatLoader } from "react-spinners";
 
 export function RegistrarMetodosPago({
@@ -22,11 +18,8 @@ export function RegistrarMetodosPago({
   accion,
   setIsExploding,
 }) {
-  const { insertarMetodosPago, editarMetodosPago } = useMetodosPagoStore();
+  const { setFile } = useMetodosPagoStore();
   const theme = useTheme();
-  const queryClient = useQueryClient();
-  const { dataempresa } = useEmpresaStore();
-  const [file, setFile] = useState([]);
   const ref = useRef(null);
   const [fileurl, setFileurl] = useState();
   const {
@@ -34,46 +27,18 @@ export function RegistrarMetodosPago({
     formState: { errors },
     handleSubmit,
   } = useForm();
-  const { isPending, mutate: doInsertar } = useMutation({
-    mutationKey: "insertar metodos de pago",
-    mutationFn: insertar,
-    onError: (error) => {
-      toast.error(
-        `No pudimos guardar el método de pago, ${error.message} algo falló en el proceso. Revisa la información e inténtalo de nuevo 😥`,
-      );
-    },
-    onSuccess: () => {
-      toast.success(
-        "El método de pago quedó guardado correctamente y ya está disponible 🥳",
-      );
-      queryClient.invalidateQueries(["mostrar metodos pago"]);
-      cerrarFormulario();
-    },
-  });
-  const handlesub = (data) => {
-    doInsertar(data);
-  };
   const cerrarFormulario = () => {
     onClose();
     setIsExploding(true);
   };
-  async function insertar(data) {
-    if (accion === "Editar") {
-      const p = {
-        nombre: ConvertirCapitalize(data.nombre),
-        id: dataSelect.id,
-      };
-      await editarMetodosPago(p, dataSelect.icono, file);
-    } else {
-      const p = {
-        nombre: ConvertirCapitalize(data.nombre),
-        id_empresa: dataempresa?.id,
-        delete_update: true,
-      };
-
-      await insertarMetodosPago(p, file);
-    }
-  }
+  const { isPending, mutate: doInsertar } = useInsertarMetodosPagoMutationStack(
+    accion,
+    dataSelect,
+    cerrarFormulario,
+  );
+  const handlesub = (data) => {
+    doInsertar(data);
+  };
   function abrirImagenes() {
     ref.current.click();
   }
@@ -113,7 +78,6 @@ export function RegistrarMetodosPago({
                   : "Registrar nuevo método de pago"}
               </h1>
             </section>
-
             <section>
               <BtnClose funcion={onClose}></BtnClose>
             </section>
@@ -126,7 +90,6 @@ export function RegistrarMetodosPago({
             ) : (
               <Icono>{<v.iconoimagenvacia />}</Icono>
             )}
-
             <Btn1
               funcion={abrirImagenes}
               titulo="+imagen(opcional)"
@@ -181,7 +144,6 @@ const Container = styled.div`
   align-items: center;
   justify-content: center;
   z-index: 1000;
-
   .sub-contenedor {
     position: relative;
     width: 500px;
@@ -191,13 +153,11 @@ const Container = styled.div`
     box-shadow: -10px 15px 30px rgba(10, 9, 9, 0.4);
     padding: 13px 36px 20px 36px;
     z-index: 100;
-
     .headers {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 20px;
-
       h1 {
         font-size: 20px;
         font-weight: 500;
@@ -222,25 +182,6 @@ const Container = styled.div`
     }
   }
 `;
-
-const ContentTitle = styled.div`
-  display: flex;
-  justify-content: start;
-  align-items: center;
-  gap: 20px;
-
-  svg {
-    font-size: 25px;
-  }
-  input {
-    border: none;
-    outline: none;
-    background: transparent;
-    padding: 2px;
-    width: 40px;
-    font-size: 28px;
-  }
-`;
 const PictureContainer = styled.div`
   display: flex;
   align-items: center;
@@ -252,7 +193,6 @@ const PictureContainer = styled.div`
   position: relative;
   gap: 3px;
   margin-bottom: 8px;
-
   .ContentImage {
     overflow: hidden;
     img {

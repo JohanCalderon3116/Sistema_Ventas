@@ -9,6 +9,10 @@ import {
 export const useMetodosPagoStore = create((set) => ({
   dataMetodosPago: null,
   selectMetodo: null,
+  file: [],
+  setFile: (p) => {
+    set({ file: p });
+  },
   setSelectMetodo: (p) => {
     set({ selectMetodo: p });
   },

@@ -3,8 +3,6 @@ import { v } from "../../../styles/variables";
 import {
   InputText,
   Btn1,
-  ConvertirCapitalize,
-  useCajasStore,
   useEmpresaStore,
   useProductosStore,
   SelectList,
@@ -19,18 +17,11 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast, Toaster } from "sonner";
 import { useMovStockStore } from "../../../store/MovStockStore";
 import { BuscadorList } from "../../ui/lists/Buscador";
-import { BarLoader, BeatLoader } from "react-spinners";
+import { BeatLoader } from "react-spinners";
 import { RadioChecks } from "../../ui/toogles/RadioChecks";
 export function RegistrarInventario({ onClose }) {
   const queryClient = useQueryClient();
   const fechaactual = useFormattedDate();
-  const {
-    accion: accionCaja,
-    cajaSelelctItem,
-    setStateCaja,
-    insertarCaja,
-    editarCaja,
-  } = useCajasStore();
   const { dataempresa } = useEmpresaStore();
   const theme = useTheme();
   const { insertarMovStock, tipo, setTipo } = useMovStockStore();

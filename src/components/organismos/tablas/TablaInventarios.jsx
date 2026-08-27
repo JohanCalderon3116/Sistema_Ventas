@@ -1,14 +1,7 @@
 import styled from "styled-components";
 import {
-  ContentAccionesTabla,
   Paginacion,
-  ImageContent,
-  Icono,
-  useAsignacionCajaSucursalesStore,
-  useUsuariosStore,
-  useProductosStore,
 } from "../../../index";
-import Swal from "sweetalert2";
 import { v } from "../../../styles/variables";
 import { useState } from "react";
 import {
@@ -20,50 +13,13 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { FaArrowsAltV } from "react-icons/fa";
-import { useQueryClient } from "@tanstack/react-query";
 export function TablaInventarios({
   data,
-  SetopenRegistro,
-  setdataSelect,
-  setAccion,
 }) {
   if (data == null) return;
   const [pagina, setPagina] = useState(1);
   const [datas, setData] = useState(data);
   const [columnFilters, setColumnFilters] = useState([]);
-  const queryClinet = useQueryClient();
-  const { eliminarUsuariosAsignados } = useUsuariosStore();
-  const { dataProductos } = useProductosStore();
-  function eliminar(p) {
-    Swal.fire({
-      title: "¿Estás seguro(a)?",
-      text: "Una vez eliminado, ¡no podrá recuperar este registro!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Si, eliminar",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        await eliminarUsuariosAsignados({ id: p.id_usuario });
-        queryClinet.invalidateQueries(["mostrar usuarios asignados"]);
-      }
-    });
-  }
-  function editar(data) {
-    if (data.nombre === "General") {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Este registro no se permite modificar ya que es valor por defecto.",
-        footer: '<a href="">...</a>',
-      });
-      return;
-    }
-    SetopenRegistro(true);
-    setdataSelect(data);
-    setAccion("Editar");
-  }
   const columns = [
     {
       accessorKey: "fecha",

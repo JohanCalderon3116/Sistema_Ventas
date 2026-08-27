@@ -2,7 +2,6 @@ import styled from "styled-components";
 import {
   Btn1,
   Footer,
-  GenerarCodigo,
   InputText2,
   Linea,
   Lottieanimation,
@@ -14,28 +13,26 @@ import { v } from "../../styles/variables";
 import { Device } from "../../styles/breakpoints";
 import cart from "../../assets/add to cart.json";
 import { useForm } from "react-hook-form";
-import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast, Toaster } from "sonner";
 import { useState } from "react";
 import { CardModos } from "../organismos/LoginDesing/CardModos";
 import { useContraseñaStore } from "../../store/ContraseñaStore";
+import {
+  useIniciarSesionConEmailMutationStack,
+  useMostrarContraseñaQueryStack,
+} from "../../tanstack/LoginStack";
 export const LoginTemplate = () => {
   const [stateModos, setStateModos] = useState(true);
   const [stateModo, setStateModo] = useState(null);
   const [contraseñaOk, setContraseñaOk] = useState(false);
   const [inputContraseña, setInputContraseña] = useState("");
-  const { loginGoogle, loginEmail, crearUserYLogin } = useAuthStore();
-  const { mostrarContraseña, dataContraseña } = useContraseñaStore();
+  const { loginGoogle } = useAuthStore();
+  const { dataContraseña } = useContraseñaStore();
   const { register, handleSubmit } = useForm();
-  useQuery({
-    queryKey: ["mostrar contraseña"],
-    queryFn: mostrarContraseña,
-  });
-
+  useMostrarContraseñaQueryStack();
   const validarContraseña = () => {
     const data = dataContraseña;
     const contraseñaReal = data[0]?.contraseña;
-
     if (Number(inputContraseña) === contraseñaReal) {
       setContraseñaOk(true);
       toast.success("Contraseña correcta, entrando al modo SuperAdmin");
@@ -43,34 +40,12 @@ export const LoginTemplate = () => {
       toast.error("Contraseña incorrecta");
     }
   };
-  const { mutate } = useMutation({
-    mutationKey: ["iniciar sesion con email"],
-    mutationFn: loginEmail,
-    onError: (error) => {
-      toast.error(`Error al iniciar sesión: ${error.message}`);
-    },
-  });
-  const { mutate: mutateTester } = useMutation({
-    mutationKey: ["iniciar sesion con email tester"],
-    mutationFn: loginEmail,
-    onError: (error) => {
-      toast.error(`Error al iniciar sesión: ${error.message}`);
-    },
-    onSuccess: () => {
-      window.location.reload();
-    },
-  });
+  const { mutate } = useIniciarSesionConEmailMutationStack();
   const manejadorEmailSesion = (data) => {
     mutate({ email: data.email, password: data.password });
   };
   const manejadorEmailSesionTester = (data) => {
     mutate({ email: "tester1@gmail.com", password: "123456" });
-  };
-  const manejarCrearUserTester = () => {
-    const response = GenerarCodigo({ id: 2 });
-    const email = "@gmail.com";
-    const correoCompleto = response.toLowerCase() + email;
-    mutateTester({ email: correoCompleto, password: "123456" });
   };
   return (
     <Container>
@@ -215,7 +190,6 @@ const Container = styled.div`
   flex-direction: column;
   padding: 20px;
   color: ${({ theme }) => theme.text};
-
   .card {
     display: flex;
     flex-direction: column;
