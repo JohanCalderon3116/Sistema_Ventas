@@ -16,3 +16,21 @@ export function useFormattedDate() {
 
   return formattedDate;
 }
+export function formatearFechaColombia(fechaISO) {
+  if (!fechaISO) return "";
+  const fecha = new Date(fechaISO);
+  const partes = new Intl.DateTimeFormat("es-CO", {
+    timeZone: "America/Bogota",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+  }).formatToParts(fecha);
+
+  const obtener = (tipo) => partes.find((p) => p.type === tipo)?.value;
+
+  return `${obtener("year")}/${obtener("month")}/${obtener("day")} ${obtener("hour")}:${obtener("minute")}:${obtener("second")}`;
+}

@@ -16,7 +16,7 @@ export const Inventario = () => {
     setBuscador,
     selectProductos,
   } = useProductosStore();
-  const { data: dataProductos, error: errorBuscar } =
+  const { data: dataProductos } =
     useBuscarProductosQueryStack();
   const { data, isLoading } = useMostrarMovimientosStockQueryStack();
   if (isLoading) {

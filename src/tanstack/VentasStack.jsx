@@ -203,7 +203,8 @@ export const useInsertarVentasConDetalleVentasMutationStack = (buscadorRef) => {
   });
 };
 export const useEliminarVentasMutationStack = () => {
-  const { eliminarVenta, idventa } = useVentasStore();
+  const { eliminarVenta, idventa, resetState } = useVentasStore();
+  const { resetDetalleVenta } = useDetalleVentasStore();
   const queryClient = useQueryClient();
   return useMutation({
     mutationKey: ["elminar venta"],
@@ -211,7 +212,9 @@ export const useEliminarVentasMutationStack = () => {
       if (idventa > 0) {
         return eliminarVenta({ id: idventa });
       } else {
-        return Promise.reject(new Error("🛒 No tienes ninguna venta activa para eliminar"));
+        return Promise.reject(
+          new Error("🛒 No tienes ninguna venta activa para eliminar"),
+        );
       }
     },
     onError: (error) => {
@@ -219,7 +222,11 @@ export const useEliminarVentasMutationStack = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["mostrar detalle venta"]);
-      toast.success("🗑️ Listo, eliminaste la venta correctamente, ya limpiaste el carrito 🧹");
+      resetDetalleVenta();
+      resetState();
+      toast.success(
+        "🗑️ Listo, eliminaste la venta correctamente, ya limpiaste el carrito 🧹",
+      );
       document.getElementById("input-buscador-pos")?.focus();
     },
   });

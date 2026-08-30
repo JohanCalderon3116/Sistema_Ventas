@@ -1,31 +1,15 @@
 import styled from "styled-components";
-import { InputText2 } from "../../formularios/InputText2";
-import { Btn1 } from "../../../moleculas/Btn1";
-import { useState } from "react";
-import { useUsuariosStore } from "../../../../store/UsuariosStore";
 import { useCajasStore } from "../../../../store/CajaStore";
 import { useCierreCajaStore } from "../../../../store/CierreCajaStore";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast, Toaster } from "sonner";
-import { useFormattedDate } from "../../../../hooks/useFormattedDate";
-import { useMetodosPagoStore } from "../../../../store/MetodosPagoStore";
-import { useMovCajaStore } from "../../../../store/MovCajaStore";
+import { Toaster } from "sonner";
 import { useAsignacionCajaSucursalesStore } from "../../../../store/AsignacionCajaSucursales";
-import { useMostrarSucursalesAsignadsQueryStack } from "../../../../tanstack/AsignacionesSucursal";
 import { CardListCajas } from "./CardListCajas";
 import { Device } from "../../../../styles/breakpoints";
 import { useMostrarCierreCajaPorEmpresaQueryStack } from "../../../../tanstack/CierreCajaStack";
 
 export const PantallaAperturaCaja = () => {
-  const fechaActual = useFormattedDate();
-  const [montoEfectivo, setMontoEfectivo] = useState(0);
-  const queryClient = useQueryClient();
-  const { datausuarios } = useUsuariosStore();
-  const { sucursalesItemSelectAsignadas, datSucursalesAsignadas } =
+  const { datSucursalesAsignadas } =
     useAsignacionCajaSucursalesStore();
-  const { aperturarCaja } = useCierreCajaStore();
-  const { dataMetodosPago } = useMetodosPagoStore();
-  const { insertarMovcaja } = useMovCajaStore();
   const { data: dataCierreCajaEmpresa } =
     useMostrarCierreCajaPorEmpresaQueryStack();
   const { setCajaSelelctItem } = useCajasStore();

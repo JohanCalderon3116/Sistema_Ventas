@@ -1,6 +1,8 @@
 import styled from "styled-components";
 import {
+  formatearFechaColombia,
   Paginacion,
+  useFormattedDate,
 } from "../../../index";
 import { v } from "../../../styles/variables";
 import { useState } from "react";
@@ -13,18 +15,17 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { FaArrowsAltV } from "react-icons/fa";
-export function TablaInventarios({
-  data,
-}) {
+export function TablaInventarios({ data }) {
   if (data == null) return;
   const [pagina, setPagina] = useState(1);
   const [datas, setData] = useState(data);
   const [columnFilters, setColumnFilters] = useState([]);
+  const fecha = useFormattedDate();
   const columns = [
     {
       accessorKey: "fecha",
       header: "Fecha",
-      cell: (info) => <span>{info.getValue()}</span>,
+      cell: (info) => <span>{formatearFechaColombia(info.getValue())}</span>,
       enableColumnFilter: true,
       filterFn: (row, columnId, filterStatuses) => {
         if (filterStatuses.length === 0) return true;

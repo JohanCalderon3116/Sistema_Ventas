@@ -5,7 +5,8 @@ export async function MostrarMetodosPago(p) {
   const { data, error } = await supabase
     .from(table)
     .select()
-    .eq("id_empresa", p.id_empresa);
+    .eq("id_empresa", p.id_empresa)
+    .order("id", { ascending: true });
   if (error) {
     throw new Error(error.message);
   }

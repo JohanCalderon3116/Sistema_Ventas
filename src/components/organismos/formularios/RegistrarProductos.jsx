@@ -62,7 +62,6 @@ export function RegistrarProductos({
     setStateInventarios,
   } = useProductosStore();
   const {
-    mostrarAlmacen,
     dataalmacen,
     eliminarAlmacen,
     mostrarAlmacenesXSucursal,
@@ -226,7 +225,6 @@ export function RegistrarProductos({
                   : "Registrar nuevo producto"}
               </h1>
             </section>
-
             <section>
               <BtnClose
                 funcion={() => {

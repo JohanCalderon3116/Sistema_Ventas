@@ -26,7 +26,8 @@ export async function MostrarAlmacenesXSucursal(p) {
   const { data, error } = await supabase
     .from(tabla)
     .select()
-    .eq("id_sucursal", p.id_sucursal);
+    .eq("id_sucursal", p.id_sucursal)
+    .order("id", { ascending: true });
   if (error) {
     throw new Error(error.message);
   }
