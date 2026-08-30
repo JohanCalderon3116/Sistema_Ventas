@@ -11,6 +11,7 @@ import {
   useMostrarCajasPorSucursalQueryStack,
 } from "../../../tanstack/SucursalesStack";
 import { useElimarCajasMutationStack } from "../../../tanstack/CajasStack";
+import { formatearFechaColombia } from "../../../hooks/useFormattedDate";
 
 export const ListSucursales = () => {
   const {
@@ -65,7 +66,6 @@ export const ListSucursales = () => {
                     onClick={() => doDeleteSucursal(sucursal?.id)}
                   />
                 )}
-
                 <Icon
                   icon="mdi:edit"
                   width="20"
@@ -80,7 +80,15 @@ export const ListSucursales = () => {
                 return (
                   <CajaItem key={index}>
                     <CajaInfo>
-                      <FechaCreacion> {caja.fecha_creacion} </FechaCreacion>
+                      <FechaCreacion>
+                        <FechaCreacion>
+                          {formatearFechaColombia(
+                            caja.fecha_creacion.endsWith("Z")
+                              ? caja.fecha_creacion
+                              : caja.fecha_creacion + "Z",
+                          )}
+                        </FechaCreacion>
+                      </FechaCreacion>
                     </CajaInfo>
                     <CajaDescripcion> {caja.descripcion} </CajaDescripcion>
                     <Acciones $right="10px" $bottom="10px">
@@ -93,7 +101,6 @@ export const ListSucursales = () => {
                           onClick={() => doDeleteCaja(caja?.id)}
                         />
                       )}
-
                       <Icon
                         icon="mdi:edit"
                         width="20"

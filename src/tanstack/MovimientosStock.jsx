@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useProductosStore } from "../store/ProductosStore";
 import { useEmpresaStore } from "../store/EmpresaStore";
 import { useMovStockStore } from "../store/MovStockStore";
@@ -18,7 +18,8 @@ export const useMostrarMovimientosStockQueryStack = () => {
         id_empresa: dataempresa?.id,
         id_producto: ProductosItemSelect?.id,
       }),
-    enabled: !!dataempresa,
+    enabled: !!dataempresa && !!ProductosItemSelect?.id, 
+    placeholderData: keepPreviousData,
   });
 };
 export const useInsertarMovStcoMutationStack = ({ onClose, resetFuction }) => {
@@ -34,7 +35,6 @@ export const useInsertarMovStcoMutationStack = ({ onClose, resetFuction }) => {
       id_producto: ProductosItemSelect?.id,
       tipo_movimiento: tipo,
       cantidad: parseFloat(data.cantidad),
-      fecha: fechaactual,
       detalle: data.detalle ? data.detalle : "Registro de inventario manual",
       origen: "inventario",
     };

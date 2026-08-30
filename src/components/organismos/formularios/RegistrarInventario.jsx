@@ -53,22 +53,6 @@ export function RegistrarInventario({ onClose }) {
   const {
     data: dataStock,
   } = useMostrarStockQueryStack();
-  //   const pMovimientosStock = {
-  //     id_almacen: almacenSelelctItem?.id,
-  //     id_producto: ProductosItemSelect?.id,
-  //     tipo_movimiento: tipo,
-  //     cantidad: parseFloat(data.cantidad),
-  //     fecha: fechaactual,
-  //     detalle: data.detalle ? data.detalle : "Registro de inventario manual",
-  //     origen: "inventario",
-  //   };
-  //   const pStock = {
-  //     _id: dataStock?.id,
-  //     cantidad: parseFloat(data.cantidad),
-  //   };
-  //   await insertarMovStock(pMovimientosStock);
-  //   await editarStock(pStock, tipo);
-  // };
   const { isPending, mutate: doInsertar } = useInsertarMovStcoMutationStack({
     onClose,
     resetFuction,
@@ -114,7 +98,6 @@ export function RegistrarInventario({ onClose }) {
               <BtnClose funcion={onClose} />
             </section>
           </div>
-
           <form className="formulario" onSubmit={handleSubmit(handlesub)}>
             <section className="form-subcontainer">
               <BuscadorList

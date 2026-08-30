@@ -2,22 +2,28 @@ import {
   ProductosTemplate,
   useMostrarProductosQueryStack,
   useBuscarProductosQueryStack,
+  useProductosStore,
 } from "../index";
 import styled, { useTheme } from "styled-components";
 import { BeatLoader } from "react-spinners";
 import { useMostrarSucursalesXEmpresaStack } from "../tanstack/SucursalesStack";
 import { useMostrarCategoriasQueryStack } from "../tanstack/CategoriasStack";
+import { useEffect } from "react";
 
 export const Productos = () => {
   const theme = useTheme();
-  const {
-    isLoading: isLoadingMostrarProductos,
-  } = useMostrarProductosQueryStack();
+  const { setBuscador } = useProductosStore();
+  const { isLoading: isLoadingMostrarProductos } =
+    useMostrarProductosQueryStack();
   useBuscarProductosQueryStack();
   const { isLoading: isLoadingMostrarSucursales } =
     useMostrarSucursalesXEmpresaStack();
   const { isLoading: isLoadingMostrarCategorias } =
     useMostrarCategoriasQueryStack();
+  useEffect(() => {
+    setBuscador("");
+    return () => setBuscador("");
+  }, []);
   const isLoading =
     isLoadingMostrarCategorias ||
     isLoadingMostrarProductos ||

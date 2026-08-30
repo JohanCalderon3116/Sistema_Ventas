@@ -4,16 +4,23 @@ import {
   Spinner1,
   useCierreCajaStore,
   useMostrarAperturaCajaPorUsuarioQueryStack,
+  useProductosStore,
 } from "../index";
 import { toast } from "sonner";
 import { useMostrarMetodosDePagoQueryStack } from "../tanstack/MetodosPagoStack";
+import { useEffect } from "react";
 
 export function POS() {
   const { dataCierreCaja } = useCierreCajaStore();
+  const { setBuscador } = useProductosStore();
   const { isLoading: isLoadingmetodosPago, error: errorMetodosPago } =
     useMostrarMetodosDePagoQueryStack();
   const { isLoading: isLoadingCierreCaja, error: errorCiereCaja } =
     useMostrarAperturaCajaPorUsuarioQueryStack();
+  useEffect(() => {
+    setBuscador(""); 
+    return () => setBuscador(""); 
+  }, []);
   const isLoading = isLoadingCierreCaja || isLoadingmetodosPago;
   const error = errorCiereCaja || errorMetodosPago;
   if (isLoading) {
