@@ -1,6 +1,7 @@
 import { supabase } from "./supabase.config";
 const tabla = "permisos";
 const tablaDefault = "permisos_default";
+
 export async function MostrarPermisos(p) {
   const { data, error } = await supabase
     .from(tabla)

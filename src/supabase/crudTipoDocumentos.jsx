@@ -1,5 +1,6 @@
 import { supabase } from "./supabase.config";
 const tabla = "tipodocumento";
+
 export async function MostrarTipoDocumentos(p) {
   const { data, error } = await supabase
     .from(tabla)

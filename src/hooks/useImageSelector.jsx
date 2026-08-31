@@ -1,5 +1,5 @@
 import { Icon } from "@iconify/react";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import styled from "styled-components";
 import { useGlobalStore } from "../store/GlobalStore";
 

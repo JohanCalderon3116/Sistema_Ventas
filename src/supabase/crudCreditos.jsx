@@ -1,6 +1,6 @@
 import { supabase } from "./supabase.config";
-
 const table = "creditos";
+
 export async function InsertarCredito(p) {
   const { data, error } = await supabase.from(table).insert(p);
   if (error) {

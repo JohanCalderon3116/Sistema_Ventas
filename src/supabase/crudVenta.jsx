@@ -1,5 +1,6 @@
 import { supabase } from "./supabase.config";
 const tabla = "ventas";
+
 export async function InsertarVentas(p) {
   const { error, data } = await supabase
     .from(tabla)
@@ -8,7 +9,6 @@ export async function InsertarVentas(p) {
     .maybeSingle();
   if (error) {
     throw new Error(error.message);
-    return;
   }
   return data;
 }

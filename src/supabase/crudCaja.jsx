@@ -1,6 +1,6 @@
 import { supabase } from "./supabase.config";
-
 const tabla = "caja";
+
 export async function MostrarCajaXSucursal(p) {
   const { data, error } = await supabase
     .from(tabla)

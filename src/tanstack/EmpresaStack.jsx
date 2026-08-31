@@ -55,7 +55,7 @@ export const useUpdatEmpresaTicketMutateStack = () => {
     },
   });
 };
-export const useeditarMonedaConfigEmpresaMutationStack = () => {
+export const useEditarMonedaConfigEmpresaMutationStack = () => {
   const queryClient = useQueryClient();
   const { dataempresa, editarMondaEmpresa } = useEmpresaStore();
   const { selectedCountry } = useMonedasStore();

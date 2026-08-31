@@ -11,6 +11,7 @@ import {
   MostrarVentasAgrupadasFecha,
   SumarTotalVentasXEmpresa,
 } from "../index";
+
 function calcularTotal(items) {
   return items.reduce(
     (total, item) => total + item.precio_venta * item.cantidad,

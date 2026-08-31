@@ -1,5 +1,6 @@
 import { supabase } from "./supabase.config";
 const tabla = "stock";
+
 export async function InsertarStock(p) {
   const { error } = await supabase.from(tabla).insert(p);
   if (error) {

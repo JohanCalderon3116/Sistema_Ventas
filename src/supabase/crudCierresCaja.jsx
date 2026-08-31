@@ -1,6 +1,6 @@
 import { supabase } from "./supabase.config";
-
 const tabla = "cierrecaja";
+
 export async function MostrarCierreCajaAperturada(p) {
   const { data, error } = await supabase
     .from(tabla)

@@ -1,6 +1,6 @@
 import { supabase } from "./supabase.config";
-
 const table = "metodos_pago";
+
 export async function MostrarMetodosPago(p) {
   const { data, error } = await supabase
     .from(table)

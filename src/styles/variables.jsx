@@ -14,7 +14,6 @@ import { BsArrowDown, BsArrowUpShort } from "react-icons/bs";
 import { FaBalanceScale } from "react-icons/fa";
 import logo from "../../public/SoftCreate POS logo.png";
 import { FcGoogle } from "react-icons/fc";
-
 import { RiCloseLine } from "react-icons/ri";
 import { BiSave } from "react-icons/bi";
 import { BsQuestionCircle } from "react-icons/bs";
@@ -24,7 +23,6 @@ import { BsBarChartLine } from "react-icons/bs";
 import { AiOutlineCalculator } from "react-icons/ai";
 import { BsCalendarCheck } from "react-icons/bs";
 import { IoIosArrowForward } from "react-icons/io";
-
 import { GrFormPrevious, GrCaretNext } from "react-icons/gr";
 import { MdOutlineBorderAll } from "react-icons/md";
 import { MdAlternateEmail } from "react-icons/md";
@@ -74,7 +72,6 @@ export const v = {
   xlSpacing: `32px`,
   xxlSpacing: `48px`,
   borderRadius: `6px`,
-
   paletacolores: CiPalette,
   emoji: BsEmojiLaughing,
   iconeditarTabla: RiEditLine,
@@ -90,7 +87,6 @@ export const v = {
   bpbart: `48em`,
   bpmarge: `62em`,
   bphomer: `75em`,
-
   boxshadowGray: `0px 10px 15px -3px rgba(0,0,0,0.1)`,
   iconoFlechabajo: IoIosArrowDown,
   iconocorona: RiVipCrownFill,
@@ -116,8 +112,6 @@ export const v = {
   iconobars: BsBarChartLine,
   iconocalculadora: AiOutlineCalculator,
   iconocheck: BsCalendarCheck,
-
-  
   iconoflechaderecha: IoIosArrowForward,
   iconoflechaizquierda: IoIosArrowBack,
   colorselector: "#BF94FF",

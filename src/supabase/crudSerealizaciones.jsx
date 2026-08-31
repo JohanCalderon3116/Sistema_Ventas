@@ -1,5 +1,6 @@
 import { supabase } from "./supabase.config";
 const table = "serealizacion_comprobantes";
+
 export async function MostrarSerealizaciones(p) {
   const { data, error } = await supabase
     .from(table)

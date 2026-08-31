@@ -9,7 +9,7 @@ import {
 
 export const Usuarios = () => {
   const theme = useTheme();
-  const { isLoading, error } = useMostrarUsuariosAsignadosQueryStack();
+  const { isLoading } = useMostrarUsuariosAsignadosQueryStack();
   useBuscarUsuariosAsignados();
   if (isLoading) {
     return (

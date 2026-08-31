@@ -1,5 +1,6 @@
 import { supabase } from "./supabase.config";
 const tabla = "usuarios";
+
 export async function MostrarUsuarios(p) {
   const { data, error } = await supabase
     .from(tabla)

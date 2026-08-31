@@ -3,6 +3,7 @@ import {
   EditarImpresoras,
   MostrarImpresorasXCaja,
 } from "../supabase/crudImpresoras";
+
 const fetchWithTimeOut = (url, timeout = 5000) => {
   return new Promise((resolve, reject) => {
     const timer = setTimeout(() => reject(new Error("Timeout")), timeout);

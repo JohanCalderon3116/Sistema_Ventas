@@ -1,5 +1,6 @@
 import { supabase } from "../index";
 const tabla = "sucursales";
+
 export async function MostrarSucursales(p) {
   const { data, error } = await supabase
     .from(tabla)

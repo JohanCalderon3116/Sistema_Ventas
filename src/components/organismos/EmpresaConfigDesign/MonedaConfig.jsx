@@ -6,7 +6,7 @@ import { InputText2 } from "../formularios/InputText2";
 import { FlagIcon } from "react-flag-kit";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { useEmpresaStore } from "../../../store/EmpresaStore";
-import { useeditarMonedaConfigEmpresaMutationStack } from "../../../tanstack/EmpresaStack";
+import { useEditarMonedaConfigEmpresaMutationStack } from "../../../tanstack/EmpresaStack";
 
 export const MonedaConfig = () => {
   const { dataempresa } = useEmpresaStore();
@@ -26,7 +26,7 @@ export const MonedaConfig = () => {
   const filteredCountries = isocodigos.filter((country) =>
     country.countryName.toLowerCase().includes(search),
   );
-  const mutate = useeditarMonedaConfigEmpresaMutationStack();
+  const mutate = useEditarMonedaConfigEmpresaMutationStack();
   return (
     <Container>
       <InputText2>

@@ -1,5 +1,6 @@
 import { supabase } from "./supabase.config";
 const tabla = "empresa";
+
 export async function InsertarEmpresa(p) {
   const { data, error } = await supabase
     .from(tabla)

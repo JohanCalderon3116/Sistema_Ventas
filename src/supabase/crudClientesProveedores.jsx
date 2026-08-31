@@ -1,5 +1,6 @@
 import { supabase } from "./supabase.config";
 const tabla = "clientes_proveedores";
+
 export async function InsertarClientesProveedores(p) {
   const { error, data } = await supabase.rpc("insertarclientesproveedores", p);
   if (error) {

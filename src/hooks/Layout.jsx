@@ -7,9 +7,7 @@ import {
   useCierreCajaStore,
   useEliminarVentasIncompletasMutateStack,
   useEmpresaStore,
-  usePermisosStore,
   userAuth,
-  useSucursalesStore,
   useUsuariosStore,
 } from "../index";
 import { useEffect, useState } from "react";
@@ -23,7 +21,6 @@ export const Layout = ({ children }) => {
   const { mostrarSucursalCajaAsignada } = useAsignacionCajaSucursalesStore();
   const { user } = userAuth();
   const id_auth = user?.id;
-  const { mostrarPermisosGlobales } = usePermisosStore();
   const [stateMenu, setStateMenu] = useState(false);
   const { dataCierreCaja } = useCierreCajaStore();
 
@@ -31,7 +28,6 @@ export const Layout = ({ children }) => {
     refetch: refetchUsuarios,
     data: datausuarios,
     isLoading: isLoadingUsuarios,
-    error: errorUsuarios,
   } = useQuery({
     queryKey: ["mostrar usuarios"],
     queryFn: () =>
@@ -41,11 +37,9 @@ export const Layout = ({ children }) => {
     refetchOnWindowFocus: false,
     enabled: !!id_auth,
   });
-  const { mutate, isPending } = useEliminarVentasIncompletasMutateStack();
+  const { mutate } = useEliminarVentasIncompletasMutateStack();
   const {
-    data: dataSucursales,
     isLoading: isLoadingSucursales,
-    error: errorSucursales,
   } = useQuery({
     queryKey: ["mostrar sucursales caja asignadas", datausuarios?.id],
     queryFn: () =>

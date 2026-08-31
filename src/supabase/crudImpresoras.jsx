@@ -1,5 +1,6 @@
 import { supabase } from "./supabase.config";
 const tabla = "impresoras";
+
 export async function EditarImpresoras(p) {
   const { error } = await supabase.from(tabla).update(p).eq("id", p.id);
   if (error) {

@@ -16,7 +16,6 @@ const initialState = {
   tipocobro: "",
   stateMetodosPago: false,
 };
-
 export const useVentasStore = create((set, get) => ({
   ...initialState,
   porcentajeCambio: 0,

@@ -50,7 +50,6 @@ export const useEditarSerealizacionDefaultMutationStack = () => {
     },
   });
 };
-
 export const useEditarSerealizaciontMutationStack = () => {
   const { editarSerealizacion } = useSerealizacionesStore();
   const { itemSelect, setStateClose } = useGlobalStore();
