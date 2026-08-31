@@ -40,12 +40,10 @@ export function RegistrarSucursal() {
                   : "Registrar nueva sucursal"}
               </h1>
             </section>
-
             <section>
               <BtnClose funcion={() => setStateSucursal(false)} />
             </section>
           </div>
-
           <form className="formulario" onSubmit={handleSubmit(handlesub)}>
             <section className="form-subcontainer">
               <article>
@@ -82,7 +80,6 @@ export function RegistrarSucursal() {
                   )}
                 </InputText>
               </article>
-
               <Btn1
                 icono={<v.iconoguardar />}
                 titulo="Guardar"
@@ -118,13 +115,11 @@ const Container = styled.div`
     z-index: 100;
     max-height: 80vh;
     overflow-y: auto;
-
     .headers {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 20px;
-
       h1 {
         font-size: 30px;
         font-weight: 700;

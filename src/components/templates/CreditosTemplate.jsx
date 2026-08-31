@@ -1,59 +1,35 @@
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import {
   Btn1,
   Buscador,
   InputText2,
-  RegistrarAbonoCreditos,
-  Spinner1,
-  TablaClientesProveedores,
   Title,
-  useClientesProveedoresStore,
-  useEmpresaStore,
+  useBuscarCreditsoQueryStack,
+  useMostrarCreditosQueryStack,
 } from "../../index";
 import { v } from "../../styles/variables";
 import { useState } from "react";
 import Confetti from "react-confetti-boom";
-import { useLocation } from "react-router-dom";
 import { RegistrarCreditos } from "../organismos/formularios/RegistrarCreditos";
 import { toast, Toaster } from "sonner";
 import { TablaCreditos } from "../organismos/tablas/TablaCreditos";
-import { useQuery } from "@tanstack/react-query";
 import { useCreditosStore } from "../../store/CreditosStore";
 import { useContraseñaStore } from "../../store/ContraseñaStore";
+import { useMostrarContraseñaQueryStack } from "../../tanstack/LoginStack";
+import { BeatLoader } from "react-spinners";
 export const CreditosTemplate = () => {
-  const { setBuscador, buscador, buscarCreditos } = useCreditosStore();
+  const { setBuscador } = useCreditosStore();
+  const theme = useTheme();
   const [openRegistro, setOpenRegistro] = useState(false);
-  const [openRegistroAgregar, setOpenRegistroAgregar] = useState(false);
-  const [accion, setAccion] = useState("");
   const [dataSelect, setDataSelect] = useState([]);
-  const [dataSelectAgregar, setDataSelectAgregar] = useState([]);
   const [isExploding, setIsExploding] = useState(false);
-  const [isExplodingAgregar, setIsExplodingAgregar] = useState(false);
-  const [contraseñaOk, setContraseñaOk] = useState(false);
   const [openModalContraseña, setOpenModalContraseña] = useState(false);
   const [inputContraseña, setInputContraseña] = useState("");
-  const { mostrarCreditos, datacreditos } = useCreditosStore();
-  const { mostrarContraseña, dataContraseña } = useContraseñaStore();
-  const { dataempresa } = useEmpresaStore();
-  const location = useLocation();
-  function nuevoRegistro() {
-    setOpenRegistro(!openRegistro);
-    setDataSelect([]);
-    setIsExploding(false);
-  }
-  function nuevoRegistroAgregar() {
-    setOpenRegistroAgregar(!openRegistroAgregar);
-    setDataSelectAgregar([]);
-    setIsExplodingAgregar(false);
-  }
-  useQuery({
-    queryKey: ["mostrar contraseña"],
-    queryFn: mostrarContraseña,
-  });
-
+  const { datacreditos } = useCreditosStore();
+  const { dataContraseña } = useContraseñaStore();
+  useMostrarContraseñaQueryStack();
   const validarContraseña = () => {
     const contraseñaReal = dataContraseña[0]?.contraseña;
-
     if (Number(inputContraseña) === contraseñaReal) {
       setOpenModalContraseña(false);
       setInputContraseña("");
@@ -67,23 +43,17 @@ export const CreditosTemplate = () => {
       );
     }
   };
-  const { isLoading } = useQuery({
-    queryKey: ["mostrar creditos", { id_empresa: dataempresa?.id }],
-    queryFn: () =>
-      mostrarCreditos({
-        id_empresa: dataempresa?.id,
-      }),
-    enabled: !!dataempresa?.id,
-  });
-  useQuery({
-    queryKey: ["buscar creditos", buscador],
-    queryFn: () =>
-      buscarCreditos({ id_empresa: dataempresa?.id, nombres: buscador }),
-    enabled: !!dataempresa,
-    refetchOnWindowFocus: false,
-  });
+  const { isLoading } = useMostrarCreditosQueryStack();
+  useBuscarCreditsoQueryStack();
   if (isLoading) {
-    return <Spinner1></Spinner1>;
+    return (
+      <ConteinerLoader>
+        <span>
+          <strong>Cargando</strong>
+        </span>
+        <BeatLoader color={theme.text} size={8} />
+      </ConteinerLoader>
+    );
   }
   return (
     <Container>
@@ -115,15 +85,7 @@ export const CreditosTemplate = () => {
         <RegistrarCreditos
           setIsExploding={setIsExploding}
           onClose={() => setOpenRegistro(!openRegistro)}
-          dataSelect={dataSelect}
         ></RegistrarCreditos>
-      )}
-      {openRegistroAgregar && (
-        <RegistrarAbonoCreditos
-          setIsExploding={setIsExplodingAgregar}
-          onClose={() => setOpenRegistroAgregar(!openRegistroAgregar)}
-          dataSelect={dataSelectAgregar}
-        ></RegistrarAbonoCreditos>
       )}
       <section className="area1">
         <Title>Créditos</Title>
@@ -131,13 +93,6 @@ export const CreditosTemplate = () => {
           funcion={() => setOpenModalContraseña(true)}
           bgcolor="#6d05e5"
           titulo="Nuevo"
-          icono={<v.iconoagregar />}
-        ></Btn1>
-
-        <Btn1
-          funcion={nuevoRegistroAgregar}
-          bgcolor="#3300E3"
-          titulo="Abonos"
           icono={<v.iconoagregar />}
         ></Btn1>
       </section>
@@ -166,7 +121,6 @@ const Container = styled.div`
     "main" auto;
   .area1 {
     grid-area: area1;
-
     display: flex;
     justify-content: end;
     align-items: center;
@@ -174,7 +128,6 @@ const Container = styled.div`
   }
   .area2 {
     grid-area: area2;
-
     display: flex;
     justify-content: end;
     align-items: center;
@@ -192,7 +145,6 @@ const ModalContraseña = styled.div`
   align-items: center;
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(5px);
-
   .card {
     background: ${({ theme }) => theme.body2};
     padding: 30px;
@@ -208,4 +160,12 @@ const ModalContraseña = styled.div`
       text-align: center;
     }
   }
+`;
+const ConteinerLoader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  height: 100vh;
 `;

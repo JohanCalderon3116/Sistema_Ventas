@@ -1,4 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
 import {
   CategoriasTemplate,
 } from "../index";
@@ -11,7 +10,7 @@ import {
 
 export const Categorias = () => {
   const theme = useTheme();
-  const { isLoading, error } = useMostrarCategoriasQueryStack();
+  const { isLoading } = useMostrarCategoriasQueryStack();
   useBuscarCategoriasQueryStack();
   if (isLoading) {
     return (

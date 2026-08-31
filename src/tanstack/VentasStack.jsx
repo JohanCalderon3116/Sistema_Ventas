@@ -15,6 +15,7 @@ import Swal from "sweetalert2";
 import { useEmpresaStore } from "../store/EmpresaStore";
 import { useProductosStore } from "../store/ProductosStore";
 import { useAlmacenesStore } from "../store/AlmacenesStore";
+import { useDashboardStore } from "../store/DashboardStore";
 
 export const useEliminarVentasIncompletasMutateStack = () => {
   const { eliminarventasIncompletas } = useVentasStore();
@@ -229,5 +230,148 @@ export const useEliminarVentasMutationStack = () => {
       );
       document.getElementById("input-buscador-pos")?.focus();
     },
+  });
+};
+export const useMostrarCantidadVentasQueryStack = () => {
+  const { dataempresa } = useEmpresaStore();
+  const { fechaInicio, fechaFin } = useDashboardStore();
+  const { contarVentasXEmpresa } = useDetalleVentasStore();
+  return useQuery({
+    queryKey: [
+      "mostrar cantidad ventas",
+      {
+        _id_empresa: dataempresa?.id,
+        _fecha_inicio: fechaInicio,
+        _fecha_fin: fechaFin,
+      },
+    ],
+    queryFn: () =>
+      contarVentasXEmpresa({
+        _id_empresa: dataempresa?.id,
+        _fecha_inicio: fechaInicio,
+        _fecha_fin: fechaFin,
+      }),
+    enabled: !!dataempresa?.id && !!fechaInicio && !!fechaFin,
+  });
+};
+export const useSumarVentasQueryStack = () => {
+  const { dataempresa } = useEmpresaStore();
+  const { fechaInicio, fechaFin } = useDashboardStore();
+  const { sumarTotalVentasXEmpresa } = useDetalleVentasStore();
+  return useQuery({
+    queryKey: [
+      "sumar ventas",
+      {
+        _id_empresa: dataempresa?.id,
+        _fecha_inicio: fechaInicio,
+        _fecha_fin: fechaFin,
+      },
+    ],
+    queryFn: () =>
+      sumarTotalVentasXEmpresa({
+        _id_empresa: dataempresa?.id,
+        _fecha_inicio: fechaInicio,
+        _fecha_fin: fechaFin,
+      }),
+
+    enabled: !!dataempresa?.id && !!fechaInicio && !!fechaFin,
+  });
+};
+export const useMostrarGanaciasXEmpresaQueryStack = () => {
+  const { dataempresa } = useEmpresaStore();
+  const { fechaInicio, fechaFin } = useDashboardStore();
+  const { calcularGananciasXEmpresa } = useDetalleVentasStore();
+  return useQuery({
+    queryKey: [
+      "mostrar ganacias x empresa",
+      {
+        _id_empresa: dataempresa?.id,
+        _fecha_inicio: fechaInicio,
+        _fecha_fin: fechaFin,
+      },
+    ],
+    queryFn: () =>
+      calcularGananciasXEmpresa({
+        _id_empresa: dataempresa?.id,
+        _fecha_inicio: fechaInicio,
+        _fecha_fin: fechaFin,
+      }),
+    enabled: !!dataempresa?.id && !!fechaInicio && !!fechaFin,
+  });
+};
+export const useMostrarVentasAgrupadasXFechaQueryStack = () => {
+  const { dataempresa } = useEmpresaStore();
+  const { fechaInicio, fechaFin } = useDashboardStore();
+  const { mostrarVentasAgrupadasFecha } = useDetalleVentasStore();
+  return useQuery({
+    queryKey: [
+      "mostrar ventas agrupadas x fecha",
+      {
+        _id_empresa: dataempresa?.id,
+        _fecha_inicio: fechaInicio,
+        _fecha_fin: fechaFin,
+      },
+    ],
+    queryFn: () =>
+      mostrarVentasAgrupadasFecha({
+        _id_empresa: dataempresa?.id,
+        _fecha_inicio: fechaInicio,
+        _fecha_fin: fechaFin,
+      }),
+
+    enabled: !!dataempresa?.id && !!fechaInicio && !!fechaFin,
+  });
+};
+export const useMostrarTop5MasVendidosXCantidadQueryStack = () => {
+  const { dataempresa } = useEmpresaStore();
+  const { fechaInicio, fechaFin } = useDashboardStore();
+  const { mostrarTop5ProductosMasVenidosPorCantidad } = useDetalleVentasStore();
+  return useQuery({
+    queryKey: [
+      "mostrar top 5 mas vendidos por cantidad",
+      {
+        _id_empresa: dataempresa?.id,
+        _fecha_inicio: fechaInicio,
+        _fecha_fin: fechaFin,
+      },
+    ],
+    queryFn: () =>
+      mostrarTop5ProductosMasVenidosPorCantidad({
+        _id_empresa: dataempresa?.id,
+        _fecha_inicio: fechaInicio,
+        _fecha_fin: fechaFin,
+      }),
+    enabled: !!dataempresa,
+  });
+};
+export const useMostrarMovimientosCajaLiveQueryStack = () => {
+  const { mostrarMovimentosCajaLive } = useMovCajaStore();
+  const { dataempresa } = useEmpresaStore();
+  return useQuery({
+    queryKey: ["mostrar movimientos caja live"],
+    queryFn: () => mostrarMovimentosCajaLive({ _id_empresa: dataempresa?.id }),
+    enabled: !!dataempresa,
+  });
+};
+export const useMostrarTop10MasVendidosXMontoQueryStack = () => {
+  const { dataempresa } = useEmpresaStore();
+  const { fechaInicio, fechaFin } = useDashboardStore();
+  const { mostrarTop10ProductosMasVenidosPorMonto } = useDetalleVentasStore();
+  return useQuery({
+    queryKey: [
+      "mostrar top 10 productos mas venidos por monto",
+      {
+        _id_empresa: dataempresa?.id,
+        _fecha_inicio: fechaInicio,
+        _fecha_fin: fechaFin,
+      },
+    ],
+    queryFn: () =>
+      mostrarTop10ProductosMasVenidosPorMonto({
+        _id_empresa: dataempresa?.id,
+        _fecha_inicio: fechaInicio,
+        _fecha_fin: fechaFin,
+      }),
+    enabled: !!dataempresa,
   });
 };

@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEmpresaStore } from "../store/EmpresaStore";
 import { toast } from "sonner";
 import { useGlobalStore } from "../store/GlobalStore";
+import { useMonedasStore } from "../store/MonedasStore";
 export const useUpdatEmpresaMutateStack = () => {
   const queryClient = useQueryClient();
   const { dataempresa, editarEmpresa } = useEmpresaStore();
@@ -46,13 +47,39 @@ export const useUpdatEmpresaTicketMutateStack = () => {
       await editarEmpresa(p, dataempresa?.logo, file);
     },
     onError: (error) => {
+      toast.error(`No pudimos actualizar tu ticket 😕 ${error.message}`);
+    },
+    onSuccess: () => {
+      toast.success("¡Datos guardados! Tu ticket se actualizó con éxito 🎉");
+      queryClient.invalidateQueries(["mostrar ticket"]);
+    },
+  });
+};
+export const useeditarMonedaConfigEmpresaMutationStack = () => {
+  const queryClient = useQueryClient();
+  const { dataempresa, editarMondaEmpresa } = useEmpresaStore();
+  const { selectedCountry } = useMonedasStore();
+  const editar = async () => {
+    const p = {
+      id: dataempresa?.id,
+      simbolo_moneda: selectedCountry.symbol,
+      iso: selectedCountry.iso,
+      pais: selectedCountry.countryName,
+      currency: selectedCountry.currency,
+    };
+    await editarMondaEmpresa(p);
+  };
+  return useMutation({
+    mutationKey: "editar empresa moneda",
+    mutationFn: editar,
+    onError: (error) => {
       toast.error(
-        `LO sentimos, no pudimos actualizar tu empresa :/ ${error.message}`,
+        `No se pudo actualizar la moneda de tu país, ${error.message} inténtalo de nuevo 😩`,
       );
     },
     onSuccess: () => {
-      toast.success("Datos guardados, tu empresa se actualizo con exito :p");
-      queryClient.invalidateQueries(["mostrar empresa"]);
+      queryClient.invalidateQueries("mostrar empresa");
+      toast.success("La moneda de tu país se actualizó correctamente 😃");
     },
   });
 };

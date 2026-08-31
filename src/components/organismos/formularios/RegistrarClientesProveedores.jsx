@@ -1,19 +1,14 @@
-import { useEffect, useRef, useState } from "react";
 import styled, { useTheme } from "styled-components";
 import { v } from "../../../styles/variables";
 import {
   InputText,
   Btn1,
-  ConvertirCapitalize,
   useClientesProveedoresStore,
   BtnClose,
+  useInsertarClientesProveedoresMutationStack,
 } from "../../../index";
 import { useForm } from "react-hook-form";
-import { CirclePicker } from "react-color";
-import { useEmpresaStore } from "../../../store/EmpresaStore";
-import { useMutation } from "@tanstack/react-query";
 import { BeatLoader } from "react-spinners";
-import { toast } from "sonner";
 
 export function RegistrarClientesProveedores({
   onClose,
@@ -21,64 +16,25 @@ export function RegistrarClientesProveedores({
   accion,
   setIsExploding,
 }) {
-  const { dataempresa } = useEmpresaStore();
-  const { insertarCliPro, editarCliPro, tipo } = useClientesProveedoresStore();
+  const { tipo } = useClientesProveedoresStore();
   const theme = useTheme();
   const {
     register,
     formState: { errors },
     handleSubmit,
   } = useForm();
-  const { isPending, mutate: doInsertar } = useMutation({
-    mutationFn: insertar,
-    mutationKey: "insertar clientes proveedores",
-    onError: (error) => {
-      toast.error(
-        `No pudimos guardar los datos que ingresaste, algo falló en el proceso: ${error.message}. Revisa la información e inténtalo de nuevo 😣`,
-      );
-    },
-    onSuccess: () => {
-      toast.success(
-        "Todo salió bien, la información quedó guardada correctamente y ya está disponible 🤗",
-      );
-      cerrarFormulario();
-    },
-  });
+  const { isPending, mutate: doInsertar } =
+    useInsertarClientesProveedoresMutationStack({
+      accion,
+      dataSelect,
+      cerrarFormulario,
+    });
   const handlesub = (data) => {
     doInsertar(data);
   };
-  const cerrarFormulario = () => {
+  function cerrarFormulario() {
     onClose();
     setIsExploding(true);
-  };
-  async function insertar(data) {
-    if (accion === "Editar") {
-      const p = {
-        _id: dataSelect.id,
-        _nombres: ConvertirCapitalize(data.nombres),
-        _id_empresa: dataempresa?.id,
-        _direccion: data.direccion,
-        _telefono: data.telefono,
-        _email: data.email,
-        _identificador_nacional: data.identificador_nacional,
-        _identificador_fiscal: data.identificador_fiscal || "-",
-        _tipo: tipo,
-      };
-      await editarCliPro(p);
-    } else {
-      const p = {
-        _nombres: ConvertirCapitalize(data.nombres),
-        _id_empresa: dataempresa?.id,
-        _direccion: data.direccion,
-        _telefono: data.telefono,
-        _email: data.email,
-        _identificador_nacional: data.identificador_nacional,
-        _identificador_fiscal: data.identificador_fiscal || "-",
-        _tipo: tipo,
-      };
-
-      await insertarCliPro(p);
-    }
   }
   return (
     <Container>
@@ -145,7 +101,7 @@ export function RegistrarClientesProveedores({
                   <input
                     className="form__field"
                     defaultValue={dataSelect.telefono}
-                    type="text"
+                    type="number"
                     placeholder="Telefono"
                     {...register("telefono", {
                       required: true,
@@ -162,7 +118,7 @@ export function RegistrarClientesProveedores({
                   <input
                     className="form__field"
                     defaultValue={dataSelect.email}
-                    type="text"
+                    type="email"
                     placeholder="Email"
                     {...register("email", {
                       required: true,
@@ -177,7 +133,7 @@ export function RegistrarClientesProveedores({
                   <input
                     className="form__field"
                     defaultValue={dataSelect.identificador_nacional}
-                    type="text"
+                    type="number"
                     placeholder="Identificador_nacional"
                     {...register("identificador_nacional", {
                       required: true,
@@ -194,7 +150,7 @@ export function RegistrarClientesProveedores({
                   <input
                     className="form__field"
                     defaultValue={dataSelect.identificador_fiscal}
-                    type="text"
+                    type="number"
                     placeholder="Identificador_fiscal"
                     {...register("identificador_fiscal")}
                   />
@@ -266,48 +222,6 @@ const Container = styled.div`
         }
       }
     }
-  }
-`;
-
-const ContentTitle = styled.div`
-  display: flex;
-  justify-content: start;
-  align-items: center;
-  gap: 20px;
-
-  svg {
-    font-size: 25px;
-  }
-  input {
-    border: none;
-    outline: none;
-    background: transparent;
-    padding: 2px;
-    width: 40px;
-    font-size: 28px;
-  }
-`;
-const PictureContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: start;
-  border: 2px dashed #f9d70b;
-  border-radius: 5px;
-  background-color: rgba(249, 215, 11, 0.1);
-  padding: 8px;
-  position: relative;
-  gap: 3px;
-  margin-bottom: 8px;
-
-  .ContentImage {
-    overflow: hidden;
-    img {
-      width: 100%;
-      object-fit: contain;
-    }
-  }
-  input {
-    display: none;
   }
 `;
 const ConteinerLoader = styled.div`

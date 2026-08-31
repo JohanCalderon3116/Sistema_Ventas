@@ -19,7 +19,7 @@ export const Configuraciones = () => {
   }
   if (error) {
     return toast.error(
-      "Tuvimos un error al tratar de cargar las serializaciones 😑​",
+      "Tuvimos un error al tratar de cargar las configuracines 😑​",
     );
   }
   return (

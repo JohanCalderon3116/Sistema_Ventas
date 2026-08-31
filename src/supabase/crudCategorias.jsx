@@ -45,7 +45,7 @@ export async function MostrarCategorias(p) {
     .from(tabla)
     .select()
     .eq("id_empresa", p.id_empresa)
-    .order("id", { ascending: false });
+    .order("id", { ascending: true });
   if (error) {
     throw new Error(error.message);
   }

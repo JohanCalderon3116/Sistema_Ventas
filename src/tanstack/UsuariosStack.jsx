@@ -1,8 +1,4 @@
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useEmpresaStore } from "../store/EmpresaStore";
 import { useAsignacionCajaSucursalesStore } from "../store/AsignacionCajaSucursales";
@@ -11,6 +7,7 @@ import { usePermisosStore } from "../store/PermisosStore";
 import { useRolesStore } from "../store/RolesStore";
 import { useSucursalesStore } from "../store/SucursalesStore";
 import { useCajasStore } from "../store/CajaStore";
+import { useClientesProveedoresStore } from "../store/ClientesProveedoresStore";
 
 export const useEditarUsuarioMutationStack = () => {
   const queryClient = useQueryClient();
@@ -120,5 +117,20 @@ export const useInsertarUsuariosPorEmpresaMutationStack = ({
       queryClient.invalidateQueries(["mostrar usuarios asignados"]);
       onClose();
     },
+  });
+};
+export const useMostrarUsuarioQueryStack = () => {
+  const { dataempresa } = useEmpresaStore();
+  const { mostrarCliPro } = useClientesProveedoresStore();
+  return useQuery({
+    queryKey: [
+      "mostrar usuarios",
+      { id_empresa: dataempresa?.id, tipo: "cliente" },
+    ],
+    queryFn: () =>
+      mostrarCliPro({
+        id_empresa: dataempresa?.id,
+        tipo: "cliente",
+      }),
   });
 };

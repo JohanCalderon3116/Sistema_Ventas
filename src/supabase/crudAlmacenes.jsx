@@ -16,7 +16,9 @@ export async function MostrarAlmacenesXEmpresa(p) {
   const { data, error } = await supabase
     .from("sucursales")
     .select(`*, almacenes(*)`)
-    .eq("id_empresa", p.id_empresa);
+    .eq("id_empresa", p.id_empresa)
+    .order("id", { ascending: true })
+    .order("id", { referencedTable: "almacenes", ascending: true });
   if (error) {
     throw new Error(error.message);
   }

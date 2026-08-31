@@ -1,5 +1,4 @@
 import { Icon } from "@iconify/react/dist/iconify.js";
-import React from "react";
 import styled, { useTheme } from "styled-components";
 import { InputText2 } from "../formularios/InputText2";
 import { Btn1 } from "../../moleculas/Btn1";
@@ -27,7 +26,6 @@ export const BasicosConfig = () => {
       telefono_celular: dataempresa?.telefono_celular,
     },
   });
-
   const { mutate: doEditar, isPending } = useUpdatEmpresaMutateStack();
   return (
     <Container>
@@ -188,9 +186,9 @@ const Avatar = styled.div`
     bottom: 0;
     right: 10px;
     font-size: 25px;
-    overflow: hidden; /* Para asegurarse de que el contenido adicional esté oculto */
-    white-space: normal; /* Permite el salto de línea */
-    word-wrap: break-word; /* Rompe las palabras largas y las envuelve a la siguiente línea */
+    overflow: hidden; 
+    white-space: normal; 
+    word-wrap: break-word; 
     color: #fff !important;
   }
   background-color: #6d05e5;
@@ -205,44 +203,7 @@ const Avatar = styled.div`
   }
 `;
 
-const AvatarImage = styled.img`
-  width: 80px;
-  height: 80px;
-  border-radius: 10px;
-  margin-right: 10px;
-`;
-
-const EditButton = styled.button`
-  background-color: #00aaff;
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-  width: 30px;
-  height: 30px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: absolute;
-  left: 60px;
-  top: 10px;
-  margin: auto;
-  .icono {
-    font-size: 20px;
-  }
-`;
-
 const Label = styled.label`
   display: block;
   margin: 10px 0 5px;
-`;
-
-const Button = styled.button`
-  width: 100%;
-  padding: 10px;
-  margin-top: 20px;
-  border: none;
-  border-radius: 5px;
-  background-color: #00aaff;
-  color: #fff;
-  cursor: pointer;
 `;

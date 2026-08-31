@@ -6,19 +6,16 @@ import { InputText2 } from "../formularios/InputText2";
 import { FlagIcon } from "react-flag-kit";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { useEmpresaStore } from "../../../store/EmpresaStore";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { useeditarMonedaConfigEmpresaMutationStack } from "../../../tanstack/EmpresaStack";
 
 export const MonedaConfig = () => {
-  const { dataempresa, editarMondaEmpresa } = useEmpresaStore();
+  const { dataempresa } = useEmpresaStore();
   const { search, setSearch, selectedCountry, setSelectedCountry } =
     useMonedasStore();
-  const queryClient = useQueryClient();
   const isocodigos = iso.getAllISOCodes();
   const handleSearchChange = (e) => {
     setSearch(e.target.value.toLowerCase());
   };
-
   const handleSelectCountry = (country) => {
     const countryInfo = getAllInfoByISO(country.iso);
     setSelectedCountry({ ...country, currency: countryInfo.currency });
@@ -26,34 +23,10 @@ export const MonedaConfig = () => {
 
     mutate.mutateAsync();
   };
-
   const filteredCountries = isocodigos.filter((country) =>
     country.countryName.toLowerCase().includes(search),
   );
-  const editar = async () => {
-    const p = {
-      id: dataempresa?.id,
-      simbolo_moneda: selectedCountry.symbol,
-      iso: selectedCountry.iso,
-      pais: selectedCountry.countryName,
-      currency: selectedCountry.currency,
-    };
-    await editarMondaEmpresa(p);
-  };
-  const mutate = useMutation({
-    mutationKey: "editar empresa moneda",
-    mutationFn: editar,
-    onError: (error) => {
-      toast.error(
-        "No se pudo actualizar la moneda de tu país, inténtalo de nuevo 😩",
-      );
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries("mostrar empresa");
-      toast.success("La moneda de tu país se actualizó correctamente 😃");
-    },
-  });
-
+  const mutate = useeditarMonedaConfigEmpresaMutationStack();
   return (
     <Container>
       <InputText2>
@@ -67,7 +40,6 @@ export const MonedaConfig = () => {
         />
       </InputText2>
       <Linea />
-
       {search && filteredCountries.length > 0 && (
         <Dropdown>
           <DropdownList>
@@ -82,7 +54,6 @@ export const MonedaConfig = () => {
           </DropdownList>
         </Dropdown>
       )}
-
       <Cardselect
         flag={
           selectedCountry
@@ -102,7 +73,6 @@ export const MonedaConfig = () => {
               size={60}
             />
           </article>
-
           <article className="area2_2">
             <span>
               {selectedCountry == null
@@ -166,11 +136,11 @@ const DropdownItem = styled.li`
   border-radius: 10px;
   cursor: pointer;
   transition: 0.3s;
-
   &:hover {
     background-color: ${({ theme }) => theme.bgtotal};
   }
 `;
+
 const Cardselect = styled.section`
   border: 2px solid ${({ theme }) => theme.color2};
   border-radius: 10px;
@@ -181,7 +151,6 @@ const Cardselect = styled.section`
   position: relative;
   overflow: hidden;
   width: 320px;
-
   .area2 {
     display: flex;
     align-items: center;
@@ -203,6 +172,7 @@ const Cardselect = styled.section`
     }
   }
 `;
+
 const Linea = styled.span`
   width: 100%;
   border-bottom: solid 2px ${({ theme }) => theme.color2};

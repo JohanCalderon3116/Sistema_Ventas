@@ -4,7 +4,8 @@ export async function MostrarSucursales(p) {
   const { data, error } = await supabase
     .from(tabla)
     .select()
-    .eq("id_empresa", p.id_empresa);
+    .eq("id_empresa", p.id_empresa)
+    .order("id", { ascending: true });
   if (error) {
     throw new Error(error.message);
   }
@@ -14,7 +15,8 @@ export async function MostrarCajasPorSucursal(p) {
   const { data, error } = await supabase
     .from(tabla)
     .select(`*, caja(*)`)
-    .eq("id_empresa", p.id_empresa);
+    .eq("id_empresa", p.id_empresa)
+    .order("id", { ascending: true });
   if (error) {
     throw new Error(error.message);
   }

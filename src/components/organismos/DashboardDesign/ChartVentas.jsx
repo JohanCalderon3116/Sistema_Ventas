@@ -15,40 +15,21 @@ import {
 } from "../../../utils/Conversiones";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { useThemeStore } from "../../../store/ThemeStore";
-import { useQuery } from "@tanstack/react-query";
-import { useDashboardStore, useDetalleVentasStore } from "../../..";
+import {
+  useDetalleVentasStore,
+  useMostrarVentasAgrupadasXFechaQueryStack,
+} from "../../..";
 import { BarLoader } from "react-spinners";
 export const ChartVentas = () => {
-  const { dataempresa } = useEmpresaStore();
   const {
-    mostrarVentasAgrupadasFecha,
     ventasAgrupadasFecha,
     totalVentas,
     porcentajeCambioTotal,
   } = useDetalleVentasStore();
-  const { fechaInicio, fechaFin } = useDashboardStore();
   const { themeStyle } = useThemeStore();
   const isPositive = porcentajeCambioTotal > 0;
   const isNeutral = porcentajeCambioTotal === 0;
-  const { isLoading } = useQuery({
-    queryKey: [
-      "mostrar ventas agrupadas x fecha",
-      {
-        _id_empresa: dataempresa?.id,
-        _fecha_inicio: fechaInicio,
-        _fecha_fin: fechaFin,
-      },
-    ],
-    queryFn: () =>
-      mostrarVentasAgrupadasFecha({
-        _id_empresa: dataempresa?.id,
-        _fecha_inicio: fechaInicio,
-        _fecha_fin: fechaFin,
-      }),
-
-    enabled: !!dataempresa?.id && !!fechaInicio && !!fechaFin,
-  });
-
+  const { isLoading } = useMostrarVentasAgrupadasXFechaQueryStack();
   if (isLoading) {
     return <BarLoader></BarLoader>;
   }
@@ -136,6 +117,7 @@ const CustomTooltip = ({ active, payload, label }) => {
   }
 };
 const Container = styled.div``;
+
 const TooltipContainer = styled.div`
   background: ${({ theme }) => theme.bg};
   padding: 10px;
@@ -143,6 +125,7 @@ const TooltipContainer = styled.div`
   font-size: 12px;
   box-shadow: ${({ theme }) => theme.boxshadow};
 `;
+
 const Date = styled.div`
   font-size: 14px;
 `;
@@ -164,21 +147,25 @@ const Title = styled.h3`
   font-weight: bold;
   color: ${({ theme }) => theme.text};
 `;
+
 const MainInfo = styled.div`
   margin: 20px 0;
   padding-left: 20px;
 `;
+
 const Revenue = styled.div`
   font-size: 24px;
   font-weight: bold;
   color: ${({ theme }) => theme.text};
 `;
+
 const Change = styled.div`
   display: flex;
   align-items: center;
   gap: 5px;
   margin-top: 5px;
 `;
+
 const Percentage = styled.span`
   display: flex;
   text-align: center;

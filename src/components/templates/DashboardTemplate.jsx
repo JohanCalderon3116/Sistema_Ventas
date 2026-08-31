@@ -1,15 +1,11 @@
 import styled from "styled-components";
 import { Device } from "../../styles/breakpoints";
 import { DashboardHeader } from "../organismos/DashboardDesign/DashboardHeader";
-import { CardTotales } from "../organismos/DashboardDesign/CardTotales";
 import { ChartVentas } from "../organismos/DashboardDesign/ChartVentas";
 import { ChartProductosTop5 } from "../organismos/DashboardDesign/ChartProductosTop5";
 import { CardMovimientosCajaLive } from "../organismos/DashboardDesign/CardMovimientosCajaLive";
 import { CardMovimientosProductosTopMonto } from "../organismos/DashboardDesign/CardMovimientosProductosTopMonto";
-import { useQuery } from "@tanstack/react-query";
-import { useDetalleVentasStore } from "../../store/DetalleVentasStore";
-import { Ganacias, useDashboardStore, useEmpresaStore } from "../..";
-import { BarLoader } from "react-spinners";
+import { Ganacias } from "../..";
 import { CantidadVentas } from "../organismos/DashboardDesign/CantidadVentas";
 import { SumarVentas } from "../organismos/DashboardDesign/SumarVentas";
 
@@ -54,8 +50,6 @@ const Container = styled.div`
   gap: 22px;
   padding: 24px;
   position: relative;
-
-  /* halo morado suave detrás del contenido, como en el landing */
   &::before {
     content: "";
     position: absolute;
@@ -73,7 +67,6 @@ const Container = styled.div`
     pointer-events: none;
     z-index: 0;
   }
-
   > * {
     position: relative;
     z-index: 1;
@@ -117,8 +110,6 @@ const Area2 = styled.section`
   background-color: ${({ theme }) => theme.body};
   position: relative;
   overflow: hidden;
-
-  /* franja superior morada, sutil, como firma de marca */
   &::after {
     content: "";
     position: absolute;
@@ -129,7 +120,6 @@ const Area2 = styled.section`
     background: linear-gradient(90deg, #3300e3, #7c3aed, #a855f7);
   }
 `;
-
 const Area3 = styled.section`
   grid-area: area3;
   background-color: ${({ theme }) => theme.body};
@@ -138,7 +128,6 @@ const Area3 = styled.section`
   border-radius: 22px;
   position: relative;
   overflow: hidden;
-
   &::after {
     content: "";
     position: absolute;
@@ -159,7 +148,6 @@ const Area4 = styled.section`
     flex-wrap: nowrap;
   }
 `;
-
 const ContentTotales = styled.div`
   background-color: ${({ theme }) => theme.body};
   padding: 16px;
@@ -170,8 +158,6 @@ const ContentTotales = styled.div`
   position: relative;
   overflow: hidden;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-
-  /* barrita lateral de acento, cada card con su tono morado */
   &::before {
     content: "";
     position: absolute;
@@ -181,7 +167,6 @@ const ContentTotales = styled.div`
     width: 4px;
     background: ${(props) => props.$accent || "#3300E3"};
   }
-
   &:hover {
     transform: translateY(-3px);
     box-shadow: 0 16px 30px -14px rgba(51, 0, 227, 0.28);

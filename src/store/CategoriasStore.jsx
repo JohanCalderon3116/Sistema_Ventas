@@ -12,6 +12,14 @@ export const useCategoriasStore = create((set, get) => ({
   setBuscador: (p) => {
     set({ buscador: p });
   },
+  currentColor: "#F44336",
+  setColor: (p) => {
+    set({ currentColor: p });
+  },
+  file: [],
+  setFile: (p) => {
+    set({ file: p });
+  },
   datacategorias: [],
   categoriaItemSelect: [],
   parametros: {},

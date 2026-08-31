@@ -29,7 +29,6 @@ export function TablaCategorias({
   const [pagina, setPagina] = useState(1);
   const [datas, setData] = useState(data);
   const [columnFilters, setColumnFilters] = useState([]);
-
   const { eliminarCategorias } = useCategoriasStore();
   function eliminar(p) {
     if (p.nombre === "General") {
@@ -80,7 +79,6 @@ export function TablaCategorias({
           )}
         </td>
       ),
-
       enableColumnFilter: true,
       filterFn: (row, columnId, filterStatuses) => {
         if (filterStatuses.length === 0) return true;
@@ -99,7 +97,6 @@ export function TablaCategorias({
         return filterStatuses.includes(status?.id);
       },
     },
-
     {
       accessorKey: "color",
       header: "Color",
@@ -109,7 +106,6 @@ export function TablaCategorias({
           <Colorcontent color={info.getValue()} $alto="25px" $ancho="25px" />
         </td>
       ),
-
       enableColumnFilter: true,
       filterFn: (row, columnId, filterStatuses) => {
         if (filterStatuses.length === 0) return true;

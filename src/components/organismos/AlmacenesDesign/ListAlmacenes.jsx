@@ -1,46 +1,32 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import styled, { useTheme } from "styled-components";
 import { useSucursalesStore } from "../../../store/SucursalesStore";
-import { useEmpresaStore } from "../../../store/EmpresaStore";
-import { BarLoader, BeatLoader } from "react-spinners";
+import { BeatLoader } from "react-spinners";
 import { Icon } from "@iconify/react";
 import { Device } from "../../../styles/breakpoints";
 import { ButtonDashed } from "../../ui/buttons/ButtonDashed";
-import { useCajasStore } from "../../../store/CajaStore";
-import Swal from "sweetalert2";
-import { toast } from "sonner";
 import { useAlmacenesStore } from "../../../store/AlmacenesStore";
+import { formatearFechaColombia } from "../../../hooks/useFormattedDate";
+import {
+  useEliminarAlmacenesMutationStack,
+  useMostrarAlmacenesXEmpresaQueryStack,
+} from "../../../tanstack/AlmacenesStack";
+import { useEliminarSucursalesMutationStack } from "../../../tanstack/SucursalesStack";
 
 export const ListAlmacenes = () => {
-  const queryClient = useQueryClient();
-  const { dataempresa } = useEmpresaStore();
   const theme = useTheme();
   const {
     setStateAlmacen,
     setAlmacenSelelctItem,
     setAccion: setAccionAlmacen,
-    eliminarAlmacen,
-    mostrarAlmacenesXEmpresa,
   } = useAlmacenesStore();
-  const {
-    mostrarCajasPorSucursal,
-    setStateSucursal,
-    setAccion,
-    selectSucursal,
-    eliminarSucursal,
-  } = useSucursalesStore();
-  const { isLoading, error, data } = useQuery({
-    queryKey: ["mostrar almacenes x empresa", { id_empresa: dataempresa?.id }],
-    queryFn: () => mostrarAlmacenesXEmpresa({ id_empresa: dataempresa?.id }),
-    enabled: !!dataempresa,
-  });
-
+  const { setStateSucursal, setAccion, selectSucursal, eliminarSucursal } =
+    useSucursalesStore();
+  const { isLoading, error, data } = useMostrarAlmacenesXEmpresaQueryStack();
   const editarSucursal = (p) => {
     selectSucursal(p);
     setStateSucursal(true);
     setAccion("Editar");
   };
-
   const agregarAlmacen = (p) => {
     setAccionAlmacen("Nuevo");
     setStateAlmacen(true);
@@ -51,91 +37,8 @@ export const ListAlmacenes = () => {
     setAccionAlmacen("Editar");
     setAlmacenSelelctItem(p);
   };
-  const controladorEliminarAlmacen = (id) => {
-    return new Promise((resolve, reject) => {
-      Swal.fire({
-        title: "¿Estás seguro(a)(o)?",
-        text: "Una vez eliminado, se eliminaran todas las ventas relacionadas",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Sí, eliminar",
-      }).then(async (result) => {
-        if (result.isConfirmed) {
-          try {
-            await eliminarAlmacen({ id: id });
-            resolve();
-          } catch (error) {
-            reject(error);
-          }
-        } else {
-          reject(new Error("Eliminación cancelada"));
-        }
-      });
-    });
-  };
-  const controladorEliminarSucursal = (id) => {
-    return new Promise((resolve, reject) => {
-      Swal.fire({
-        title: "¿Estás seguro(a)(o)?",
-        text: "Una vez eliminado, se eliminaran todas las ventas relacionadas",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Sí, eliminar",
-      }).then(async (result) => {
-        if (result.isConfirmed) {
-          try {
-            await eliminarSucursal({ id: id });
-            resolve();
-          } catch (error) {
-            reject(error);
-          }
-        } else {
-          reject(new Error("Eliminación cancelada"));
-        }
-      });
-    });
-  };
-
-  const { mutate: doDeleteSucursal } = useMutation({
-    mutationKey: ["eliminar sucursal"],
-    mutationFn: controladorEliminarSucursal,
-    onError: (error) => {
-      if (error.message === "Eliminación cancelada") {
-        toast.info(error.message);
-        return;
-      }
-      toast.error(
-        `No pudimos eliminar la sucursal, algo falló en el proceso. Inténtalo de nuevo 😔`,
-      );
-    },
-    onSuccess: () => {
-      toast.success(
-        "La sucursal se eliminó correctamente y ya no aparecerá en tu lista 😌",
-      );
-      queryClient.invalidateQueries(["mostrar cajas por sucursal"]);
-    },
-  });
-  const { mutate: doDeleteAlamcenes } = useMutation({
-    mutationKey: ["eliminar almacenes"],
-    mutationFn: controladorEliminarAlmacen,
-    onError: (error) => {
-      if (error.message === "Eliminación cancelada") {
-        toast.info(error.message);
-        return;
-      }
-      toast.error(
-        `No pudimos eliminar tu almacén, algo falló en el proceso: ${error.message} 🤨`,
-      );
-    },
-    onSuccess: () => {
-      toast.success("Tu almacén se eliminó correctamente 🙃");
-      queryClient.invalidateQueries(["mostrar almacenes x empresa"]);
-    },
-  });
+  const { mutate: doDeleteSucursal } = useEliminarSucursalesMutationStack();
+  const { mutate: doDeleteAlamcenes } = useEliminarAlmacenesMutationStack();
   if (isLoading) {
     return (
       <ConteinerLoader>
@@ -165,7 +68,6 @@ export const ListAlmacenes = () => {
                     onClick={() => doDeleteSucursal(sucursal?.id)}
                   />
                 )}
-
                 <Icon
                   icon="mdi:edit"
                   width="20"
@@ -181,8 +83,7 @@ export const ListAlmacenes = () => {
                   <CajaItem key={index}>
                     <CajaInfo>
                       <FechaCreacion>
-                        {" "}
-                        {almacenes.fecha_creacion_a}{" "}
+                        {formatearFechaColombia(almacenes.fecha_creacion_a)}
                       </FechaCreacion>
                     </CajaInfo>
                     <CajaDescripcion> {almacenes.nombre} </CajaDescripcion>
@@ -196,7 +97,6 @@ export const ListAlmacenes = () => {
                           onClick={() => doDeleteAlamcenes(almacenes?.id)}
                         />
                       )}
-
                       <Icon
                         icon="mdi:edit"
                         width="20"
@@ -273,13 +173,11 @@ const SucursalTitle = styled.h3`
   font-weight: bold;
   position: relative;
   top: 10px;
-  /* Evitar desbordes */
   word-wrap: break-word;
   word-break: break-word;
   overflow-wrap: break-word;
   white-space: normal;
 `;
-
 const CajaList = styled.ul`
   list-style: none;
   margin: 0;

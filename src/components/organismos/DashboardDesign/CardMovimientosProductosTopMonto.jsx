@@ -1,39 +1,16 @@
 import styled from "styled-components";
 import { LiveIndicator } from "../../moleculas/LiveIndicator";
-import { TablaMovimientosCajaLive } from "../tablas/TablaMovimientosCajaLive";
 import {
   Lottieanimation,
-  useDashboardStore,
-  useDetalleVentasStore,
-  useEmpresaStore,
-  useMovCajaStore,
+  useMostrarTop10MasVendidosXMontoQueryStack,
 } from "../../..";
-import { useQuery } from "@tanstack/react-query";
 import { BarLoader } from "react-spinners";
 import { TablaProductosTop10 } from "../tablas/TablaProductosTop10";
 import vacio from "../../../assets/vacio2.json";
 
 export const CardMovimientosProductosTopMonto = () => {
-  const { dataempresa } = useEmpresaStore();
-  const { fechaInicio, fechaFin } = useDashboardStore();
-  const { mostrarTop10ProductosMasVenidosPorMonto } = useDetalleVentasStore();
-  const { data, isLoading, error } = useQuery({
-    queryKey: [
-      "mostrar top 10 productos mas venidos por monto",
-      {
-        _id_empresa: dataempresa?.id,
-        _fecha_inicio: fechaInicio,
-        _fecha_fin: fechaFin,
-      },
-    ],
-    queryFn: () =>
-      mostrarTop10ProductosMasVenidosPorMonto({
-        _id_empresa: dataempresa?.id,
-        _fecha_inicio: fechaInicio,
-        _fecha_fin: fechaFin,
-      }),
-    enabled: !!dataempresa,
-  });
+  const { data, isLoading, error } =
+    useMostrarTop10MasVendidosXMontoQueryStack();
   if (isLoading) {
     return <BarLoader color="#6d6d6d"></BarLoader>;
   }

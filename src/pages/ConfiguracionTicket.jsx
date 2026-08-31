@@ -1,14 +1,15 @@
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { Btn1 } from "../components/moleculas/Btn1";
 import { useEmpresaStore } from "../store/EmpresaStore";
 import { useForm } from "react-hook-form";
 import { Toaster } from "sonner";
-import { SpinnerSecundario } from "../components/moleculas/SpinnerSecundario";
 import { useUpdatEmpresaTicketMutateStack } from "../tanstack/EmpresaStack";
 import { ImageSelector } from "../hooks/useImageSelector";
 import { useGlobalStore } from "../store/GlobalStore";
+import { BeatLoader } from "react-spinners";
 
 export const ConfiguracionTicket = () => {
+  const theme = useTheme();
   const { dataempresa } = useEmpresaStore();
   const { fileurl } = useGlobalStore();
   const {
@@ -30,7 +31,12 @@ export const ConfiguracionTicket = () => {
     <Container>
       <Toaster richColors />
       {isPending ? (
-        <SpinnerSecundario texto={"Guardando..."} />
+        <ConteinerLoader>
+          <span>
+            <strong>Guardando</strong>
+          </span>
+          <BeatLoader color={theme.text} size={8} />
+        </ConteinerLoader>
       ) : (
         <div className="left-section">
           <Contentguia>
@@ -308,25 +314,33 @@ const Container = styled.div`
   align-items: center;
   width: 100%;
   min-height: 100vh;
-  font-family: Arial, sans-serif;
+  font-family: "Segoe UI", Arial, sans-serif;
   position: relative;
-  color: #000;
-  /* background-color:red; */
+  color: ${({ theme }) => theme.text};
+  padding: 40px 20px;
+
   input {
     width: 90%;
-    padding: 6px 10px;
+    padding: 8px 12px;
     font-size: 12px;
     text-align: center;
-    border: 1px solid #ffd600;
-    border-radius: 4px;
+    border: 1.5px solid #ffd600;
+    border-radius: 6px;
     background-color: #fffde7;
-    transition: all 0.3s ease;
+    color: #000;
+    font-weight: 500;
+    transition: all 0.25s ease;
+
+    &::placeholder {
+      color: #a89b3d;
+    }
 
     &:hover,
     &:focus {
       border-color: #ffc107;
       background-color: #fff9c4;
-      box-shadow: 0 0 0 2px rgba(255, 214, 0, 0.1);
+      box-shadow: 0 0 0 3px rgba(255, 214, 0, 0.15);
+      transform: translateY(-1px);
     }
 
     &:focus {
@@ -337,15 +351,21 @@ const Container = styled.div`
   .left-section {
     width: 400px;
     margin: 10px;
-    margin-top:20px;
-    margin-bottom:20px;
-    background-color: #ffffff;
-    padding: 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    background-color: ${({ theme }) => theme.bgcards};
+    color: ${({ theme }) => theme.colortitlecard};
+    padding: 32px 24px;
+    border-radius: 16px;
+    box-shadow:
+      0 20px 50px -12px rgba(0, 0, 0, 0.35),
+      0 4px 12px rgba(0, 0, 0, 0.15);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     position: relative;
+
     &::before,
     &::after {
       content: "";
@@ -357,45 +377,46 @@ const Container = styled.div`
         to right,
         transparent 0%,
         transparent 5%,
-        white 5%,
-        white 10%,
+        ${({ theme }) => theme.bgcards} 5%,
+        ${({ theme }) => theme.bgcards} 10%,
         transparent 10%,
         transparent 15%,
-        white 15%,
-        white 20%,
+        ${({ theme }) => theme.bgcards} 15%,
+        ${({ theme }) => theme.bgcards} 20%,
         transparent 20%,
         transparent 25%,
-        white 25%,
-        white 30%,
+        ${({ theme }) => theme.bgcards} 25%,
+        ${({ theme }) => theme.bgcards} 30%,
         transparent 30%,
         transparent 35%,
-        white 35%,
-        white 40%,
+        ${({ theme }) => theme.bgcards} 35%,
+        ${({ theme }) => theme.bgcards} 40%,
         transparent 40%,
         transparent 45%,
-        white 45%,
-        white 50%,
+        ${({ theme }) => theme.bgcards} 45%,
+        ${({ theme }) => theme.bgcards} 50%,
         transparent 50%,
         transparent 55%,
-        white 55%,
-        white 60%,
+        ${({ theme }) => theme.bgcards} 55%,
+        ${({ theme }) => theme.bgcards} 60%,
         transparent 60%,
         transparent 65%,
-        white 65%,
-        white 70%,
+        ${({ theme }) => theme.bgcards} 65%,
+        ${({ theme }) => theme.bgcards} 70%,
         transparent 70%,
         transparent 75%,
-        white 75%,
-        white 80%,
+        ${({ theme }) => theme.bgcards} 75%,
+        ${({ theme }) => theme.bgcards} 80%,
         transparent 80%,
         transparent 85%,
-        white 85%,
-        white 90%,
+        ${({ theme }) => theme.bgcards} 85%,
+        ${({ theme }) => theme.bgcards} 90%,
         transparent 90%,
         transparent 95%,
-        white 95%,
-        white 100%
+        ${({ theme }) => theme.bgcards} 95%,
+        ${({ theme }) => theme.bgcards} 100%
       );
+      filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.2));
     }
 
     &::before {
@@ -418,6 +439,7 @@ const Container = styled.div`
     align-items: center;
     display: flex;
     font-weight: 600;
+    color: ${({ theme }) => theme.colortitlecard};
   }
 
   .camera-icon {
@@ -440,8 +462,11 @@ const Container = styled.div`
     width: 100%;
     max-width: 600px;
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
     position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
 
     &:hover {
       .tech-label {
@@ -457,8 +482,13 @@ const Container = styled.div`
 
   .company-name {
     font-weight: bold;
-    margin-bottom: 10px;
     position: relative;
+
+    input {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
 
     &:hover {
       .tech-label {
@@ -474,7 +504,6 @@ const Container = styled.div`
 
   .company-details {
     font-size: 12px;
-    margin: 8px 0;
     position: relative;
 
     &:hover {
@@ -491,8 +520,14 @@ const Container = styled.div`
 
   .ticket-number {
     font-weight: bold;
-    margin: 10px 0;
+    font-size: 15px;
+    letter-spacing: 1px;
+    margin: 16px 0;
+    padding: 8px 16px;
+    background: ${({ theme }) => theme.color2}33;
+    border-radius: 8px;
     position: relative;
+    color: ${({ theme }) => theme.colortitlecard};
 
     &:hover {
       .tech-label {
@@ -533,8 +568,8 @@ const Container = styled.div`
   .divider {
     width: 100%;
     max-width: 600px;
-    border-top: 1px dashed #ccc;
-    margin: 10px 0;
+    border-top: 1.5px dashed ${({ theme }) => theme.color2};
+    margin: 14px 0;
   }
 
   .details-section {
@@ -542,18 +577,25 @@ const Container = styled.div`
     max-width: 600px;
     margin: 0 auto;
     position: relative;
+    background: ${({ theme }) => theme.color2}1a;
+    border-radius: 10px;
+    padding: 4px 12px;
   }
 
   .details-row {
     display: grid;
     grid-template-columns: 120px 20px 1fr;
-    padding: 8px 0;
-    border-bottom: 1px dotted #ccc;
+    padding: 10px 0;
+    border-bottom: 1px dotted ${({ theme }) => theme.color2};
     align-items: center;
     position: relative;
 
+    &:last-child {
+      border-bottom: none;
+    }
+
     &:hover {
-      background-color: rgba(74, 108, 247, 0.05);
+      background-color: rgba(74, 108, 247, 0.08);
 
       .tech-label {
         opacity: 1;
@@ -568,6 +610,8 @@ const Container = styled.div`
 
   .details-label {
     font-weight: 500;
+    font-size: 12.5px;
+    color: ${({ theme }) => theme.colorSubtitle};
   }
 
   .details-colon {
@@ -575,7 +619,8 @@ const Container = styled.div`
   }
 
   .details-value {
-    color: #333;
+    font-weight: 600;
+    color: ${({ theme }) => theme.colorsubtitlecard};
   }
 
   .products-table {
@@ -584,15 +629,17 @@ const Container = styled.div`
     margin: 20px auto;
     border-collapse: separate;
     border-spacing: 0;
+    border-radius: 10px;
+    overflow: hidden;
 
     th,
     td {
-      padding: 10px;
+      padding: 12px 10px;
       text-align: left;
       position: relative;
 
       &:hover {
-        background-color: rgba(74, 108, 247, 0.05);
+        background-color: rgba(74, 108, 247, 0.08);
 
         .tech-label {
           opacity: 1;
@@ -606,13 +653,19 @@ const Container = styled.div`
     }
 
     th {
-      font-weight: 500;
-      color: #666;
-      border-bottom: 1px solid #ddd;
+      font-weight: 600;
+      font-size: 11.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: ${({ theme }) => theme.colorSubtitle};
+      background: ${({ theme }) => theme.color2}33;
+      border-bottom: 1px solid ${({ theme }) => theme.color2};
     }
 
     td {
-      border-bottom: 1px dotted #ccc;
+      font-size: 13px;
+      color: ${({ theme }) => theme.colorsubtitlecard};
+      border-bottom: 1px dotted ${({ theme }) => theme.color2};
     }
   }
 
@@ -620,18 +673,22 @@ const Container = styled.div`
     width: 100%;
     max-width: 600px;
     margin: 0 auto;
+    background: ${({ theme }) => theme.color2}1a;
+    border-radius: 10px;
+    padding: 10px 14px;
   }
 
   .summary-row {
     display: flex;
     justify-content: space-between;
-    font-size: 12px;
-    margin: 5px 0;
-    padding: 5px 0;
+    font-size: 12.5px;
+    margin: 4px 0;
+    padding: 6px 0;
     position: relative;
+    color: ${({ theme }) => theme.colorsubtitlecard};
 
     &:hover {
-      background-color: rgba(74, 108, 247, 0.05);
+      background-color: rgba(74, 108, 247, 0.08);
 
       .tech-label {
         opacity: 1;
@@ -646,24 +703,31 @@ const Container = styled.div`
 
   .summary-row.total {
     font-weight: bold;
-    color: #000;
+    font-size: 15px;
+    color: ${({ theme }) => theme.colortitlecard};
+    border-top: 2px solid ${({ theme }) => theme.color2};
+    margin-top: 8px;
+    padding-top: 10px;
   }
 
   .payment-info {
     width: 100%;
     max-width: 600px;
     font-size: 12px;
-    margin: 10px auto;
+    margin: 16px auto;
+    color: ${({ theme }) => theme.colorsubtitlecard};
   }
 
   .son-text {
     display: flex;
     align-items: center;
-    padding: 5px 0;
+    gap: 10px;
+    padding: 8px 0;
+    font-style: italic;
     position: relative;
 
     &:hover {
-      background-color: rgba(74, 108, 247, 0.05);
+      background-color: rgba(74, 108, 247, 0.08);
 
       .tech-label {
         opacity: 1;
@@ -679,12 +743,12 @@ const Container = styled.div`
   .payment-row {
     display: flex;
     justify-content: space-between;
-    margin: 5px 0;
-    padding: 5px 0;
+    margin: 6px 0;
+    padding: 6px 0;
     position: relative;
 
     &:hover {
-      background-color: rgba(74, 108, 247, 0.05);
+      background-color: rgba(74, 108, 247, 0.08);
 
       .tech-label {
         opacity: 1;
@@ -700,12 +764,11 @@ const Container = styled.div`
   .footer-info {
     width: 100%;
     max-width: 600px;
-    margin: 20px auto 0;
+    margin: 24px auto 0;
   }
 
   .footer-row {
     width: 100%;
-
     text-align: center;
     padding: 5px 0;
     margin: 2px 0;
@@ -725,19 +788,21 @@ const Container = styled.div`
 
     input {
       width: 90%;
-      padding: 6px 10px;
+      padding: 8px 12px;
       font-size: 12px;
       text-align: center;
-      border: 1px solid #ffd600;
-      border-radius: 4px;
+      font-style: italic;
+      border: 1.5px solid #ffd600;
+      border-radius: 6px;
       background-color: #fffde7;
-      transition: all 0.3s ease;
+      color: #000;
+      transition: all 0.25s ease;
 
       &:hover,
       &:focus {
         border-color: #ffc107;
         background-color: #fff9c4;
-        box-shadow: 0 0 0 2px rgba(255, 214, 0, 0.1);
+        box-shadow: 0 0 0 3px rgba(255, 214, 0, 0.15);
       }
 
       &:focus {
@@ -751,13 +816,20 @@ const Container = styled.div`
     max-width: 600px;
     text-align: center;
     color: #ffd700;
-    margin: 10px auto;
+    letter-spacing: 2px;
+    margin: 16px auto;
   }
 
   .qr-code {
-    width: 120px;
-    height: 120px;
+    width: 130px;
+    height: 130px;
     position: relative;
+    margin-top: 8px;
+    padding: 10px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+
     &:hover {
       .tech-label {
         opacity: 1;
@@ -779,6 +851,7 @@ const Container = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 4px;
   }
 
   /* Desktop tooltips */
@@ -801,6 +874,7 @@ const Container = styled.div`
     pointer-events: none;
     z-index: 20;
     white-space: nowrap;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   }
 
   .tech-type {
@@ -813,7 +887,7 @@ const Container = styled.div`
     left: -70px;
     top: 50%;
     height: 2px;
-    background-color: white;
+    background-color: ${({ theme }) => theme.colortitlecard};
     opacity: 0;
     width: 0;
     transition: all 0.3s ease;
@@ -891,22 +965,41 @@ const Container = styled.div`
     }
   }
 `;
+
 const Contentguia = styled.div`
   display: flex;
   flex-direction: column;
   text-align: center;
-  gap: 10px;
-  margin: 10px;
+  gap: 8px;
+  margin-bottom: 10px;
   font-size: 14px;
   width: 100%;
-  border-bottom: 2px dashed #c9c9c9;
+  padding-bottom: 20px;
+  border-bottom: 2px dashed ${({ theme }) => theme.color2};
+  color: ${({ theme }) => theme.colortitlecard};
 
   .title {
-    font-size: 40px;
-    font-weight: bold;
+    font-size: 36px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    background: linear-gradient(135deg, #fad43c, #f9743b);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
   .format-title {
-    color: #878787;
-    margin-bottom: 10px;
+    color: ${({ theme }) => theme.colorSubtitle};
+    margin-bottom: 4px;
+    font-size: 13px;
   }
+`;
+
+const ConteinerLoader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  height: 100vh;
+  color: ${({ theme }) => theme.text};
 `;

@@ -4,11 +4,13 @@ import {
   Btn1,
   useCierreCajaStore,
   useEliminarVentasMutationStack,
+  useMovimientosCreditosStore,
 } from "../../../index";
 import { Icon } from "@iconify/react";
 export const FooterPos = () => {
   const { setStateIngresoSalida, setTipoRegistro, setStateCierreCaja } =
     useCierreCajaStore();
+  const { setStateIngresoCredito } = useMovimientosCreditosStore();
   const { mutate: mutateEliminarVenta, isPending } =
     useEliminarVentasMutationStack();
   return (
@@ -54,6 +56,16 @@ export const FooterPos = () => {
           }}
           icono={<Icon icon="noto-v1:money-bag" />}
           titulo="Retirar dinero"
+        />
+        <Btn1
+          bgcolor="#fff"
+          color="#2d2d2d"
+          funcion={() => {
+            setStateIngresoCredito(true);
+            setTipoRegistro("ingreso");
+          }}
+          icono={<Icon icon="fluent-emoji:credit-card" />}
+          titulo="Abonar Crédito"
         />
         {/* <Btn1
           bgcolor="#fff"

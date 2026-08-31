@@ -3,22 +3,17 @@ import { v } from "../../../styles/variables";
 import {
   InputText,
   Btn1,
-  ConvertirCapitalize,
   useAlmacenesStore,
+  useInsertarAlmacenesXSucursalMuattionStack,
 } from "../../../index";
 import { useForm } from "react-hook-form";
 import { BtnClose } from "../../ui/buttons/BtnClose";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast, Toaster } from "sonner";
 import { BeatLoader } from "react-spinners";
 export function RegistrarAlmacen() {
-  const queryClient = useQueryClient();
   const {
     accion: accionAlmacen,
     almacenSelelctItem,
     setStateAlmacen,
-    insertarAlmacenes,
-    editarAlmacenes,
   } = useAlmacenesStore();
   const theme = useTheme();
   const {
@@ -26,34 +21,8 @@ export function RegistrarAlmacen() {
     formState: { errors },
     handleSubmit,
   } = useForm();
-  const insertar = async (data) => {
-    if (accionAlmacen == "Editar") {
-      const p = {
-        id: almacenSelelctItem?.id,
-        nombre: ConvertirCapitalize(data.nombre),
-      };
-      await editarAlmacenes(p);
-    } else {
-      const p = {
-        id_sucursal: almacenSelelctItem?.id,
-        nombre: ConvertirCapitalize(data.nombre),
-      };
-      await insertarAlmacenes(p);
-    }
-  };
-  const { isPending, mutate: doInsertar } = useMutation({
-    mutationKey: ["insertar almacen"],
-    mutationFn: insertar,
-    onError: (error) => {
-      toast.error(`No pudimos guardar tu almacén, algo falló en el proceso 😬`);
-    },
-    onSuccess: () => {
-      toast.success("Tu almacén quedó registrado correctamente 🥹");
-      queryClient.invalidateQueries(["mostrar almacenes x empresa"]);
-      setStateAlmacen(false);
-    },
-  });
-
+  const { isPending, mutate: doInsertar } =
+    useInsertarAlmacenesXSucursalMuattionStack();
   const handlesub = (data) => {
     doInsertar(data);
   };
@@ -81,7 +50,6 @@ export function RegistrarAlmacen() {
               <BtnClose funcion={() => setStateAlmacen(false)} />
             </section>
           </div>
-
           <form className="formulario" onSubmit={handleSubmit(handlesub)}>
             <section className="form-subcontainer">
               <article>
@@ -138,13 +106,11 @@ const Container = styled.div`
     z-index: 100;
     max-height: 80vh;
     overflow-y: auto;
-
     .headers {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 20px;
-
       h1 {
         font-size: 30px;
         font-weight: 700;

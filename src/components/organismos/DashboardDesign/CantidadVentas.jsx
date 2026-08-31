@@ -1,32 +1,14 @@
-import styled from "styled-components";
 import { CardTotales } from "./CardTotales";
 import { useDetalleVentasStore } from "../../../store/DetalleVentasStore";
-import { useDashboardStore, useEmpresaStore } from "../../..";
-import { useQuery } from "@tanstack/react-query";
+import {
+  useMostrarCantidadVentasQueryStack,
+} from "../../..";
 import { BarLoader } from "react-spinners";
 
 export const CantidadVentas = () => {
-  const { contarVentasXEmpresa, cantidadVentas, porcentajeCambio } =
+  const { cantidadVentas, porcentajeCambio } =
     useDetalleVentasStore();
-  const { dataempresa } = useEmpresaStore();
-  const { fechaInicio, fechaFin } = useDashboardStore();
-  const { isLoading } = useQuery({
-    queryKey: [
-      "mostrar cantidad ventas",
-      {
-        _id_empresa: dataempresa?.id,
-        _fecha_inicio: fechaInicio,
-        _fecha_fin: fechaFin,
-      },
-    ],
-    queryFn: () =>
-      contarVentasXEmpresa({
-        _id_empresa: dataempresa?.id,
-        _fecha_inicio: fechaInicio,
-        _fecha_fin: fechaFin,
-      }),
-    enabled: !!dataempresa?.id && !!fechaInicio && !!fechaFin,
-  });
+  const { isLoading } = useMostrarCantidadVentasQueryStack();
   if (isLoading) {
     return <BarLoader></BarLoader>;
   }
@@ -39,5 +21,3 @@ export const CantidadVentas = () => {
     ></CardTotales>
   );
 };
-
-const Container = styled.div``;

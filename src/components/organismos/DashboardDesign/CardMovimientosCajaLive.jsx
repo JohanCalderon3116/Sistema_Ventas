@@ -2,21 +2,13 @@ import styled from "styled-components";
 import { LiveIndicator } from "../../moleculas/LiveIndicator";
 import { TablaMovimientosCajaLive } from "../tablas/TablaMovimientosCajaLive";
 import {
-  useEmpresaStore,
-  useMovCajaStore,
+  useMostrarMovimientosCajaLiveQueryStack,
   useSupabaseSubscription,
 } from "../../..";
-import { useQuery } from "@tanstack/react-query";
 import { BarLoader } from "react-spinners";
 
 export const CardMovimientosCajaLive = () => {
-  const { dataempresa } = useEmpresaStore();
-  const { mostrarMovimentosCajaLive } = useMovCajaStore();
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["mostrar movimientos caja live"],
-    queryFn: () => mostrarMovimentosCajaLive({ _id_empresa: dataempresa?.id }),
-    enabled: !!dataempresa,
-  });
+  const { data, isLoading, error } = useMostrarMovimientosCajaLiveQueryStack();
   useSupabaseSubscription({
     channelName: "public:movimientos_caja",
     options: { event: "*", schema: "public", table: "movimientos_caja" },

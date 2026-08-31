@@ -3,7 +3,6 @@ import styled from "styled-components";
 import { Btn1 } from "../moleculas/Btn1";
 import { Toaster } from "sonner";
 import { useAuthStore } from "../../store/AuthStore";
-import { AnimatedGrid } from "../ui/animated/AnimatedGrid";
 
 export const EmpresaTemplate = () => {
   const { cerrarSesion } = useAuthStore();
@@ -43,7 +42,6 @@ const Main = styled.div`
 const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
-
   max-width: 1200px;
   justify-content: center;
   width: 100%;
@@ -57,7 +55,6 @@ const Sidebar = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
-
   @media (min-width: 768px) {
     width: 250px;
     order: 2;
@@ -78,7 +75,6 @@ const SidebarItem = styled(NavLink)`
   text-decoration: none;
   color: ${(props) => props.theme.text};
   height: 60px;
-
   &:hover {
     color: ${(props) => props.theme.colorSubtitle};
   }
@@ -92,7 +88,6 @@ const SidebarItem = styled(NavLink)`
 
 const Content = styled.div`
   flex: 1;
-
   padding: 20px;
   border-radius: 8px;
   margin: 20px;

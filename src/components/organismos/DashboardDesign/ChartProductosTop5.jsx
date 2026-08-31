@@ -8,46 +8,18 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { useEmpresaStore } from "../../../store/EmpresaStore";
 import {
   ConvertirCapitalize,
-  FormatearNumeroDinero,
 } from "../../../utils/Conversiones";
-import { useVentasStore } from "../../../store/VentasStore";
-import { Icon } from "@iconify/react/dist/iconify.js";
 import { useThemeStore } from "../../../store/ThemeStore";
-import { useDetalleVentasStore } from "../../../store/DetalleVentasStore";
-import { useQuery } from "@tanstack/react-query";
 import { BarLoader } from "react-spinners";
-import { useDashboardStore } from "../../../store/DashboardStore";
 import { Lottieanimation } from "../../atomos/Lottieanimation";
 import animacionvacio from "../../../assets/vacioanimation.json.json";
+import { useMostrarTop5MasVendidosXCantidadQueryStack } from "../../../tanstack/VentasStack";
 export const ChartProductosTop5 = () => {
-  const { dataempresa } = useEmpresaStore();
-  const { porcentajeCambio } = useVentasStore();
-  const { fechaInicio, fechaFin } = useDashboardStore();
   const { themeStyle } = useThemeStore();
-  const isPositive = porcentajeCambio > 0;
-  const isNeutral = porcentajeCambio === 0;
-
-  const { mostrarTop5ProductosMasVenidosPorCantidad } = useDetalleVentasStore();
-  const { data, isLoading, error } = useQuery({
-    queryKey: [
-      "mostrar top 5 mas vendidos por cantidad",
-      {
-        _id_empresa: dataempresa?.id,
-        _fecha_inicio: fechaInicio,
-        _fecha_fin: fechaFin,
-      },
-    ],
-    queryFn: () =>
-      mostrarTop5ProductosMasVenidosPorCantidad({
-        _id_empresa: dataempresa?.id,
-        _fecha_inicio: fechaInicio,
-        _fecha_fin: fechaFin,
-      }),
-    enabled: !!dataempresa,
-  });
+  const { data, isLoading } =
+    useMostrarTop5MasVendidosXCantidadQueryStack();
   if (isLoading) {
     return <BarLoader color="#6d6d6d"></BarLoader>;
   }
@@ -188,18 +160,4 @@ const Title = styled.h3`
   font-weight: bold;
   color: ${({ theme }) => theme.text};
   margin: 0;
-`;
-const MainInfo = styled.div`
-  margin: 20px 0;
-`;
-const Revenue = styled.div`
-  font-size: 24px;
-  font-weight: bold;
-  color: ${({ theme }) => theme.text};
-`;
-const Change = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  margin-top: 5px;
 `;

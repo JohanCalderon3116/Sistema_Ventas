@@ -5,16 +5,13 @@ import {
   InputText,
   Btn1,
   Icono,
-  ConvertirCapitalize,
   BtnClose,
   useCategoriasStore,
+  useInsertarCategoriasMutationStack,
 } from "../../../index";
 import { useForm } from "react-hook-form";
 import { CirclePicker } from "react-color";
-import { useEmpresaStore } from "../../../store/EmpresaStore";
-import { useMutation } from "@tanstack/react-query";
 import { BeatLoader } from "react-spinners";
-import { toast } from "sonner";
 
 export function RegistrarCategorias({
   onClose,
@@ -22,11 +19,12 @@ export function RegistrarCategorias({
   accion,
   setIsExploding,
 }) {
-  const { insertarCategorias, editarCategorias } = useCategoriasStore();
-  const { dataempresa } = useEmpresaStore();
-  const [currentColor, setColor] = useState("#F44336");
+  const {
+    currentColor,
+    setColor,
+    setFile,
+  } = useCategoriasStore();
   const theme = useTheme();
-  const [file, setFile] = useState([]);
   const ref = useRef(null);
   const [fileurl, setFileurl] = useState();
   function elegirColor(color) {
@@ -37,45 +35,17 @@ export function RegistrarCategorias({
     formState: { errors },
     handleSubmit,
   } = useForm();
-  const { isPending, mutate: doInsertar } = useMutation({
-    mutationFn: insertar,
-    mutationKey: "insertar categorias",
-    onError: () => {
-      toast.error(
-        "No pudimos guardar tu categoría, algo falló en el proceso. Inténtalo de nuevo 😩",
-      );
-    },
-    onSuccess: () => {
-      toast.success("Tu categoría quedó guardada correctamente 😄");
-      cerrarFormulario();
-    },
+  const { isPending, mutate: doInsertar } = useInsertarCategoriasMutationStack({
+    accion,
+    dataSelect,
+    cerrarFormulario,
   });
   const handlesub = (data) => {
     doInsertar(data);
   };
-  const cerrarFormulario = () => {
+  function cerrarFormulario() {
     onClose();
     setIsExploding(true);
-  };
-  async function insertar(data) {
-    if (accion === "Editar") {
-      const p = {
-        _nombre: ConvertirCapitalize(data.descripcion),
-        _idempresa: dataempresa.id,
-        _color: currentColor,
-        _id: dataSelect.id,
-      };
-      await editarCategorias(p, dataSelect.icono, file);
-    } else {
-      const p = {
-        _nombre: ConvertirCapitalize(data.descripcion),
-        _color: currentColor,
-        _icono: "-",
-        _id_empresa: dataempresa.id,
-      };
-
-      await insertarCategorias(p, file);
-    }
   }
   function abrirImagenes() {
     ref.current.click();
@@ -96,7 +66,11 @@ export function RegistrarCategorias({
     if (accion === "Editar") {
       setColor(dataSelect.color);
       setFileurl(dataSelect.icono);
+    } else {
+      setColor("#F44336"); 
+      setFileurl(null);
     }
+    setFile([]);
   }, []);
   return (
     <Container>
@@ -117,7 +91,6 @@ export function RegistrarCategorias({
                   : "Registrar nueva categoría"}
               </h1>
             </section>
-
             <section>
               <BtnClose funcion={onClose}></BtnClose>
             </section>
@@ -130,7 +103,6 @@ export function RegistrarCategorias({
             ) : (
               <Icono>{<v.iconoimagenvacia />}</Icono>
             )}
-
             <Btn1
               funcion={abrirImagenes}
               titulo="+imagen(opcional)"
@@ -163,7 +135,6 @@ export function RegistrarCategorias({
                   )}
                 </InputText>
               </article>
-
               <article className="colorContainer">
                 <ContentTitle>
                   {<v.paletacolores />}
@@ -173,7 +144,6 @@ export function RegistrarCategorias({
                   <CirclePicker onChange={elegirColor} color={currentColor} />
                 </div>
               </article>
-
               <Btn1
                 icono={<v.iconoguardar />}
                 titulo="Guardar"

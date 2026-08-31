@@ -1,83 +1,40 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import styled, { useTheme } from "styled-components";
 import { v } from "../../../styles/variables";
 import {
   InputText,
   Btn1,
-  ConvertirCapitalize,
   useClientesProveedoresStore,
   SelectList,
   Switch1,
   BtnClose,
+  useMostrarUsuarioQueryStack,
+  useInsetarCreditosMutationStack,
 } from "../../../index";
 import { useForm } from "react-hook-form";
-import { CirclePicker } from "react-color";
-import { useEmpresaStore } from "../../../store/EmpresaStore";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useCreditosStore } from "../../../store/CreditosStore";
-import { toast, Toaster } from "sonner";
+import { Toaster } from "sonner";
 import { BeatLoader } from "react-spinners";
 
 export function RegistrarCreditos({ onClose, dataSelect, setIsExploding }) {
-  const queryClient = useQueryClient();
   const [stateCreditos, setStateCreditos] = useState(false);
   const {
     register,
     formState: { errors },
     handleSubmit,
   } = useForm();
-  const {
-    insertarCliPro,
-    editarCliPro,
-    mostrarCliPro,
-    cliproItemSelect,
-    selectCliPro,
-  } = useClientesProveedoresStore();
+  const { cliproItemSelect, selectCliPro } =
+    useClientesProveedoresStore();
   const theme = useTheme();
-  const { dataempresa } = useEmpresaStore();
-  const { insertarCredito } = useCreditosStore();
-
-  const { data: dataclipro, isLoading } = useQuery({
-    queryKey: [
-      "mostrar usuarios",
-      { id_empresa: dataempresa?.id, tipo: "cliente" },
-    ],
-    queryFn: () =>
-      mostrarCliPro({
-        id_empresa: dataempresa?.id,
-        tipo: "cliente",
-      }),
-  });
-
-  const { isPending, mutate: doInsertar } = useMutation({
-    mutationKey: "insertar credito",
-    mutationFn: insertar,
-    onError: (error) => {
-      toast.error(
-        `No pudimos guardar el crédito, algo falló en el proceso: ${error.message} 😑`,
-      );
-    },
-    onSuccess: () => {
-      toast.success("El crédito quedó registrado correctamente 🙌");
-      queryClient.invalidateQueries(["mostrar creditos"]);
-      cerrarFormulario();
-    },
+  const { data: dataclipro } = useMostrarUsuarioQueryStack();
+  const { isPending, mutate: doInsertar } = useInsetarCreditosMutationStack({
+    cerrarFormulario,
   });
   const handlesub = (data) => {
     doInsertar(data);
   };
-  const cerrarFormulario = () => {
+  function cerrarFormulario() {
     onClose();
     setIsExploding(true);
-  };
-  async function insertar(data) {
-    const p = {
-      id_cliente: cliproItemSelect?.id,
-      cupo_maximo: data.cupo_maximo,
-      credito_disponible: data.cupo_maximo - (data.saldo_actual || 0),
-      saldo_actual: data.saldo_actual || 0,
-    };
-    await insertarCredito(p);
   }
   return (
     <Container>
@@ -176,7 +133,6 @@ const Container = styled.div`
   align-items: center;
   justify-content: center;
   z-index: 1000;
-
   .sub-contenedor {
     position: relative;
     width: 500px;
@@ -186,13 +142,11 @@ const Container = styled.div`
     box-shadow: -10px 15px 30px rgba(10, 9, 9, 0.4);
     padding: 13px 36px 20px 36px;
     z-index: 100;
-
     .headers {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 20px;
-
       h1 {
         font-size: 20px;
         font-weight: 500;
@@ -215,48 +169,6 @@ const Container = styled.div`
         }
       }
     }
-  }
-`;
-
-const ContentTitle = styled.div`
-  display: flex;
-  justify-content: start;
-  align-items: center;
-  gap: 20px;
-
-  svg {
-    font-size: 25px;
-  }
-  input {
-    border: none;
-    outline: none;
-    background: transparent;
-    padding: 2px;
-    width: 40px;
-    font-size: 28px;
-  }
-`;
-const PictureContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: start;
-  border: 2px dashed #f9d70b;
-  border-radius: 5px;
-  background-color: rgba(249, 215, 11, 0.1);
-  padding: 8px;
-  position: relative;
-  gap: 3px;
-  margin-bottom: 8px;
-
-  .ContentImage {
-    overflow: hidden;
-    img {
-      width: 100%;
-      object-fit: contain;
-    }
-  }
-  input {
-    display: none;
   }
 `;
 export const ContainerSelector = styled.div`

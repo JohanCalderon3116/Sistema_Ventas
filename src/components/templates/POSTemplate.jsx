@@ -13,15 +13,18 @@ import {
   useBuscarProductosCodigoQueryStack,
   useCierreCajaStore,
   useMostrarSerealizacionesVentasQueryStack,
+  useMovimientosCreditosStore,
   useVentasStore,
 } from "../../index";
 import { Toaster } from "sonner";
 import { useMostrarAlmacenesXSucursalQueryStack } from "../../tanstack/AlmacenesStack";
 import { useMostrarStockAlmacenesyProductoQueryStack } from "../../tanstack/StockStack";
 import { useMostrarImpresorasXCajaQueryStack } from "../../tanstack/ImpresorasStack";
+import { PantallaAbonoCredito } from "../organismos/POSDesing/CajaDesing/PantallaAbonoCredito";
 export const POSTemplate = () => {
   const { statePantallaCobro } = useVentasStore();
   const { stateIngresoSalida, stateCierreCaja } = useCierreCajaStore();
+  const { stateIngresoCredito } = useMovimientosCreditosStore();
   useBuscarProductosCodigoQueryStack();
   useMostrarAlmacenesXSucursalQueryStack();
   useMostrarStockAlmacenesyProductoQueryStack();
@@ -41,6 +44,7 @@ export const POSTemplate = () => {
       {stateIngresoSalida && (
         <PantallaIngresoSalidaDinero></PantallaIngresoSalidaDinero>
       )}
+      {stateIngresoCredito && <PantallaAbonoCredito></PantallaAbonoCredito>}
       {stateCierreCaja && <PantallaCierreCaja></PantallaCierreCaja>}
     </Container>
   );
