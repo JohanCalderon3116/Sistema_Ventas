@@ -8,8 +8,8 @@ import {
   SelectList,
   Switch1,
   BtnClose,
-  useMostrarUsuarioQueryStack,
   useInsetarCreditosMutationStack,
+  useMostrarClientesQueryStack,
 } from "../../../index";
 import { useForm } from "react-hook-form";
 import { Toaster } from "sonner";
@@ -25,7 +25,7 @@ export function RegistrarCreditos({ onClose, dataSelect, setIsExploding }) {
   const { cliproItemSelect, selectCliPro } =
     useClientesProveedoresStore();
   const theme = useTheme();
-  const { data: dataclipro } = useMostrarUsuarioQueryStack();
+  const { data: dataclipro } = useMostrarClientesQueryStack();
   const { isPending, mutate: doInsertar } = useInsetarCreditosMutationStack({
     cerrarFormulario,
   });

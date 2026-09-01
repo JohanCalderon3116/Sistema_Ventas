@@ -127,3 +127,18 @@ export const useInsertarClientesProveedoresMutationStack = ({
     },
   });
 };
+export const useMostrarClientesQueryStack = () => {
+  const { dataempresa } = useEmpresaStore();
+  const { mostrarCliPro } = useClientesProveedoresStore();
+  return useQuery({
+    queryKey: [
+      "mostrar clientes",
+      { id_empresa: dataempresa?.id, tipo: "cliente" },
+    ],
+    queryFn: () =>
+      mostrarCliPro({
+        id_empresa: dataempresa?.id,
+        tipo: "cliente",
+      }),
+  });
+};

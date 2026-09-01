@@ -8,6 +8,7 @@ import { useRolesStore } from "../store/RolesStore";
 import { useSucursalesStore } from "../store/SucursalesStore";
 import { useCajasStore } from "../store/CajaStore";
 import { useClientesProveedoresStore } from "../store/ClientesProveedoresStore";
+import { userAuth } from "../context/AuthContext";
 
 export const useEditarUsuarioMutationStack = () => {
   const queryClient = useQueryClient();
@@ -119,18 +120,17 @@ export const useInsertarUsuariosPorEmpresaMutationStack = ({
     },
   });
 };
-export const useMostrarUsuarioQueryStack = () => {
-  const { dataempresa } = useEmpresaStore();
-  const { mostrarCliPro } = useClientesProveedoresStore();
+export const useMostrarUsuariosQueryStack = () => {
+  const { mostrarusuarios } = useUsuariosStore();
+  const { user } = userAuth();
+  const id_auth = user?.id;
   return useQuery({
-    queryKey: [
-      "mostrar usuarios",
-      { id_empresa: dataempresa?.id, tipo: "cliente" },
-    ],
+    queryKey: ["mostrar usuarios"],
     queryFn: () =>
-      mostrarCliPro({
-        id_empresa: dataempresa?.id,
-        tipo: "cliente",
+      mostrarusuarios({
+        id_auth: id_auth,
       }),
+    refetchOnWindowFocus: false,
+    enabled: !!id_auth,
   });
 };

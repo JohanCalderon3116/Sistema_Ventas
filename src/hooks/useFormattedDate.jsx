@@ -2,10 +2,8 @@ import { useState, useEffect } from "react";
 
 export function useFormattedDate() {
   const [formattedDate, setFormattedDate] = useState("");
-
   useEffect(() => {
     const fechaActual = new Date();
-    //2024-19-09 45.45:UTC45200
     const offset = fechaActual.getTimezoneOffset() * 60000;
     const fechaLocal = new Date(fechaActual - offset)
       .toISOString()
@@ -29,8 +27,6 @@ export function formatearFechaColombia(fechaISO) {
     second: "2-digit",
     hour12: false,
   }).formatToParts(fecha);
-
   const obtener = (tipo) => partes.find((p) => p.type === tipo)?.value;
-
   return `${obtener("year")}/${obtener("month")}/${obtener("day")} ${obtener("hour")}:${obtener("minute")}:${obtener("second")}`;
 }

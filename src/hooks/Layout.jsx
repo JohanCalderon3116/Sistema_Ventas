@@ -6,53 +6,26 @@ import {
   Toogle,
   useCierreCajaStore,
   useEliminarVentasIncompletasMutateStack,
-  useEmpresaStore,
-  userAuth,
-  useUsuariosStore,
+  useMostrarEmpresaQueryStack,
+  useMostrarSucursalesAsignadsQueryStack,
+  useMostrarUsuariosQueryStack,
 } from "../index";
 import { useEffect, useState } from "react";
 import { Device } from "../styles/breakpoints";
-import { useQuery } from "@tanstack/react-query";
-import { useAsignacionCajaSucursalesStore } from "../store/AsignacionCajaSucursales";
 export const Layout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { mostrarusuarios } = useUsuariosStore();
-  const { mostrarempresa } = useEmpresaStore();
-  const { mostrarSucursalCajaAsignada } = useAsignacionCajaSucursalesStore();
-  const { user } = userAuth();
-  const id_auth = user?.id;
   const [stateMenu, setStateMenu] = useState(false);
   const { dataCierreCaja } = useCierreCajaStore();
-
   const {
     refetch: refetchUsuarios,
     data: datausuarios,
     isLoading: isLoadingUsuarios,
-  } = useQuery({
-    queryKey: ["mostrar usuarios"],
-    queryFn: () =>
-      mostrarusuarios({
-        id_auth: id_auth,
-      }),
-    refetchOnWindowFocus: false,
-    enabled: !!id_auth,
-  });
+  } = useMostrarUsuariosQueryStack();
   const { mutate } = useEliminarVentasIncompletasMutateStack();
-  const {
-    isLoading: isLoadingSucursales,
-  } = useQuery({
-    queryKey: ["mostrar sucursales caja asignadas", datausuarios?.id],
-    queryFn: () =>
-      mostrarSucursalCajaAsignada({ id_usuario: datausuarios?.id }),
-    enabled: !!datausuarios,
-    refetchOnWindowFocus: false,
-  });
-  const { isLoading: isLoadingEmpresa, error: errorEmpresa } = useQuery({
-    queryKey: ["mostrar empresa", datausuarios?.id],
-    queryFn: () => mostrarempresa({ _id_usuario: datausuarios?.id }),
-    enabled: !!datausuarios,
-    refetchOnWindowFocus: false,
-  });
+  const { isLoading: isLoadingSucursales } =
+    useMostrarSucursalesAsignadsQueryStack();
+  const { isLoading: isLoadingEmpresa } =
+    useMostrarEmpresaQueryStack();
   useEffect(() => {
     if (datausuarios?.id && dataCierreCaja?.id) {
       mutate();
@@ -62,10 +35,8 @@ export const Layout = ({ children }) => {
   if (datausuarios == null) {
     refetchUsuarios();
   }
-
   const isLoading =
     isLoadingEmpresa || isLoadingSucursales || isLoadingUsuarios;
-  const error = errorEmpresa;
   if (isLoading) {
     return <Spinner1></Spinner1>;
   }
@@ -96,7 +67,6 @@ const Container = styled.main`
   grid-template-columns: 1fr;
   transition: 0.1s ease-in-out;
   color: ${({ theme }) => theme.text};
-
   .contentSidebar {
     display: none;
   }

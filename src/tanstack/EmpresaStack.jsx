@@ -1,8 +1,9 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEmpresaStore } from "../store/EmpresaStore";
 import { toast } from "sonner";
 import { useGlobalStore } from "../store/GlobalStore";
 import { useMonedasStore } from "../store/MonedasStore";
+import { useUsuariosStore } from "../store/UsuariosStore";
 export const useUpdatEmpresaMutateStack = () => {
   const queryClient = useQueryClient();
   const { dataempresa, editarEmpresa } = useEmpresaStore();
@@ -81,5 +82,15 @@ export const useEditarMonedaConfigEmpresaMutationStack = () => {
       queryClient.invalidateQueries("mostrar empresa");
       toast.success("La moneda de tu país se actualizó correctamente 😃");
     },
+  });
+};
+export const useMostrarEmpresaQueryStack = () => {
+  const { datausuarios } = useUsuariosStore();
+  const { mostrarempresa } = useEmpresaStore();
+  return useQuery({
+    queryKey: ["mostrar empresa", datausuarios?.id],
+    queryFn: () => mostrarempresa({ _id_usuario: datausuarios?.id }),
+    enabled: !!datausuarios,
+    refetchOnWindowFocus: false,
   });
 };

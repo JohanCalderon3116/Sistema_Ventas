@@ -3,7 +3,6 @@ import { userAuth } from "../context/AuthContext";
 import { usePermisosStore } from "../store/PermisosStore";
 import { useQuery } from "@tanstack/react-query";
 import { useUsuariosStore } from "../store/UsuariosStore";
-import { Spinner1 } from "../components/moleculas/Spinner1";
 import { SpinnerSecundario } from "../components/moleculas/SpinnerSecundario";
 
 export const ProtectedRoute = ({ children, accesby }) => {
@@ -21,7 +20,6 @@ export const ProtectedRoute = ({ children, accesby }) => {
     enabled: !!datausuarios,
   });
 
-  // 👇 clave: considerar "cargando" también mientras datausuarios no exista
   const isLoading = !datausuarios || isLoadingPermisosGlobales;
 
   if (accesby === "non-authenticated") {
@@ -38,9 +36,7 @@ export const ProtectedRoute = ({ children, accesby }) => {
     }
 
     if (isLoading) {
-      return (
-        <SpinnerSecundario texto={"Cargando permisos :p"}></SpinnerSecundario>
-      );
+      return <SpinnerSecundario texto={"🔐 Verificando permisos..."} />;
     }
 
     const hasPermission = dataPermisosGlobales?.some((item) => {
