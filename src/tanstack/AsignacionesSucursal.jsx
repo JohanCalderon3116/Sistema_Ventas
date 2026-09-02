@@ -15,5 +15,6 @@ export const useMostrarSucursalesAsignadsQueryStack = () => {
         id_usuario: datausuarios?.id,
       }),
     enabled: !!datausuarios,
+    staleTime: 1000 * 60 * 5,
   });
 };

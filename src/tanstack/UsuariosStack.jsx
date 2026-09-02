@@ -132,5 +132,6 @@ export const useMostrarUsuariosQueryStack = () => {
       }),
     refetchOnWindowFocus: false,
     enabled: !!id_auth,
+    staleTime: 1000 * 60 * 5,
   });
 };

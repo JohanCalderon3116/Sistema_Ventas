@@ -4,6 +4,7 @@ import { usePermisosStore } from "../store/PermisosStore";
 import { useQuery } from "@tanstack/react-query";
 import { useUsuariosStore } from "../store/UsuariosStore";
 import { SpinnerSecundario } from "../components/moleculas/SpinnerSecundario";
+import { Spinner1 } from "../components/moleculas/Spinner1";
 
 export const ProtectedRoute = ({ children, accesby }) => {
   const { user } = userAuth();
@@ -21,7 +22,7 @@ export const ProtectedRoute = ({ children, accesby }) => {
   });
 
   const isLoading = !datausuarios || isLoadingPermisosGlobales;
-
+  if (user === undefined) return <Spinner1></Spinner1>;
   if (accesby === "non-authenticated") {
     if (!user) {
       return children;

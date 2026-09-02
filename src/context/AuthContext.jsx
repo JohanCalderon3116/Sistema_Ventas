@@ -8,7 +8,7 @@ const AuthContext = createContext();
 
 export const AuthContextProvider = ({ children }) => {
   const { insertarEmpresa } = useEmpresaStore();
-  const [user, setUser] = useState([]);
+  const [user, setUser] = useState(undefined);
   useEffect(() => {
     const { data } = supabase.auth.onAuthStateChange(async (value, session) => {
       if (session?.user == null) {

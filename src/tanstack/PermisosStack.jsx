@@ -6,7 +6,7 @@ export const useMostrarPermisosConfiguracionesQueryStack = () => {
   const { datausuarios } = useUsuariosStore();
   const { mostrarPermisosConfiguraciones } = usePermisosStore();
   return useQuery({
-    queryKey: "mostrar permisos configuracion",
+    queryKey: ["mostrar permisos configuracion"],
     queryFn: () =>
       mostrarPermisosConfiguraciones({
         id_usuario: datausuarios?.id,

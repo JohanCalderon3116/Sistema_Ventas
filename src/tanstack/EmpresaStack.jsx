@@ -92,5 +92,6 @@ export const useMostrarEmpresaQueryStack = () => {
     queryFn: () => mostrarempresa({ _id_usuario: datausuarios?.id }),
     enabled: !!datausuarios,
     refetchOnWindowFocus: false,
+    staleTime: 1000 * 60 * 5,
   });
 };
