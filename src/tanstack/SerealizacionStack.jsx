@@ -14,6 +14,7 @@ export const useMostrarSerealizacionesQueryStack = () => {
         sucursal_id: dataCierreCaja?.caja?.id_sucursal,
       }),
     enabled: !!dataCierreCaja,
+    staleTime: 1000 * 60 * 5,
   });
 };
 export const useMostrarSerealizacionesVentasQueryStack = () => {
@@ -26,6 +27,7 @@ export const useMostrarSerealizacionesVentasQueryStack = () => {
         sucursal_id: dataCierreCaja?.caja?.id_sucursal,
       }),
     enabled: !!dataCierreCaja,
+    staleTime: 1000 * 60 * 5,
   });
 };
 export const useEditarSerealizacionDefaultMutationStack = () => {

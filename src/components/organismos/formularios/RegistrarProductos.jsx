@@ -74,21 +74,19 @@ export function RegistrarProductos({
   const { sucursalesItemSelect, dataSucursales, selectSucursal } =
     useSucursalesStore();
   const theme = useTheme();
-  const {
-    data: dataStockXAlamacenYProducto,
-  } = useMostrarStckAlmacenYProductoQueryStack({ dataSelect });
-    const {
-      data: dataAlmacenes,
-    } = useQuery({
-      queryKey: [
-        "mostrar almacenes x sucursal",
-        { id_producto: dataSelect.id, id_sucursal: sucursalesItemSelect.id },
-      ],
-      queryFn: () =>
-        mostrarAlmacenesXSucursal({
-          id_sucursal: sucursalesItemSelect.id,
-        }),
-    });
+  const { data: dataStockXAlamacenYProducto } =
+    useMostrarStckAlmacenYProductoQueryStack({ dataSelect });
+  const { data: dataAlmacenes } = useQuery({
+    queryKey: [
+      "mostrar almacenes x sucursal",
+      { id_producto: dataSelect.id, id_sucursal: sucursalesItemSelect.id },
+    ],
+    queryFn: () =>
+      mostrarAlmacenesXSucursal({
+        id_sucursal: sucursalesItemSelect.id,
+      }),
+    enabled: !!sucursalesItemSelect,
+  });
   const {
     register,
     formState: { errors },

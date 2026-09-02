@@ -18,6 +18,7 @@ export const useMostrarSucursalesXEmpresaStack = () => {
     queryFn: () => mostrarSucursales({ id_empresa: dataempresa?.id }),
     enabled: !!dataempresa,
     refetchOnWindowFocus: false,
+    staleTime: 1000 * 60 * 5,
   });
 };
 export const useMostrarCajaPorSucursalQueryStack = () => {
@@ -35,6 +36,7 @@ export const useMostrarCajaPorSucursalQueryStack = () => {
         id_sucursal: sucursalesItemSelect?.id,
       }),
     enabled: !!sucursalesItemSelect,
+    staleTime: 1000 * 60 * 5,
   });
 };
 export const useMostrarCajasPorSucursalQueryStack = () => {

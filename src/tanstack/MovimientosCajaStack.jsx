@@ -50,6 +50,7 @@ export const useMostrarEfectivoSinVentasMovCajasQueryStack = () => {
       mostrarEfectivoSinVentasMovCierreCaja({
         _id_cierre_caja: dataCierreCaja?.id,
       }),
+    enabled: !!dataCierreCaja,
   });
 };
 export const useMostrarVentasMetodoPagoMovCajaQueryStack = () => {

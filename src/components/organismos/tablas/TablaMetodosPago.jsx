@@ -53,7 +53,7 @@ export function TablaMetodosPago({
         toast.success(
           "El método de pago se eliminó correctamente y ya no aparecerá en tu lista 😌",
         );
-        queryClient.invalidateQueries(["mostrar metodos pago"]);
+        queryClient.invalidateQueries(["mostrar metodos de pago"]);
       }
     });
   }

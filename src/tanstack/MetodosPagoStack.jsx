@@ -51,7 +51,7 @@ export const useInsertarMetodosPagoMutationStack = (
       toast.success(
         "El método de pago quedó guardado correctamente y ya está disponible 🥳",
       );
-      queryClient.invalidateQueries(["mostrar metodos pago"]);
+      queryClient.invalidateQueries(["mostrar metodos de pago"]);
       cerrarFormulario();
     },
   });

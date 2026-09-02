@@ -29,6 +29,7 @@ export const useMostrarProductosQueryStack = () => {
     queryFn: () => mostrarProductos({ id_empresa: dataempresa?.id }),
     enabled: !!dataempresa,
     refetchOnWindowFocus: false,
+    staleTime: 1000 * 60 * 2,
   });
 };
 export const useBuscarProductosQueryStack = () => {
@@ -117,7 +118,7 @@ export const useInsertarProductosMutationStack = ({
     }
   }
   return useMutation({
-    mutationKey: "insertar productos",
+    mutationKey: ["insertar productos"],
     mutationFn: insertar,
     onError: (error) => {
       toast.error(

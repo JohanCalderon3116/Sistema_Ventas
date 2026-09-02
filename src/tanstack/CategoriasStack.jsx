@@ -12,6 +12,7 @@ export const useMostrarCategoriasQueryStack = () => {
     queryFn: () => mostrarCategorias({ id_empresa: dataempresa?.id }),
     enabled: !!dataempresa,
     refetchOnWindowFocus: false,
+    staleTime: 5 * 60 * 1000,
   });
 };
 export const useBuscarCategoriasQueryStack = () => {

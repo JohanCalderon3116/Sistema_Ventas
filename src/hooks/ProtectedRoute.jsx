@@ -5,22 +5,15 @@ import { useQuery } from "@tanstack/react-query";
 import { useUsuariosStore } from "../store/UsuariosStore";
 import { SpinnerSecundario } from "../components/moleculas/SpinnerSecundario";
 import { Spinner1 } from "../components/moleculas/Spinner1";
+import { useMostrarPermisosGlobalesQueryStack } from "../tanstack/PermisosStack";
 
 export const ProtectedRoute = ({ children, accesby }) => {
   const { user } = userAuth();
   const { mostrarPermisosGlobales } = usePermisosStore();
   const location = useLocation();
   const { datausuarios } = useUsuariosStore();
-  const {
-    data: dataPermisosGlobales,
-    isLoading: isLoadingPermisosGlobales,
-    error: errorPermisosGlobales,
-  } = useQuery({
-    queryKey: ["permisos globales", datausuarios?.id],
-    queryFn: () => mostrarPermisosGlobales({ id_usuario: datausuarios?.id }),
-    enabled: !!datausuarios,
-  });
-
+  const { data: dataPermisosGlobales, isLoading: isLoadingPermisosGlobales } =
+    useMostrarPermisosGlobalesQueryStack();
   const isLoading = !datausuarios || isLoadingPermisosGlobales;
   if (user === undefined) return <Spinner1></Spinner1>;
   if (accesby === "non-authenticated") {

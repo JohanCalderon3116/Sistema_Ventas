@@ -2,7 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import { useProductosStore } from "../store/ProductosStore";
 import { useAlmacenesStore } from "../store/AlmacenesStore";
 import { useStockStore } from "../store/StockStore";
-import { useSucursalesStore } from "../store/SucursalesStore";
 
 export const useMostrarStockAlmacenesyProductoQueryStack = () => {
   const { mostrarStockAlmacenesYProducto } = useStockStore();
@@ -21,6 +20,7 @@ export const useMostrarStockAlmacenesyProductoQueryStack = () => {
         id_producto: ProductosItemSelect?.id,
         id_almacen: almacenSelelctItem?.id,
       }),
+    enabled: !!ProductosItemSelect && !!almacenSelelctItem,
   });
 };
 export const useMostrarStckAlmacenYProductoQueryStack = ({ dataSelect }) => {
@@ -36,16 +36,16 @@ export const useMostrarStckAlmacenYProductoQueryStack = ({ dataSelect }) => {
         id_almacen: almacenSelelctItem?.id,
         id_producto: dataSelect?.id,
       }),
+    enabled: !!almacenSelelctItem,
   });
 };
 export const useMostrarStockQueryStack = () => {
   const { almacenSelelctItem } = useAlmacenesStore();
   const { mostrarStockAlmacenYProducto } = useStockStore();
   const { ProductosItemSelect } = useProductosStore();
-  const { dataSucursales } = useSucursalesStore();
   return useQuery({
     queryKey: [
-      "mostrar stock almacen y producto",
+      "mostrar stock",
       {
         id_producto: ProductosItemSelect?.id,
         id_almacen: almacenSelelctItem?.id,
@@ -56,6 +56,6 @@ export const useMostrarStockQueryStack = () => {
         id_almacen: almacenSelelctItem?.id,
         id_producto: ProductosItemSelect?.id,
       }),
-    enabled: !!dataSucursales,
+    enabled: !!almacenSelelctItem && ProductosItemSelect,
   });
 };
