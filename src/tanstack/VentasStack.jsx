@@ -23,7 +23,7 @@ export const useEliminarVentasIncompletasMutateStack = () => {
   const { dataCierreCaja } = useCierreCajaStore();
   const queryClient = useQueryClient();
   return useMutation({
-    mutationKey: ["elimina ventas incompletas"],
+    mutationKey: ["eliminar ventas incompletas"],
     mutationFn: async () => {
       await eliminarventasIncompletas({
         id_usuario: datausuarios?.id,
@@ -34,7 +34,7 @@ export const useEliminarVentasIncompletasMutateStack = () => {
       toast.error(error.message);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["mostrar detalle venta"]);
+      queryClient.invalidateQueries({ queryKey: ["mostrar detalle venta"] });
     },
   });
 };
@@ -96,7 +96,7 @@ export const useConfirmarVentasMutationStack = ({
     }
   }
   return useMutation({
-    mutationKey: ["insertar ventas"],
+    mutationKey: ["confirmar ventas"],
     mutationFn: ConfirmarVenta,
     onSuccess: async () => {
       if (restante != 0) {
@@ -132,6 +132,38 @@ export const useConfirmarVentasMutationStack = ({
       queryClient.invalidateQueries({
         queryKey: ["mostrar detalle venta"],
         refetchType: "none",
+      });
+      queryClient.invalidateQueries({ queryKey: ["mostrar stock"] });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar Stock Almacenes y Producto"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar stock almacen y producto"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar efectivo sin ventas movCaja"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar ventas metodoPago movCaja"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar cantidad ventas"],
+      });
+      queryClient.invalidateQueries({ queryKey: ["sumar ventas"] });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar ganacias x empresa"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar ventas agrupadas x fecha"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar top 5 mas vendidos por cantidad"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar top 10 productos mas venidos por monto"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar movimientos caja live"],
       });
       toast.success("😁🎉 Venta generada correctamente");
       document.getElementById("input-buscador-pos")?.focus();
@@ -193,13 +225,22 @@ export const useInsertarVentasConDetalleVentasMutationStack = (buscadorRef) => {
     mutationFn: insertarventa,
     onError: (error) => {
       toast.error(`Error al insertar la venta ${error.message}`);
-      queryClien.invalidateQueries(["mostrar Stock Almacenes y Producto"]);
+      queryClien.invalidateQueries({
+        queryKey: ["mostrar Stock Almacenes y Producto"],
+      });
       if (dataStockXAlmacenesYProducto) {
         setStateModal(true);
       }
     },
     onSuccess: () => {
-      queryClien.invalidateQueries(["mostrar detalle venta"]);
+      queryClien.invalidateQueries({ queryKey: ["mostrar detalle venta"] });
+      queryClien.invalidateQueries({ queryKey: ["mostrar stock"] });
+      queryClien.invalidateQueries({
+        queryKey: ["mostrar Stock Almacenes y Producto"],
+      });
+      queryClien.invalidateQueries({
+        queryKey: ["mostrar stock almacen y producto"],
+      });
     },
   });
 };
@@ -222,7 +263,33 @@ export const useEliminarVentasMutationStack = () => {
       toast.error(`❌ Ups, algo falló: ${error.message}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["mostrar detalle venta"]);
+      queryClient.invalidateQueries({ queryKey: ["mostrar detalle venta"] });
+      queryClient.invalidateQueries({ queryKey: ["mostrar stock"] });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar Stock Almacenes y Producto"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar stock almacen y producto"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar cantidad ventas"],
+      });
+      queryClient.invalidateQueries({ queryKey: ["sumar ventas"] });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar ganacias x empresa"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar ventas agrupadas x fecha"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar top 5 mas vendidos por cantidad"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar top 10 productos mas venidos por monto"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar movimientos caja live"],
+      });
       resetDetalleVenta();
       resetState();
       toast.success(
@@ -252,6 +319,7 @@ export const useMostrarCantidadVentasQueryStack = () => {
         _fecha_fin: fechaFin,
       }),
     enabled: !!dataempresa?.id && !!fechaInicio && !!fechaFin,
+    retry: 1,
   });
 };
 export const useSumarVentasQueryStack = () => {
@@ -275,6 +343,7 @@ export const useSumarVentasQueryStack = () => {
       }),
 
     enabled: !!dataempresa?.id && !!fechaInicio && !!fechaFin,
+    retry: 1,
   });
 };
 export const useMostrarGanaciasXEmpresaQueryStack = () => {
@@ -297,6 +366,7 @@ export const useMostrarGanaciasXEmpresaQueryStack = () => {
         _fecha_fin: fechaFin,
       }),
     enabled: !!dataempresa?.id && !!fechaInicio && !!fechaFin,
+    retry: 1,
   });
 };
 export const useMostrarVentasAgrupadasXFechaQueryStack = () => {
@@ -320,6 +390,7 @@ export const useMostrarVentasAgrupadasXFechaQueryStack = () => {
       }),
 
     enabled: !!dataempresa?.id && !!fechaInicio && !!fechaFin,
+    retry: 1,
   });
 };
 export const useMostrarTop5MasVendidosXCantidadQueryStack = () => {
@@ -341,7 +412,8 @@ export const useMostrarTop5MasVendidosXCantidadQueryStack = () => {
         _fecha_inicio: fechaInicio,
         _fecha_fin: fechaFin,
       }),
-    enabled: !!dataempresa,
+    enabled: !!dataempresa?.id && !!fechaInicio && !!fechaFin,
+    retry: 1,
   });
 };
 export const useMostrarMovimientosCajaLiveQueryStack = () => {
@@ -350,7 +422,8 @@ export const useMostrarMovimientosCajaLiveQueryStack = () => {
   return useQuery({
     queryKey: ["mostrar movimientos caja live"],
     queryFn: () => mostrarMovimentosCajaLive({ _id_empresa: dataempresa?.id }),
-    enabled: !!dataempresa,
+    enabled: !!dataempresa?.id,
+    retry: 1,
   });
 };
 export const useMostrarTop10MasVendidosXMontoQueryStack = () => {
@@ -372,6 +445,7 @@ export const useMostrarTop10MasVendidosXMontoQueryStack = () => {
         _fecha_inicio: fechaInicio,
         _fecha_fin: fechaFin,
       }),
-    enabled: !!dataempresa,
+    enabled: !!dataempresa?.id && !!fechaInicio && !!fechaFin,
+    retry: 1,
   });
 };

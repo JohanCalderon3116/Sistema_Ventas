@@ -19,6 +19,7 @@ export const useMostrarSucursalesXEmpresaStack = () => {
     enabled: !!dataempresa,
     refetchOnWindowFocus: false,
     staleTime: 1000 * 60 * 5,
+    retry: 1,
   });
 };
 export const useMostrarCajaPorSucursalQueryStack = () => {
@@ -37,6 +38,7 @@ export const useMostrarCajaPorSucursalQueryStack = () => {
       }),
     enabled: !!sucursalesItemSelect,
     staleTime: 1000 * 60 * 5,
+    retry: 1,
   });
 };
 export const useMostrarCajasPorSucursalQueryStack = () => {
@@ -46,6 +48,7 @@ export const useMostrarCajasPorSucursalQueryStack = () => {
     queryKey: ["mostrar cajas por sucursal"],
     queryFn: () => mostrarCajasPorSucursal({ id_empresa: dataempresa?.id }),
     enabled: !!dataempresa,
+    retry: 1,
   });
 };
 export const useInsertarSucursalesMutationStack = () => {
@@ -98,7 +101,10 @@ export const useInsertarSucursalesMutationStack = () => {
       toast.success(
         "La sucursal quedó registrada correctamente y ya está lista para usarse 🙂",
       );
-      queryClient.invalidateQueries(["mostrar cajas por sucursal"]);
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar cajas por sucursal"],
+      });
+      queryClient.invalidateQueries({ queryKey: ["mostrar sucursales"] });
       setStateSucursal(false);
     },
   });
@@ -146,7 +152,10 @@ export const useEliminarSucursalesMutationStack = () => {
       toast.success(
         "La sucursal se eliminó correctamente y ya no aparecerá en tu lista 😌",
       );
-      queryClient.invalidateQueries(["mostrar cajas por sucursal"]);
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar cajas por sucursal"],
+      });
+      queryClient.invalidateQueries({ queryKey: ["mostrar sucursales"] });
     },
   });
 };

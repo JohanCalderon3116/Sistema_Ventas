@@ -6,5 +6,8 @@ export const useMostrarModulosQueryStack = () => {
   return useQuery({
     queryKey: ["mostrar modulos"],
     queryFn: mostrarmodulos,
+    staleTime: 1000 * 60 * 10,
+    refetchOnWindowFocus: false,
+    retry: 1,
   });
 };

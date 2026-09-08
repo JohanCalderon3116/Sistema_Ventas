@@ -7,7 +7,6 @@ import { usePermisosStore } from "../store/PermisosStore";
 import { useRolesStore } from "../store/RolesStore";
 import { useSucursalesStore } from "../store/SucursalesStore";
 import { useCajasStore } from "../store/CajaStore";
-import { useClientesProveedoresStore } from "../store/ClientesProveedoresStore";
 import { userAuth } from "../context/AuthContext";
 import { useThemeStore } from "../store/ThemeStore";
 import { Dark, Light } from "../styles/themes";
@@ -31,7 +30,7 @@ export const useEditarUsuarioMutationStack = () => {
     },
     onSuccess: () => {
       toast.success("¡Perfil actualizado sin problema! 😎");
-      queryClient.invalidateQueries(["mostrar usuarios"]);
+      queryClient.invalidateQueries({ queryKey: ["mostrar usuarios"] });
     },
   });
 };
@@ -45,6 +44,7 @@ export const useMostrarUsuariosAsignadosQueryStack = () => {
         _id_empresa: dataempresa?.id,
       }),
     enabled: !!dataempresa,
+    retry: 1,
   });
 };
 export const useBuscarUsuariosAsignados = () => {
@@ -61,7 +61,8 @@ export const useBuscarUsuariosAsignados = () => {
         _id_empresa: dataempresa?.id,
         buscador: buscador,
       }),
-    enabled: !!dataempresa,
+    enabled: !!dataempresa && buscador.trim().length > 0,
+    retry: 1,
   });
 };
 export const useInsertarUsuariosPorEmpresaMutationStack = ({
@@ -97,10 +98,8 @@ export const useInsertarUsuariosPorEmpresaMutationStack = ({
         telefono: data.telefono,
         id_rol: rolesItemSelect?.id,
         correo: data.email,
-        // datos asignacion caja y sucursal
         id_sucursal: sucursalesItemSelect?.id,
         id_caja: cajaSelelctItem?.id,
-        //datos credenciales
         email: data.email,
         pass: data.pass,
       };
@@ -117,7 +116,12 @@ export const useInsertarUsuariosPorEmpresaMutationStack = ({
     },
     onSuccess: () => {
       toast.success("¡Hecho! Ya quedó registrado. ✌️😎");
-      queryClient.invalidateQueries(["mostrar usuarios asignados"]);
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar usuarios asignados"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["buscar usuarios asignados"],
+      });
       onClose();
     },
   });
@@ -135,6 +139,7 @@ export const useMostrarUsuariosQueryStack = () => {
     refetchOnWindowFocus: false,
     enabled: !!id_auth,
     staleTime: 1000 * 60 * 5,
+    retry: 1,
   });
 };
 export const useEditarTemaMutationStack = () => {
@@ -158,7 +163,7 @@ export const useEditarTemaMutationStack = () => {
     mutationKey: ["editar tema"],
     mutationFn: EditarTemaUser,
     onSuccess: () => {
-      queryClient.invalidateQueries(["mostrar usuarios"]);
+      queryClient.invalidateQueries({ queryKey: ["mostrar usuarios"] });
     },
     onError: (error) => {
       toast.error(`Error: ${error.message}`);

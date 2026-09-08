@@ -15,6 +15,8 @@ export const useMostrarSerealizacionesQueryStack = () => {
       }),
     enabled: !!dataCierreCaja,
     staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
+    retry: 1,
   });
 };
 export const useMostrarSerealizacionesVentasQueryStack = () => {
@@ -28,6 +30,8 @@ export const useMostrarSerealizacionesVentasQueryStack = () => {
       }),
     enabled: !!dataCierreCaja,
     staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
+    retry: 1,
   });
 };
 export const useEditarSerealizacionDefaultMutationStack = () => {
@@ -48,7 +52,7 @@ export const useEditarSerealizacionDefaultMutationStack = () => {
     },
     onSuccess: () => {
       toast.success("Datos guardados");
-      queryClient.invalidateQueries(["mostrar serealizaciones"]);
+      queryClient.invalidateQueries({ queryKey: ["mostrar serealizaciones"] });
     },
   });
 };
@@ -72,7 +76,10 @@ export const useEditarSerealizaciontMutationStack = () => {
     },
     onSuccess: () => {
       toast.success("Datos guardados");
-      queryClient.invalidateQueries(["mostrar serealizaciones"]);
+      queryClient.invalidateQueries({ queryKey: ["mostrar serealizaciones"] });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar serealizaciones ventas"],
+      });
       setStateClose(false);
     },
   });

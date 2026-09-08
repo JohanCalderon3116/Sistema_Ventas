@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEmpresaStore } from "../store/EmpresaStore";
 import { useProductosStore } from "../store/ProductosStore";
 import { ConvertirMayusculas } from "../utils/Conversiones";
@@ -14,11 +14,12 @@ export const useBuscarProductosCodigoQueryStack = () => {
   const esCodigoDeBarras = /^[0-9]{3,}$/.test(texto);
 
   return useQuery({
-    queryKey: ["buscar productos", buscador],
+    queryKey: ["buscar productos codigo", buscador],
     queryFn: () =>
       buscarProductos({ id_empresa: dataempresa?.id, buscador: texto }),
     enabled: !!dataempresa && texto.length > 0 && !esCodigoDeBarras,
     refetchOnWindowFocus: false,
+    retry: 1,
   });
 };
 export const useMostrarProductosQueryStack = () => {
@@ -30,6 +31,7 @@ export const useMostrarProductosQueryStack = () => {
     enabled: !!dataempresa,
     refetchOnWindowFocus: false,
     staleTime: 1000 * 60 * 2,
+    retry: 1,
   });
 };
 export const useBuscarProductosQueryStack = () => {
@@ -39,8 +41,9 @@ export const useBuscarProductosQueryStack = () => {
     queryKey: ["buscar productos", buscador],
     queryFn: () =>
       buscarProductos({ id_empresa: dataempresa?.id, buscador: buscador }),
-    enabled: !!dataempresa,
+    enabled: !!dataempresa && buscador.trim().length > 0,
     refetchOnWindowFocus: false,
+    retry: 1,
   });
 };
 export const useInsertarProductosMutationStack = ({
@@ -49,6 +52,7 @@ export const useInsertarProductosMutationStack = ({
   validarVacios,
   cerrarFormulario,
 }) => {
+  const queryClient = useQueryClient();
   const { categoriaItemSelect } = useCategoriasStore();
   const {
     randomCodeBarras,
@@ -127,6 +131,16 @@ export const useInsertarProductosMutationStack = ({
     },
     onSuccess: () => {
       toast.success("¡Genial! Tu producto se guardó correctamente. ✨😊");
+      queryClient.invalidateQueries({ queryKey: ["mostrar productos"] });
+      queryClient.invalidateQueries({ queryKey: ["buscar productos"] });
+      queryClient.invalidateQueries({ queryKey: ["buscar productos codigo"] });
+      queryClient.invalidateQueries({ queryKey: ["mostrar stock"] });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar Stock Almacenes y Producto"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar stock almacen y producto"],
+      });
       cerrarFormulario();
       setRandomCodeBarras("");
     },

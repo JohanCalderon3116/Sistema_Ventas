@@ -21,6 +21,7 @@ export const useMostrarStockAlmacenesyProductoQueryStack = () => {
         id_almacen: almacenSelelctItem?.id,
       }),
     enabled: !!ProductosItemSelect && !!almacenSelelctItem,
+    retry: 1,
   });
 };
 export const useMostrarStckAlmacenYProductoQueryStack = ({ dataSelect }) => {
@@ -29,14 +30,15 @@ export const useMostrarStckAlmacenYProductoQueryStack = ({ dataSelect }) => {
   return useQuery({
     queryKey: [
       "mostrar stock almacen y producto",
-      { id_producto: dataSelect.id, id_almacen: almacenSelelctItem?.id },
+      { id_producto: dataSelect?.id, id_almacen: almacenSelelctItem?.id },
     ],
     queryFn: () =>
       mostrarStockAlmacenYProducto({
         id_almacen: almacenSelelctItem?.id,
         id_producto: dataSelect?.id,
       }),
-    enabled: !!almacenSelelctItem,
+    enabled: !!almacenSelelctItem && !!dataSelect?.id,
+    retry: 1,
   });
 };
 export const useMostrarStockQueryStack = () => {
@@ -56,6 +58,7 @@ export const useMostrarStockQueryStack = () => {
         id_almacen: almacenSelelctItem?.id,
         id_producto: ProductosItemSelect?.id,
       }),
-    enabled: !!almacenSelelctItem && ProductosItemSelect,
+    enabled: !!almacenSelelctItem && !!ProductosItemSelect,
+    retry: 1,
   });
 };

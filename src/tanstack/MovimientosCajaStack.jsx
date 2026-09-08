@@ -8,6 +8,7 @@ import { useFormattedDate } from "../hooks/useFormattedDate";
 import { useAuthStore } from "../store/AuthStore";
 
 export const useInsertarIngresosSalidasCajasMutationStack = (reset) => {
+  const queryClient = useQueryClient();
   const fechaActual = useFormattedDate();
   const { tipoRegistro } = useCierreCajaStore();
   const { selectMetodo } = useMetodosPagoStore();
@@ -31,6 +32,9 @@ export const useInsertarIngresosSalidasCajasMutationStack = (reset) => {
     mutationFn: insertar,
     onSuccess: () => {
       toast.success("El movimiento de caja quedó registrado correctamente 🙌");
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar efectivo sin ventas movCaja"],
+      });
       setStateIngresoSalida(false);
       reset();
     },
@@ -50,7 +54,8 @@ export const useMostrarEfectivoSinVentasMovCajasQueryStack = () => {
       mostrarEfectivoSinVentasMovCierreCaja({
         _id_cierre_caja: dataCierreCaja?.id,
       }),
-    enabled: !!dataCierreCaja,
+    enabled: !!dataCierreCaja?.id,
+    retry: 1,
   });
 };
 export const useMostrarVentasMetodoPagoMovCajaQueryStack = () => {
@@ -62,6 +67,8 @@ export const useMostrarVentasMetodoPagoMovCajaQueryStack = () => {
       mostrarVentasMetodoPagoMovCaja({
         _id_cierre_caja: dataCierreCaja?.id,
       }),
+    enabled: !!dataCierreCaja?.id,
+    retry: 1,
   });
 };
 export const useTerminarTurnoMutationStack = (diferencia, reset) => {
@@ -96,7 +103,13 @@ export const useTerminarTurnoMutationStack = (diferencia, reset) => {
       setStateConteoCaja(false);
       setStateCierreCaja(false);
       reset();
-      queryClient.invalidateQueries(["mostrar cierre de caja"]);
+      queryClient.invalidateQueries({ queryKey: ["mostrar cierre de caja"] });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar efectivo sin ventas movCaja"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar ventas metodoPago movCaja"],
+      });
       cerrarSesion();
     },
     onError: (error) => {

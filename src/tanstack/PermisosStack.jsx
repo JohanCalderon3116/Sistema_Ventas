@@ -6,13 +6,14 @@ export const useMostrarPermisosConfiguracionesQueryStack = () => {
   const { datausuarios } = useUsuariosStore();
   const { mostrarPermisosConfiguraciones } = usePermisosStore();
   return useQuery({
-    queryKey: ["mostrar permisos configuracion"],
+    queryKey: ["mostrar permisos configuracion", datausuarios?.id],
     queryFn: () =>
       mostrarPermisosConfiguraciones({
         id_usuario: datausuarios?.id,
       }),
     enabled: !!datausuarios,
     staleTime: 1000 * 60 * 5,
+    retry: 1,
   });
 };
 export const useMostrarPermisosGlobalesQueryStack = () => {
@@ -23,6 +24,7 @@ export const useMostrarPermisosGlobalesQueryStack = () => {
     queryFn: () => mostrarPermisosGlobales({ id_usuario: datausuarios?.id }),
     enabled: !!datausuarios,
     staleTime: 1000 * 60 * 5,
+    retry: 1,
   });
 };
 export const useMostrarPermisosDefaultQueryStack = () => {
@@ -30,6 +32,9 @@ export const useMostrarPermisosDefaultQueryStack = () => {
   return useQuery({
     queryKey: ["mostrar permisos default"],
     queryFn: mostrarPermisosDefault,
+    staleTime: 1000 * 60 * 10,
+    refetchOnWindowFocus: false,
+    retry: 1,
   });
 };
 export const useMostrarPermisosPorUsuariosQueryStack = (
@@ -37,9 +42,13 @@ export const useMostrarPermisosPorUsuariosQueryStack = (
 ) => {
   const { mostrarPermisos } = usePermisosStore();
   return useQuery({
-    queryKey: ["mostrar permisos por usuarios"],
+    queryKey: [
+      "mostrar permisos por usuarios",
+      selectItemAsignaciones?.id_usuario,
+    ],
     queryFn: () =>
       mostrarPermisos({ id_usuario: selectItemAsignaciones?.id_usuario }),
     enabled: !!selectItemAsignaciones,
+    retry: 1,
   });
 };
