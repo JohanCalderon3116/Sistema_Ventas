@@ -54,7 +54,18 @@ export const useInsertarCajasMutationStack = () => {
       toast.success(
         "La caja quedó registrada correctamente y ya está lista para usarse 😎",
       );
-      queryClient.invalidateQueries(["mostrar cajas por sucursal"]);
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar cajas por sucursal"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar usuarios asignados"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["buscar usuarios asignados"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar sucursales asignadas"],
+      });
       setStateCaja(false);
     },
   });
@@ -102,7 +113,18 @@ export const useElimarCajasMutationStack = () => {
       toast.success(
         "La caja se eliminó correctamente y ya no aparecerá en tu lista 🥰",
       );
-      queryClient.invalidateQueries(["mostrar cajas por sucursal"]);
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar cajas por sucursal"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar usuarios asignados"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["buscar usuarios asignados"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar sucursales asignadas"],
+      });
     },
   });
 };
@@ -143,7 +165,18 @@ export const useAperturarCajasMutationStack = (item) => {
     mutationFn: insertar,
     onSuccess: () => {
       toast.success("La caja se aperturó correctamente 😌");
-      queryClient.invalidateQueries("mostrar cierre de caja");
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar cierre caja por empresa"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar caja aperturada por usuario"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar efectivo sin ventas movCaja"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar ventas metodoPago movCaja"],
+      });
     },
     onError: (error) => {
       toast.error(`No pudimos aperturar la caja, algo falló en el proceso 😥`);

@@ -26,7 +26,7 @@ export const useUpdatEmpresaMutateStack = () => {
     },
     onSuccess: () => {
       toast.success("¡Listo! Tu empresa se actualizó con éxito 🥳");
-      queryClient.invalidateQueries(["mostrar empresa"]);
+      queryClient.invalidateQueries({ queryKey: ["mostrar empresa"] });
     },
   });
 };
@@ -35,7 +35,7 @@ export const useUpdatEmpresaTicketMutateStack = () => {
   const queryClient = useQueryClient();
   const { dataempresa, editarEmpresa } = useEmpresaStore();
   return useMutation({
-    mutationKey: ["editar empresa"],
+    mutationKey: ["editar empresa ticket"],
     mutationFn: async (data) => {
       const p = {
         id: dataempresa?.id,
@@ -52,7 +52,7 @@ export const useUpdatEmpresaTicketMutateStack = () => {
     },
     onSuccess: () => {
       toast.success("¡Datos guardados! Tu ticket se actualizó con éxito 🎉");
-      queryClient.invalidateQueries(["mostrar ticket"]);
+      queryClient.invalidateQueries({ queryKey: ["mostrar empresa"] });
     },
   });
 };
@@ -71,7 +71,7 @@ export const useEditarMonedaConfigEmpresaMutationStack = () => {
     await editarMondaEmpresa(p);
   };
   return useMutation({
-    mutationKey: "editar empresa moneda",
+    mutationKey: ["editar empresa moneda"],
     mutationFn: editar,
     onError: (error) => {
       toast.error(
@@ -79,7 +79,7 @@ export const useEditarMonedaConfigEmpresaMutationStack = () => {
       );
     },
     onSuccess: () => {
-      queryClient.invalidateQueries("mostrar empresa");
+      queryClient.invalidateQueries({ queryKey: ["mostrar empresa"] });
       toast.success("La moneda de tu país se actualizó correctamente 😃");
     },
   });
@@ -93,5 +93,6 @@ export const useMostrarEmpresaQueryStack = () => {
     enabled: !!datausuarios,
     refetchOnWindowFocus: false,
     staleTime: 1000 * 60 * 5,
+    retry: 1,
   });
 };

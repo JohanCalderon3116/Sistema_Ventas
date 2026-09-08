@@ -122,6 +122,11 @@ export const useInsertarUsuariosPorEmpresaMutationStack = ({
       queryClient.invalidateQueries({
         queryKey: ["buscar usuarios asignados"],
       });
+      if (accion === "Editar") {
+        queryClient.invalidateQueries({
+          queryKey: ["mostrar permisos por usuarios"],
+        });
+      }
       onClose();
     },
   });

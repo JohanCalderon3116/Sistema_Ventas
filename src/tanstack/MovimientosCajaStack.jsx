@@ -35,6 +35,9 @@ export const useInsertarIngresosSalidasCajasMutationStack = (reset) => {
       queryClient.invalidateQueries({
         queryKey: ["mostrar efectivo sin ventas movCaja"],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar ventas metodoPago movCaja"],
+      });
       setStateIngresoSalida(false);
       reset();
     },
@@ -103,12 +106,17 @@ export const useTerminarTurnoMutationStack = (diferencia, reset) => {
       setStateConteoCaja(false);
       setStateCierreCaja(false);
       reset();
-      queryClient.invalidateQueries({ queryKey: ["mostrar cierre de caja"] });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar cierre caja por empresa"],
+      });
       queryClient.invalidateQueries({
         queryKey: ["mostrar efectivo sin ventas movCaja"],
       });
       queryClient.invalidateQueries({
         queryKey: ["mostrar ventas metodoPago movCaja"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar caja aperturada por usuario"],
       });
       cerrarSesion();
     },

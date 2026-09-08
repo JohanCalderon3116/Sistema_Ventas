@@ -16,6 +16,7 @@ export const useMostrarCierreCajaPorEmpresaQueryStack = () => {
         _id_empresa: dataempresa?.id,
       }),
     enabled: !!dataempresa,
+    retry: 1,
   });
 };
 export const useMostrarAperturaCajaPorUsuarioQueryStack = () => {
@@ -31,5 +32,6 @@ export const useMostrarAperturaCajaPorUsuarioQueryStack = () => {
         id_usuario: datausuarios?.id,
       }),
     enabled: !!datausuarios,
+    retry: 1,
   });
 };

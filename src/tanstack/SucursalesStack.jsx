@@ -105,6 +105,24 @@ export const useInsertarSucursalesMutationStack = () => {
         queryKey: ["mostrar cajas por sucursal"],
       });
       queryClient.invalidateQueries({ queryKey: ["mostrar sucursales"] });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar usuarios asignados"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["buscar usuarios asignados"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar almacenes por sucursal"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar almacenes por sucursal item select"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar almacenes x empresa"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar sucursales asignadas"],
+      });
       setStateSucursal(false);
     },
   });
@@ -156,6 +174,24 @@ export const useEliminarSucursalesMutationStack = () => {
         queryKey: ["mostrar cajas por sucursal"],
       });
       queryClient.invalidateQueries({ queryKey: ["mostrar sucursales"] });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar usuarios asignados"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["buscar usuarios asignados"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar almacenes por sucursal"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar almacenes por sucursal item select"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar almacenes x empresa"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar sucursales asignadas"],
+      });
     },
   });
 };

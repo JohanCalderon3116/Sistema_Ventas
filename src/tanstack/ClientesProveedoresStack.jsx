@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEmpresaStore } from "../store/EmpresaStore";
 import { useLocation } from "react-router-dom";
 import { useClientesProveedoresStore } from "../store/ClientesProveedoresStore";
@@ -30,6 +30,7 @@ export const useMostrarClientesProveedoresQueryStack = () => {
       }),
     enabled: !!dataempresa,
     refetchOnWindowFocus: false,
+    retry: 1,
   });
 };
 export const useBuscarClientesProveedoresLocationQueryStack = () => {
@@ -57,8 +58,9 @@ export const useBuscarClientesProveedoresLocationQueryStack = () => {
             : "proveedor",
         buscador: buscador,
       }),
-    enabled: !!dataempresa,
+    enabled: !!dataempresa && buscador.trim().length > 0,
     refetchOnWindowFocus: false,
+    retry: 1,
   });
 };
 export const useBuscarClientesQueryStack = () => {
@@ -72,8 +74,9 @@ export const useBuscarClientesQueryStack = () => {
         tipo: "cliente",
         buscador: buscador,
       }),
-    enabled: !!dataempresa,
+    enabled: !!dataempresa && buscador.trim().length > 0,
     refetchOnWindowFocus: false,
+    retry: 1,
   });
 };
 export const useInsertarClientesProveedoresMutationStack = ({
@@ -81,6 +84,7 @@ export const useInsertarClientesProveedoresMutationStack = ({
   dataSelect,
   cerrarFormulario,
 }) => {
+  const queryClient = useQueryClient();
   const { dataempresa } = useEmpresaStore();
   const { tipo, editarCliPro, insertarCliPro } = useClientesProveedoresStore();
   async function insertar(data) {
@@ -113,7 +117,7 @@ export const useInsertarClientesProveedoresMutationStack = ({
   }
   return useMutation({
     mutationFn: insertar,
-    mutationKey: "insertar clientes proveedores",
+    mutationKey: ["insertar clientes proveedores"],
     onError: (error) => {
       toast.error(
         `No pudimos guardar los datos que ingresaste, algo falló en el proceso: ${error.message}. Revisa la información e inténtalo de nuevo 😣`,
@@ -123,6 +127,14 @@ export const useInsertarClientesProveedoresMutationStack = ({
       toast.success(
         "Todo salió bien, la información quedó guardada correctamente y ya está disponible 🤗",
       );
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar clientes proveedores"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["buscar clientes proveedores"],
+      });
+      queryClient.invalidateQueries({ queryKey: ["buscar cliente"] });
+      queryClient.invalidateQueries({ queryKey: ["mostrar clientes"] });
       cerrarFormulario();
     },
   });
@@ -140,5 +152,7 @@ export const useMostrarClientesQueryStack = () => {
         id_empresa: dataempresa?.id,
         tipo: "cliente",
       }),
+    enabled: !!dataempresa,
+    retry: 1,
   });
 };

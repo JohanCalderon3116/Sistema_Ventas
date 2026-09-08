@@ -26,6 +26,8 @@ export const useMostrarCreditosQueryStack = () => {
       mostrarCreditos({
         id_empresa: dataempresa?.id,
       }),
+    enabled: !!dataempresa,
+    retry: 1,
   });
 };
 export const useBuscarCreditsoQueryStack = () => {
@@ -38,14 +40,16 @@ export const useBuscarCreditsoQueryStack = () => {
         id_empresa: dataempresa?.id,
         nombres: buscadorCreditos,
       }),
-    enabled: !!dataempresa,
+    enabled: !!dataempresa && buscadorCreditos.trim().length > 0,
     refetchOnWindowFocus: false,
+    retry: 1,
   });
 };
 export const useInsertarMovimientoCreditoMutationStack = ({
   onClose,
   resetFuction,
 }) => {
+  const queryClient = useQueryClient();
   const { creditosItemSelect } = useCreditosStore();
   const { idventa } = useVentasStore();
   const { total } = useDetalleVentasStore();
@@ -70,6 +74,8 @@ export const useInsertarMovimientoCreditoMutationStack = ({
     },
     onSuccess: () => {
       toast.success("🎉 ¡Registro guardado correctamente! ✨");
+      queryClient.invalidateQueries({ queryKey: ["mostrar creditos"] });
+      queryClient.invalidateQueries({ queryKey: ["buscar creditos"] });
       resetFuction();
       onClose();
     },
@@ -89,7 +95,7 @@ export const useInsetarCreditosMutationStack = ({ cerrarFormulario }) => {
     await insertarCredito(p);
   }
   return useMutation({
-    mutationKey: "insertar credito",
+    mutationKey: ["insertar credito"],
     mutationFn: insertar,
     onError: (error) => {
       toast.error(
@@ -98,12 +104,14 @@ export const useInsetarCreditosMutationStack = ({ cerrarFormulario }) => {
     },
     onSuccess: () => {
       toast.success("El crédito quedó registrado correctamente 🙌");
-      queryClient.invalidateQueries(["mostrar creditos"]);
+      queryClient.invalidateQueries({ queryKey: ["mostrar creditos"] });
+      queryClient.invalidateQueries({ queryKey: ["buscar creditos"] });
       cerrarFormulario();
     },
   });
 };
 export const useInsertarAbonoCreditoMuatationStack = () => {
+  const queryClient = useQueryClient();
   const fechaActual = useFormattedDate();
   const { creditosItemSelect } = useCreditosStore();
   const { insertarMovimientosCreditos } = useMovimientosCreditosStore();
@@ -133,7 +141,7 @@ export const useInsertarAbonoCreditoMuatationStack = () => {
     await insertarMovcaja(pmovcaja);
   }
   return useMutation({
-    mutationKey: "insertar abono credito",
+    mutationKey: ["insertar abono credito"],
     mutationFn: insertar,
     onError: (error) => {
       toast.error(
@@ -143,6 +151,14 @@ export const useInsertarAbonoCreditoMuatationStack = () => {
     onSuccess: () => {
       setStateIngresoCredito(false);
       toast.success("El abono al crédito quedó registrado correctamente 🫶");
+      queryClient.invalidateQueries({ queryKey: ["mostrar creditos"] });
+      queryClient.invalidateQueries({ queryKey: ["buscar creditos"] });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar efectivo sin ventas movCaja"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar ventas metodoPago movCaja"],
+      });
     },
   });
 };

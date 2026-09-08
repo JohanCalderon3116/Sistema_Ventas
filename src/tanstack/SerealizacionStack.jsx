@@ -53,6 +53,9 @@ export const useEditarSerealizacionDefaultMutationStack = () => {
     onSuccess: () => {
       toast.success("Datos guardados");
       queryClient.invalidateQueries({ queryKey: ["mostrar serealizaciones"] });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar serealizaciones ventas"],
+      });
     },
   });
 };

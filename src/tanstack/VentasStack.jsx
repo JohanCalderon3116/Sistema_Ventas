@@ -35,6 +35,13 @@ export const useEliminarVentasIncompletasMutateStack = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["mostrar detalle venta"] });
+      queryClient.invalidateQueries({ queryKey: ["mostrar stock"] });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar Stock Almacenes y Producto"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar stock almacen y producto"],
+      });
     },
   });
 };

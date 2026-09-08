@@ -14,9 +14,9 @@ import {
   useCategoriasStore,
   useMostrarStckAlmacenYProductoQueryStack,
   useInsertarProductosMutationStack,
+  useMostrarAlmacenesXSucursalItemSelectQueryStack,
 } from "../../../index";
 import { useForm } from "react-hook-form";
-import { useQuery } from "@tanstack/react-query";
 import { Device } from "../../../styles/breakpoints";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
@@ -64,7 +64,6 @@ export function RegistrarProductos({
   const {
     dataalmacen,
     eliminarAlmacen,
-    mostrarAlmacenesXSucursal,
     almacenSelelctItem,
     setAlmacenSelelctItem,
   } = useAlmacenesStore();
@@ -76,17 +75,8 @@ export function RegistrarProductos({
   const theme = useTheme();
   const { data: dataStockXAlamacenYProducto } =
     useMostrarStckAlmacenYProductoQueryStack({ dataSelect });
-  const { data: dataAlmacenes } = useQuery({
-    queryKey: [
-      "mostrar almacenes x sucursal",
-      { id_producto: dataSelect.id, id_sucursal: sucursalesItemSelect.id },
-    ],
-    queryFn: () =>
-      mostrarAlmacenesXSucursal({
-        id_sucursal: sucursalesItemSelect.id,
-      }),
-    enabled: !!sucursalesItemSelect,
-  });
+  const { data: dataAlmacenes } =
+    useMostrarAlmacenesXSucursalItemSelectQueryStack();
   const {
     register,
     formState: { errors },

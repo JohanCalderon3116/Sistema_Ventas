@@ -20,7 +20,14 @@ export const useEditarCantidadDetalleVentaMutationStack = () => {
       toast.error(`Error: ${error.message}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["mostrar detalle venta"]);
+      queryClient.invalidateQueries({ queryKey: ["mostrar detalle venta"] });
+      queryClient.invalidateQueries({ queryKey: ["mostrar stock"] });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar Stock Almacenes y Producto"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar stock almacen y producto"],
+      });
     },
   });
 };
@@ -37,7 +44,14 @@ export const useEliminarCantidadDetalleVentaMutationStack = () => {
       toast.error(`Error: ${error.message}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["mostrar detalle venta"]);
+      queryClient.invalidateQueries({ queryKey: ["mostrar detalle venta"] });
+      queryClient.invalidateQueries({ queryKey: ["mostrar stock"] });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar Stock Almacenes y Producto"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar stock almacen y producto"],
+      });
     },
   });
 };
@@ -45,8 +59,9 @@ export const useMostrarDetalleVentaQueryStack = () => {
   const { idventa } = useVentasStore();
   const { mostrardetalleventa } = useDetalleVentasStore();
   return useQuery({
-    queryKey: ["mostrar detalle venta", { id_vanta: idventa }],
+    queryKey: ["mostrar detalle venta", { id_venta: idventa }],
     queryFn: () => mostrardetalleventa({ id_venta: idventa }),
     enabled: idventa > 0,
+    retry: 1,
   });
 };

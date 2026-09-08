@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEmpresaStore } from "../store/EmpresaStore";
 import { useCategoriasStore } from "../store/CategoriasStore";
 import { ConvertirCapitalize } from "../utils/Conversiones";
@@ -13,6 +13,7 @@ export const useMostrarCategoriasQueryStack = () => {
     enabled: !!dataempresa,
     refetchOnWindowFocus: false,
     staleTime: 5 * 60 * 1000,
+    retry: 1,
   });
 };
 export const useBuscarCategoriasQueryStack = () => {
@@ -22,8 +23,9 @@ export const useBuscarCategoriasQueryStack = () => {
     queryKey: ["buscar categorias", buscador],
     queryFn: () =>
       buscarCategorias({ id_empresa: dataempresa?.id, descripcion: buscador }),
-    enabled: !!dataempresa,
+    enabled: !!dataempresa && buscador.trim().length > 0,
     refetchOnWindowFocus: false,
+    retry: 1,
   });
 };
 export const useInsertarCategoriasMutationStack = ({
@@ -31,6 +33,7 @@ export const useInsertarCategoriasMutationStack = ({
   dataSelect,
   cerrarFormulario,
 }) => {
+  const queryClient = useQueryClient();
   const { dataempresa } = useEmpresaStore();
   const { currentColor, editarCategorias, file, insertarCategorias } =
     useCategoriasStore();
@@ -55,7 +58,7 @@ export const useInsertarCategoriasMutationStack = ({
   }
   return useMutation({
     mutationFn: insertar,
-    mutationKey: "insertar categorias",
+    mutationKey: ["insertar categorias"],
     onError: (error) => {
       toast.error(
         `No pudimos guardar tu categoría, algo falló en el proceso. ${error.message} Inténtalo de nuevo 😩`,
@@ -63,6 +66,8 @@ export const useInsertarCategoriasMutationStack = ({
     },
     onSuccess: () => {
       toast.success("Tu categoría quedó guardada correctamente 😄");
+      queryClient.invalidateQueries({ queryKey: ["mostrar categorias"] });
+      queryClient.invalidateQueries({ queryKey: ["buscar categorias"] });
       cerrarFormulario();
     },
   });

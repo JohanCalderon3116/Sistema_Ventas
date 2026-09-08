@@ -21,19 +21,24 @@ export const useMostrarAlmacenesXSucursalQueryStack = () => {
       }),
     enabled: !!dataCierreCaja,
     refetchOnWindowFocus: false,
+    retry: 1,
   });
 };
 export const useMostrarAlmacenesXSucursalItemSelectQueryStack = () => {
   const { mostrarAlmacenesXSucursal } = useAlmacenesStore();
   const { sucursalesItemSelect, dataSucursales } = useSucursalesStore();
   return useQuery({
-    queryKey: ["mostrar almacenes por sucursal"],
+    queryKey: [
+      "mostrar almacenes por sucursal item select",
+      sucursalesItemSelect?.id,
+    ],
     queryFn: () =>
       mostrarAlmacenesXSucursal({
         id_sucursal: sucursalesItemSelect?.id,
       }),
     enabled: !!dataSucursales,
     refetchOnWindowFocus: false,
+    retry: 1,
   });
 };
 export const useInsertarAlmacenesXSucursalMuattionStack = () => {
@@ -70,7 +75,22 @@ export const useInsertarAlmacenesXSucursalMuattionStack = () => {
     },
     onSuccess: () => {
       toast.success("Tu almacén quedó registrado correctamente 🥹");
-      queryClient.invalidateQueries(["mostrar almacenes x empresa"]);
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar almacenes x empresa"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar almacenes por sucursal"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar almacenes por sucursal item select"],
+      });
+      queryClient.invalidateQueries({ queryKey: ["mostrar stock"] });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar Stock Almacenes y Producto"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar stock almacen y producto"],
+      });
       setStateAlmacen(false);
     },
   });
@@ -82,6 +102,7 @@ export const useMostrarAlmacenesXEmpresaQueryStack = () => {
     queryKey: ["mostrar almacenes x empresa", { id_empresa: dataempresa?.id }],
     queryFn: () => mostrarAlmacenesXEmpresa({ id_empresa: dataempresa?.id }),
     enabled: !!dataempresa,
+    retry: 1,
   });
 };
 export const useEliminarAlmacenesMutationStack = () => {
@@ -125,7 +146,22 @@ export const useEliminarAlmacenesMutationStack = () => {
     },
     onSuccess: () => {
       toast.success("Tu almacén se eliminó correctamente 🙃");
-      queryClient.invalidateQueries(["mostrar almacenes x empresa"]);
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar almacenes x empresa"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar almacenes por sucursal"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar almacenes por sucursal item select"],
+      });
+      queryClient.invalidateQueries({ queryKey: ["mostrar stock"] });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar Stock Almacenes y Producto"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar stock almacen y producto"],
+      });
     },
   });
 };

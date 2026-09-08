@@ -11,6 +11,9 @@ export const useMostrarMetodosDePagoQueryStack = () => {
     queryKey: ["mostrar metodos de pago"],
     queryFn: () => mostrarMetodosPago({ id_empresa: dataempresa?.id }),
     enabled: !!dataempresa,
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
+    retry: 1,
   });
 };
 export const useInsertarMetodosPagoMutationStack = (
@@ -40,7 +43,7 @@ export const useInsertarMetodosPagoMutationStack = (
     }
   }
   return useMutation({
-    mutationKey: "insertar metodos de pago",
+    mutationKey: ["insertar metodos de pago"],
     mutationFn: insertar,
     onError: (error) => {
       toast.error(
@@ -51,7 +54,7 @@ export const useInsertarMetodosPagoMutationStack = (
       toast.success(
         "El método de pago quedó guardado correctamente y ya está disponible 🥳",
       );
-      queryClient.invalidateQueries(["mostrar metodos de pago"]);
+      queryClient.invalidateQueries({ queryKey: ["mostrar metodos de pago"] });
       cerrarFormulario();
     },
   });
