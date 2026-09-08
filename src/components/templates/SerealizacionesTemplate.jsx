@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import { Btn1, Buscador, Title, useGlobalStore } from "../../index";
 import { v } from "../../styles/variables";
-import { useState } from "react";
 import Confetti from "react-confetti-boom";
 import { BuscadorList } from "../ui/lists/Buscador";
 import { Toaster } from "sonner";

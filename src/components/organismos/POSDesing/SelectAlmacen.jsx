@@ -6,7 +6,6 @@ import { useAsignacionCajaSucursalesStore } from "../../../store/AsignacionCajaS
 import { useAlmacenesStore } from "../../../store/AlmacenesStore";
 import { useVentasStore } from "../../../store/VentasStore";
 import { useDetalleVentasStore } from "../../../store/DetalleVentasStore";
-import { useClientesProveedoresStore } from "../../../store/ClientesProveedoresStore";
 import { useCierreCajaStore } from "../../../store/CierreCajaStore";
 import { useStockStore } from "../../../store/StockStore";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -27,7 +26,6 @@ export const SelectAlmacen = () => {
   const { almacenSelelctItem, setAlmacenSelelctItem } = useAlmacenesStore();
   const { idventa, insertarVentas } = useVentasStore();
   const { insertarDetalleVentas } = useDetalleVentasStore();
-  const { cliproItemSelect } = useClientesProveedoresStore();
   const { dataCierreCaja } = useCierreCajaStore();
   const { dataStockXAlmacenesYProducto: data, setStateModal } = useStockStore();
   const fechaactual = useFormattedDate();

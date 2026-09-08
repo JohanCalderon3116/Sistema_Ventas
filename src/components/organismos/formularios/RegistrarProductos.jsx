@@ -227,7 +227,7 @@ export function RegistrarProductos({
               <BtnClose
                 funcion={() => {
                   onClose();
-                  refetchs();
+                  refetchs;
                 }}
               ></BtnClose>
             </section>

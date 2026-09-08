@@ -9,6 +9,8 @@ import { useSucursalesStore } from "../store/SucursalesStore";
 import { useCajasStore } from "../store/CajaStore";
 import { useClientesProveedoresStore } from "../store/ClientesProveedoresStore";
 import { userAuth } from "../context/AuthContext";
+import { useThemeStore } from "../store/ThemeStore";
+import { Dark, Light } from "../styles/themes";
 
 export const useEditarUsuarioMutationStack = () => {
   const queryClient = useQueryClient();
@@ -133,5 +135,33 @@ export const useMostrarUsuariosQueryStack = () => {
     refetchOnWindowFocus: false,
     enabled: !!id_auth,
     staleTime: 1000 * 60 * 5,
+  });
+};
+export const useEditarTemaMutationStack = () => {
+  const queryClient = useQueryClient();
+  const { setTheme, theme } = useThemeStore();
+  const { datausuarios, editarUsuario } = useUsuariosStore();
+  const EditarTemaUser = async () => {
+    const themeUse = theme === "light" ? "dark" : "light";
+    const themeStyle = datausuarios?.tema === "light" ? Dark : Light;
+    setTheme({
+      tema: themeUse,
+      style: themeStyle,
+    });
+    const p = {
+      id: datausuarios?.id,
+      tema: themeUse,
+    };
+    await editarUsuario(p);
+  };
+  return useMutation({
+    mutationKey: ["editar tema"],
+    mutationFn: EditarTemaUser,
+    onSuccess: () => {
+      queryClient.invalidateQueries(["mostrar usuarios"]);
+    },
+    onError: (error) => {
+      toast.error(`Error: ${error.message}`);
+    },
   });
 };

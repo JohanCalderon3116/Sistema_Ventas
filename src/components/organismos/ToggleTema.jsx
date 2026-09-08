@@ -1,38 +1,7 @@
 import styled from "styled-components";
-import { useThemeStore } from "../../store/ThemeStore";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useUsuariosStore } from "../../store/UsuariosStore";
-import { toast } from "sonner";
-import { Dark, Light } from "../../styles/themes";
+import { useEditarTemaMutationStack } from "../../tanstack/UsuariosStack";
 export function ToggleTema() {
-  const { editarUsuario, datausuarios } = useUsuariosStore();
-  const { setTheme, theme } = useThemeStore();
-  const queryClient = useQueryClient();
-  const EditarTemaUser = async () => {
-    const themeUse = theme === "light" ? "dark" : "light";
-    const themeStyle = datausuarios?.tema === "light" ? Dark : Light;
-    setTheme({
-      tema: themeUse,
-      style: themeStyle,
-    });
-    const p = {
-      id: datausuarios?.id,
-      tema: themeUse,
-    };
-    console.log(p);
-    await editarUsuario(p);
-  };
-  const { mutate } = useMutation({
-    mutationKey: ["editar tema"],
-    mutationFn: EditarTemaUser,
-    onSuccess: () => {
-      queryClient.invalidateQueries(["mostrar usuarios"]);
-    },
-    onError: (error) => {
-      toast.error(`Error: ${error.message}`);
-    },
-  });
-
+  const { mutate } = useEditarTemaMutationStack();
   return (
     <Container>
       <div className="container">

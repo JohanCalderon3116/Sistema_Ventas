@@ -25,3 +25,21 @@ export const useMostrarPermisosGlobalesQueryStack = () => {
     staleTime: 1000 * 60 * 5,
   });
 };
+export const useMostrarPermisosDefaultQueryStack = () => {
+  const { mostrarPermisosDefault } = usePermisosStore();
+  return useQuery({
+    queryKey: ["mostrar permisos default"],
+    queryFn: mostrarPermisosDefault,
+  });
+};
+export const useMostrarPermisosPorUsuariosQueryStack = (
+  selectItemAsignaciones,
+) => {
+  const { mostrarPermisos } = usePermisosStore();
+  return useQuery({
+    queryKey: ["mostrar permisos por usuarios"],
+    queryFn: () =>
+      mostrarPermisos({ id_usuario: selectItemAsignaciones?.id_usuario }),
+    enabled: !!selectItemAsignaciones,
+  });
+};

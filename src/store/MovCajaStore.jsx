@@ -14,6 +14,10 @@ export const useMovCajaStore = create((set, get) => ({
   totalIngresosVariosCaja: 0,
   totalEfectivoCajaSinVentas: 0,
   totalEfectivoTotalCaja: 0,
+  montoEfectivo: 0,
+  setMontoEfectivo: (p) => {
+    set({ montoEfectivo: p });
+  },
   updateTotalEfectivoTotalCaja: () => {
     const { totalEfectivoCajaSinVentas, totalVentasEfectivo } = get();
     const total = totalEfectivoCajaSinVentas + totalVentasEfectivo;

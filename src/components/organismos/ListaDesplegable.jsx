@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { Device } from "../../index";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 export function ListaDesplegable({
   data,
   setState,

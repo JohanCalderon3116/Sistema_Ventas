@@ -19,7 +19,7 @@ export const ListAlmacenes = () => {
     setAlmacenSelelctItem,
     setAccion: setAccionAlmacen,
   } = useAlmacenesStore();
-  const { setStateSucursal, setAccion, selectSucursal, eliminarSucursal } =
+  const { setStateSucursal, setAccion, selectSucursal } =
     useSucursalesStore();
   const { isLoading, error, data } = useMostrarAlmacenesXEmpresaQueryStack();
   const editarSucursal = (p) => {

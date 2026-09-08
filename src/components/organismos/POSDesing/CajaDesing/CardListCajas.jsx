@@ -2,17 +2,11 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import styled from "styled-components";
 import { InputText2 } from "../../formularios/InputText2";
 import { Btn1 } from "../../../moleculas/Btn1";
-import { useFormattedDate } from "../../../../hooks/useFormattedDate";
-import { useEffect, useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useUsuariosStore } from "../../../../store/UsuariosStore";
-import { useAsignacionCajaSucursalesStore } from "../../../../store/AsignacionCajaSucursales";
-import { useCierreCajaStore } from "../../../../store/CierreCajaStore";
+import { useEffect } from "react";
 import { useMetodosPagoStore } from "../../../../store/MetodosPagoStore";
 import { useMovCajaStore } from "../../../../store/MovCajaStore";
-import { useCajasStore } from "../../../../store/CajaStore";
-import { toast } from "sonner";
 import { useEmpresaStore } from "../../../../store/EmpresaStore";
+import { useAperturarCajasMutationStack } from "../../../../tanstack/CajasStack";
 export function CardListCajas({
   title,
   subtitle,
@@ -22,68 +16,16 @@ export function CardListCajas({
   state,
   item,
 }) {
-  const fechaActual = useFormattedDate();
-  const [montoEfectivo, setMontoEfectivo] = useState(0);
-  const queryClient = useQueryClient();
-  const { datausuarios } = useUsuariosStore();
-  const { sucursalesItemSelectAsignadas, datSucursalesAsignadas } =
-    useAsignacionCajaSucursalesStore();
-  const { aperturarCaja } = useCierreCajaStore();
   const { dataMetodosPago, mostrarMetodosPago } = useMetodosPagoStore();
-  const { insertarMovcaja } = useMovCajaStore();
-  const { cajaSelelctItem } = useCajasStore();
+  const { setMontoEfectivo } =
+    useMovCajaStore();
   const { dataempresa } = useEmpresaStore();
-
-  const registrarMovCaja = async (p) => {
-    console.log("dataMetodosPago:", dataMetodosPago); // ← ve qué tiene
-    const id_metodo_pago = dataMetodosPago
-      .filter((item) => item.nombre === "Efectivo")
-      .map((item) => item.id)[0];
-    const pmovcaja = {
-      fecha_movimiento: fechaActual,
-      tipo_movimiento: "apertura",
-      monto: montoEfectivo,
-      id_metodo_pago: id_metodo_pago,
-      descripcion: `Apertura de caja`,
-      id_usuario: datausuarios?.id,
-      id_cierre_caja: p.id_cierre_caja,
-    };
-    await insertarMovcaja(pmovcaja);
-    console.log(pmovcaja);
-  };
-
-  const insertar = async () => {
-    console.log("item completo:", item);
-    console.log("id_caja:", item?.id);
-    const p = {
-      fechainicio: fechaActual,
-      fechacierre: fechaActual,
-      id_usuario: datausuarios?.id,
-      id_caja: item?.id_caja,
-    };
-    console.log(cajaSelelctItem);
-    const data = await aperturarCaja(p);
-    console.log(data);
-    await registrarMovCaja({ id_cierre_caja: data?.id });
-  };
-  const mutation = useMutation({
-    mutationKey: ["aperturar caja"],
-    mutationFn: insertar,
-    onSuccess: () => {
-      toast.success("La caja se aperturó correctamente 😌");
-      queryClient.invalidateQueries("mostrar cierre de caja");
-    },
-    onError: (error) => {
-      toast.error(
-        `No pudimos aperturar la caja, algo falló en el proceso 😥`,
-      );
-    },
-  });
+  const mutation = useAperturarCajasMutationStack(item);
   useEffect(() => {
     if (!dataMetodosPago) {
       mostrarMetodosPago({
         id_empresa: dataempresa?.id,
-      }); 
+      });
     }
   }, [dataempresa?.id]);
   return (

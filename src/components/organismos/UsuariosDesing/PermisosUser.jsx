@@ -1,50 +1,37 @@
 import styled from "styled-components";
 import { SelectList } from "../../ui/lists/SelectList";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useModulosStore } from "../../../store/ModulosStore";
 import { Check } from "../../ui/toogles/Check";
 import { useRolesStore } from "../../../store/RolesStore";
 import { usePermisosStore } from "../../../store/PermisosStore";
 import { useEffect } from "react";
 import { useAsignacionCajaSucursalesStore } from "../../../store/AsignacionCajaSucursales";
 import { BarLoader } from "react-spinners";
+import { useMostrarModulosQueryStack } from "../../../tanstack/ModulosStack";
+import { useMostrarRolesQueryStack } from "../../../tanstack/RolesStack";
+import {
+  useMostrarPermisosDefaultQueryStack,
+  useMostrarPermisosPorUsuariosQueryStack,
+} from "../../../tanstack/PermisosStack";
 
 export const PermisosUser = () => {
-  const { mostrarmodulos } = useModulosStore();
-  const { mostrarRoles, rolesItemSelect, setRolesItemSelect } = useRolesStore();
+  const { rolesItemSelect, setRolesItemSelect } = useRolesStore();
   const {
-    mostrarPermisos,
     toggleModule,
     selectModules,
     setSelectModules,
-    mostrarPermisosDefault,
     actualizarPermisos,
   } = usePermisosStore();
-  const {
-    accion,
-    selectItem: selectItemAsignaciones,
-  } = useAsignacionCajaSucursalesStore();
-  const { data: dataModulos, isLoading: isLadingModulos } = useQuery({
-    queryKey: ["mostrar modulos"],
-    queryFn: mostrarmodulos,
-  });
-  const { data: dataRoles, isLoading: isLadingRoles } = useQuery({
-    queryKey: ["mostrar roles"],
-    queryFn: mostrarRoles,
-  });
+  const { accion, selectItem: selectItemAsignaciones } =
+    useAsignacionCajaSucursalesStore();
+  const { data: dataModulos, isLoading: isLadingModulos } =
+    useMostrarModulosQueryStack();
+  const { data: dataRoles, isLoading: isLadingRoles } =
+    useMostrarRolesQueryStack();
   const { data: dataPermisosDefault, isLoading: isLadingPermisosDefault } =
-    useQuery({
-      queryKey: ["mostrar permisos default"],
-      queryFn: mostrarPermisosDefault,
-    });
-
-  const { data: dataPermisos, isLoading: isLadingPermisosUser } = useQuery({
-    queryKey: ["mostrar permisos por usuarios"],
-    queryFn: () =>
-      mostrarPermisos({ id_usuario: selectItemAsignaciones?.id_usuario }),
-    enabled: !!selectItemAsignaciones,
-  });
-
+    useMostrarPermisosDefaultQueryStack();
+  const { data: dataPermisos, isLoading: isLadingPermisosUser } =
+    useMostrarPermisosPorUsuariosQueryStack(selectItemAsignaciones);
   const mutation = useMutation({
     mutationKey: ["actualizar permisos"],
     mutationFn: () => actualizarPermisos(),
@@ -69,7 +56,6 @@ export const PermisosUser = () => {
     isLadingRoles ||
     isLadingPermisosDefault ||
     isLadingPermisosUser;
-
   if (isLoading) {
     return <BarLoader color="#6c6c6c"></BarLoader>;
   }

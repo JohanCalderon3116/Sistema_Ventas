@@ -30,7 +30,7 @@ function App() {
         });
       }
     }
-  }, [datausuarios]);
+  }, [datausuarios, location.pathname]);
   return (
     <ThemeProvider theme={themeStyle}>
       <AuthContextProvider>

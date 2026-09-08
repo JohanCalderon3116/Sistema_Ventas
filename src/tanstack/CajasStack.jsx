@@ -5,6 +5,10 @@ import { useUsuariosStore } from "../store/UsuariosStore";
 import { useAsignacionCajaSucursalesStore } from "../store/AsignacionCajaSucursales";
 import { toast } from "sonner";
 import Swal from "sweetalert2";
+import { useFormattedDate } from "../hooks/useFormattedDate";
+import { useCierreCajaStore } from "../store/CierreCajaStore";
+import { useMovCajaStore } from "../store/MovCajaStore";
+import { useMetodosPagoStore } from "../store/MetodosPagoStore";
 
 export const useInsertarCajasMutationStack = () => {
   const queryClient = useQueryClient();
@@ -99,6 +103,50 @@ export const useElimarCajasMutationStack = () => {
         "La caja se eliminó correctamente y ya no aparecerá en tu lista 🥰",
       );
       queryClient.invalidateQueries(["mostrar cajas por sucursal"]);
+    },
+  });
+};
+export const useAperturarCajasMutationStack = (item) => {
+  const queryClient = useQueryClient();
+  const fechaActual = useFormattedDate();
+  const { datausuarios } = useUsuariosStore();
+  const { aperturarCaja } = useCierreCajaStore();
+  const { dataMetodosPago } = useMetodosPagoStore();
+  const { montoEfectivo, insertarMovcaja } = useMovCajaStore();
+  const registrarMovCaja = async (p) => {
+    const id_metodo_pago = dataMetodosPago
+      .filter((item) => item.nombre === "Efectivo")
+      .map((item) => item.id)[0];
+    const pmovcaja = {
+      fecha_movimiento: fechaActual,
+      tipo_movimiento: "apertura",
+      monto: montoEfectivo,
+      id_metodo_pago: id_metodo_pago,
+      descripcion: `Apertura de caja`,
+      id_usuario: datausuarios?.id,
+      id_cierre_caja: p.id_cierre_caja,
+    };
+    await insertarMovcaja(pmovcaja);
+  };
+  const insertar = async () => {
+    const p = {
+      fechainicio: fechaActual,
+      fechacierre: fechaActual,
+      id_usuario: datausuarios?.id,
+      id_caja: item?.id_caja,
+    };
+    const data = await aperturarCaja(p);
+    await registrarMovCaja({ id_cierre_caja: data?.id });
+  };
+  return useMutation({
+    mutationKey: ["aperturar caja"],
+    mutationFn: insertar,
+    onSuccess: () => {
+      toast.success("La caja se aperturó correctamente 😌");
+      queryClient.invalidateQueries("mostrar cierre de caja");
+    },
+    onError: (error) => {
+      toast.error(`No pudimos aperturar la caja, algo falló en el proceso 😥`);
     },
   });
 };
