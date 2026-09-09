@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import {
   EditarStock,
+  EliminarStock,
   InsertarStock,
   MostrarAlertasStockXVenta,
   MostrarStockAlmacenesYProducto,
@@ -33,5 +34,8 @@ export const useStockStore = create((set) => ({
   mostrarAlertasStockXVenta: async (p) => {
     const response = await MostrarAlertasStockXVenta(p);
     return response;
+  },
+  eliminarStock: async (p) => {
+    await EliminarStock(p);
   },
 }));

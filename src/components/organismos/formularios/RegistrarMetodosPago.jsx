@@ -28,6 +28,7 @@ export function RegistrarMetodosPago({
     handleSubmit,
   } = useForm();
   const cerrarFormulario = () => {
+    setFile([]);
     onClose();
     setIsExploding(true);
   };
@@ -57,6 +58,9 @@ export function RegistrarMetodosPago({
   useEffect(() => {
     if (accion === "Editar") {
       setFileurl(dataSelect.icono);
+    } else {
+      setFile([]);
+      setFileurl(undefined);
     }
   }, []);
   return (

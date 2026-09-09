@@ -47,3 +47,9 @@ export async function MostrarAlertasStockXVenta(p) {
   }
   return data;
 }
+export async function EliminarStock(p) {
+  const { error } = await supabase.from(tabla).delete().eq("id", p.id);
+  if (error) {
+    throw new Error(error.message);
+  }
+}

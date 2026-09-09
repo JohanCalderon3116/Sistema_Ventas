@@ -155,7 +155,7 @@ export function RegistrarClientesProveedores({
                     {...register("identificador_fiscal")}
                   />
                   <label className="form__label">
-                    Indentificador Empresa (NIT)
+                    Indentificador Empresa (NIT) (Opcional)
                   </label>
                 </InputText>
               </article>

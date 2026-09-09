@@ -58,7 +58,7 @@ export const useBuscarClientesProveedoresLocationQueryStack = () => {
             : "proveedor",
         buscador: buscador,
       }),
-    enabled: !!dataempresa && buscador.trim().length > 0,
+    enabled: !!dataempresa,
     refetchOnWindowFocus: false,
     retry: 1,
   });

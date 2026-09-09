@@ -59,7 +59,7 @@ export const Perfil = () => {
               <input
                 className="form__field"
                 placeholder="nro_doc"
-                type="text"
+                type="number"
                 {...register("nro_doc", {
                   required: true,
                 })}
@@ -71,7 +71,7 @@ export const Perfil = () => {
               <input
                 className="form__field"
                 placeholder="telefono"
-                type="text"
+                type="number"
                 {...register("telefono", {
                   required: true,
                 })}
@@ -86,7 +86,7 @@ export const Perfil = () => {
                 defaultValue={datausuarios?.correo}
                 className="form__field"
                 placeholder="correo"
-                type="text"
+                type="email"
               />
             </InputText2>
             <br></br>

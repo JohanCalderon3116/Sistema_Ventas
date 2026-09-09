@@ -15,6 +15,7 @@ import {
   useMostrarStckAlmacenYProductoQueryStack,
   useInsertarProductosMutationStack,
   useMostrarAlmacenesXSucursalItemSelectQueryStack,
+  EliminarStock,
 } from "../../../index";
 import { useForm } from "react-hook-form";
 import { Device } from "../../../styles/breakpoints";
@@ -22,6 +23,7 @@ import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import { ContainerSelector } from "./RegistrarInventario";
 import { BeatLoader } from "react-spinners";
+import { toast } from "sonner";
 
 export function RegistrarProductos({
   onClose,
@@ -143,6 +145,7 @@ export function RegistrarProductos({
   useEffect(() => {
     if (accion != "Editar") {
       generarCodigoInterno();
+      setRandomCodeBarras("");
     } else {
       selectCategoria({
         id: dataSelect.id_categoria,
@@ -180,7 +183,8 @@ export function RegistrarProductos({
           }).then(async (result) => {
             if (result.isConfirmed) {
               setStateInventarios(false);
-              await eliminarAlmacen({ id: dataalmacen.id });
+              await EliminarStock({ id: dataStockXAlamacenYProducto.id });
+              toast.success("¡Listo! Borraste el stock correctamente 🗑️");
             }
           });
         } else {
@@ -193,6 +197,11 @@ export function RegistrarProductos({
       setStateInventarios(!stateInventarios);
     }
   }
+  useEffect(() => {
+    setStock("");
+    setStockMinimo("");
+    setUbicacion("");
+  }, [almacenSelelctItem]);
   //#endregion
   return (
     <Container>
@@ -367,8 +376,8 @@ export function RegistrarProductos({
                         disabled={!!dataStockXAlamacenYProducto}
                         className="form__field"
                         value={
-                          accion === "Editar"
-                            ? dataStockXAlamacenYProducto?.stock
+                          dataStockXAlamacenYProducto
+                            ? (dataStockXAlamacenYProducto.stock ?? "")
                             : stock
                         }
                         type="number"
@@ -386,8 +395,8 @@ export function RegistrarProductos({
                         disabled={!!dataStockXAlamacenYProducto}
                         className="form__field"
                         value={
-                          accion === "Editar"
-                            ? dataStockXAlamacenYProducto?.stock_minimo
+                          dataStockXAlamacenYProducto
+                            ? (dataStockXAlamacenYProducto.stock_minimo ?? "")
                             : stockMinimo
                         }
                         type="number"
@@ -405,8 +414,8 @@ export function RegistrarProductos({
                         disabled={!!dataStockXAlamacenYProducto}
                         className="form__field"
                         value={
-                          accion === "Editar"
-                            ? dataStockXAlamacenYProducto?.ubicacion
+                          dataStockXAlamacenYProducto
+                            ? (dataStockXAlamacenYProducto.ubicacion ?? "")
                             : ubicacion
                         }
                         type="text"

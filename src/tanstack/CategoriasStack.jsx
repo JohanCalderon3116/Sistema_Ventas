@@ -23,7 +23,7 @@ export const useBuscarCategoriasQueryStack = () => {
     queryKey: ["buscar categorias", buscador],
     queryFn: () =>
       buscarCategorias({ id_empresa: dataempresa?.id, descripcion: buscador }),
-    enabled: !!dataempresa && buscador.trim().length > 0,
+    enabled: !!dataempresa,
     refetchOnWindowFocus: false,
     retry: 1,
   });

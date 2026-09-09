@@ -38,7 +38,6 @@ export const useInsertarMetodosPagoMutationStack = (
         id_empresa: dataempresa?.id,
         delete_update: true,
       };
-
       await insertarMetodosPago(p, file);
     }
   }

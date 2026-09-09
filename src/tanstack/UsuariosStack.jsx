@@ -61,7 +61,7 @@ export const useBuscarUsuariosAsignados = () => {
         _id_empresa: dataempresa?.id,
         buscador: buscador,
       }),
-    enabled: !!dataempresa && buscador.trim().length > 0,
+    enabled: !!dataempresa,
     retry: 1,
   });
 };
