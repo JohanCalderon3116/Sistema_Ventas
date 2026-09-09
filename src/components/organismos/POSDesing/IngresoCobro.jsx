@@ -66,8 +66,7 @@ export const IngresoCobro = forwardRef((props, ref) => {
       }
     }
   };
-  const { data: databuscadorcliente} =
-    useBuscarClientesQueryStack();
+  const { data: databuscadorcliente } = useBuscarClientesQueryStack();
   const mutation = useConfirmarVentasMutationStack({
     imprimirDirectoTicket,
     imprimirConVentanaEmergente,
@@ -258,7 +257,10 @@ export const IngresoCobro = forwardRef((props, ref) => {
                 ></Btn1>
                 <Linea></Linea>
                 <Btn1
-                  funcion={() => mutation.mutateAsync()}
+                  funcion={() => {
+                    if (mutation.isPending) return;
+                    mutation.mutateAsync();
+                  }}
                   border="2px"
                   titulo="Cobrar (Enter)"
                   bgcolor="#0aca21"
@@ -268,7 +270,10 @@ export const IngresoCobro = forwardRef((props, ref) => {
               </>
             ) : (
               <Btn1
-                funcion={() => mutation.mutateAsync()}
+                funcion={() => {
+                  if (mutation.isPending) return;
+                  mutation.mutateAsync();
+                }}
                 border="2px"
                 titulo="Cobrar (Enter)"
                 bgcolor="#0aca21"

@@ -34,3 +34,13 @@ export async function MostrarMovimientosCajaLive(p) {
   }
   return data;
 }
+export async function MostrarMovimientosCajaXEmpresYFecha(p) {
+  const { data, error } = await supabase.rpc(
+    "mostrar_movimientos_caja_por_fecha",
+    p,
+  );
+  if (error) {
+    throw new Error(error.message);
+  }
+  return data;
+}

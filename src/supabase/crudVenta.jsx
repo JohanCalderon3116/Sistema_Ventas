@@ -39,4 +39,12 @@ export async function EliminarVenta(p) {
     throw new Error(error.message);
   }
 }
+export const MostrarVentaCompletaPorId = async (p) => {
+  const { data, error } = await supabase.rpc(
+    "mostrar_venta_completa_por_id",
+    p,
+  );
+  if (error) throw error;
+  return data;
+};
 

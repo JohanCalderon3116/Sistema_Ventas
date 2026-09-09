@@ -3,10 +3,15 @@ import {
   InsertarMovCaja,
   MostrarEfectivoSinVentasMovCierreCaja,
   MostrarMovimientosCajaLive,
+  MostrarMovimientosCajaXEmpresYFecha,
   MostrarVentasMetodoPagoMovCaja,
 } from "../supabase/crudMovimientosCaja";
 
 export const useMovCajaStore = create((set, get) => ({
+  fechaInicio: null,
+  fechaFin: null,
+  setRangoFechas: (inicio, fin) => set({ fechaInicio: inicio, fechaFin: fin }),
+  limpiarFechas: () => set({ fechaInicio: null, fechaFin: null }),
   totalVentasMetodoPago: 0,
   totalVentasEfectivo: 0,
   totalAperturaCaja: 0,
@@ -96,6 +101,10 @@ export const useMovCajaStore = create((set, get) => ({
   },
   mostrarMovimentosCajaLive: async (p) => {
     const response = await MostrarMovimientosCajaLive(p);
+    return response;
+  },
+  mostrarMovimientosCajaXEmpresYFecha: async (p) => {
+    const response = await MostrarMovimientosCajaXEmpresYFecha(p);
     return response;
   },
 }));

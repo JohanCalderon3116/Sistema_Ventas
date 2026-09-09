@@ -26,6 +26,7 @@ import { Inventario } from "../pages/Inventario";
 import { ConfiguracionTicket } from "../pages/ConfiguracionTicket";
 import { Perfil } from "../pages/Perfil";
 import { Creditos } from "../pages/Creditos";
+import { MovimientosCaja } from "../pages/MovimientosCaja";
 
 export function Myroutes() {
   return (
@@ -84,6 +85,16 @@ export function Myroutes() {
           <Layout>
             <ProtectedRoute accesby="authenticated">
               <Creditos></Creditos>
+            </ProtectedRoute>
+          </Layout>
+        }
+      />
+      <Route
+        path="/configuracion/movimientoscaja"
+        element={
+          <Layout>
+            <ProtectedRoute accesby="authenticated">
+              <MovimientosCaja></MovimientosCaja>
             </ProtectedRoute>
           </Layout>
         }

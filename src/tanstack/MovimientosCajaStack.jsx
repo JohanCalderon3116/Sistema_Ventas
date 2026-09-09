@@ -6,6 +6,7 @@ import { useMovCajaStore } from "../store/MovCajaStore";
 import { toast } from "sonner";
 import { useFormattedDate } from "../hooks/useFormattedDate";
 import { useAuthStore } from "../store/AuthStore";
+import { useEmpresaStore } from "../store/EmpresaStore";
 
 export const useInsertarIngresosSalidasCajasMutationStack = (reset) => {
   const queryClient = useQueryClient();
@@ -123,5 +124,26 @@ export const useTerminarTurnoMutationStack = (diferencia, reset) => {
     onError: (error) => {
       toast.error(`Error al cerrar caja: ${error.message} `);
     },
+  });
+};
+export const useMostrarMovimientosCajaXEmpresYFechaQueryStack = (
+  fechaInicio,
+  fechaFin,
+) => {
+  const { dataempresa } = useEmpresaStore();
+  const { mostrarMovimientosCajaXEmpresYFecha } = useMovCajaStore();
+  return useQuery({
+    queryKey: [
+      "mostrar movimientos caja por fecha",
+      { id_empresa: dataempresa?.id, fechaInicio, fechaFin },
+    ],
+    queryFn: () => {
+      const p = { _id_empresa: dataempresa?.id };
+      if (fechaInicio) p._fecha_inicio = fechaInicio;
+      if (fechaFin) p._fecha_fin = fechaFin;
+      return mostrarMovimientosCajaXEmpresYFecha(p);
+    },
+    enabled: !!dataempresa?.id,
+    retry: 1,
   });
 };

@@ -4,6 +4,7 @@ import {
   EliminarVenta,
   EliminarVentasIncompletas,
   InsertarVentas,
+  MostrarVentaCompletaPorId,
   useClientesProveedoresStore,
 } from "../index";
 import { toast } from "sonner";
@@ -78,5 +79,17 @@ export const useVentasStore = create((set, get) => ({
     const { resetState } = get();
     await EliminarVenta(p);
     resetState();
+  },
+  isTicketOpen: false,
+  idVentaSeleccionada: null,
+
+  abrirTicket: (idVenta) =>
+    set({ isTicketOpen: true, idVentaSeleccionada: idVenta }),
+
+  cerrarTicket: () => set({ isTicketOpen: false, idVentaSeleccionada: null }),
+
+  mostrarVentaCompletaPorId: async (p) => {
+    const response = await MostrarVentaCompletaPorId(p);
+    return response;
   },
 }));

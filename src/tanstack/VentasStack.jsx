@@ -456,3 +456,13 @@ export const useMostrarTop10MasVendidosXMontoQueryStack = () => {
     retry: 1,
   });
 };
+export const useMostrarVentaCompletaQueryStack = () => {
+  const { idVentaSeleccionada, mostrarVentaCompletaPorId } = useVentasStore();
+  return useQuery({
+    queryKey: ["mostrar venta completa", idVentaSeleccionada],
+    queryFn: () =>
+      mostrarVentaCompletaPorId({ _id_venta: idVentaSeleccionada }),
+    enabled: !!idVentaSeleccionada,
+    retry: 1,
+  });
+};

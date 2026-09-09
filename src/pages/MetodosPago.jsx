@@ -1,4 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
 import {
   MetodosPagoTemplate,
   useMostrarMetodosDePagoQueryStack,
@@ -8,7 +7,7 @@ import { BeatLoader } from "react-spinners";
 
 export const MetodosPago = () => {
   const theme = useTheme();
-  const { isLoading, error, refetch } = useMostrarMetodosDePagoQueryStack();
+  const { isLoading } = useMostrarMetodosDePagoQueryStack();
   if (isLoading) {
     return (
       <ConteinerLoader>
