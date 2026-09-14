@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import {
   LinksArray,
   SecondarylinksArray,
@@ -8,9 +8,28 @@ import {
 import { v } from "../../../../styles/variables";
 import { NavLink } from "react-router-dom";
 import { Icon } from "@iconify/react";
+import Swal from "sweetalert2";
 
 export function Sidebar({ state, setState }) {
   const { cerrarSesion } = useAuthStore();
+  const theme = useTheme();
+  function cerrarseion() {
+    Swal.fire({
+      title: "¿Estás seguro(a)?",
+      text: "Una vez cerrada la sesión, tendrá que volver a iniciar sesión",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Si, cerrar sesión",
+      background: theme.bg2,
+      color: theme.text,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        cerrarSesion();
+      }
+    });
+  }
   return (
     <Main $isopen={state.toString()}>
       <span className="Sidebarbutton" onClick={() => setState(!state)}>
@@ -63,7 +82,7 @@ export function Sidebar({ state, setState }) {
         <div className={state ? "LinkContainer active" : "LinkContainer"}>
           <div className="Links">
             <section
-              onClick={cerrarSesion}
+              onClick={cerrarseion}
               className={state ? "content open" : "content"}
             >
               <Icon

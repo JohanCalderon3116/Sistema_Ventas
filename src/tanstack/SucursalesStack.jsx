@@ -9,6 +9,7 @@ import {
 } from "..";
 import { toast } from "sonner";
 import Swal from "sweetalert2";
+import { useTheme } from "styled-components";
 
 export const useMostrarSucursalesXEmpresaStack = () => {
   const { dataempresa } = useEmpresaStore();
@@ -128,6 +129,7 @@ export const useInsertarSucursalesMutationStack = () => {
   });
 };
 export const useEliminarSucursalesMutationStack = () => {
+  const theme = useTheme();
   const queryClient = useQueryClient();
   const { eliminarSucursal } = useSucursalesStore();
   const controladorEliminarSucursal = (id) => {
@@ -140,6 +142,8 @@ export const useEliminarSucursalesMutationStack = () => {
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
         confirmButtonText: "Sí, eliminar",
+        background: theme.bg2,
+        color: theme.text,
       }).then(async (result) => {
         if (result.isConfirmed) {
           try {

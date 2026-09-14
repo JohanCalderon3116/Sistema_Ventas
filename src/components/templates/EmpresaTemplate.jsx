@@ -1,17 +1,33 @@
 import { NavLink, Outlet } from "react-router-dom";
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { Btn1 } from "../moleculas/Btn1";
 import { Toaster } from "sonner";
 import { useAuthStore } from "../../store/AuthStore";
+import Swal from "sweetalert2";
 
 export const EmpresaTemplate = () => {
   const { cerrarSesion } = useAuthStore();
-  function cerrar(){
-    cerrarSesion()
+  const theme = useTheme();
+  function cerrarseion() {
+    Swal.fire({
+      title: "¿Estás seguro(a)?",
+      text: "Una vez cerrada la sesión, tendrá que volver a iniciar sesión",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Si, cerrar sesión",
+      background: theme.bg2,
+      color: theme.text,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        cerrarSesion();
+      }
+    });
   }
   return (
     <Main>
-      <Toaster richColors/>
+      <Toaster richColors />
       <PageContainer>
         <Content>
           <Outlet />
@@ -23,7 +39,7 @@ export const EmpresaTemplate = () => {
             <SidebarItem to="monedaconfig">Moneda</SidebarItem>
           </SidebarSection>
           <Btn1
-            funcion={cerrar}
+            funcion={cerrarseion}
             bgcolor="transparent"
             color={({ theme }) => theme.text}
             titulo="Cerrar sesión"

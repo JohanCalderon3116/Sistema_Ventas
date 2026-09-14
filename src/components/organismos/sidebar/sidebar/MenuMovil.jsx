@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { useState } from "react";
 import {
   LinksArray,
@@ -9,9 +9,28 @@ import {
 import { v } from "../../../../styles/variables";
 import { NavLink } from "react-router-dom";
 import { Icon } from "@iconify/react";
+import Swal from "sweetalert2";
 export const MenuMovil = ({ setState }) => {
   const [state, setstate] = useState(true);
   const { cerrarSesion } = useAuthStore();
+  const theme = useTheme();
+  function cerrarseion() {
+    Swal.fire({
+      title: "¿Estás seguro(a)?",
+      text: "Una vez cerrada la sesión, tendrá que volver a iniciar sesión",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Si, cerrar sesión",
+      background: theme.bg2,
+      color: theme.text,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        cerrarSesion();
+      }
+    });
+  }
   return (
     <Container>
       <Main $isopen={state.toString()}>
@@ -77,7 +96,7 @@ export const MenuMovil = ({ setState }) => {
                   icon="heroicons:ellipsis-horizontal-circle-solid"
                 />
                 <span
-                  onClick={cerrarSesion}
+                  onClick={cerrarseion}
                   className={state ? "label_ver" : "label_oculto"}
                 >
                   Salir

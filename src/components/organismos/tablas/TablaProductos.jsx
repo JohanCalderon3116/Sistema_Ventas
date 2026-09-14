@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import {
   Checkbox1,
   ContentAccionesTabla,
@@ -25,6 +25,7 @@ export function TablaProductos({
   setAccion,
 }) {
   if (data == null) return;
+  const theme = useTheme();
   const [pagina, setPagina] = useState(1);
   const [datas, setData] = useState(data);
   const [columnFilters, setColumnFilters] = useState([]);
@@ -39,6 +40,8 @@ export function TablaProductos({
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
       confirmButtonText: "Si, eliminar",
+      background: theme.bg2,
+      color: theme.text,
     }).then(async (result) => {
       if (result.isConfirmed) {
         toast.success("¡Listo! El producto se eliminó correctamente. 😄✨");

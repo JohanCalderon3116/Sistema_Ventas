@@ -180,6 +180,8 @@ export function RegistrarProductos({
             confirmButtonColor: "#3085d6",
             cancelButtonColor: "#d33",
             confirmButtonText: "Si, eliminar",
+            background: theme.bg2,
+            color: theme.text,
           }).then(async (result) => {
             if (result.isConfirmed) {
               setStateInventarios(false);

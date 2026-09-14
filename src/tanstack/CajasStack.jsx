@@ -9,6 +9,7 @@ import { useFormattedDate } from "../hooks/useFormattedDate";
 import { useCierreCajaStore } from "../store/CierreCajaStore";
 import { useMovCajaStore } from "../store/MovCajaStore";
 import { useMetodosPagoStore } from "../store/MetodosPagoStore";
+import { useTheme } from "styled-components";
 
 export const useInsertarCajasMutationStack = () => {
   const queryClient = useQueryClient();
@@ -71,6 +72,7 @@ export const useInsertarCajasMutationStack = () => {
   });
 };
 export const useElimarCajasMutationStack = () => {
+  const theme = useTheme();
   const queryClient = useQueryClient();
   const { eliminarCaja } = useCajasStore();
   const controladorEliminarCaja = (id) => {
@@ -83,6 +85,8 @@ export const useElimarCajasMutationStack = () => {
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
         confirmButtonText: "Sí, eliminar",
+        background: theme.bg2,
+        color: theme.text,
       }).then(async (result) => {
         if (result.isConfirmed) {
           try {

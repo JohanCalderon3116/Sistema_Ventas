@@ -3,6 +3,7 @@ import {
   ContentAccionesTabla,
   Paginacion,
   useCreditosStore,
+  useMovimientosCreditosStore,
 } from "../../../index";
 import Swal from "sweetalert2";
 import { v } from "../../../styles/variables";
@@ -18,6 +19,7 @@ import {
 import { FaArrowsAltV } from "react-icons/fa";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { Icon } from "@iconify/react";
 export function TablaCreditos({
   data,
   SetopenRegistro,
@@ -28,7 +30,8 @@ export function TablaCreditos({
   const [pagina, setPagina] = useState(1);
   const [datas, setData] = useState(data);
   const [columnFilters, setColumnFilters] = useState([]);
-  const { deleteCreditos } = useCreditosStore();
+  const { deleteCreditos, setCreditosItemSelect } = useCreditosStore();
+  const { abrirHistorial } = useMovimientosCreditosStore();
   const queryClient = useQueryClient();
   function eliminar(p) {
     Swal.fire({
@@ -54,11 +57,26 @@ export function TablaCreditos({
     setdataSelect(data);
     setAccion("Editar");
   }
+  function verHistorial(data) {
+    setCreditosItemSelect(data);
+    abrirHistorial();
+  }
   const columns = [
     {
       accessorKey: "fecha",
       header: "Fecha",
-      cell: (info) => <span>{info.getValue()}</span>,
+      cell: (info) => {
+        const fecha = new Date(info.getValue());
+        return (
+          <span>
+            {fecha.toLocaleDateString("es-CO")}{" "}
+            {fecha.toLocaleTimeString("es-CO", {
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
+          </span>
+        );
+      },
       enableColumnFilter: true,
       filterFn: (row, columnId, filterStatuses) => {
         if (filterStatuses.length === 0) return true;
@@ -131,10 +149,19 @@ export function TablaCreditos({
       enableSorting: false,
       cell: (info) => (
         <td data-title="Acciones" className="ContentCell">
-          <ContentAccionesTabla
-            funcionEditar={() => editar(info.row.original)}
-            funcionEliminar={() => eliminar(info.row.original)}
-          />
+          <AccionesWrapper>
+            <BtnVerVenta
+              type="button"
+              onClick={() => verHistorial(info.row.original)}
+              title="Ver ventas a crédito"
+            >
+              <Icon icon="mdi:receipt-text-outline" width="20" height="20" />
+            </BtnVerVenta>
+            <ContentAccionesTabla
+              funcionEditar={() => editar(info.row.original)}
+              funcionEliminar={() => eliminar(info.row.original)}
+            />
+          </AccionesWrapper>
         </td>
       ),
       enableColumnFilter: true,
@@ -370,12 +397,25 @@ const Container = styled.div`
     }
   }
 `;
-const Colorcontent = styled.div`
-  justify-content: center;
-  min-height: ${(props) => props.$alto};
-  width: ${(props) => props.$ancho};
+const BtnVerVenta = styled.button`
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: ${({ theme }) => theme.text};
   display: flex;
-  background-color: ${(props) => props.color};
-  border-radius: 50%;
-  text-align: center;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+  &:hover {
+    background-color: rgba(10, 202, 33, 0.15);
+    color: #0aca21;
+  }
+`;
+const AccionesWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
 `;

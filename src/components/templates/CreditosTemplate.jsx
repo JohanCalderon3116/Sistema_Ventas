@@ -2,6 +2,8 @@ import styled, { useTheme } from "styled-components";
 import {
   Btn1,
   Buscador,
+  HistorialCreditoModal,
+  TicketModalCredito,
   Title,
   useBuscarCreditsoQueryStack,
   useMostrarCreditosQueryStack,
@@ -53,6 +55,9 @@ export const CreditosTemplate = () => {
           accion={accion}
         ></RegistrarCreditos>
       )}
+      <HistorialCreditoModal></HistorialCreditoModal>
+      <TicketModalCredito></TicketModalCredito>
+
       <section className="area1">
         <Title>Créditos</Title>
         <Btn1

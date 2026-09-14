@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import {
   ContentAccionesTabla,
   Paginacion,
@@ -27,6 +27,7 @@ export function TablaMetodosPago({
   setAccion,
 }) {
   if (data == null) return;
+  const theme = useTheme();
   const [pagina, setPagina] = useState(1);
   const [datas, setData] = useState(data);
   const [columnFilters, setColumnFilters] = useState([]);
@@ -47,6 +48,8 @@ export function TablaMetodosPago({
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
       confirmButtonText: "Si, eliminar",
+      background: theme.bg2,
+      color: theme.text,
     }).then(async (result) => {
       if (result.isConfirmed) {
         await eliminarMetodosPago({ id: p.id });

@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import {
   ContentAccionesTabla,
   Paginacion,
@@ -32,6 +32,7 @@ export function TablaUsuarios({
   const [columnFilters, setColumnFilters] = useState([]);
   const { eliminarUsuariosAsignados } = useUsuariosStore();
   const { setSelectItem } = useAsignacionCajaSucursalesStore();
+  const theme = useTheme();
   function eliminar(p) {
     Swal.fire({
       title: "¿Estás seguro(a)?",
@@ -41,6 +42,8 @@ export function TablaUsuarios({
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
       confirmButtonText: "Si, eliminar",
+      background: theme.bg2,
+      color: theme.text,
     }).then(async (result) => {
       if (result.isConfirmed) {
         await eliminarUsuariosAsignados({ id: p.id_usuario });

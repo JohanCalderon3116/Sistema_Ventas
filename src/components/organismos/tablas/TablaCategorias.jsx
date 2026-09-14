@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import {
   ContentAccionesTabla,
   Paginacion,
@@ -30,6 +30,7 @@ export function TablaCategorias({
   const [datas, setData] = useState(data);
   const [columnFilters, setColumnFilters] = useState([]);
   const { eliminarCategorias } = useCategoriasStore();
+  const theme = useTheme();
   function eliminar(p) {
     if (p.nombre === "General") {
       toast.warning(
@@ -45,6 +46,8 @@ export function TablaCategorias({
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
       confirmButtonText: "Si, eliminar",
+      background: theme.bg2,
+      color: theme.text,
     }).then(async (result) => {
       if (result.isConfirmed) {
         await eliminarCategorias({ id: p.id });

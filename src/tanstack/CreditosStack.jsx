@@ -10,6 +10,7 @@ import { useCierreCajaStore } from "../store/CierreCajaStore";
 import { useUsuariosStore } from "../store/UsuariosStore";
 import { useMovCajaStore } from "../store/MovCajaStore";
 import { useMetodosPagoStore } from "../store/MetodosPagoStore";
+import { MostrarVentaCompletaPorId } from "../supabase/crudVenta";
 
 export const useMostrarCreditosQueryStack = () => {
   const { dataempresa } = useEmpresaStore();
@@ -177,5 +178,26 @@ export const useInsertarAbonoCreditoMuatationStack = () => {
         queryKey: ["mostrar ventas metodoPago movCaja"],
       });
     },
+  });
+};
+export const useObtenerMovimientosCreditoQueryStack = () => {
+  const { creditosItemSelect } = useCreditosStore();
+  const { obtenerMovimientosCredito } = useMovimientosCreditosStore(); 
+  return useQuery({
+    queryKey: ["movimientos credito", creditosItemSelect?.id],
+    queryFn: () => obtenerMovimientosCredito(creditosItemSelect?.id),
+    enabled: !!creditosItemSelect?.id,
+    retry: 1,
+  });
+};
+
+export const useMostrarVentaCompletaCreditoQueryStack = () => {
+  const { idVentaCreditoSeleccionada } = useMovimientosCreditosStore();
+  return useQuery({
+    queryKey: ["mostrar venta completa credito", idVentaCreditoSeleccionada],
+    queryFn: () =>
+      MostrarVentaCompletaPorId({ _id_venta: idVentaCreditoSeleccionada }),
+    enabled: !!idVentaCreditoSeleccionada,
+    retry: 1,
   });
 };

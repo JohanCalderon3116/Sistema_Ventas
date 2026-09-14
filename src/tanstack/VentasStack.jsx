@@ -16,6 +16,7 @@ import { useEmpresaStore } from "../store/EmpresaStore";
 import { useProductosStore } from "../store/ProductosStore";
 import { useAlmacenesStore } from "../store/AlmacenesStore";
 import { useDashboardStore } from "../store/DashboardStore";
+import { useTheme } from "styled-components";
 
 export const useEliminarVentasIncompletasMutateStack = () => {
   const { eliminarventasIncompletas } = useVentasStore();
@@ -62,6 +63,7 @@ export const useConfirmarVentasMutationStack = ({
   const { insertarMovcaja } = useMovCajaStore();
   const { dataImpresorasXCaja } = useImpresorasStore();
   const { mostrarAlertasStockXVenta } = useStockStore();
+  const theme = useTheme();
   async function ConfirmarVenta(p) {
     if (restante === 0) {
       const pventas = {
@@ -132,6 +134,8 @@ export const useConfirmarVentasMutationStack = ({
           title: "Stock bajo",
           html: `Los siguientes productos quedaron con poco stock: <ul style="text-align:left;">${listaHtml}</ul>`,
           confirmButtonText: "Entendido",
+          background: theme.bg2,
+          color: theme.text,
         });
       }
       resetDetalleVenta();
