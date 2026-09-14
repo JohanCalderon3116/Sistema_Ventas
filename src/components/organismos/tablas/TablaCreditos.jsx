@@ -2,11 +2,7 @@ import styled from "styled-components";
 import {
   ContentAccionesTabla,
   Paginacion,
-  ImageContent,
-  Icono,
-  useAsignacionCajaSucursalesStore,
-  useUsuariosStore,
-  useProductosStore,
+  useCreditosStore,
 } from "../../../index";
 import Swal from "sweetalert2";
 import { v } from "../../../styles/variables";
@@ -21,6 +17,7 @@ import {
 } from "@tanstack/react-table";
 import { FaArrowsAltV } from "react-icons/fa";
 import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 export function TablaCreditos({
   data,
   SetopenRegistro,
@@ -31,9 +28,32 @@ export function TablaCreditos({
   const [pagina, setPagina] = useState(1);
   const [datas, setData] = useState(data);
   const [columnFilters, setColumnFilters] = useState([]);
-  const queryClinet = useQueryClient();
-  const { eliminarUsuariosAsignados } = useUsuariosStore();
-  const { dataProductos } = useProductosStore();
+  const { deleteCreditos } = useCreditosStore();
+  const queryClient = useQueryClient();
+  function eliminar(p) {
+    Swal.fire({
+      title: "¿Estás seguro(a)?",
+      text: "Una vez eliminado, ¡no podrá recuperar este registro!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Si, eliminar",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        await deleteCreditos({ id: p.id });
+        queryClient.invalidateQueries({ queryKey: ["mostrar creditos"] });
+        toast.success("Se eliminó correctamente el crédito 🙌");
+      } else {
+        toast.info("Eliminación cancelada, no se hizo ningún cambio. 😮✅");
+      }
+    });
+  }
+  function editar(data) {
+    SetopenRegistro(true);
+    setdataSelect(data);
+    setAccion("Editar");
+  }
   const columns = [
     {
       accessorKey: "fecha",
@@ -103,6 +123,25 @@ export function TablaCreditos({
         )
           return true;
         return row.getValue(columnId) === filterValue;
+      },
+    },
+    {
+      accessorKey: "acciones",
+      header: "",
+      enableSorting: false,
+      cell: (info) => (
+        <td data-title="Acciones" className="ContentCell">
+          <ContentAccionesTabla
+            funcionEditar={() => editar(info.row.original)}
+            funcionEliminar={() => eliminar(info.row.original)}
+          />
+        </td>
+      ),
+      enableColumnFilter: true,
+      filterFn: (row, columnId, filterStatuses) => {
+        if (filterStatuses.length === 0) return true;
+        const status = row.getValue(columnId);
+        return filterStatuses.includes(status?.id);
       },
     },
   ];

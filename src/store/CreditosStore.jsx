@@ -1,8 +1,10 @@
 import { create } from "zustand";
 import {
   BuscarCreditos,
+  DeleteCreditos,
   InsertarCredito,
   MostrarCreditos,
+  UpdateCreditos,
 } from "../supabase/crudCreditos";
 
 export const useCreditosStore = create((set) => ({
@@ -29,5 +31,11 @@ export const useCreditosStore = create((set) => ({
     const response = await BuscarCreditos(p);
     set({ datacreditos: response });
     return response;
+  },
+  updateCreditos: async (p) => {
+    await UpdateCreditos(p);
+  },
+  deleteCreditos: async (p) => {
+    await DeleteCreditos(p);
   },
 }));

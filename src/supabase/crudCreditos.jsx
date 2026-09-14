@@ -58,3 +58,20 @@ export async function BuscarCreditos(p) {
     nombres: item.clientes_proveedores?.nombres || "Sin nombre",
   }));
 }
+export async function UpdateCreditos(p) {
+  const { error, data } = await supabase
+    .from(table)
+    .update(p)
+    .select()
+    .eq("id", p.id);
+  if (error) {
+    throw new Error(error.message);
+  }
+  return data;
+}
+export async function DeleteCreditos(p) {
+  const { error } = await supabase.from(table).delete().eq("id", p.id);
+  if (error) {
+    throw new Error(error.message);
+  }
+}

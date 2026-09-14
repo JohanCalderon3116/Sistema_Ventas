@@ -1,10 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled, { useTheme } from "styled-components";
 import { v } from "../../../styles/variables";
 import {
   InputText,
   Btn1,
-  useClientesProveedoresStore,
   SelectList,
   Switch1,
   BtnClose,
@@ -15,19 +14,26 @@ import { useForm } from "react-hook-form";
 import { Toaster } from "sonner";
 import { BeatLoader } from "react-spinners";
 
-export function RegistrarCreditos({ onClose, dataSelect, setIsExploding }) {
+export function RegistrarCreditos({
+  onClose,
+  dataSelect,
+  setIsExploding,
+  accion,
+}) {
   const [stateCreditos, setStateCreditos] = useState(false);
+  const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
   const {
     register,
     formState: { errors },
     handleSubmit,
   } = useForm();
-  const { cliproItemSelect, selectCliPro } =
-    useClientesProveedoresStore();
   const theme = useTheme();
   const { data: dataclipro } = useMostrarClientesQueryStack();
   const { isPending, mutate: doInsertar } = useInsetarCreditosMutationStack({
     cerrarFormulario,
+    accion,
+    dataSelect,
+    clienteSeleccionado,
   });
   const handlesub = (data) => {
     doInsertar(data);
@@ -36,6 +42,17 @@ export function RegistrarCreditos({ onClose, dataSelect, setIsExploding }) {
     onClose();
     setIsExploding(true);
   }
+  useEffect(() => {
+    if (!dataclipro) return;
+    if (accion === "Editar" && dataSelect) {
+      const clienteDelCredito = dataclipro.find(
+        (c) => c.id === dataSelect.id_cliente,
+      );
+      setClienteSeleccionado(clienteDelCredito || dataclipro[0]);
+    } else {
+      setClienteSeleccionado(dataclipro[0]);
+    }
+  }, [accion, dataSelect, dataclipro]);
   return (
     <Container>
       <Toaster richColors></Toaster>
@@ -50,7 +67,9 @@ export function RegistrarCreditos({ onClose, dataSelect, setIsExploding }) {
         <div className="sub-contenedor">
           <div className="headers">
             <section>
-              <h1>Regitrar nuevo crédito</h1>
+              {accion == "Editar"
+                ? "Editar crédito"
+                : "Registrar nuevo crédito "}
             </section>
             <section>
               <BtnClose funcion={onClose}></BtnClose>
@@ -62,8 +81,8 @@ export function RegistrarCreditos({ onClose, dataSelect, setIsExploding }) {
                 <label>Clientes: </label>
                 <SelectList
                   data={dataclipro}
-                  itemSelect={cliproItemSelect}
-                  onSelect={selectCliPro}
+                  itemSelect={clienteSeleccionado}
+                  onSelect={setClienteSeleccionado}
                   displayField="nombres"
                 ></SelectList>
               </ContainerSelector>
@@ -73,6 +92,7 @@ export function RegistrarCreditos({ onClose, dataSelect, setIsExploding }) {
                     className="form__field"
                     type="number"
                     placeholder="Cupo maximno"
+                    defaultValue={dataSelect.cupo_maximo}
                     {...register("cupo_maximo", {
                       required: true,
                     })}
@@ -98,6 +118,7 @@ export function RegistrarCreditos({ onClose, dataSelect, setIsExploding }) {
                       className="form__field"
                       type="number"
                       placeholder="Debe..."
+                      defaultValue={dataSelect.saldo_actual}
                       {...register("saldo_actual", {
                         required: true,
                       })}

@@ -2,7 +2,6 @@ import styled, { useTheme } from "styled-components";
 import {
   Btn1,
   Buscador,
-  InputText2,
   Title,
   useBuscarCreditsoQueryStack,
   useMostrarCreditosQueryStack,
@@ -11,10 +10,9 @@ import { v } from "../../styles/variables";
 import { useState } from "react";
 import Confetti from "react-confetti-boom";
 import { RegistrarCreditos } from "../organismos/formularios/RegistrarCreditos";
-import { toast, Toaster } from "sonner";
+import { Toaster } from "sonner";
 import { TablaCreditos } from "../organismos/tablas/TablaCreditos";
 import { useCreditosStore } from "../../store/CreditosStore";
-import { useContraseñaStore } from "../../store/ContraseñaStore";
 import { useMostrarContraseñaQueryStack } from "../../tanstack/LoginStack";
 import { BeatLoader } from "react-spinners";
 export const CreditosTemplate = () => {
@@ -23,28 +21,17 @@ export const CreditosTemplate = () => {
   const [openRegistro, setOpenRegistro] = useState(false);
   const [dataSelect, setDataSelect] = useState([]);
   const [isExploding, setIsExploding] = useState(false);
-  const [openModalContraseña, setOpenModalContraseña] = useState(false);
-  const [inputContraseña, setInputContraseña] = useState("");
+  const [accion, setAccion] = useState(false);
   const { datacreditos } = useCreditosStore();
-  const { dataContraseña } = useContraseñaStore();
   useMostrarContraseñaQueryStack();
-  const validarContraseña = () => {
-    const contraseñaReal = dataContraseña[0]?.contraseña;
-    if (Number(inputContraseña) === contraseñaReal) {
-      setOpenModalContraseña(false);
-      setInputContraseña("");
-      setOpenRegistro(true);
-      toast.success(
-        "Contraseña de verificación correcta, entrando al módulo Créditos 🔓",
-      );
-    } else {
-      toast.error(
-        "La contraseña de verificación es incorrecta, inténtalo de nuevo 😧",
-      );
-    }
-  };
   const { isLoading } = useMostrarCreditosQueryStack();
   useBuscarCreditsoQueryStack();
+  function nuevoRegistro() {
+    setOpenRegistro(!openRegistro);
+    setAccion("Nuevo");
+    setDataSelect([]);
+    setIsExploding(false);
+  }
   if (isLoading) {
     return (
       <ConteinerLoader>
@@ -58,39 +45,18 @@ export const CreditosTemplate = () => {
   return (
     <Container>
       <Toaster richColors></Toaster>
-      {openModalContraseña && (
-        <ModalContraseña>
-          <div className="card">
-            <span>Ingresa la contraseña</span>
-            <InputText2>
-              <input
-                className="form__field"
-                placeholder="Contraseña"
-                type="password"
-                value={inputContraseña}
-                onChange={(e) => setInputContraseña(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && validarContraseña()}
-              />
-            </InputText2>
-            <Btn1 titulo="Verificar" funcion={validarContraseña} width="100%" />
-            <Btn1
-              titulo="Cancelar"
-              funcion={() => setOpenModalContraseña(false)}
-              width="100%"
-            />
-          </div>
-        </ModalContraseña>
-      )}
       {openRegistro && (
         <RegistrarCreditos
           setIsExploding={setIsExploding}
           onClose={() => setOpenRegistro(!openRegistro)}
+          dataSelect={dataSelect}
+          accion={accion}
         ></RegistrarCreditos>
       )}
       <section className="area1">
         <Title>Créditos</Title>
         <Btn1
-          funcion={() => setOpenModalContraseña(true)}
+          funcion={nuevoRegistro}
           bgcolor="#6d05e5"
           titulo="Nuevo"
           icono={<v.iconoagregar />}
@@ -105,6 +71,7 @@ export const CreditosTemplate = () => {
           data={datacreditos || []}
           SetopenRegistro={setOpenRegistro}
           setdataSelect={setDataSelect}
+          setAccion={setAccion}
         ></TablaCreditos>{" "}
       </section>
     </Container>

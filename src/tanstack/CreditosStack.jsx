@@ -6,7 +6,6 @@ import { useDetalleVentasStore } from "../store/DetalleVentasStore";
 import { useFormattedDate } from "../hooks/useFormattedDate";
 import { useMovimientosCreditosStore } from "../store/MovimientosCreditosStore";
 import { toast } from "sonner";
-import { useClientesProveedoresStore } from "../store/ClientesProveedoresStore";
 import { useCierreCajaStore } from "../store/CierreCajaStore";
 import { useUsuariosStore } from "../store/UsuariosStore";
 import { useMovCajaStore } from "../store/MovCajaStore";
@@ -40,7 +39,7 @@ export const useBuscarCreditsoQueryStack = () => {
         id_empresa: dataempresa?.id,
         nombres: buscadorCreditos,
       }),
-    enabled: !!dataempresa && buscadorCreditos.trim().length > 0,
+    enabled: !!dataempresa,
     refetchOnWindowFocus: false,
     retry: 1,
   });
@@ -81,18 +80,36 @@ export const useInsertarMovimientoCreditoMutationStack = ({
     },
   });
 };
-export const useInsetarCreditosMutationStack = ({ cerrarFormulario }) => {
+export const useInsetarCreditosMutationStack = ({
+  cerrarFormulario,
+  accion,
+  dataSelect,
+  clienteSeleccionado,
+}) => {
   const queryClient = useQueryClient();
-  const { cliproItemSelect } = useClientesProveedoresStore();
-  const { insertarCredito } = useCreditosStore();
+  const { insertarCredito, updateCreditos } = useCreditosStore();
+  const fechaActual = useFormattedDate();
   async function insertar(data) {
-    const p = {
-      id_cliente: cliproItemSelect?.id,
-      cupo_maximo: data.cupo_maximo,
-      credito_disponible: data.cupo_maximo - (data.saldo_actual || 0),
-      saldo_actual: data.saldo_actual || 0,
-    };
-    await insertarCredito(p);
+    if (accion === "Editar") {
+      const p = {
+        id: dataSelect.id,
+        id_cliente: clienteSeleccionado?.id,
+        cupo_maximo: data.cupo_maximo,
+        fecha: fechaActual,
+        credito_disponible: data.cupo_maximo - (data.saldo_actual || 0),
+        saldo_actual: data.saldo_actual || 0,
+      };
+      await updateCreditos(p);
+    } else {
+      const p = {
+        id_cliente: clienteSeleccionado?.id,
+        cupo_maximo: data.cupo_maximo,
+        fecha: fechaActual,
+        credito_disponible: data.cupo_maximo - (data.saldo_actual || 0),
+        saldo_actual: data.saldo_actual || 0,
+      };
+      await insertarCredito(p);
+    }
   }
   return useMutation({
     mutationKey: ["insertar credito"],
