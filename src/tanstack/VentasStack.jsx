@@ -83,10 +83,11 @@ export const useConfirmarVentasMutationStack = ({
           const metodoPago = dataMetodosPago.find(
             (item) => item.nombre === tipo,
           );
+          const montoNetoCaja = tipo === "Efectivo" ? monto - vuelto : monto;
           const pmovcaja = {
             fecha_movimiento: fechaActual,
             tipo_movimiento: "venta",
-            monto: monto,
+            monto: montoNetoCaja,
             id_metodo_pago: metodoPago?.id,
             descripcion: `Pago de venta con ${tipo} `,
             id_usuario: datausuarios?.id,

@@ -19,9 +19,12 @@ import { useProductosStore } from "../../../store/ProductosStore";
 import { useBuscarClientesQueryStack } from "../../../tanstack/ClientesProveedoresStack";
 import { useConfirmarVentasMutationStack } from "../../../tanstack/VentasStack";
 import { BeatLoader } from "react-spinners";
+import { useMostrarMonedaQueryStack } from "../../../tanstack/MonedaStack";
+
 export const IngresoCobro = forwardRef((props, ref) => {
   const [openRegistro, setOpenRegistro] = useState(false);
   const [stateBuscadorClientes, setStateBuscadorClientes] = useState(false);
+  const [montoManualEfectivo, setMontoManualEfectivo] = useState("");
   const {
     tipocobro,
     restante,
@@ -34,6 +37,7 @@ export const IngresoCobro = forwardRef((props, ref) => {
   } = useVentasStore();
   const { total, mostrardetalleventa } = useDetalleVentasStore();
   const [precioVenta, setPrecioVenta] = useState(total);
+  const { data: dataMonedas } = useMostrarMonedaQueryStack();
   const {
     dataComprobantes,
     itemSelectComprobanteSelect,
@@ -46,6 +50,10 @@ export const IngresoCobro = forwardRef((props, ref) => {
   const { dataempresa } = useEmpresaStore();
   const { setBuscador, selectCliPro, cliproItemSelect } =
     useClientesProveedoresStore();
+  const usaEfectivo = tipocobro === "Efectivo";
+  const denominacionesOrdenadas = [...(dataMonedas ?? [])].sort(
+    (a, b) => a.numero - b.numero,
+  );
   const calcularVueltoYRestante = () => {
     const totalPagado = Object.values(valoresPago).reduce(
       (acc, curr) => acc + curr,
@@ -76,6 +84,27 @@ export const IngresoCobro = forwardRef((props, ref) => {
       ...prev,
       [tipo]: parseFloat(valor) || 0,
     }));
+  };
+  const handleAgregarMontoEfectivo = (monto) => {
+    if (!monto || monto <= 0) return;
+    setValoresPago((prev) => ({
+      ...prev,
+      Efectivo: (prev["Efectivo"] || 0) + monto,
+    }));
+  };
+  const handleAgregarMontoManual = () => {
+    const valor = parseFloat(montoManualEfectivo);
+    if (!isNaN(valor) && valor > 0) {
+      handleAgregarMontoEfectivo(valor);
+      setMontoManualEfectivo("");
+    }
+  };
+  const handleLimpiarEfectivo = () => {
+    setValoresPago((prev) => ({
+      ...prev,
+      Efectivo: 0,
+    }));
+    setMontoManualEfectivo("");
   };
   useImperativeHandle(ref, () => ({
     mutateAsync: mutation.mutateAsync,
@@ -113,22 +142,25 @@ export const IngresoCobro = forwardRef((props, ref) => {
     await ticket("print", dataenv);
   }
   function imprimirDirectoTicket() {}
-
   useEffect(() => {
-    setValoresPago(tipocobro === "Mixto" ? {} : { [tipocobro]: total });
+    if (tipocobro === "Mixto") {
+      setValoresPago({});
+    } else if (tipocobro === "Efectivo") {
+      setValoresPago({ Efectivo: 0 });
+    } else {
+      setValoresPago({ [tipocobro]: total });
+    }
   }, [tipocobro]);
-
   useEffect(() => {
-    if (tipocobro !== "Mixto") {
+    if (tipocobro !== "Mixto" && tipocobro !== "Efectivo") {
       setValoresPago({ [tipocobro]: total });
     }
   }, [total]);
-
   useEffect(() => {
     calcularVueltoYRestante();
   }, [precioVenta, tipocobro, valoresPago]);
   return (
-    <Container>
+    <Container $ancho={usaEfectivo ? "900px" : "480px"}>
       {mutation.isPending ? (
         <ConteinerLoader>
           <span>
@@ -139,149 +171,237 @@ export const IngresoCobro = forwardRef((props, ref) => {
       ) : (
         <>
           {mutation.isError && <span>Error: {mutation.error.message} </span>}
-          <section className="area1">
-            {openRegistro && (
-              <ContentReg>
-                <RegistrarmovimientocreditoVenta
-                  onClose={() => setOpenRegistro(!openRegistro)}
-                ></RegistrarmovimientocreditoVenta>
-              </ContentReg>
-            )}
-            <span className="tipocobro"> {tipocobro} </span>
-            <section>
-              <span>
-                {" "}
-                {itemSelectComprobanteSelect?.tipo_comprobantes?.nombre} :{" "}
-                <strong>
-                  {" "}
-                  {itemSelectComprobanteSelect?.serie}-
-                  {itemSelectComprobanteSelect?.correlativos}{" "}
-                </strong>{" "}
-              </span>
-            </section>
-            <section className="areacomprobantes">
-              {dataComprobantes?.map((item, index) => {
-                return (
-                  <article className="box" key={index}>
+          <span className="tipocobro"> {tipocobro} </span>
+          <Libro>
+            <PaginaIzquierda>
+              {openRegistro && (
+                <ContentReg>
+                  <RegistrarmovimientocreditoVenta
+                    onClose={() => setOpenRegistro(!openRegistro)}
+                  ></RegistrarmovimientocreditoVenta>
+                </ContentReg>
+              )}
+
+              <section className="cabecera">
+                <section>
+                  <span>
+                    {" "}
+                    {
+                      itemSelectComprobanteSelect?.tipo_comprobantes?.nombre
+                    } :{" "}
+                    <strong>
+                      {" "}
+                      {itemSelectComprobanteSelect?.serie}-
+                      {itemSelectComprobanteSelect?.correlativos}{" "}
+                    </strong>{" "}
+                  </span>
+                </section>
+                <section className="areacomprobantes">
+                  {dataComprobantes?.map((item, index) => {
+                    return (
+                      <article className="box" key={index}>
+                        <Btn1
+                          funcion={() => setItemSelectComprobanteSelect(item)}
+                          border="0"
+                          height={"70px"}
+                          width={"100%"}
+                          titulo={item?.tipo_comprobantes?.nombre}
+                        ></Btn1>
+                      </article>
+                    );
+                  })}
+                </section>
+                <span>Cliente</span>
+                <EditButton
+                  onClick={() =>
+                    setStateBuscadorClientes(!stateBuscadorClientes)
+                  }
+                >
+                  <Icon
+                    className="icono"
+                    icon="line-md:pencil-twotone"
+                    width="24"
+                    height="24"
+                  />
+                </EditButton>
+                <span className="cliente"> {cliproItemSelect?.nombres} </span>
+              </section>
+              <section className="metodos">
+                {dataMetodosPago?.map((item, index) => {
+                  const mostrar =
+                    (tipocobro === "Mixto" && item.nombre !== "Mixto") ||
+                    (tipocobro === item.nombre && item.nombre !== "Mixto");
+
+                  if (!mostrar) return null;
+                  if (item.nombre === "Efectivo") {
+                    return (
+                      <EfectivoContainer key={index}>
+                        <label className="form__label">Efectivo</label>
+                        <DisplayEfectivo>
+                          {FormatearNumeroDinero(
+                            valoresPago["Efectivo"] || 0,
+                            dataempresa?.currency,
+                            dataempresa?.iso,
+                          )}
+                        </DisplayEfectivo>
+
+                        <ManualRow>
+                          <input
+                            type="number"
+                            placeholder="Otro monto"
+                            value={montoManualEfectivo}
+                            onChange={(e) =>
+                              setMontoManualEfectivo(e.target.value)
+                            }
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                handleAgregarMontoManual();
+                              }
+                            }}
+                          />
+                          <button
+                            type="button"
+                            onClick={handleAgregarMontoManual}
+                          >
+                            Agregar
+                          </button>
+                          <button
+                            type="button"
+                            className="limpiar"
+                            onClick={handleLimpiarEfectivo}
+                          >
+                            Limpiar
+                          </button>
+                        </ManualRow>
+                      </EfectivoContainer>
+                    );
+                  }
+                  return (
+                    <InputText textaling="center" key={index}>
+                      <input
+                        onChange={(e) =>
+                          handleChangePago(item.nombre, e.target.value)
+                        }
+                        defaultValue={tipocobro === item.nombre ? total : ""}
+                        className="form__field"
+                        type="number"
+                        disabled={tipocobro === "Mixto" ? false : true}
+                      ></input>
+                      <label className="form__label"> {item.nombre} </label>
+                    </InputText>
+                  );
+                })}
+              </section>
+
+              <section className="totales">
+                <article>
+                  <span className="total">Total: </span>
+                  <span>Vuelto: </span>
+                  <span>Restante: </span>
+                </article>
+                <article>
+                  <span className="total">
+                    {" "}
+                    {FormatearNumeroDinero(
+                      total,
+                      dataempresa?.currency,
+                      dataempresa?.iso,
+                    )}{" "}
+                  </span>
+                  <span>
+                    {" "}
+                    {FormatearNumeroDinero(
+                      vuelto,
+                      dataempresa?.currency,
+                      dataempresa?.iso,
+                    )}{" "}
+                  </span>
+                  <span>
+                    {" "}
+                    {FormatearNumeroDinero(
+                      restante,
+                      dataempresa?.currency,
+                      dataempresa?.iso,
+                    )}{" "}
+                  </span>
+                </article>
+              </section>
+
+              <section className="acciones">
+                {tipocobro === "Credito" ? (
+                  <>
                     <Btn1
-                      funcion={() => setItemSelectComprobanteSelect(item)}
-                      border="0"
-                      height={"70px"}
-                      width={"100%"}
-                      titulo={item?.tipo_comprobantes?.nombre}
+                      border="2px"
+                      titulo="¿Fiado? Presiona"
+                      bgcolor="#ddd319"
+                      color="#ffffff"
+                      width="100%"
+                      funcion={() => setOpenRegistro(!openRegistro)}
                     ></Btn1>
-                  </article>
-                );
-              })}
-            </section>
-            <span>Cliente</span>
-            <EditButton
-              onClick={() => setStateBuscadorClientes(!stateBuscadorClientes)}
-            >
-              <Icon
-                className="icono"
-                icon="line-md:pencil-twotone"
-                width="24"
-                height="24"
-              />
-            </EditButton>
-            <span className="cliente"> {cliproItemSelect?.nombres} </span>
-          </section>
-          <section className="area2">
-            {dataMetodosPago?.map((item, index) => {
-              return (tipocobro === "Mixto" && item.nombre !== "Mixto") ||
-                (tipocobro === item.nombre && item.nombre != "Mixto") ? (
-                <InputText textaling="center">
-                  <input
-                    key={index}
-                    onChange={(e) =>
-                      handleChangePago(item.nombre, e.target.value)
-                    }
-                    defaultValue={tipocobro === item.nombre ? total : ""}
-                    className="form__field"
-                    type="number"
-                    disabled={
-                      tipocobro === "Mixto" || tipocobro === "Efectivo"
-                        ? false
-                        : true
-                    }
-                  ></input>
-                  <label className="form__label"> {item.nombre} </label>
-                </InputText>
-              ) : null;
-            })}
-          </section>
-          <section className="area3">
-            <article>
-              <span className="total">Total: </span>
-              <span>Vuelto: </span>
-              <span>Restante: </span>
-            </article>
-            <article>
-              <span className="total">
-                {" "}
-                {FormatearNumeroDinero(
-                  total,
-                  dataempresa?.currency,
-                  dataempresa?.iso,
-                )}{" "}
-              </span>
-              <span>
-                {" "}
-                {FormatearNumeroDinero(
-                  vuelto,
-                  dataempresa?.currency,
-                  dataempresa?.iso,
-                )}{" "}
-              </span>
-              <span>
-                {" "}
-                {FormatearNumeroDinero(
-                  restante,
-                  dataempresa?.currency,
-                  dataempresa?.iso,
-                )}{" "}
-              </span>
-            </article>
-          </section>
-          <section className="area4">
-            {tipocobro === "Credito" ? (
+                    <Linea></Linea>
+                    <Btn1
+                      border="2px"
+                      titulo="Cobrar (Enter)"
+                      bgcolor="#0aca21"
+                      color="#ffffff"
+                      width="100%"
+                    ></Btn1>
+                  </>
+                ) : (
+                  <Btn1
+                    funcion={() => {
+                      if (mutation.isPending) return;
+                      mutation.mutateAsync();
+                    }}
+                    border="2px"
+                    titulo="Cobrar (Enter)"
+                    bgcolor="#0aca21"
+                    color="#ffffff"
+                    width="100%"
+                  ></Btn1>
+                )}
+              </section>
+            </PaginaIzquierda>
+            {usaEfectivo && (
               <>
-                <Btn1
-                  border="2px"
-                  titulo="¿Fiado? Presiona"
-                  bgcolor="#ddd319"
-                  color="#ffffff"
-                  width="100%"
-                  funcion={() => setOpenRegistro(!openRegistro)}
-                ></Btn1>
-                <Linea></Linea>
-                <Btn1
-                  funcion={() => {
-                    if (mutation.isPending) return;
-                    mutation.mutateAsync();
-                  }}
-                  border="2px"
-                  titulo="Cobrar (Enter)"
-                  bgcolor="#0aca21"
-                  color="#ffffff"
-                  width="100%"
-                ></Btn1>
+                <Lomo />
+                <PaginaDerecha>
+                  <h4>Denominaciones</h4>
+                  <DenominacionesGrid>
+                    {denominacionesOrdenadas.map((moneda) => (
+                      <DenominacionBtn
+                        key={moneda.id}
+                        type="button"
+                        onClick={() =>
+                          handleAgregarMontoEfectivo(moneda.numero)
+                        }
+                      >
+                        {moneda.icono ? (
+                          <img
+                            src={moneda.icono}
+                            alt={`$${moneda.numero}`}
+                            onError={(e) => {
+                              e.currentTarget.style.display = "none";
+                            }}
+                          />
+                        ) : null}
+                        <span>
+                          {FormatearNumeroDinero(
+                            moneda.numero,
+                            dataempresa?.currency,
+                            dataempresa?.iso,
+                          )}
+                        </span>
+                      </DenominacionBtn>
+                    ))}
+                  </DenominacionesGrid>
+                </PaginaDerecha>
               </>
-            ) : (
-              <Btn1
-                funcion={() => {
-                  if (mutation.isPending) return;
-                  mutation.mutateAsync();
-                }}
-                border="2px"
-                titulo="Cobrar (Enter)"
-                bgcolor="#0aca21"
-                color="#ffffff"
-                width="100%"
-              ></Btn1>
             )}
-          </section>
+          </Libro>
+
           {stateBuscadorClientes && (
             <PanelBuscador
               data={databuscadorcliente}
@@ -298,10 +418,12 @@ export const IngresoCobro = forwardRef((props, ref) => {
     </Container>
   );
 });
+
 const Container = styled.div`
   position: relative;
   box-sizing: border-box;
-  width: 400px;
+  width: ${({ $ancho }) => $ancho || "480px"};
+  max-width: 96vw;
   padding: 20px;
   border-radius: 10px;
   box-shadow: ${({ theme }) =>
@@ -316,46 +438,64 @@ const Container = styled.div`
   align-items: center;
   justify-content: flex-start;
   font-size: 22px;
-  &::before,
-  &::after {
-    content: "";
+  transition: width 0.2s ease;
+
+  .tipocobro {
     position: absolute;
-    left: 5px;
-    height: 6px;
-    width: 380px;
+    right: 6px;
+    top: 6px;
+    background-color: rgba(233, 6, 184, 0.15);
+    padding: 5px;
+    color: ${({ theme }) => (theme.body === "#fff" ? "#c20f96" : "#ff66d8")};
+    border-radius: 5px;
+    font-size: 15px;
+    font-weight: 650;
   }
-  &::before {
-    top: -5px;
-    background: radial-gradient(
-        circle,
-        transparent,
-        transparent 50%,
-        ${({ theme }) => theme.bg2} 50%,
-        ${({ theme }) => theme.bg2} 100%
-      ) -7px -8px /
-      16px 16px repeat-x;
-  }
-  &::after {
-    bottom: -5px;
-    background: radial-gradient(
-        circle,
-        transparent,
-        transparent 50%,
-        ${({ theme }) => theme.bg2} 50%,
-        ${({ theme }) => theme.bg2} 100%
-      ) -7px -2px /
-      16px 16px repeat-x;
-  }
-  .area1 {
+`;
+
+/* ---------- Estructura de "libro abierto" ---------- */
+
+const Libro = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 0;
+`;
+
+const Lomo = styled.div`
+  width: 2px;
+  align-self: stretch;
+  background: ${({ theme }) =>
+    theme.body === "#fff" ? "rgba(0,0,0,0.15)" : "rgba(255,255,255,0.15)"};
+  box-shadow: 0 0 8px 1px
+    ${({ theme }) =>
+      theme.body === "#fff" ? "rgba(0,0,0,0.15)" : "rgba(0,0,0,0.6)"};
+  margin: 0 14px;
+`;
+
+const PaginaIzquierda = styled.div`
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .cabecera {
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 100%;
     margin-bottom: 5px;
+
     .areacomprobantes {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
-      padding: 10px;
+      padding: 10px 0;
+      width: 100%;
+
       .box {
         flex: 1 1 40%;
         display: flex;
@@ -381,24 +521,16 @@ const Container = styled.div`
         }
       }
     }
+
     .cliente {
       font-weight: 700;
       color: ${({ theme }) => theme.text};
     }
-    .tipocobro {
-      position: absolute;
-      right: 6px;
-      top: 6px;
-      background-color: rgba(233, 6, 184, 0.15);
-      padding: 5px;
-      color: ${({ theme }) => (theme.body === "#fff" ? "#c20f96" : "#ff66d8")};
-      border-radius: 5px;
-      font-size: 15px;
-      font-weight: 650;
-    }
   }
-  .area2 {
+
+  .metodos {
     margin-top: 5px;
+    width: 100%;
     input {
       color: ${({ theme }) => theme.text} !important;
       font-weight: 700;
@@ -415,7 +547,8 @@ const Container = styled.div`
       opacity: 0.7;
     }
   }
-  .area3 {
+
+  .totales {
     margin-top: 15px;
     display: flex;
     justify-content: space-between;
@@ -431,11 +564,28 @@ const Container = styled.div`
       color: ${({ theme }) => (theme.body === "#fff" ? "#088f17" : "#0aca21")};
     }
   }
-  .area4 {
+
+  .acciones {
     width: 100%;
     margin-top: 15px;
   }
 `;
+
+const PaginaDerecha = styled.div`
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  h4 {
+    margin: 0 0 10px 0;
+    opacity: 0.7;
+    font-size: 16px;
+    align-self: center;
+  }
+`;
+
 const EditButton = styled.button`
   background-color: #62c6f7;
   border: none;
@@ -461,4 +611,110 @@ const ConteinerLoader = styled.div`
   flex-direction: column;
   gap: 8px;
   height: 100vh;
+`;
+
+/* ---------- Efectivo ---------- */
+
+const EfectivoContainer = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 5px;
+`;
+
+const DisplayEfectivo = styled.div`
+  font-weight: 700;
+  font-size: 30px;
+  text-align: center;
+  color: ${({ theme }) => theme.text};
+  border-bottom: 2px solid
+    ${({ theme }) =>
+      theme.body === "#fff"
+        ? "rgba(0, 0, 0, 0.2)"
+        : "rgba(255, 255, 255, 0.2)"};
+  padding-bottom: 6px;
+  user-select: none;
+`;
+
+const ManualRow = styled.div`
+  display: flex;
+  gap: 8px;
+  align-items: center;
+
+  input {
+    flex: 1;
+    padding: 8px;
+    border-radius: 6px;
+    font-size: 16px !important;
+    font-weight: 500 !important;
+    border: 1px solid
+      ${({ theme }) =>
+        theme.body === "#fff" ? "#ccc" : "rgba(255, 255, 255, 0.15)"};
+    background: transparent;
+    color: ${({ theme }) => theme.text} !important;
+  }
+
+  button {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-weight: 700;
+    background-color: #0aca21;
+    color: #fff;
+
+    &.limpiar {
+      background-color: #e04040;
+    }
+  }
+`;
+
+/* ---------- Denominaciones (página derecha) ---------- */
+
+const DenominacionesGrid = styled.div`
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  max-height: 420px;
+  overflow-y: auto;
+  padding-right: 4px;
+`;
+
+const DenominacionBtn = styled.button`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 6px;
+  border-radius: 10px;
+  border: 1px solid
+    ${({ theme }) =>
+      theme.body === "#fff" ? "#ccc" : "rgba(255, 255, 255, 0.15)"};
+  background-color: ${({ theme }) =>
+    theme.body === "#fff" ? "#e8f8ec" : "rgba(10, 202, 33, 0.12)"};
+  color: ${({ theme }) => theme.text};
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition:
+    transform 0.08s ease,
+    background-color 0.15s ease;
+
+  img {
+    width: 42px;
+    height: 42px;
+    object-fit: contain;
+    pointer-events: none;
+  }
+
+  &:hover {
+    background-color: ${({ theme }) =>
+      theme.body === "#fff" ? "#d3f2da" : "rgba(10, 202, 33, 0.2)"};
+  }
+  &:active {
+    transform: scale(0.96);
+  }
 `;
