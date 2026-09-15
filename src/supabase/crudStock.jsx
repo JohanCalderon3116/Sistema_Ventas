@@ -23,13 +23,16 @@ export async function MostrarStockAlmacenesYProducto(p) {
   const { data, error } = await supabase
     .from(tabla)
     .select(`*, almacenes(*)`)
-    .eq("id_almacen", p.id_almacen)
     .eq("id_producto", p.id_producto)
     .gt("stock", 0);
   if (error) {
     throw new Error(error.message);
   }
-  return data;
+  return (data ?? []).sort(
+    (a, b) =>
+      new Date(a.almacenes?.fecha_creacion_a) -
+      new Date(b.almacenes?.fecha_creacion_a),
+  );
 }
 export async function EditarStock(p, tipo) {
   const { error } = await supabase.rpc(

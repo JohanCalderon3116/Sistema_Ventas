@@ -229,54 +229,57 @@ export const IngresoCobro = forwardRef((props, ref) => {
               <section className="metodos">
                 {dataMetodosPago?.map((item, index) => {
                   const mostrar =
-                    (tipocobro === "Mixto" && item.nombre !== "Mixto") ||
+                    (tipocobro === "Mixto" &&
+                      item.nombre !== "Mixto" &&
+                      item.nombre !== "Credito") ||
                     (tipocobro === item.nombre && item.nombre !== "Mixto");
-
                   if (!mostrar) return null;
                   if (item.nombre === "Efectivo") {
-                    return (
-                      <EfectivoContainer key={index}>
-                        <label className="form__label">Efectivo</label>
-                        <DisplayEfectivo>
-                          {FormatearNumeroDinero(
-                            valoresPago["Efectivo"] || 0,
-                            dataempresa?.currency,
-                            dataempresa?.iso,
-                          )}
-                        </DisplayEfectivo>
+                    if (tipocobro === "Efectivo") {
+                      return (
+                        <EfectivoContainer key={index}>
+                          <label className="form__label">Efectivo</label>
+                          <DisplayEfectivo>
+                            {FormatearNumeroDinero(
+                              valoresPago["Efectivo"] || 0,
+                              dataempresa?.currency,
+                              dataempresa?.iso,
+                            )}
+                          </DisplayEfectivo>
 
-                        <ManualRow>
-                          <input
-                            type="number"
-                            placeholder="Otro monto"
-                            value={montoManualEfectivo}
-                            onChange={(e) =>
-                              setMontoManualEfectivo(e.target.value)
-                            }
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter") {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                handleAgregarMontoManual();
+                          <ManualRow>
+                            <input
+                              type="number"
+                              placeholder="Otro monto"
+                              value={montoManualEfectivo}
+                              onChange={(e) =>
+                                setMontoManualEfectivo(e.target.value)
                               }
-                            }}
-                          />
-                          <button
-                            type="button"
-                            onClick={handleAgregarMontoManual}
-                          >
-                            Agregar
-                          </button>
-                          <button
-                            type="button"
-                            className="limpiar"
-                            onClick={handleLimpiarEfectivo}
-                          >
-                            Limpiar
-                          </button>
-                        </ManualRow>
-                      </EfectivoContainer>
-                    );
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  handleAgregarMontoManual();
+                                }
+                              }}
+                            />
+                            <button
+                              type="button"
+                              onClick={handleAgregarMontoManual}
+                            >
+                              Agregar
+                            </button>
+                            <button
+                              type="button"
+                              className="limpiar"
+                              onClick={handleLimpiarEfectivo}
+                            >
+                              Limpiar
+                            </button>
+                          </ManualRow>
+                        </EfectivoContainer>
+                      );
+                    }
                   }
                   return (
                     <InputText textaling="center" key={index}>
@@ -453,8 +456,6 @@ const Container = styled.div`
   }
 `;
 
-/* ---------- Estructura de "libro abierto" ---------- */
-
 const Libro = styled.div`
   width: 100%;
   display: flex;
@@ -613,7 +614,6 @@ const ConteinerLoader = styled.div`
   height: 100vh;
 `;
 
-/* ---------- Efectivo ---------- */
 
 const EfectivoContainer = styled.div`
   width: 100%;
@@ -669,9 +669,6 @@ const ManualRow = styled.div`
     }
   }
 `;
-
-/* ---------- Denominaciones (página derecha) ---------- */
-
 const DenominacionesGrid = styled.div`
   width: 100%;
   display: grid;

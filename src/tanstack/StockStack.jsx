@@ -6,21 +6,18 @@ import { useStockStore } from "../store/StockStore";
 export const useMostrarStockAlmacenesyProductoQueryStack = () => {
   const { mostrarStockAlmacenesYProducto } = useStockStore();
   const { ProductosItemSelect } = useProductosStore();
-  const { almacenSelelctItem } = useAlmacenesStore();
   return useQuery({
     queryKey: [
       "mostrar Stock Almacenes y Producto",
       {
         id_producto: ProductosItemSelect?.id,
-        id_almacen: almacenSelelctItem?.id,
       },
     ],
     queryFn: () =>
       mostrarStockAlmacenesYProducto({
         id_producto: ProductosItemSelect?.id,
-        id_almacen: almacenSelelctItem?.id,
       }),
-    enabled: !!ProductosItemSelect && !!almacenSelelctItem,
+    enabled: !!ProductosItemSelect,
     retry: 1,
   });
 };
