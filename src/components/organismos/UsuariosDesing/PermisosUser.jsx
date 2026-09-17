@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import { SelectList } from "../../ui/lists/SelectList";
-import { useMutation, useQuery } from "@tanstack/react-query";
 import { Check } from "../../ui/toogles/Check";
 import { useRolesStore } from "../../../store/RolesStore";
 import { usePermisosStore } from "../../../store/PermisosStore";
@@ -32,10 +31,6 @@ export const PermisosUser = () => {
     useMostrarPermisosDefaultQueryStack();
   const { data: dataPermisos, isLoading: isLadingPermisosUser } =
     useMostrarPermisosPorUsuariosQueryStack(selectItemAsignaciones);
-  const mutation = useMutation({
-    mutationKey: ["actualizar permisos"],
-    mutationFn: () => actualizarPermisos(),
-  });
   useEffect(() => {
     if (accion === "Nuevo") {
       const permisosPorRol =

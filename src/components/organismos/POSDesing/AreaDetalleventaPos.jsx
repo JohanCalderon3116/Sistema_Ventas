@@ -93,12 +93,12 @@ export const AreaDetalleventaPos = () => {
                   funcion={() =>
                     mutateEditarCantidadDetalleVenta({
                       id: item.id,
-                      cantidad: item.cantidad + 1,
+                      cantidad: item.cantidad - 1,
                     })
                   }
                   width="20px"
                   height="35px"
-                  icono={<Icon icon="mdi:add-bold" />}
+                  icono={<Icon icon="subway:subtraction-1" />}
                 ></Btn1>
                 {editIndex === index ? (
                   <InputText2>
@@ -127,12 +127,12 @@ export const AreaDetalleventaPos = () => {
                   funcion={() =>
                     mutateEditarCantidadDetalleVenta({
                       id: item.id,
-                      cantidad: item.cantidad - 1,
+                      cantidad: item.cantidad + 1,
                     })
                   }
                   width="20px"
                   height="35px"
-                  icono={<Icon icon="subway:subtraction-1" />}
+                  icono={<Icon icon="mdi:add-bold" />}
                 ></Btn1>
               </article>
               <article className="contentTotaldetalleventa">
@@ -199,7 +199,7 @@ const AreaDetalleventa = styled.section`
   flex-direction: column;
   gap: 10px;
   max-height: calc(100vh - 500px);
-  overflow-y: auto; 
+  overflow-y: auto;
   overflow-x: hidden;
 
   &::-webkit-scrollbar {

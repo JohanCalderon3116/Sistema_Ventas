@@ -10,10 +10,12 @@ import {
   PantallaCierreCaja,
   PantallaCobro,
   PantallaIngresoSalidaDinero,
+  SelectAlmacen,
   useBuscarProductosCodigoQueryStack,
   useCierreCajaStore,
   useMostrarSerealizacionesVentasQueryStack,
   useMovimientosCreditosStore,
+  useStockStore,
   useVentasStore,
 } from "../../index";
 import { Toaster } from "sonner";
@@ -25,6 +27,7 @@ export const POSTemplate = () => {
   const { statePantallaCobro } = useVentasStore();
   const { stateIngresoSalida, stateCierreCaja } = useCierreCajaStore();
   const { stateIngresoCredito } = useMovimientosCreditosStore();
+  const { stateModal } = useStockStore();
   useBuscarProductosCodigoQueryStack();
   useMostrarAlmacenesXSucursalQueryStack();
   useMostrarStockAlmacenesyProductoQueryStack();
@@ -38,6 +41,7 @@ export const POSTemplate = () => {
         <Toaster richColors />
         <AreaDetalleventaPos></AreaDetalleventaPos>
         <AreaTecladoPos></AreaTecladoPos>
+        {stateModal && <SelectAlmacen></SelectAlmacen>}
       </Main>
       <FooterPos></FooterPos>
       <MenuFlotante></MenuFlotante>

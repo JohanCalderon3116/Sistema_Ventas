@@ -1,316 +1,379 @@
-import { useState } from "react";
 import styled from "styled-components";
-import { useEmpresaStore } from "../../../store/EmpresaStore";
 import { useProductosStore } from "../../../store/ProductosStore";
-import { useAsignacionCajaSucursalesStore } from "../../../store/AsignacionCajaSucursales";
-import { useAlmacenesStore } from "../../../store/AlmacenesStore";
 import { useVentasStore } from "../../../store/VentasStore";
-import { useDetalleVentasStore } from "../../../store/DetalleVentasStore";
-import { useCierreCajaStore } from "../../../store/CierreCajaStore";
 import { useStockStore } from "../../../store/StockStore";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { slideBackground } from "../../../styles/Keyframes";
 import { Btn1 } from "../../moleculas/Btn1";
 import { BtnClose } from "../../ui/buttons/BtnClose";
 import { Icon } from "@iconify/react";
 import { InputText2 } from "../formularios/InputText2";
-import { useFormattedDate } from "../../../hooks/useFormattedDate";
-import { useUsuariosStore } from "../../../store/UsuariosStore";
+import { useInsertarVentaDesdeAlmacenAlternoMutationStack } from "../../../tanstack/VentasStack";
 
 export const SelectAlmacen = () => {
-  const [cantidadInput, setCantidadInpuit] = useState(1);
-  const { dataempresa } = useEmpresaStore();
   const { ProductosItemSelect } = useProductosStore();
-  const { sucursalesItemSelectAsignadas } = useAsignacionCajaSucursalesStore();
-  const { almacenSelelctItem, setAlmacenSelelctItem } = useAlmacenesStore();
-  const { idventa, insertarVentas } = useVentasStore();
-  const { insertarDetalleVentas } = useDetalleVentasStore();
-  const { dataCierreCaja } = useCierreCajaStore();
+  const { catidadInput, setCantidadInput } = useVentasStore();
   const { dataStockXAlmacenesYProducto: data, setStateModal } = useStockStore();
-  const fechaactual = useFormattedDate();
-  const { datausuarios } = useUsuariosStore();
-  const queryClient = useQueryClient();
-
-  async function insertarventa() {
-    if (idventa === 0) {
-      const pventas = {
-        fecha: fechaactual,
-        id_usuario: datausuarios?.id,
-        id_sucursal: sucursalesItemSelectAsignadas?.id_sucursal,
-        id_empresa: dataempresa?.id,
-        id_cierre_caja: dataCierreCaja?.id,
-      };
-      const result = await insertarVentas(pventas);
-      if (result?.id > 0) {
-        await insertarDVentas(result?.id);
-      }
-    } else {
-      await insertarDVentas(idventa);
-    }
-  }
-  async function insertarDVentas(p) {
-    const ProductosItemSelect =
-      useProductosStore.getState().ProductosItemSelect;
-    const pDetalleventas = {
-      _id_venta: p,
-      _cantidad: parseFloat(cantidadInput) || 1,
-      _precio_venta: ProductosItemSelect.precio_venta,
-      _descripcion: ProductosItemSelect.nombre,
-      _id_producto: ProductosItemSelect.id,
-      _precio_compra: ProductosItemSelect.precio_compra,
-      _id_sucursal: sucursalesItemSelectAsignadas.id_sucursal,
-      _id_almacen: almacenSelelctItem?.id_almacen,
-    };
-    await insertarDetalleVentas(pDetalleventas);
-  }
-  async function ControladorInsertarVentas(item) {
-    setAlmacenSelelctItem(item);
-    doInsertarVentas();
-  }
-  const { mutate: doInsertarVentas, isPending } = useMutation({
-    mutationKey: ["insertar ventas"],
-    mutationFn: insertarventa,
-    onError: (error) => {
-      toast.error(`Error al insertar la venta ${error.message}`);
-      setStateModal(false);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries(["mostrar detalle venta"]);
-      setStateModal(false);
-    },
-  });
-  //validar cantidad
+  const { mutate: doInsertarVentas, isPending } =
+    useInsertarVentaDesdeAlmacenAlternoMutationStack();
   const ValidarCantidad = (e) => {
     const value = Math.max(0, parseFloat(e.target.value));
-    setCantidadInpuit(value);
+    setCantidadInput(value);
   };
+  const maxStock = Math.max(1, ...(data?.map((i) => i.stock) || [1]));
+
   return (
-    <Container>
-      <SubContainer>
+    <Overlay>
+      <Docket>
         <BtnClose funcion={() => setStateModal(false)}></BtnClose>
-        <HeaderContainer>
-          <SubContainerHeader>
-            <ContainerLabel>
-              <span>Producto: </span>
-            </ContainerLabel>
-            <ContainerProducto>
-              {" "}
-              {ProductosItemSelect?.nombre}{" "}
-            </ContainerProducto>
-            <CommandText>
-              <Icon icon="fluent-emoji:cat-face" width="32" height="32"></Icon>
-            </CommandText>
-          </SubContainerHeader>
-        </HeaderContainer>
-        <ContentMensaje>
-          <SubTitle>
-            Se encontro <strong>Stock</strong> del producto que buscas en otro
-            almacen. Seleccion el almacen a usar
-          </SubTitle>
-        </ContentMensaje>
-        <div className="contentCantidad">
+        <HazardEdge />
+        <Header>
+          <Badge>
+            <Icon icon="mdi:warehouse" width="20" height="20" />
+          </Badge>
+          <div>
+            <Eyebrow>No hay existencias aquí</Eyebrow>
+            <ProductName>{ProductosItemSelect?.nombre}</ProductName>
+          </div>
+        </Header>
+        <TransferTrack aria-hidden="true">
+          <Forklift>
+            <Icon icon="mdi:forklift" width="18" height="18" />
+          </Forklift>
+        </TransferTrack>
+        <Message>
+          Encontramos stock de este producto en otro almacén. Elige uno para
+          continuar con la venta.
+        </Message>
+        <QtyRow>
+          <QtyLabel htmlFor="cantidad-almacen">Cantidad</QtyLabel>
           <InputText2>
             <input
-              value={cantidadInput}
+              id="cantidad-almacen"
+              value={catidadInput}
               onChange={ValidarCantidad}
               className="form__field"
               type="number"
               min="1"
-              placeholder="Cantidad..."
+              placeholder="1"
             ></input>
           </InputText2>
-        </div>
-        <Avatar $bg="#9d0ec5">
-          <ContainerTable>
-            <table className="responsive-table">
-              <thead>
-                <tr>
-                  <th>
-                    Almacen <span style={{ cursor: "pointer" }}>🔶</span>
-                  </th>
-                  <th>
-                    Stock <span style={{ cursor: "pointer" }}>🔷</span>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {data?.map((item, index) => {
-                  return (
-                    <tr
-                      key={index}
-                      onClick={() => ControladorInsertarVentas(item)}
-                    >
-                      <td>{item?.almacenes.nombre} </td>
-                      <td>{item?.stock} </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </ContainerTable>
+        </QtyRow>
+        <ListLabel>Almacenes disponibles</ListLabel>
+        {data?.length > 0 ? (
+          <List>
+            {data.map((item, index) => (
+              <Row
+                key={index}
+                onClick={() => !isPending && doInsertarVentas(item)}
+                $disabled={isPending}
+              >
+                <RowMain>
+                  <RowName>{item?.almacenes?.nombre}</RowName>
+                  <RowStock>
+                    {item?.stock} <unit>u.</unit>
+                  </RowStock>
+                </RowMain>
+                <Bar>
+                  <BarFill
+                    style={{ width: `${(item.stock / maxStock) * 100}%` }}
+                  />
+                </Bar>
+              </Row>
+            ))}
+          </List>
+        ) : (
+          <EmptyState>
+            No hay stock disponible en ningún otro almacén.
+          </EmptyState>
+        )}
+        <Footer>
           <Btn1
             titulo="Volver"
             funcion={() => setStateModal(false)}
             disabled={isPending}
           ></Btn1>
-        </Avatar>
-      </SubContainer>
-    </Container>
+        </Footer>
+      </Docket>
+    </Overlay>
   );
 };
-const ContainerTable = styled.div`
-  position: relative;
 
-  .responsive-table {
-    width: 100%;
-    margin-bottom: 1.5em;
-    border-spacing: 0;
-    font-size: 0.9em; /* Tamaño de fuente predeterminado */
+const ACCENT = "#f2a900";
+const ACCENT_TEXT = "#a15c00";
+const GREEN = "#178a4c";
+const GREEN_FILL = "#34c481";
 
-    thead {
-      position: relative;
-      padding: 0;
-      border: 0;
-      height: auto;
-      width: auto;
-      overflow: auto;
-
-      th {
-        border-bottom: 1px solid ${({ theme }) => theme.color2};
-        font-weight: 700;
-        text-align: center;
-        color: ${({ theme }) => theme.text};
-        &:first-of-type {
-          text-align: center;
-        }
-      }
-    }
-
-    tbody {
-      tr {
-        display: table-row; /* Siempre se mantendrá como fila */
-        margin-bottom: 0;
-        cursor: pointer;
-
-        &:nth-of-type(even) {
-          background-color: rgba(161, 161, 161, 0.1);
-        }
-
-        td {
-          text-align: center;
-          padding: 0.5em;
-          border-bottom: 1px solid rgba(161, 161, 161, 0.32);
-
-          @media (max-width: 768px) {
-            padding: 0.4em;
-          }
-        }
-      }
-    }
-  }
-`;
-const SubTitle = styled.span`
-  font-size: 18px;
-`;
-const CommandText = styled.p`
-  font-size: 14px;
-  margin: 0;
-`;
-
-const ContainerProducto = styled.div`
-  display: flex;
-  gap: 10px;
-  flex-direction: column;
-  text-align: start;
-`;
-const SubContainer = styled.div`
-  max-width: 400px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 10px;
-  border-radius: 8px;
-  background-color: ${({ theme }) => theme.bgtotal};
-  position: relative;
-`;
-const ContainerLabel = styled.div`
-  display: flex;
-  gap: 10px;
-  flex-direction: column;
-  text-align: end;
-  font-weight: bold;
-`;
-const HeaderContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 20px;
-  padding: 20px;
-  position: relative;
-  border-bottom: solid 1px ${({ theme }) => theme.bg};
-  margin-bottom: 20px;
-`;
-
-const SubContainerHeader = styled.div`
-  display: flex;
-  gap: 12px;
-  font-size: 22px;
-`;
-const ContentMensaje = styled.section`
-  display: flex;
-  gap: 15px;
-  margin-bottom: 10px;
-`;
-const Container = styled.div`
-  background-color: rgba(18, 18, 18, 0.5);
-  border-radius: 10px;
-  margin: auto;
-  height: 100vh;
-  display: flex;
-  align-items: center;
+const Overlay = styled.div`
   position: fixed;
-  z-index: 100;
-  width: 100%;
-  justify-content: center;
-`;
-
-const Title = styled.span`
-  font-size: 44px;
-  margin-bottom: 20px;
-  font-weight: bold;
-  position: absolute;
-  top: 50px;
-  right: 0;
+  top: 0;
   left: 0;
-  text-align: center;
-`;
-
-const Avatar = styled.div`
+  right: 0;
+  bottom: 0;
+  background-color: rgba(8, 9, 10, 0.55);
   display: flex;
   align-items: center;
-  margin-bottom: 20px;
-  position: relative;
-  border-radius: 10px;
-  height: 200px;
-  flex-direction: column;
   justify-content: center;
-  gap: 10px;
+  z-index: 100;
+  padding: 16px;
+`;
 
-  .nombre {
-    font-size: 30px;
-    font-weight: bold;
-    cursor: pointer;
-  }
-  .anuncio {
-    text-align: center;
-    font-weight: bold;
-    color: #fff;
-  }
-  background-color: ${(props) => props.$bg};
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 120 120'%3E%3Cpolygon fill='%23000' fill-opacity='0.19' points='120 0 120 60 90 30 60 0 0 0 0 0 60 60 0 120 60 120 90 90 120 60 120 0'/%3E%3C/svg%3E");
+const Docket = styled.div`
+  position: relative;
+  width: 100%;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px 22px 20px;
+  border-radius: 6px;
+  background-color: ${({ theme }) => theme.bgtotal};
+  border: 1px solid ${({ theme }) => theme.color2};
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+  animation: docket-in 0.22s cubic-bezier(0.2, 0.7, 0.3, 1) both;
 
-  background-size: 60px 60px;
-  animation: ${slideBackground} 10s linear infinite;
+  @keyframes docket-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+`;
+
+const HazardEdge = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  border-radius: 6px 6px 0 0;
+  background: repeating-linear-gradient(
+    -45deg,
+    ${ACCENT},
+    ${ACCENT} 8px,
+    transparent 8px,
+    transparent 16px
+  );
+  background-color: ${({ theme }) => theme.bgtotal};
+`;
+
+const Header = styled.div`
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding-top: 4px;
+`;
+
+const Badge = styled.div`
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: color-mix(in srgb, ${ACCENT} 18%, transparent);
+  color: ${ACCENT_TEXT};
+`;
+
+const Eyebrow = styled.span`
+  display: block;
+  font-size: 12.5px;
+  color: ${ACCENT_TEXT};
+  font-weight: 600;
+  margin-bottom: 2px;
+`;
+
+const ProductName = styled.h2`
+  margin: 0;
+  font-size: 19px;
+  font-weight: 700;
+  color: ${({ theme }) => theme.text};
+  line-height: 1.25;
+`;
+
+const TransferTrack = styled.div`
+  position: relative;
+  height: 18px;
+  margin: -6px 0 -4px;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    transform: translateY(-50%);
+    background-image: linear-gradient(
+      to right,
+      ${({ theme }) => theme.color2} 0 6px,
+      transparent 6px 12px
+    );
+    background-size: 12px 1px;
+    background-repeat: repeat-x;
+  }
+`;
+
+const Forklift = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  color: ${ACCENT_TEXT};
+  animation: drive 3.6s ease-in-out infinite;
+
+  @keyframes drive {
+    0%,
+    100% {
+      left: 0%;
+    }
+    45%,
+    55% {
+      left: calc(100% - 18px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    left: 8px;
+  }
+`;
+
+const Message = styled.p`
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: ${({ theme }) => theme.text};
+  opacity: 0.65;
+`;
+
+const QtyRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 4px 0;
+  border-top: 1px solid ${({ theme }) => theme.color2};
+  border-bottom: 1px solid ${({ theme }) => theme.color2};
+
+  .form__field {
+    width: 90px;
+    text-align: right;
+  }
+`;
+
+const QtyLabel = styled.label`
+  font-size: 14px;
+  color: ${({ theme }) => theme.text};
+  font-weight: 600;
+`;
+
+const ListLabel = styled.span`
+  font-size: 13px;
+  color: ${({ theme }) => theme.text};
+  opacity: 0.55;
+`;
+
+const List = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 220px;
+  overflow-y: auto;
+  margin-top: -8px;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: ${({ theme }) => theme.color2};
+    border-radius: 10px;
+  }
+`;
+
+const Row = styled.div`
+  padding: 12px 14px;
+  border-radius: 6px;
+  background-color: ${({ theme }) => theme.bgtotal};
+  background-color: color-mix(
+    in srgb,
+    ${({ theme }) => theme.text} 5%,
+    ${({ theme }) => theme.bgtotal}
+  );
+  border: 1px solid ${({ theme }) => theme.color2};
+  cursor: ${({ $disabled }) => ($disabled ? "default" : "pointer")};
+  opacity: ${({ $disabled }) => ($disabled ? 0.55 : 1)};
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  &:hover {
+    border-color: ${({ $disabled }) => ($disabled ? "" : ACCENT)};
+    background-color: ${({ $disabled, theme }) =>
+      $disabled
+        ? ""
+        : `color-mix(in srgb, ${theme.text} 9%, ${theme.bgtotal})`};
+  }
+`;
+
+const RowMain = styled.div`
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+`;
+
+const RowName = styled.span`
+  font-size: 15px;
+  font-weight: 600;
+  color: ${({ theme }) => theme.text};
+`;
+
+const RowStock = styled.span`
+  font-size: 17px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: ${GREEN};
+
+  unit {
+    font-size: 12px;
+    font-weight: 500;
+    color: ${({ theme }) => theme.text};
+    opacity: 0.55;
+    margin-left: 2px;
+  }
+`;
+
+const Bar = styled.div`
+  height: 4px;
+  border-radius: 2px;
+  background-color: ${({ theme }) => theme.color2};
+  overflow: hidden;
+`;
+
+const BarFill = styled.div`
+  height: 100%;
+  border-radius: 2px;
+  background-color: ${GREEN_FILL};
+`;
+
+const EmptyState = styled.div`
+  padding: 20px 14px;
+  text-align: center;
+  font-size: 14px;
+  color: ${({ theme }) => theme.text};
+  opacity: 0.55;
+  border: 1px dashed ${({ theme }) => theme.color2};
+  border-radius: 6px;
+`;
+
+const Footer = styled.div`
+  display: flex;
+  justify-content: center;
 `;

@@ -256,6 +256,80 @@ export const useInsertarVentasConDetalleVentasMutationStack = (buscadorRef) => {
     },
   });
 };
+export const useInsertarVentaDesdeAlmacenAlternoMutationStack = () => {
+  const { dataStockXAlmacenesYProducto, setStateModal } = useStockStore();
+  const queryClien = useQueryClient();
+  const { idventa, insertarVentas, catidadInput, setCantidadInput } =
+    useVentasStore();
+  const fechaActual = useFormattedDate();
+  const { datausuarios } = useUsuariosStore();
+  const { dataCierreCaja } = useCierreCajaStore();
+  const { dataempresa } = useEmpresaStore();
+  const { insertarDetalleVentas } = useDetalleVentasStore();
+  const { setBuscador } = useProductosStore();
+
+  async function insertarDVentas(p, idAlmacen) {
+    const ProductosItemSelect =
+      useProductosStore.getState().ProductosItemSelect;
+    const pDetalleventas = {
+      _id_venta: p,
+      _cantidad: parseFloat(catidadInput) || 1,
+      _precio_venta: ProductosItemSelect.precio_venta,
+      _descripcion: ProductosItemSelect.nombre,
+      _id_producto: ProductosItemSelect.id,
+      _precio_compra: ProductosItemSelect.precio_compra,
+      _id_sucursal: dataCierreCaja?.caja?.id_sucursal,
+      _id_almacen: idAlmacen,
+    };
+    await insertarDetalleVentas(pDetalleventas);
+  }
+
+  async function insertarVentaDesdeAlmacenAlterno(itemAlmacen) {
+    const idAlmacen = itemAlmacen?.id_almacen;
+    if (idventa === 0) {
+      const pventas = {
+        fecha: fechaActual,
+        id_usuario: datausuarios?.id,
+        id_sucursal: dataCierreCaja?.caja?.id_sucursal,
+        id_empresa: dataempresa?.id,
+        id_cierre_caja: dataCierreCaja?.id,
+      };
+      const result = await insertarVentas(pventas);
+      if (result?.id > 0) {
+        await insertarDVentas(result?.id, idAlmacen);
+      }
+    } else {
+      await insertarDVentas(idventa, idAlmacen);
+    }
+    setBuscador("");
+    setCantidadInput(1);
+  }
+
+  return useMutation({
+    mutationKey: ["insertar venta desde almacen alterno"],
+    mutationFn: insertarVentaDesdeAlmacenAlterno,
+    onError: (error) => {
+      toast.error(`Error al insertar la venta ${error.message}`);
+      queryClien.invalidateQueries({
+        queryKey: ["mostrar Stock Almacenes y Producto"],
+      });
+      if (dataStockXAlmacenesYProducto) {
+        setStateModal(true);
+      }
+    },
+    onSuccess: () => {
+      queryClien.invalidateQueries({ queryKey: ["mostrar detalle venta"] });
+      queryClien.invalidateQueries({ queryKey: ["mostrar stock"] });
+      queryClien.invalidateQueries({
+        queryKey: ["mostrar Stock Almacenes y Producto"],
+      });
+      queryClien.invalidateQueries({
+        queryKey: ["mostrar stock almacen y producto"],
+      });
+      setStateModal(false);
+    },
+  });
+};
 export const useEliminarVentasMutationStack = () => {
   const { eliminarVenta, idventa, resetState } = useVentasStore();
   const { resetDetalleVenta } = useDetalleVentasStore();

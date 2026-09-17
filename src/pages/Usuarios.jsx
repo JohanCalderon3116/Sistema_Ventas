@@ -1,4 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
 import { UsuariosTemplate } from "../components/templates/UsuariosTemplate";
 import { BeatLoader } from "react-spinners";
 import styled, { useTheme } from "styled-components";
