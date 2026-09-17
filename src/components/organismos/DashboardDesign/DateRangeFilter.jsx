@@ -1,21 +1,17 @@
 import styled from "styled-components";
 import { DatePicker } from "antd";
-import { useEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react"; // 👈 cambio de import
 import dayjs from "dayjs";
 import { useDashboardStore } from "../../../store/DashboardStore";
 const { RangePicker } = DatePicker;
 export const DateRangeFilter = () => {
-  const [dates, setDates] = useState([
-    dayjs("1900-01-01"),
-    dayjs("9999-12-31"),
-  ]);
-  const [singleDate, setSingleDate] = useState(null);
-  const [activeRange, setActiveRang] = useState("Todo");
+  const [dates, setDates] = useState([]);
+  const [singleDate, setSingleDate] = useState(dayjs().startOf("day"));
+  const [activeRange, setActiveRang] = useState("Hoy");
 
   const { setRangoFechas, fechaInicio, fechaFin, limpiarFechas } =
     useDashboardStore();
 
-  //Para mostrar todas las fechas
   const setSiempreRange = () => {
     const startDate = dayjs("1900-01-01");
     const endDate = dayjs("9999-12-31");
@@ -49,7 +45,6 @@ export const DateRangeFilter = () => {
     setRangoFechas(today.format("YYYY-MM-DD"), today.format("YYYY-MM-DD"));
     setActiveRang("Hoy");
   };
-  //Funcion para establecer un rango predefinido
   const setPresetRange = (days, rangeName) => {
     const startDate = dayjs().subtract(days, "day").startOf("day");
     const endDate = dayjs().endOf("day");
@@ -60,8 +55,9 @@ export const DateRangeFilter = () => {
     );
     setActiveRang(rangeName);
   };
-  useEffect(() => {
-    setSiempreRange();
+  useLayoutEffect(() => {
+    // 👈 cambio: useEffect -> useLayoutEffect
+    selectToday();
   }, []);
   return (
     <Container>
@@ -120,7 +116,10 @@ export const DateRangeFilter = () => {
         ></StyleRangePicker>
       )}
       {activeRange === "Por día" && (
-        <StyleDatePicker onChange={handleSingleDateChange}></StyleDatePicker>
+        <StyleDatePicker
+          onChange={handleSingleDateChange}
+          value={singleDate}
+        ></StyleDatePicker>
       )}
     </Container>
   );
