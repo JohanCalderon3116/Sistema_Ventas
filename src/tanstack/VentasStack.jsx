@@ -17,6 +17,7 @@ import { useProductosStore } from "../store/ProductosStore";
 import { useAlmacenesStore } from "../store/AlmacenesStore";
 import { useDashboardStore } from "../store/DashboardStore";
 import { useTheme } from "styled-components";
+import { abrirCaja } from "../components/atomos/AbrirCajaImpresora";
 
 export const useEliminarVentasIncompletasMutateStack = () => {
   const { eliminarventasIncompletas } = useVentasStore();
@@ -97,6 +98,12 @@ export const useConfirmarVentasMutationStack = ({
           };
           await insertarMovcaja(pmovcaja);
         }
+      }
+      try {
+        await abrirCaja();
+      } catch (e) {
+        console.error(e);
+        toast.warning("No se pudo abrir la caja");
       }
       dataImpresorasXCaja?.state
         ? await imprimirDirectoTicket()
