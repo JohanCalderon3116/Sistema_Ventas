@@ -1,11 +1,11 @@
 import styled, { useTheme } from "styled-components";
-import { useCierreCajaStore } from "../../../../store/CierreCajaStore";
 import {
   Btn1,
   FormatearNumeroDinero,
   InputText2,
   SelectList,
   useCreditosStore,
+  useEmpresaStore,
   useInsertarAbonoCreditoMuatationStack,
   useMetodosPagoStore,
   useMostrarCreditosQueryStack,
@@ -13,15 +13,15 @@ import {
   VolverBtn,
 } from "../../../../index";
 import "react-datepicker/dist/react-datepicker.css";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { BeatLoader } from "react-spinners";
-import { useInsertarIngresosSalidasCajasMutationStack } from "../../../../tanstack/MovimientosCajaStack";
+import TicketAbonoCredito from "../../../../reports/TicketAbonoCredito";
 export const PantallaAbonoCredito = () => {
-  const { tipoRegistro, setStateIngresoSalida } = useCierreCajaStore();
   const { setStateIngresoCredito } = useMovimientosCreditosStore();
-  const { datacreditos, creditosItemSelect, setCreditosItemSelect } =
-    useCreditosStore();
+  const creditoAntesRef = useRef(null);
+  const { creditosItemSelect, setCreditosItemSelect } = useCreditosStore();
+  const { dataempresa } = useEmpresaStore();
   const { dataMetodosPago, selectMetodo, setSelectMetodo } =
     useMetodosPagoStore();
   const theme = useTheme();
@@ -31,11 +31,37 @@ export const PantallaAbonoCredito = () => {
     handleSubmit,
     reset,
   } = useForm();
+  async function imprimirConVentanaEmergente(data) {
+    const ahora = new Date();
+    const fechaFormateada = ahora.toLocaleDateString();
+    const c = creditoAntesRef.current || creditosItemSelect;
+    const monto = parseFloat(data.monto) || 0;
+    const cupoMaximo = Number(c?.cupo_maximo) || 0;
+    const saldoAnterior = Number(c?.saldo_actual) || 0;
+    const nuevoSaldo = Math.max(saldoAnterior - monto, 0);
+    const nuevoDisponible = cupoMaximo - nuevoSaldo;
 
+    const dataenv = {
+      logo: dataempresa?.logo,
+      direccion_empresa: dataempresa?.direccion_fiscal,
+      pais: dataempresa?.pais,
+      fecha: fechaFormateada,
+      cliente: c?.nombres,
+      credito_maximo_aprobado: cupoMaximo,
+      saldo_anterior: saldoAnterior,
+      credito_disponible: nuevoDisponible,
+      debe: nuevoSaldo,
+      monto,
+      motivo: data.motivo,
+      metodo_pago: selectMetodo?.nombre,
+    };
+    await TicketAbonoCredito("print", dataenv);
+  }
   const { isPending, mutate: doInsertar } =
-    useInsertarAbonoCreditoMuatationStack();
+    useInsertarAbonoCreditoMuatationStack(imprimirConVentanaEmergente);
   const { data: dataCreditos } = useMostrarCreditosQueryStack();
   const manejadorEnvio = (data) => {
+    creditoAntesRef.current = { ...creditosItemSelect };
     doInsertar(data);
   };
   const handleMetodoClick = (item) => {

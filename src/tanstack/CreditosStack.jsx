@@ -128,7 +128,7 @@ export const useInsetarCreditosMutationStack = ({
     },
   });
 };
-export const useInsertarAbonoCreditoMuatationStack = () => {
+export const useInsertarAbonoCreditoMuatationStack = (onImprimir) => {
   const queryClient = useQueryClient();
   const fechaActual = useFormattedDate();
   const { creditosItemSelect } = useCreditosStore();
@@ -138,6 +138,7 @@ export const useInsertarAbonoCreditoMuatationStack = () => {
   const { insertarMovcaja } = useMovCajaStore();
   const { selectMetodo } = useMetodosPagoStore();
   const { setStateIngresoCredito } = useMovimientosCreditosStore();
+
   async function insertar(data) {
     const p = {
       id_credito: creditosItemSelect?.id,
@@ -158,6 +159,7 @@ export const useInsertarAbonoCreditoMuatationStack = () => {
     };
     await insertarMovcaja(pmovcaja);
   }
+
   return useMutation({
     mutationKey: ["insertar abono credito"],
     mutationFn: insertar,
@@ -166,8 +168,7 @@ export const useInsertarAbonoCreditoMuatationStack = () => {
         `No pudimos registrar el abono al crédito, algo falló en el proceso ${error.message} 😯`,
       );
     },
-    onSuccess: () => {
-      setStateIngresoCredito(false);
+    onSuccess: async (_result, data) => {
       toast.success("El abono al crédito quedó registrado correctamente 🫶");
       queryClient.invalidateQueries({ queryKey: ["mostrar creditos"] });
       queryClient.invalidateQueries({ queryKey: ["buscar creditos"] });
@@ -177,12 +178,22 @@ export const useInsertarAbonoCreditoMuatationStack = () => {
       queryClient.invalidateQueries({
         queryKey: ["mostrar ventas metodoPago movCaja"],
       });
+
+      if (onImprimir) {
+        try {
+          await onImprimir(data);
+        } catch (error) {
+          console.error("❌ Error generando el ticket:", error);
+        }
+      }
+
+      setStateIngresoCredito(false);
     },
   });
 };
 export const useObtenerMovimientosCreditoQueryStack = () => {
   const { creditosItemSelect } = useCreditosStore();
-  const { obtenerMovimientosCredito } = useMovimientosCreditosStore(); 
+  const { obtenerMovimientosCredito } = useMovimientosCreditosStore();
   return useQuery({
     queryKey: ["movimientos credito", creditosItemSelect?.id],
     queryFn: () => obtenerMovimientosCredito(creditosItemSelect?.id),

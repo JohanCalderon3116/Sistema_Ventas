@@ -3,6 +3,7 @@ import { useCierreCajaStore } from "../../../../store/CierreCajaStore";
 import {
   Btn1,
   InputText2,
+  useEmpresaStore,
   useMetodosPagoStore,
   VolverBtn,
 } from "../../../../index";
@@ -11,8 +12,12 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { BeatLoader } from "react-spinners";
 import { useInsertarIngresosSalidasCajasMutationStack } from "../../../../tanstack/MovimientosCajaStack";
+import TicketEntradasSalidas from "../../../../reports/TicketEntradasSalidas";
+
 export const PantallaIngresoSalidaDinero = () => {
+  console.log("Hola");
   const { tipoRegistro, setStateIngresoSalida } = useCierreCajaStore();
+  const { dataempresa } = useEmpresaStore();
   const { dataMetodosPago, selectMetodo, setSelectMetodo } =
     useMetodosPagoStore();
   const theme = useTheme();
@@ -22,11 +27,31 @@ export const PantallaIngresoSalidaDinero = () => {
     handleSubmit,
     reset,
   } = useForm();
+  async function imprimirConVentanaEmergente(data) {
+    const ahora = new Date();
+    const fechaFormateada = ahora.toLocaleDateString();
+    const dataenv = {
+      tipo: tipoRegistro,
+      logo: dataempresa?.logo,
+      direccion_empresa: dataempresa?.direccion_fiscal,
+      pais: dataempresa?.pais,
+      fecha: fechaFormateada,
+      metodo_pago: selectMetodo?.nombre,
+      monto: parseFloat(data.monto) || 0,
+      motivo: data.motivo,
+    };
+    await TicketEntradasSalidas("print", dataenv);
+  }
   const { isPending, mutate: doInsertar } =
-    useInsertarIngresosSalidasCajasMutationStack(reset);
+    useInsertarIngresosSalidasCajasMutationStack(
+      reset,
+      imprimirConVentanaEmergente,
+    );
+
   const manejadorEnvio = (data) => {
     doInsertar(data);
   };
+
   const handleMetodoClick = (item) => {
     setSelectMetodo(item);
   };
@@ -38,6 +63,7 @@ export const PantallaIngresoSalidaDinero = () => {
       setSelectMetodo(efectivo);
     }
   }, [dataMetodosPago]);
+
   return (
     <Container>
       {isPending ? (
@@ -82,9 +108,13 @@ export const PantallaIngresoSalidaDinero = () => {
               <InputText2>
                 <input
                   type="number"
+                  step="0.01"
                   className="form__field"
                   placeholder="0.00"
-                  {...register("monto", { required: true })}
+                  {...register("monto", {
+                    required: true,
+                    valueAsNumber: true,
+                  })}
                 />
                 {errors.monto?.type === "required" && (
                   <span>Campo requerido</span>

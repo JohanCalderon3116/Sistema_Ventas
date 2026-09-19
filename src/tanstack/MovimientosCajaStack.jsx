@@ -8,7 +8,10 @@ import { useFormattedDate } from "../hooks/useFormattedDate";
 import { useAuthStore } from "../store/AuthStore";
 import { useEmpresaStore } from "../store/EmpresaStore";
 
-export const useInsertarIngresosSalidasCajasMutationStack = (reset) => {
+export const useInsertarIngresosSalidasCajasMutationStack = (
+  reset,
+  onImprimir,
+) => {
   const queryClient = useQueryClient();
   const fechaActual = useFormattedDate();
   const { tipoRegistro } = useCierreCajaStore();
@@ -16,6 +19,7 @@ export const useInsertarIngresosSalidasCajasMutationStack = (reset) => {
   const { datausuarios } = useUsuariosStore();
   const { dataCierreCaja, setStateIngresoSalida } = useCierreCajaStore();
   const { insertarMovcaja } = useMovCajaStore();
+
   const insertar = async (data) => {
     const pmovcaja = {
       fecha_movimiento: fechaActual,
@@ -28,10 +32,11 @@ export const useInsertarIngresosSalidasCajasMutationStack = (reset) => {
     };
     await insertarMovcaja(pmovcaja);
   };
+
   return useMutation({
     mutationKey: ["insertar ingresos salidas caja"],
     mutationFn: insertar,
-    onSuccess: () => {
+    onSuccess: async (_result, data) => {
       toast.success("El movimiento de caja quedó registrado correctamente 🙌");
       queryClient.invalidateQueries({
         queryKey: ["mostrar efectivo sin ventas movCaja"],
@@ -39,6 +44,13 @@ export const useInsertarIngresosSalidasCajasMutationStack = (reset) => {
       queryClient.invalidateQueries({
         queryKey: ["mostrar ventas metodoPago movCaja"],
       });
+      if (onImprimir) {
+        try {
+          await onImprimir(data);
+        } catch (error) {
+          console.error("❌ Error generando el ticket:", error);
+        }
+      }
       setStateIngresoSalida(false);
       reset();
     },
