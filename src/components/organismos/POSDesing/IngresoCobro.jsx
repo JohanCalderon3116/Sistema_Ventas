@@ -25,6 +25,8 @@ export const IngresoCobro = forwardRef((props, ref) => {
   const [openRegistro, setOpenRegistro] = useState(false);
   const [stateBuscadorClientes, setStateBuscadorClientes] = useState(false);
   const [montoManualEfectivo, setMontoManualEfectivo] = useState("");
+  // Lo que el cliente entrega en efectivo. 0 = pago exacto.
+  const [recibido, setRecibido] = useState(0);
   const {
     tipocobro,
     restante,
@@ -87,10 +89,7 @@ export const IngresoCobro = forwardRef((props, ref) => {
   };
   const handleAgregarMontoEfectivo = (monto) => {
     if (!monto || monto <= 0) return;
-    setValoresPago((prev) => ({
-      ...prev,
-      Efectivo: (prev["Efectivo"] || 0) + monto,
-    }));
+    setRecibido((prev) => prev + monto);
   };
   const handleAgregarMontoManual = () => {
     const valor = parseFloat(montoManualEfectivo);
@@ -100,10 +99,7 @@ export const IngresoCobro = forwardRef((props, ref) => {
     }
   };
   const handleLimpiarEfectivo = () => {
-    setValoresPago((prev) => ({
-      ...prev,
-      Efectivo: 0,
-    }));
+    setRecibido(0);
     setMontoManualEfectivo("");
   };
   useImperativeHandle(ref, () => ({
@@ -146,7 +142,8 @@ export const IngresoCobro = forwardRef((props, ref) => {
     if (tipocobro === "Mixto") {
       setValoresPago({});
     } else if (tipocobro === "Efectivo") {
-      setValoresPago({ Efectivo: 0 });
+      setRecibido(0);
+      setValoresPago({ Efectivo: total });
     } else {
       setValoresPago({ [tipocobro]: total });
     }
@@ -156,11 +153,17 @@ export const IngresoCobro = forwardRef((props, ref) => {
       setValoresPago({ [tipocobro]: total });
     }
   }, [total]);
+  // Efectivo = lo recibido, o el total si no han puesto nada (pago exacto)
+  useEffect(() => {
+    if (tipocobro === "Efectivo") {
+      setValoresPago({ Efectivo: recibido > 0 ? recibido : total });
+    }
+  }, [recibido, total]);
   useEffect(() => {
     calcularVueltoYRestante();
   }, [precioVenta, tipocobro, valoresPago]);
   return (
-    <Container $ancho={usaEfectivo ? "900px" : "480px"}>
+    <Container $ancho={usaEfectivo ? "1000px" : "480px"}>
       {mutation.isPending ? (
         <ConteinerLoader>
           <span>
@@ -203,7 +206,7 @@ export const IngresoCobro = forwardRef((props, ref) => {
                         <Btn1
                           funcion={() => setItemSelectComprobanteSelect(item)}
                           border="0"
-                          height={"70px"}
+                          height={"48px"}
                           width={"100%"}
                           titulo={item?.tipo_comprobantes?.nombre}
                         ></Btn1>
@@ -211,20 +214,22 @@ export const IngresoCobro = forwardRef((props, ref) => {
                     );
                   })}
                 </section>
-                <span>Cliente</span>
-                <EditButton
-                  onClick={() =>
-                    setStateBuscadorClientes(!stateBuscadorClientes)
-                  }
-                >
-                  <Icon
-                    className="icono"
-                    icon="line-md:pencil-twotone"
-                    width="24"
-                    height="24"
-                  />
-                </EditButton>
-                <span className="cliente"> {cliproItemSelect?.nombres} </span>
+                <section className="filacliente">
+                  <span>Cliente</span>
+                  <EditButton
+                    onClick={() =>
+                      setStateBuscadorClientes(!stateBuscadorClientes)
+                    }
+                  >
+                    <Icon
+                      className="icono"
+                      icon="line-md:pencil-twotone"
+                      width="24"
+                      height="24"
+                    />
+                  </EditButton>
+                  <span className="cliente"> {cliproItemSelect?.nombres} </span>
+                </section>
               </section>
               <section className="metodos">
                 {dataMetodosPago?.map((item, index) => {
@@ -238,14 +243,35 @@ export const IngresoCobro = forwardRef((props, ref) => {
                     if (tipocobro === "Efectivo") {
                       return (
                         <EfectivoContainer key={index}>
-                          <label className="form__label">Efectivo</label>
-                          <DisplayEfectivo>
-                            {FormatearNumeroDinero(
-                              valoresPago["Efectivo"] || 0,
-                              dataempresa?.currency,
-                              dataempresa?.iso,
-                            )}
-                          </DisplayEfectivo>
+                          <FilaMontos>
+                            <div>
+                              <label className="form__label">
+                                Total a cobrar
+                              </label>
+                              <DisplayEfectivo>
+                                {FormatearNumeroDinero(
+                                  total,
+                                  dataempresa?.currency,
+                                  dataempresa?.iso,
+                                )}
+                              </DisplayEfectivo>
+                            </div>
+                            <div>
+                              <label className="form__label">Recibido</label>
+                              <DisplayEfectivo $vacio={recibido === 0}>
+                                {FormatearNumeroDinero(
+                                  recibido,
+                                  dataempresa?.currency,
+                                  dataempresa?.iso,
+                                )}
+                              </DisplayEfectivo>
+                            </div>
+                          </FilaMontos>
+                          {recibido === 0 && (
+                            <Hint>
+                              Pago exacto: presiona Cobrar directamente
+                            </Hint>
+                          )}
 
                           <ManualRow>
                             <input
@@ -493,8 +519,8 @@ const PaginaIzquierda = styled.div`
     .areacomprobantes {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
-      padding: 10px 0;
+      gap: 8px;
+      padding: 6px 0;
       width: 100%;
 
       .box {
@@ -520,6 +546,16 @@ const PaginaIzquierda = styled.div`
                 : "rgba(255, 255, 255, 0.15)"} !important;
           }
         }
+      }
+    }
+
+    .filacliente {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      button {
+        margin: 0;
       }
     }
 
@@ -550,7 +586,7 @@ const PaginaIzquierda = styled.div`
   }
 
   .totales {
-    margin-top: 15px;
+    margin-top: 8px;
     display: flex;
     justify-content: space-between;
     width: 100%;
@@ -558,7 +594,7 @@ const PaginaIzquierda = styled.div`
     article {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 2px;
     }
     .total {
       font-weight: 700;
@@ -568,7 +604,7 @@ const PaginaIzquierda = styled.div`
 
   .acciones {
     width: 100%;
-    margin-top: 15px;
+    margin-top: 8px;
   }
 `;
 
@@ -614,13 +650,24 @@ const ConteinerLoader = styled.div`
   height: 100vh;
 `;
 
-
 const EfectivoContainer = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
   gap: 10px;
   margin-top: 5px;
+`;
+
+const FilaMontos = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+
+  > div {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
 `;
 
 const DisplayEfectivo = styled.div`
@@ -635,6 +682,13 @@ const DisplayEfectivo = styled.div`
         : "rgba(255, 255, 255, 0.2)"};
   padding-bottom: 6px;
   user-select: none;
+  opacity: ${({ $vacio }) => ($vacio ? 0.45 : 1)};
+`;
+
+const Hint = styled.span`
+  font-size: 14px;
+  text-align: center;
+  opacity: 0.6;
 `;
 
 const ManualRow = styled.div`
@@ -669,12 +723,13 @@ const ManualRow = styled.div`
     }
   }
 `;
+
 const DenominacionesGrid = styled.div`
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 10px;
-  max-height: 420px;
+  max-height: 70vh;
   overflow-y: auto;
   padding-right: 4px;
 `;

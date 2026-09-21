@@ -15,7 +15,7 @@ const lineaPunteada = (margin = [0, 6, 0, 6]) => ({
       x2: ANCHO_UTIL,
       y2: 0,
       lineWidth: 0.75,
-      lineColor: "#999999",
+      lineColor: "#000000",
       dash: {
         length: 2,
         space: 2,
@@ -48,14 +48,14 @@ const filaInfo = (label, valor, opciones = {}) => [
  * Datos del abono:
  *   fecha, cliente,
  *   credito_maximo_aprobado,
- *   saldo_anterior   -> lo que debía ANTES del abono
- *   debe             -> lo que debe DESPUÉS del abono (nuevo saldo)
+ *   saldo_anterior    -> lo que debía ANTES del abono
+ *   debe              -> lo que debe DESPUÉS del abono (nuevo saldo)
  *   credito_disponible -> cupo disponible DESPUÉS del abono
  *   monto, motivo, metodo_pago
  */
 const TicketAbonoCredito = async (output, data) => {
-  const colorAccento = "#1565c0";
-  const colorBorde = "#90caf9";
+  const colorAccento = "#000000";
+  const colorBorde = "#000000";
 
   const logoempresa = await urlToBase64(
     !data.logo || data.logo === "-"
@@ -81,8 +81,8 @@ const TicketAbonoCredito = async (output, data) => {
       layout: {
         hLineWidth: () => 1,
         vLineWidth: () => 1,
-        hLineColor: () => "#333333",
-        vLineColor: () => "#333333",
+        hLineColor: () => "#000000",
+        vLineColor: () => "#000000",
         paddingLeft: () => 0,
         paddingRight: () => 0,
         paddingTop: () => 0,
@@ -199,6 +199,7 @@ const TicketAbonoCredito = async (output, data) => {
               alignment: "center",
               bold: true,
               fontSize: 9,
+              color: "#000000",
               margin: [0, 3, 0, 0],
             },
           ],
@@ -237,8 +238,8 @@ const TicketAbonoCredito = async (output, data) => {
       layout: {
         hLineWidth: () => 0.75,
         vLineWidth: () => 0.75,
-        hLineColor: () => "#dcdcdc",
-        vLineColor: () => "#dcdcdc",
+        hLineColor: () => "#000000",
+        vLineColor: () => "#000000",
         paddingLeft: () => 0,
         paddingRight: () => 0,
         paddingTop: () => 0,
@@ -251,22 +252,23 @@ const TicketAbonoCredito = async (output, data) => {
     empresaDato: {
       fontSize: 8,
       alignment: "center",
-      color: "#555555",
+      color: "#000000",
     },
     seccionTitulo: {
       fontSize: 7.5,
       bold: true,
-      color: "#777777",
+      color: "#000000",
       characterSpacing: 0.5,
     },
     tInfoLabel: {
       fontSize: 8,
       bold: true,
-      color: "#555555",
+      color: "#000000",
     },
     tInfoValue: {
       fontSize: 8,
       bold: true,
+      color: "#000000",
     },
   };
 

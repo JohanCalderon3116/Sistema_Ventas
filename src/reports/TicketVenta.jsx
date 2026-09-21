@@ -9,6 +9,8 @@ const ANCHO_PAGINA = 204.09;
 const MARGEN = 4;
 const ANCHO_UTIL = ANCHO_PAGINA - MARGEN * 2;
 
+const NEGRO = "#000000";
+
 const lineaPunteada = (margin = [0, 6, 0, 6]) => ({
   canvas: [
     {
@@ -17,8 +19,8 @@ const lineaPunteada = (margin = [0, 6, 0, 6]) => ({
       y1: 0,
       x2: ANCHO_UTIL,
       y2: 0,
-      lineWidth: 0.75,
-      lineColor: "#999999",
+      lineWidth: 1,
+      lineColor: NEGRO,
       dash: {
         length: 2,
         space: 2,
@@ -77,7 +79,7 @@ const TicketVenta = async (output, data) => {
   const logoempresa = await urlToBase64(
     !data.logo || data.logo === "-"
       ? "https://i.ibb.co/HLNmDKRK/administracion-de-empresas.gif"
-      : data.logo
+      : data.logo,
   );
 
   const productTableBody = [
@@ -148,8 +150,8 @@ const TicketVenta = async (output, data) => {
       layout: {
         hLineWidth: () => 1,
         vLineWidth: () => 1,
-        hLineColor: () => "#333333",
-        vLineColor: () => "#333333",
+        hLineColor: () => NEGRO,
+        vLineColor: () => NEGRO,
         paddingLeft: () => 0,
         paddingRight: () => 0,
         paddingTop: () => 0,
@@ -197,8 +199,8 @@ const TicketVenta = async (output, data) => {
       layout: {
         hLineWidth: () => 1,
         vLineWidth: () => 1,
-        hLineColor: () => "#cccccc",
-        vLineColor: () => "#cccccc",
+        hLineColor: () => NEGRO,
+        vLineColor: () => NEGRO,
         paddingLeft: () => 0,
         paddingRight: () => 0,
       },
@@ -310,12 +312,10 @@ const TicketVenta = async (output, data) => {
       },
       layout: {
         hLineWidth: function (i, node) {
-          return i === 1 || i === node.table.body.length ? 1 : 0.5;
+          return i === 1 || i === node.table.body.length ? 1 : 0.75;
         },
         vLineWidth: () => 0,
-        hLineColor: function (i) {
-          return i === 1 ? "#333333" : "#dcdcdc";
-        },
+        hLineColor: () => NEGRO,
         paddingLeft: () => 2,
         paddingRight: () => 2,
         paddingTop: () => 4,
@@ -416,6 +416,7 @@ Total: ${FormatearNumeroDinero(data.monto_total, "COP", "CO")}`,
           text: "ESCANEAME PARA SOPORTE O PEDIDOS",
           fontSize: 6,
           bold: true,
+          color: NEGRO,
           alignment: "center",
           margin: [0, 0, 0, 4],
         },
@@ -434,97 +435,120 @@ Total: ${FormatearNumeroDinero(data.monto_total, "COP", "CO")}`,
     empresaNombre: {
       fontSize: 11,
       bold: true,
+      color: NEGRO,
       alignment: "center",
     },
     empresaDato: {
       fontSize: 8,
+      bold: true,
       alignment: "center",
-      color: "#555555",
+      color: NEGRO,
     },
     comprobanteTipo: {
       fontSize: 9,
       bold: true,
+      color: NEGRO,
       alignment: "center",
       characterSpacing: 1,
     },
     comprobanteId: {
       fontSize: 8,
+      bold: true,
       alignment: "center",
-      color: "#555555",
+      color: NEGRO,
     },
     seccionTitulo: {
       fontSize: 7.5,
       bold: true,
-      color: "#777777",
+      color: NEGRO,
       characterSpacing: 0.5,
     },
     tInfoLabel: {
       fontSize: 8,
       bold: true,
-      color: "#555555",
+      color: NEGRO,
     },
     tInfoValue: {
       fontSize: 8,
       bold: true,
+      color: NEGRO,
     },
     tProductsHeader: {
       fontSize: 7.5,
       bold: true,
-      fillColor: "#f0f0f0",
+      color: NEGRO,
+      fillColor: "#ffffff",
     },
     tProductsBody: {
       fontSize: 7.5,
+      bold: true,
+      color: NEGRO,
     },
     tProductsDescripcion: {
       fontSize: 8.5,
+      bold: true,
+      color: NEGRO,
       margin: [0, 1, 0, 1],
     },
     tTotalLabel: {
       fontSize: 9,
+      bold: true,
+      color: NEGRO,
       alignment: "left",
     },
     tTotalValue: {
       fontSize: 9,
+      bold: true,
+      color: NEGRO,
       alignment: "right",
       noWrap: true,
     },
     tTotalLabelGrande: {
       fontSize: 11,
       bold: true,
+      color: NEGRO,
       alignment: "left",
     },
     tTotalValueGrande: {
       fontSize: 11,
       bold: true,
+      color: NEGRO,
       alignment: "right",
       noWrap: true,
     },
     importeLetras: {
       fontSize: 7.5,
+      bold: true,
       italics: true,
       alignment: "center",
-      color: "#555555",
+      color: NEGRO,
     },
     tPagoTipo: {
       fontSize: 9,
       bold: true,
+      color: NEGRO,
     },
     tPagoLabel: {
       fontSize: 8,
-      color: "#555555",
+      bold: true,
+      color: NEGRO,
     },
     tPagoValue: {
       fontSize: 8,
       bold: true,
+      color: NEGRO,
       alignment: "right",
       noWrap: true,
     },
     text: {
       fontSize: 8,
+      bold: true,
+      color: NEGRO,
     },
     link: {
       fontSize: 8,
       bold: true,
+      color: NEGRO,
       margin: [0, 0, 0, 4],
       alignment: "center",
     },
@@ -536,16 +560,15 @@ Total: ${FormatearNumeroDinero(data.monto_total, "COP", "CO")}`,
         width: ANCHO_PAGINA,
         height: "auto",
       },
-      pageMargins: [
-        MARGEN,
-        MARGEN,
-        MARGEN,
-        MARGEN,
-      ],
+      pageMargins: [MARGEN, MARGEN, MARGEN, MARGEN],
+      defaultStyle: {
+        color: NEGRO,
+        bold: true,
+      },
       content,
       styles,
     },
-    output
+    output,
   );
 
   return response;

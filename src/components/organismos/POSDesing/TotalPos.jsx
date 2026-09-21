@@ -34,7 +34,6 @@ export const TotalPos = () => {
             icono={<Icon icon="emojione:money-bag" width="20" height="20" />}
             titulo="Cobrar"
           ></Btn1>
-          {/* <Btn1 border="2px" bgcolor="#fff" titulo="..."></Btn1> */}
         </section>
         <span>
           {" "}

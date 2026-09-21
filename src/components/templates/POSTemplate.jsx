@@ -23,6 +23,7 @@ import { useMostrarAlmacenesXSucursalQueryStack } from "../../tanstack/Almacenes
 import { useMostrarStockAlmacenesyProductoQueryStack } from "../../tanstack/StockStack";
 import { useMostrarImpresorasXCajaQueryStack } from "../../tanstack/ImpresorasStack";
 import { PantallaAbonoCredito } from "../organismos/POSDesing/CajaDesing/PantallaAbonoCredito";
+import { PantallaMuestraValoresVenta } from "../organismos/POSDesing/PantallaMuestraValoresVenta";
 export const POSTemplate = () => {
   const { statePantallaCobro } = useVentasStore();
   const { stateIngresoSalida, stateCierreCaja } = useCierreCajaStore();
@@ -36,6 +37,7 @@ export const POSTemplate = () => {
   return (
     <Container>
       {statePantallaCobro && <PantallaCobro></PantallaCobro>}
+      <PantallaMuestraValoresVenta></PantallaMuestraValoresVenta>
       <HeaderPos></HeaderPos>
       <Main>
         <Toaster richColors />

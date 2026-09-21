@@ -18,6 +18,7 @@ import { useAlmacenesStore } from "../store/AlmacenesStore";
 import { useDashboardStore } from "../store/DashboardStore";
 import { useTheme } from "styled-components";
 import { abrirCaja } from "../components/atomos/AbrirCajaImpresora";
+import { useResumenVentaStore } from "../store/ResumenVentaStore";
 
 export const useEliminarVentasIncompletasMutateStack = () => {
   const { eliminarventasIncompletas } = useVentasStore();
@@ -64,6 +65,7 @@ export const useConfirmarVentasMutationStack = ({
   const { insertarMovcaja } = useMovCajaStore();
   const { dataImpresorasXCaja } = useImpresorasStore();
   const { mostrarAlertasStockXVenta } = useStockStore();
+  const { mostrarResumenVenta } = useResumenVentaStore();
   const theme = useTheme();
   async function ConfirmarVenta() {
     if (restante === 0) {
@@ -107,6 +109,8 @@ export const useConfirmarVentasMutationStack = ({
       dataImpresorasXCaja?.state
         ? await imprimirDirectoTicket()
         : await imprimirConVentanaEmergente(responseVentaConfirmada);
+      mostrarResumenVenta({ total, vuelto, restante });
+      await new Promise((r) => requestAnimationFrame(() => setTimeout(r, 50)));
     } else {
       toast.warning("Falta completar el pago, el restante tiene que ser cero");
     }

@@ -178,6 +178,7 @@ export const HeaderPos = () => {
             funcion={async () => {
               try {
                 await abrirCaja();
+                toast.success("Abriendo caja registradora...")
               } catch (e) {
                 console.error(e);
                 alert("No se pudo abrir la caja");
