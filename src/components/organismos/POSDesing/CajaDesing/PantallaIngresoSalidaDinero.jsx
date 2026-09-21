@@ -15,7 +15,6 @@ import { useInsertarIngresosSalidasCajasMutationStack } from "../../../../tansta
 import TicketEntradasSalidas from "../../../../reports/TicketEntradasSalidas";
 
 export const PantallaIngresoSalidaDinero = () => {
-  console.log("Hola");
   const { tipoRegistro, setStateIngresoSalida } = useCierreCajaStore();
   const { dataempresa } = useEmpresaStore();
   const { dataMetodosPago, selectMetodo, setSelectMetodo } =

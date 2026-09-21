@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { useFormattedDate } from "../hooks/useFormattedDate";
 import { useAuthStore } from "../store/AuthStore";
 import { useEmpresaStore } from "../store/EmpresaStore";
+import { abrirCaja } from "../components/atomos/AbrirCajaImpresora";
 
 export const useInsertarIngresosSalidasCajasMutationStack = (
   reset,
@@ -31,6 +32,11 @@ export const useInsertarIngresosSalidasCajasMutationStack = (
       id_cierre_caja: dataCierreCaja?.id,
     };
     await insertarMovcaja(pmovcaja);
+    try {
+      await abrirCaja();
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   return useMutation({

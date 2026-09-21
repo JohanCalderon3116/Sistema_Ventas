@@ -11,6 +11,7 @@ import { useUsuariosStore } from "../store/UsuariosStore";
 import { useMovCajaStore } from "../store/MovCajaStore";
 import { useMetodosPagoStore } from "../store/MetodosPagoStore";
 import { MostrarVentaCompletaPorId } from "../supabase/crudVenta";
+import { abrirCaja } from "../components/atomos/AbrirCajaImpresora";
 
 export const useMostrarCreditosQueryStack = () => {
   const { dataempresa } = useEmpresaStore();
@@ -158,6 +159,11 @@ export const useInsertarAbonoCreditoMuatationStack = (onImprimir) => {
       id_cierre_caja: dataCierreCaja?.id,
     };
     await insertarMovcaja(pmovcaja);
+    try {
+      await abrirCaja();
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   return useMutation({

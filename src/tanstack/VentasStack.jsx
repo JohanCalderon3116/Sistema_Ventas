@@ -65,7 +65,7 @@ export const useConfirmarVentasMutationStack = ({
   const { dataImpresorasXCaja } = useImpresorasStore();
   const { mostrarAlertasStockXVenta } = useStockStore();
   const theme = useTheme();
-  async function ConfirmarVenta(p) {
+  async function ConfirmarVenta() {
     if (restante === 0) {
       const pventas = {
         _id_venta: idventa,
@@ -103,7 +103,6 @@ export const useConfirmarVentasMutationStack = ({
         await abrirCaja();
       } catch (e) {
         console.error(e);
-        toast.warning("No se pudo abrir la caja");
       }
       dataImpresorasXCaja?.state
         ? await imprimirDirectoTicket()

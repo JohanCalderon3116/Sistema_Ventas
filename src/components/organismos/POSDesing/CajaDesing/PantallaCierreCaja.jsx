@@ -36,13 +36,10 @@ export const PantallaCierreCaja = () => {
     new Date(dataCierreCaja?.fechainicio),
     "dd/MM/yyyy:HH:mm:ss",
   );
-  const {
-    isLoading: isLoading1,
-  } = useMostrarEfectivoSinVentasMovCajasQueryStack();
-  const {
-    isLoading: isLoading2,
-    data: dataventasmetodospago,
-  } = useMostrarVentasMetodoPagoMovCajaQueryStack();
+  const { isLoading: isLoading1 } =
+    useMostrarEfectivoSinVentasMovCajasQueryStack();
+  const { isLoading: isLoading2, data: dataventasmetodospago } =
+    useMostrarVentasMetodoPagoMovCajaQueryStack();
   const isLoading = isLoading1 || isLoading2;
   if (isLoading) {
     return (
@@ -176,6 +173,7 @@ export const PantallaCierreCaja = () => {
       </Resumen>
       <Btn1
         funcion={() => setStateConteoCaja(true)}
+        
         titulo={"Cerrar caja"}
         color="#ffffff"
         border="2px"
