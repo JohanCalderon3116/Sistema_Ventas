@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { useMovStockStore } from "../../../store/MovStockStore";
+;
 
 export const RadioChecks = () => {
   const { setTipo, tipo } = useMovStockStore();
@@ -7,7 +8,7 @@ export const RadioChecks = () => {
   return (
     <Container>
       <div className="radio-inputs">
-        <label className="radio ingreso">
+        <label className="radio">
           <input
             type="radio"
             name="radio"
@@ -18,7 +19,7 @@ export const RadioChecks = () => {
           <span className="name">Ingreso</span>
         </label>
 
-        <label className="radio salida">
+        <label className="radio">
           <input
             type="radio"
             name="radio"
@@ -38,49 +39,34 @@ const Container = styled.div`
     position: relative;
     display: flex;
     flex-wrap: wrap;
-    border-radius: 10px;
-    background-color: ${({ theme }) =>
-      theme?.text === "#FFFFFF" ? "#131313" : "#E6E6EA"};
-    border: 1px solid ${({ theme }) => theme.color2};
+    border-radius: 0.5rem;
+    background-color: #eee;
     box-sizing: border-box;
-    padding: 4px;
-    width: 100%;
-    max-width: 300px;
+    box-shadow: 0 0 0px 1px rgba(0, 0, 0, 0.06);
+    padding: 0.25rem;
+    width: 300px;
     font-size: 14px;
-    gap: 4px;
-
     .radio {
       flex: 1 1 auto;
       text-align: center;
       input {
         display: none;
       }
+      input:checked + .name {
+        background-color: #fff;
+        font-weight: 600;
+      }
       .name {
         display: flex;
         cursor: pointer;
         align-items: center;
         justify-content: center;
-        border-radius: 7px;
+        border-radius: 0.5rem;
         border: none;
-        padding: 8px 0;
-        color: ${({ theme }) => theme.colorSubtitle};
-        font-weight: 500;
-        transition: all 0.18s ease-out;
+        padding: 0.5rem 0;
+        color: rgba(51, 65, 85, 1);
+        transition: all 0.15s ease-in-out;
       }
-    }
-
-    .radio.ingreso input:checked + .name {
-      background-color: #10b981;
-      color: #ffffff;
-      font-weight: 600;
-      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
-    }
-
-    .radio.salida input:checked + .name {
-      background-color: #ef4444;
-      color: #ffffff;
-      font-weight: 600;
-      box-shadow: 0 2px 8px rgba(239, 68, 68, 0.25);
     }
   }
 `;

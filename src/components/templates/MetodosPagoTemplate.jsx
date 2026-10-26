@@ -1,21 +1,15 @@
-import styled, { keyframes } from "styled-components";
+import styled from "styled-components";
 import {
   Btn1,
   RegistrarMetodosPago,
   Title,
   useMetodosPagoStore,
 } from "../../index";
+import { v } from "../../styles/variables";
 import { useState } from "react";
 import Confetti from "react-confetti-boom";
 import { Toaster } from "sonner";
 import { TablaMetodosPago } from "../organismos/tablas/TablaMetodosPago";
-import { Icon } from "@iconify/react";
-
-const aparecer = keyframes`
-  from { opacity: 0; margin-top: 8px; }
-  to { opacity: 1; margin-top: 0; }
-`;
-
 export const MetodosPagoTemplate = () => {
   const { dataMetodosPago } = useMetodosPagoStore();
   const [openRegistro, setOpenRegistro] = useState(false);
@@ -30,7 +24,7 @@ export const MetodosPagoTemplate = () => {
   }
   return (
     <Container>
-      <Toaster richColors position="top-center"></Toaster>
+      <Toaster richColors></Toaster>
       {openRegistro && (
         <RegistrarMetodosPago
           setIsExploding={setIsExploding}
@@ -43,12 +37,10 @@ export const MetodosPagoTemplate = () => {
         <Title>Métodos de pago</Title>{" "}
         <Btn1
           funcion={nuevoRegistro}
-          bgcolor="#18181B"
-          color="255,255,255"
+          bgcolor="#3300E3"
           titulo="Nuevo"
-          border="1px"
-          icono={<Icon icon="lucide:plus" />}
-        />
+          icono={<v.iconoagregar />}
+        ></Btn1>
       </section>
       <section className="main">
         {isExploding && <Confetti></Confetti>}
@@ -64,7 +56,6 @@ export const MetodosPagoTemplate = () => {
 };
 
 const Container = styled.div`
-  position: relative;
   height: calc(100vh - 30px);
   padding: 15px;
   display: grid;
@@ -72,12 +63,9 @@ const Container = styled.div`
     "area1" 60px
     "area2" 60px
     "main" auto;
-  overflow: auto;
-  animation: ${aparecer} 0.3s ease both;
   .area1 {
     grid-area: area1;
-    position: relative;
-    z-index: 2;
+
     display: flex;
     justify-content: end;
     align-items: center;
@@ -85,7 +73,5 @@ const Container = styled.div`
   }
   .main {
     grid-area: main;
-    position: relative;
-    z-index: 2;
   }
 `;

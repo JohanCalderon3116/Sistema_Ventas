@@ -1,5 +1,5 @@
 import { useState } from "react";
-import styled, { useTheme } from "styled-components";
+import styled from "styled-components";
 import { Icon } from "@iconify/react";
 import { CardTotales } from "./CardTotales";
 import { useDetalleVentasStore } from "../../../store/DetalleVentasStore";
@@ -11,18 +11,19 @@ import {
 import { BarLoader } from "react-spinners";
 
 export const Ganacias = () => {
-  const __theme = useTheme();
   const [visible, setVisible] = useState(false);
   const { validarPermiso } = useValidarPermisosOpertivos();
   const { totalGanancias, porcentajeCambioGanancias } = useDetalleVentasStore();
   const { isLoading } = useMostrarGanaciasXEmpresaQueryStack();
+
   const desbloquear = () => {
     const permitido = validarPermiso("Ver ganancias");
     if (!permitido) return;
     setVisible(true);
   };
+
   if (isLoading) {
-    return <BarLoader color={__theme.text} />;
+    return <BarLoader></BarLoader>;
   }
 
   return (
@@ -30,18 +31,15 @@ export const Ganacias = () => {
       <Tarjeta $oculta={!visible}>
         <CardTotales
           title="Ganancias"
-          icon="lucide:wallet"
+          icon="mdi:dollar"
           value={FormatearNumeroDineroSinIsoYCurrency(totalGanancias)}
           porcentage={porcentajeCambioGanancias}
-        />
+        ></CardTotales>
       </Tarjeta>
+
       {!visible && (
         <Candado type="button" onClick={desbloquear}>
-          <Icon
-            icon="lucide:lock"
-            width="24"
-            height="24"
-          />
+          <Icon icon="mdi:lock-outline" width="28" height="28" />
           <span>Ver ganancias</span>
         </Candado>
       )}
@@ -71,18 +69,6 @@ const Candado = styled.button`
   border: none;
   background: transparent;
   color: ${({ theme }) => theme.text};
-  font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  transition:
-    transform 0.2s ease-out,
-    color 0.2s ease-out;
-  svg {
-    color: ${({ theme }) => theme.text};
-  }
-
-  &:hover {
-    transform: translateY(-1px);
-    color: ${({ theme }) => theme.text};
-  }
 `;

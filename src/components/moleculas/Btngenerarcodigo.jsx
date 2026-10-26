@@ -1,6 +1,5 @@
-import styled, { useTheme } from "styled-components";
+import styled from "styled-components";
 import { Icono } from "../../index";
-
 export function Btngenerarcodigo({
   funcion,
   titulo,
@@ -11,78 +10,56 @@ export function Btngenerarcodigo({
   disabled,
   width,
 }) {
-  const theme = useTheme();
-  const isDarkTheme =
-    theme?.text === "#FFFFFF" ||
-    theme?.bgtotal === "#050505" ||
-    theme?.bgtotal === "#000000" ||
-    theme?.bgtotal === "#121216" ||
-    theme?.bgtotal === "#09090B" ||
-    theme?.bgtotal === "#101010";
-
-  const resolvedBg = bgcolor || (isDarkTheme ? "#1A1A1A" : "#E6E6EA");
-  const resolvedText = color || (isDarkTheme ? "#FFFFFF" : "#111111");
-
   return (
     <Container
       $width={width}
       disabled={disabled}
-      $color={resolvedText}
-      $bgcolor={resolvedBg}
+      $color={color}
+      type="submit"
+      $bgcolor={bgcolor}
       onClick={funcion}
     >
       <section className="content">
-        {icono && <Icono $color={resolvedText}>{icono}</Icono>}
+        <Icono $color={color}>{icono}</Icono>
         {titulo && (
           <span className="btn">
-            {url ? (
-              <a href={url} target="_blank" rel="noreferrer">
-                {titulo}
-              </a>
-            ) : (
-              <span>{titulo}</span>
-            )}
+            <a href={url} target="_blank">
+              {titulo}
+            </a>
           </span>
         )}
       </section>
     </Container>
   );
 }
-
 const Container = styled.div`
-  font-weight: 600;
-  display: inline-flex;
-  font-size: 13px;
-  padding: 7px 14px;
-  border-radius: 8px;
+  font-weight: 700;
+  display: flex;
+  font-size: 15px;
+  padding: 10px 25px;
+  border-radius: 16px;
   background-color: ${(props) => props.$bgcolor};
-  border: 1px solid ${({ theme }) => theme.color2};
+  border: 2px solid rgba(50, 50, 50, 0.2);
+  border-bottom: 5px solid rgba(50, 50, 50, 0.2);
+  transform: translate(0, -3px);
   cursor: pointer;
-  transition: all 0.18s ease-out;
-  color: ${(props) => props.$color} !important;
+  transition: 0.2s;
+  transition-timing-function: linear;
+  color: rgb(${(props) => props.$color});
   align-items: center;
   justify-content: center;
-  width: ${(props) => props.$width || "auto"};
-
+  width: ${(props) => props.$width};
   .content {
     display: flex;
-    gap: 6px;
-    align-items: center;
+    gap: 12px;
   }
-
-  .btn,
-  .btn a,
-  .btn span {
-    color: ${(props) => props.$color} !important;
-    text-decoration: none !important;
-  }
-
-  &:hover {
-    filter: brightness(1.05);
-    transform: translateY(-1px);
-  }
-
   &:active {
-    transform: translateY(0);
+    transform: translate(0, 0);
+    border-bottom: 2px solid rgba(50, 50, 50, 0.2);
+  }
+  &[disabled] {
+    background-color: #646464;
+    cursor: no-drop;
+    box-shadow: none;
   }
 `;

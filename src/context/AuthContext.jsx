@@ -9,25 +9,17 @@ const AuthContext = createContext();
 export const AuthContextProvider = ({ children }) => {
   const { insertarEmpresa } = useEmpresaStore();
   const [user, setUser] = useState(undefined);
-  // true hasta que Supabase confirme el estado real de la sesión (INITIAL_SESSION)
-  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   useEffect(() => {
-    const { data } = supabase.auth.onAuthStateChange((value, session) => {
-      const usuarioSesion = session?.user ?? null;
-      setUser(usuarioSesion);
-      setIsCheckingAuth(false);
-      if (usuarioSesion) {
-        // Se difiere la llamada para no ejecutar consultas de Supabase dentro
-        // del callback de onAuthStateChange (recomendación oficial: evita bloqueos).
-        setTimeout(() => {
-          insertarDatos(usuarioSesion.id, usuarioSesion.email).catch((error) =>
-            console.error(error),
-          );
-        }, 0);
+    const { data } = supabase.auth.onAuthStateChange(async (value, session) => {
+      if (session?.user == null) {
+        setUser(null);
+      } else {
+        setUser(session?.user);
       }
+      insertarDatos(session?.user?.id, session?.user?.email);
     });
     return () => {
-      data.subscription.unsubscribe();
+      data.subscription;
     };
   }, []);
   const insertarDatos = async (id_auth, correo) => {
@@ -43,9 +35,7 @@ export const AuthContextProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, isCheckingAuth }}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={{ user }}>{children}</AuthContext.Provider>
   );
 };
 

@@ -8,6 +8,7 @@ import {
   useBuscarCreditsoQueryStack,
   useMostrarCreditosQueryStack,
 } from "../../index";
+import { v } from "../../styles/variables";
 import { useState } from "react";
 import Confetti from "react-confetti-boom";
 import { RegistrarCreditos } from "../organismos/formularios/RegistrarCreditos";
@@ -16,8 +17,6 @@ import { TablaCreditos } from "../organismos/tablas/TablaCreditos";
 import { useCreditosStore } from "../../store/CreditosStore";
 import { useMostrarContraseñaQueryStack } from "../../tanstack/LoginStack";
 import { BeatLoader } from "react-spinners";
-import { Icon } from "@iconify/react";
-
 export const CreditosTemplate = () => {
   const { setBuscador } = useCreditosStore();
   const theme = useTheme();
@@ -47,7 +46,7 @@ export const CreditosTemplate = () => {
   }
   return (
     <Container>
-      <Toaster richColors position="top-center"></Toaster>
+      <Toaster richColors></Toaster>
       {openRegistro && (
         <RegistrarCreditos
           setIsExploding={setIsExploding}
@@ -58,16 +57,15 @@ export const CreditosTemplate = () => {
       )}
       <HistorialCreditoModal></HistorialCreditoModal>
       <TicketModalCredito></TicketModalCredito>
+
       <section className="area1">
         <Title>Créditos</Title>
         <Btn1
           funcion={nuevoRegistro}
-          bgcolor="#18181B"
-          color="255,255,255"
+          bgcolor="#6d05e5"
           titulo="Nuevo"
-          border="1px"
-          icono={<Icon icon="lucide:plus" />}
-        />
+          icono={<v.iconoagregar />}
+        ></Btn1>
       </section>
       <section className="area2">
         <Buscador setBuscador={setBuscador}></Buscador>
@@ -110,7 +108,31 @@ const Container = styled.div`
     grid-area: main;
   }
 `;
-
+const ModalContraseña = styled.div`
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  .card {
+    background: ${({ theme }) => theme.body2};
+    padding: 30px;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 300px;
+    border: 1px solid #7c7c7c;
+    span {
+      font-weight: 700;
+      font-size: 1.1rem;
+      text-align: center;
+    }
+  }
+`;
 const ConteinerLoader = styled.div`
   display: flex;
   align-items: center;

@@ -9,67 +9,64 @@ import { Ganacias } from "../..";
 import { CantidadVentas } from "../organismos/DashboardDesign/CantidadVentas";
 import { SumarVentas } from "../organismos/DashboardDesign/SumarVentas";
 
-const isDarkTheme = (theme) =>
-  theme?.text === "#FFFFFF" ||
-  theme?.bgtotal === "#050505" ||
-  theme?.bgtotal === "#000000" ||
-  theme?.bgtotal === "#121216" ||
-  theme?.bgtotal === "#09090B" ||
-  theme?.bgtotal === "#101010";
 
 export const DashboardTemplate = () => {
   return (
     <Container>
-      <FondoCorporativo aria-hidden="true" />
-      <DashboardHeader />
+      <DashboardHeader></DashboardHeader>
       <MainContent>
         <Area1>
-          <ContentTotales>
-            <CantidadVentas />
+          <ContentTotales $accent="#3300E3">
+            <CantidadVentas></CantidadVentas>
           </ContentTotales>
-          <ContentTotales>
-            <SumarVentas />
+          <ContentTotales $accent="#7C3AED">
+            <SumarVentas></SumarVentas>
           </ContentTotales>
-          <ContentTotales>
-            <Ganacias />
+          <ContentTotales $accent="#A855F7">
+            <Ganacias></Ganacias>
           </ContentTotales>
         </Area1>
         <Area2>
-          <ChartVentas />
+          <ChartVentas></ChartVentas>
         </Area2>
         <Area3>
-          <ChartProductosTop5 />
+          <ChartProductosTop5></ChartProductosTop5>
         </Area3>
         <Area4>
-          <CardMovimientosCajaLive />
-          <CardMovimientosProductosTopMonto />
+          <CardMovimientosCajaLive></CardMovimientosCajaLive>
+          <CardMovimientosProductosTopMonto></CardMovimientosProductosTopMonto>
         </Area4>
       </MainContent>
     </Container>
   );
 };
 
-const FondoCorporativo = styled.div`
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  overflow: hidden;
-  pointer-events: none;
-
-  @media print {
-    display: none;
-  }
-`;
-
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  min-height: 100%;
   max-width: 1400px;
   margin: auto;
   gap: 22px;
   padding: 24px;
   position: relative;
+  &::before {
+    content: "";
+    position: absolute;
+    top: -80px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 700px;
+    height: 320px;
+    background: radial-gradient(
+      ellipse at center,
+      rgba(51, 0, 227, 0.14) 0%,
+      rgba(124, 58, 237, 0.06) 45%,
+      transparent 75%
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
   > * {
     position: relative;
     z-index: 1;
@@ -107,35 +104,38 @@ const Area1 = styled.section`
 
 const Area2 = styled.section`
   grid-area: area2;
-  border: 1px solid ${({ theme }) => theme.color2};
-  box-shadow: ${({ theme }) =>
-    isDarkTheme(theme)
-      ? "0 4px 20px -4px rgba(0, 0, 0, 0.4)"
-      : "0 2px 10px -2px rgba(9, 9, 11, 0.04)"};
-  border-radius: 16px;
-  background-color: ${({ theme }) => theme.bgcards};
+  border: 1px solid ${({ theme }) => theme.colortitlecard};
+  box-shadow: 0 12px 30px -12px rgba(51, 0, 227, 0.18);
+  border-radius: 22px;
+  background-color: ${({ theme }) => theme.body};
   position: relative;
   overflow: hidden;
-  transition: all 0.2s ease-out;
-  &:hover {
-    border-color: ${({ theme }) => theme.text === "#FFFFFF" ? "rgba(255, 255, 255, 0.24)" : "rgba(17, 17, 17, 0.24)"};
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #3300e3, #7c3aed, #a855f7);
   }
 `;
-
 const Area3 = styled.section`
   grid-area: area3;
-  background-color: ${({ theme }) => theme.bgcards};
-  border: 1px solid ${({ theme }) => theme.color2};
-  box-shadow: ${({ theme }) =>
-    isDarkTheme(theme)
-      ? "0 4px 20px -4px rgba(0, 0, 0, 0.4)"
-      : "0 2px 10px -2px rgba(9, 9, 11, 0.04)"};
-  border-radius: 16px;
+  background-color: ${({ theme }) => theme.body};
+  border: 1px solid ${({ theme }) => theme.colortitlecard};
+  box-shadow: 0 12px 30px -12px rgba(124, 58, 237, 0.18);
+  border-radius: 22px;
   position: relative;
   overflow: hidden;
-  transition: all 0.2s ease-out;
-  &:hover {
-    border-color: ${({ theme }) => theme.text === "#FFFFFF" ? "rgba(255, 255, 255, 0.24)" : "rgba(17, 17, 17, 0.24)"};
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #a855f7, #7c3aed, #3300e3);
   }
 `;
 
@@ -148,36 +148,27 @@ const Area4 = styled.section`
     flex-wrap: nowrap;
   }
 `;
-
 const ContentTotales = styled.div`
-  background-color: ${({ theme }) => theme.bgcards};
-  padding: 18px;
-  border-radius: 16px;
+  background-color: ${({ theme }) => theme.body};
+  padding: 16px;
+  border-radius: 18px;
   text-align: center;
-  border: 1px solid ${({ theme }) => theme.color2};
-  box-shadow: ${({ theme }) =>
-    isDarkTheme(theme)
-      ? "0 4px 16px -4px rgba(0, 0, 0, 0.35)"
-      : "0 1px 3px rgba(9, 9, 11, 0.04)"};
+  border: 1px solid ${({ theme }) => theme.colortitlecard};
+  box-shadow: 0 10px 24px -14px rgba(51, 0, 227, 0.2);
   position: relative;
   overflow: hidden;
-  transition: all 0.2s ease-out;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
   &::before {
     content: "";
     position: absolute;
     top: 0;
     left: 0;
     bottom: 0;
-    width: 3px;
-    background: ${(props) => props.$accent || props.theme.text};
-    opacity: 0.85;
+    width: 4px;
+    background: ${(props) => props.$accent || "#3300E3"};
   }
   &:hover {
-    transform: translateY(-2px);
-    border-color: ${({ theme }) => theme.text === "#FFFFFF" ? "rgba(255, 255, 255, 0.24)" : "rgba(17, 17, 17, 0.24)"};
-    box-shadow: ${({ theme }) =>
-      isDarkTheme(theme)
-        ? "0 10px 24px -8px rgba(0, 0, 0, 0.5)"
-        : "0 8px 20px -6px rgba(9, 9, 11, 0.07)"};
+    transform: translateY(-3px);
+    box-shadow: 0 16px 30px -14px rgba(51, 0, 227, 0.28);
   }
 `;

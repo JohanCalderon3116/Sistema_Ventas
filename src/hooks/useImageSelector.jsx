@@ -49,7 +49,6 @@ const Container = styled.div`
   text-align: center;
   margin-bottom: 20px;
 `;
-
 const ImageWrapper = styled.div`
   position: relative;
   display: inline-block;
@@ -65,7 +64,6 @@ const Avatar = styled.img`
     transform: scale(1.05);
   }
 `;
-
 const EditButton = styled.button`
   position: absolute;
   left: 60px;
@@ -91,7 +89,6 @@ const EditButton = styled.button`
     transform: scale(1.1);
   }
 `;
-
 const HiddenInput = styled.input`
   display: none;
 `;

@@ -82,8 +82,8 @@ export const useElimarCajasMutationStack = () => {
         text: "Una vez eliminado, se eliminaran todas las ventas relacionadas",
         icon: "warning",
         showCancelButton: true,
-        confirmButtonColor: theme.halloweenPrimary,
-        cancelButtonColor: theme.halloweenDanger,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
         confirmButtonText: "Sí, eliminar",
         background: theme.bg2,
         color: theme.text,
@@ -177,9 +177,6 @@ export const useAperturarCajasMutationStack = (item) => {
       });
       queryClient.invalidateQueries({
         queryKey: ["mostrar efectivo sin ventas movCaja"],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["mostrar movimientos caja por fecha"],
       });
       queryClient.invalidateQueries({
         queryKey: ["mostrar ventas metodoPago movCaja"],

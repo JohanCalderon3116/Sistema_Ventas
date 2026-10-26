@@ -180,7 +180,6 @@ const Container = styled.div`
     font-weight: bold;
   }
 `;
-
 const ConteinerLoader = styled.div`
   display: flex;
   align-items: center;

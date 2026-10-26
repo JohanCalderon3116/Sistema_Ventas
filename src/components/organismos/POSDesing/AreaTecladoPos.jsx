@@ -59,7 +59,6 @@ const Container = styled.div`
     width: 450px;
     bottom: initial;
     max-height: none;
-    height: 100%;
   }
   .areatipopago {
     display: ${({ stateMetodosPago }) => (stateMetodosPago ? "flex" : "none")};
@@ -73,7 +72,7 @@ const Container = styled.div`
       flex-wrap: wrap;
       gap: 10px;
       padding: 10px;
-      max-height: calc(100% - 130px); 
+      max-height: 300px; 
       overflow-y: auto;
     }
     .box {

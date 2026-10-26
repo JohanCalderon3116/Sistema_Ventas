@@ -18,6 +18,7 @@ export const RegistrarSerializacion = () => {
   );
   const [correlativo, setCorrelativo] = useState(itemSelect?.correlativos);
   const [serie, setSerie] = useState(itemSelect?.serie);
+  // Función para formatear el correlativo con ceros a la izquierda
   const formatearCorrelativo = (numero, longitud) => {
     return String(numero).padStart(longitud, "0");
   };
@@ -40,7 +41,7 @@ export const RegistrarSerializacion = () => {
     <Container>
       <section className="sub-container">
         <div className="comprobante">
-          <BtnClose color={"#09090B"} funcion={() => setStateClose(false)} />
+          <BtnClose color={"#000"} funcion={() => setStateClose(false)} />
           <span className="title">Comprobante</span>
           <div className="tipo"> {itemSelect?.tipo_comprobantes?.nombre} </div>
           <div className="numero">
@@ -89,6 +90,7 @@ export const RegistrarSerializacion = () => {
               )}
             </InputText>
           </article>
+
           <article>
             <InputText icono={<v.iconoflechaderecha />}>
               <input
@@ -108,7 +110,7 @@ export const RegistrarSerializacion = () => {
             </InputText>
           </article>
           <div className="buttons">
-            <Btn1 titulo={"Guardar"} bgcolor={"#18181B"} color={"#FFFFFF"} />
+            <Btn1 titulo={"Guardar"} bgcolor={"#fff"} />
           </div>
         </form>
       </section>
@@ -127,7 +129,6 @@ const Container = styled.div`
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  background-color: rgba(9, 9, 11, 0.55);
   backdrop-filter: blur(5px);
   input {
     color: ${({ theme }) => theme.text};
@@ -137,11 +138,10 @@ const Container = styled.div`
     position: relative;
     flex-direction: column;
     align-items: center;
-    background: ${({ theme }) => theme.bgcards || theme.bgtotal};
-    border: 1px solid ${({ theme }) => theme.color2};
-    padding: 24px;
-    border-radius: 16px;
-    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.28);
+    background: ${({ theme }) => theme.bgtotal};
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
     align-items: center;
     justify-content: center;
     .form {
@@ -155,43 +155,42 @@ const Container = styled.div`
     gap: 8px;
     flex-direction: column;
     align-items: center;
-    background: #ffffff;
-    border: 1px solid #e4e4e7;
-    padding: 16px;
-    border-radius: 12px;
+    background: #fff;
+    padding: 15px;
+    border-radius: 8px;
     width: 300px;
     text-align: center;
     position: relative;
     margin-bottom: 20px;
     .title {
-      color: #09090b;
-      font-weight: 700;
+      color: #000;
+      font-weight: bold;
       text-transform: uppercase;
-      font-size: 13px;
-      letter-spacing: 0.04em;
     }
     .tipo {
-      background: #18181b;
-      color: #ffffff;
-      padding: 5px 12px;
-      border-radius: 6px;
-      font-size: 13px;
-      font-weight: 700;
+      background: #ea5605;
+
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: bold;
       text-transform: uppercase;
     }
+
     .numero {
       margin-top: 10px;
       font-size: 18px;
-      font-weight: 700;
-      background: #f8fafc;
-      padding: 6px 12px;
-      border-radius: 6px;
-      border: 1.5px solid #27272a;
+      font-weight: bold;
+      background: white;
+      padding: 5px 10px;
+      border-radius: 4px;
+      border: 2px solid black;
+
       span:first-child {
-        color: #7c3aed;
+        color: red;
       }
       span:last-child {
-        color: #09090b;
+        color: black;
       }
     }
   }
@@ -204,5 +203,25 @@ const Container = styled.div`
     display: flex;
     margin-top: 20px;
     gap: 10px;
+    .guardar {
+      background: #ffcc00;
+      color: black;
+      font-size: 14px;
+      font-weight: bold;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .volver {
+      background: #777;
+      color: white;
+      font-size: 14px;
+      font-weight: bold;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
   }
 `;

@@ -1,16 +1,17 @@
 import styled from "styled-components";
 import { DatePicker } from "antd";
-import { useLayoutEffect, useState } from "react"; 
+import { useLayoutEffect, useState } from "react"; // 👈 cambio de import
 import dayjs from "dayjs";
 import { useDashboardStore } from "../../../store/DashboardStore";
 const { RangePicker } = DatePicker;
-
 export const DateRangeFilter = () => {
   const [dates, setDates] = useState([]);
   const [singleDate, setSingleDate] = useState(dayjs().startOf("day"));
   const [activeRange, setActiveRang] = useState("Hoy");
-  const { setRangoFechas, limpiarFechas } =
+
+  const { setRangoFechas, fechaInicio, fechaFin, limpiarFechas } =
     useDashboardStore();
+
   const setSiempreRange = () => {
     const startDate = dayjs("1900-01-01");
     const endDate = dayjs("9999-12-31");
@@ -21,12 +22,14 @@ export const DateRangeFilter = () => {
       endDate.format("YYYY-MM-DD"),
     );
   };
+
   const handleDateChange = (val) => {
     setDates(val || []);
     if (val) {
       setRangoFechas(val[0].format("YYYY-MM-DD"), val[1].format("YYYY-MM-DD"));
     }
   };
+
   const handleSingleDateChange = (date) => {
     setSingleDate(date);
     setDates([]);
@@ -53,9 +56,9 @@ export const DateRangeFilter = () => {
     setActiveRang(rangeName);
   };
   useLayoutEffect(() => {
+    // 👈 cambio: useEffect -> useLayoutEffect
     selectToday();
   }, []);
-
   return (
     <Container>
       <ButtonGroup>
@@ -163,7 +166,6 @@ const StyleRangePicker = styled(RangePicker)`
     background-color: ${({ theme }) => theme.bg2};
   }
 `;
-
 const StyleDatePicker = styled(DatePicker)`
   background-color: ${({ theme }) => theme.bg2};
   border: 2px dashed ${({ theme }) => theme.body};

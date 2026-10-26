@@ -39,19 +39,16 @@ export async function EditarEmpresa(p, fileold, filenew) {
     throw new Error(error.message);
   }
   if (filenew != "-" && filenew.size != undefined) {
-    let publicUrlBase;
     if (fileold != "-") {
       await EditarIconoStorage(p.id, filenew);
-      publicUrlBase = await obtenerUrlPublica(p.id);
     } else {
       const dataImagen = await subirImagen(p.id, filenew);
-      publicUrlBase = dataImagen.publicUrl;
+      const plogoeditar = {
+        logo: dataImagen.publicUrl,
+        id: p.id,
+      };
+      await EditarLogoEmpresa(plogoeditar);
     }
-    const plogoeditar = {
-      logo: `${publicUrlBase}?t=${Date.now()}`,
-      id: p.id,
-    };
-    await EditarLogoEmpresa(plogoeditar);
   }
 }
 export async function EditarIconoStorage(id, file) {
@@ -60,11 +57,6 @@ export async function EditarIconoStorage(id, file) {
     cacheControl: "0",
     upsert: true,
   });
-}
-async function obtenerUrlPublica(idempresa) {
-  const ruta = "empresa/" + idempresa;
-  const { data } = await supabase.storage.from("imagenes").getPublicUrl(ruta);
-  return data.publicUrl;
 }
 async function subirImagen(idempresa, file) {
   const ruta = "empresa/" + idempresa;

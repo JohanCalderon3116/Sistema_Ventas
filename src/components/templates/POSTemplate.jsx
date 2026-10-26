@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { Device } from "../../styles/breakpoints";
+import { blur_in } from "../../styles/Keyframes";
 import {
   AreaDetalleventaPos,
   AreaTecladoPos,
@@ -23,7 +24,6 @@ import { useMostrarStockAlmacenesyProductoQueryStack } from "../../tanstack/Stoc
 import { useMostrarImpresorasXCajaQueryStack } from "../../tanstack/ImpresorasStack";
 import { PantallaAbonoCredito } from "../organismos/POSDesing/CajaDesing/PantallaAbonoCredito";
 import { PantallaMuestraValoresVenta } from "../organismos/POSDesing/PantallaMuestraValoresVenta";
-
 export const POSTemplate = () => {
   const { statePantallaCobro } = useVentasStore();
   const { stateIngresoSalida, stateCierreCaja } = useCierreCajaStore();
@@ -35,66 +35,49 @@ export const POSTemplate = () => {
   useMostrarSerealizacionesVentasQueryStack();
   useMostrarImpresorasXCajaQueryStack();
   return (
-    <>
-      <FondoCorporativoPOS aria-hidden="true" />
-      <Container>
-        {statePantallaCobro && <PantallaCobro />}
-        <PantallaMuestraValoresVenta />
-        <HeaderPos />
-        <Main>
-          <Toaster richColors position="top-center" />
-          <AreaDetalleventaPos />
-          <AreaTecladoPos />
-          {stateModal && <SelectAlmacen />}
-        </Main>
-        <FooterPos />
-        <MenuFlotante />
-        {stateIngresoSalida && <PantallaIngresoSalidaDinero />}
-        {stateIngresoCredito && <PantallaAbonoCredito />}
-        {stateCierreCaja && <PantallaCierreCaja />}
-      </Container>
-    </>
+    <Container>
+      {statePantallaCobro && <PantallaCobro></PantallaCobro>}
+      <PantallaMuestraValoresVenta></PantallaMuestraValoresVenta>
+      <HeaderPos></HeaderPos>
+      <Main>
+        <Toaster richColors />
+        <AreaDetalleventaPos></AreaDetalleventaPos>
+        <AreaTecladoPos></AreaTecladoPos>
+        {stateModal && <SelectAlmacen></SelectAlmacen>}
+      </Main>
+      <FooterPos></FooterPos>
+      <MenuFlotante></MenuFlotante>
+      {stateIngresoSalida && (
+        <PantallaIngresoSalidaDinero></PantallaIngresoSalidaDinero>
+      )}
+      {stateIngresoCredito && <PantallaAbonoCredito></PantallaAbonoCredito>}
+      {stateCierreCaja && <PantallaCierreCaja></PantallaCierreCaja>}
+    </Container>
   );
 };
-
-const FondoCorporativoPOS = styled.div`
-  position: fixed;
-  inset: 0;
-  overflow: hidden;
-  pointer-events: none;
-  z-index: 0;
-`;
-
 const Container = styled.div`
-  box-sizing: border-box;
-  height: 100vh;
-  padding: 50px 10px 12px 10px;
+  height: calc(100vh - 60px);
+  padding: 10px;
+  padding-top: 50px;
   display: grid;
   gap: 10px;
-  grid-template-areas:
-    "header"
-    "main";
-  grid-template-rows: 220px 1fr;
-  position: relative;
-  z-index: 1;
+  grid-template:
+    "header" 220px
+    "main" auto;
+
+  animation: ${blur_in} 0.5s linear both;
   @media ${Device.desktop} {
-    grid-template-areas:
-      "header header"
+    grid-template:
+      "header header" 140px
       "main main"
-      "footer footer";
-    grid-template-rows: 140px 1fr 60px;
-    grid-template-columns: 1fr;
-    padding-bottom: 12px;
+      "footer footer" 60px;
   }
 `;
-
 const Main = styled.div`
   grid-area: main;
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 100%;
-  min-height: 0;
   position: relative;
   overflow: hidden;
   gap: 10px;

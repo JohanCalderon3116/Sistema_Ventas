@@ -1,4 +1,4 @@
-import styled, { useTheme } from "styled-components";
+import styled from "styled-components";
 import {
   AreaChart,
   Area,
@@ -13,24 +13,26 @@ import {
   FormatearNumeroDinero,
   FormatearNumeroDineroSinIsoYCurrency,
 } from "../../../utils/Conversiones";
-import { Icon } from "@iconify/react";
+import { Icon } from "@iconify/react/dist/iconify.js";
+import { useThemeStore } from "../../../store/ThemeStore";
 import {
   useDetalleVentasStore,
   useMostrarVentasAgrupadasXFechaQueryStack,
 } from "../../..";
 import { BarLoader } from "react-spinners";
-
 export const ChartVentas = () => {
-  const __theme = useTheme();
-  const { ventasAgrupadasFecha, totalVentas, porcentajeCambioTotal } =
-    useDetalleVentasStore();
+  const {
+    ventasAgrupadasFecha,
+    totalVentas,
+    porcentajeCambioTotal,
+  } = useDetalleVentasStore();
+  const { themeStyle } = useThemeStore();
   const isPositive = porcentajeCambioTotal > 0;
   const isNeutral = porcentajeCambioTotal === 0;
   const { isLoading } = useMostrarVentasAgrupadasXFechaQueryStack();
   if (isLoading) {
-    return <BarLoader color={__theme.text} />;
+    return <BarLoader></BarLoader>;
   }
-
   return (
     <Container>
       <Header>
@@ -41,16 +43,16 @@ export const ChartVentas = () => {
         <Change>
           <Percentage isPositive={isPositive} isNeutral={isNeutral}>
             <Icon
-              width="22"
-              height="22"
+              width="26"
+              height="26"
               icon={
                 isNeutral
-                  ? "lucide:minus"
+                  ? "akar-icons:minus"
                   : isPositive
-                    ? "lucide:trending-up"
-                    : "lucide:trending-down"
+                    ? "iconamoon:arrow-up-2-fill"
+                    : "iconamoon:arrow-down-2-fill"
               }
-            />
+            ></Icon>
             {Math.abs(porcentajeCambioTotal).toFixed(1)}% al periodo anterior
           </Percentage>
         </Change>
@@ -69,41 +71,26 @@ export const ChartVentas = () => {
         >
           <defs>
             <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor={__theme.text} stopOpacity={0.28} />
-              <stop offset="95%" stopColor={__theme.text} stopOpacity={0} />
+              <stop offset="5%" stopColor={themeStyle.text} stopOpacity={0.2} />
+              <stop offset="95%" stopColor={themeStyle.text} stopOpacity={0} />
             </linearGradient>
           </defs>
-          <CartesianGrid
-            strokeOpacity={0.12}
-            stroke="#71717A"
-            vertical={false}
-          />
+          <CartesianGrid strokeOpacity={0.2} vertical={false} />
           <XAxis
             dataKey="fecha"
             axisLine={false}
             tickLine={false}
-            tick={{ fontSize: 12, fill: "#71717A" }}
+            tick={{ fontSize: 12, fill: "#9CA3AF" }}
           />
           <YAxis hide />
           <Tooltip content={<CustomTooltip />} />
           <Area
-            strokeWidth={2}
+            strokeWidth={1.5}
             type="monotone"
             dataKey="total_dia"
-            stroke={__theme.text}
+            stroke={themeStyle.text}
             fill="url(#colorValue)"
-            dot={{
-              r: 4,
-              fill: __theme.text,
-              stroke: __theme.bgcards,
-              strokeWidth: 2,
-            }}
-            activeDot={{
-              r: 6,
-              fill: __theme.text,
-              stroke: __theme.bgcards,
-              strokeWidth: 2,
-            }}
+            activeDot={{ r: 6 }}
             fillOpacity={1}
           />
         </AreaChart>
@@ -117,7 +104,7 @@ const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
       <TooltipContainer>
-        <Date>{label}</Date>
+        <Date>{label} </Date>
         <Value>
           {FormatearNumeroDinero(
             payload[0].value,
@@ -129,27 +116,23 @@ const CustomTooltip = ({ active, payload, label }) => {
     );
   }
 };
-
 const Container = styled.div``;
 
 const TooltipContainer = styled.div`
-  background: ${({ theme }) => theme.bgcards};
-  padding: 10px 14px;
-  border-radius: 10px;
+  background: ${({ theme }) => theme.bg};
+  padding: 10px;
+  border-radius: 8px;
   font-size: 12px;
-  border: 1px solid ${({ theme }) => theme.color2};
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  box-shadow: ${({ theme }) => theme.boxshadow};
 `;
 
 const Date = styled.div`
-  font-size: 12px;
-  color: ${({ theme }) => theme.colorSubtitle};
+  font-size: 14px;
 `;
 
 const Value = styled.div`
-  font-size: 15px;
-  font-weight: 700;
-  color: ${({ theme }) => theme.text};
+  font-size: 16px;
+  font-weight: bold;
 `;
 
 const Header = styled.div`
@@ -157,25 +140,22 @@ const Header = styled.div`
   justify-content: space-between;
   align-items: center;
   padding-left: 20px;
-  padding-top: 16px;
 `;
 
 const Title = styled.h3`
-  font-size: 15px;
-  font-weight: 600;
-  color: ${({ theme }) => theme.colorSubtitle};
-  margin: 0;
+  font-size: 16px;
+  font-weight: bold;
+  color: ${({ theme }) => theme.text};
 `;
 
 const MainInfo = styled.div`
-  margin: 10px 0 20px;
+  margin: 20px 0;
   padding-left: 20px;
 `;
 
 const Revenue = styled.div`
-  font-size: 28px;
-  font-weight: 800;
-  letter-spacing: -0.02em;
+  font-size: 24px;
+  font-weight: bold;
   color: ${({ theme }) => theme.text};
 `;
 
@@ -183,16 +163,14 @@ const Change = styled.div`
   display: flex;
   align-items: center;
   gap: 5px;
-  margin-top: 6px;
+  margin-top: 5px;
 `;
 
 const Percentage = styled.span`
   display: flex;
   text-align: center;
   align-items: center;
-  gap: 4px;
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 14px;
   color: ${(props) =>
-    props.isNeutral ? "#71717A" : props.isPositive ? "#10b981" : "#ef4444"};
+    props.isNeutral ? "#6b7280" : props.isPositive ? "#12ca3a" : "#d32f5b"};
 `;

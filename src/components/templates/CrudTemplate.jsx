@@ -4,7 +4,6 @@ import { v } from "../../styles/variables";
 import { useState } from "react";
 import Confetti from "react-confetti-boom";
 import { BuscadorList } from "../ui/lists/Buscador";
-
 export const CrudTemplate = ({
   Formularioregistro,
   title,
@@ -43,8 +42,7 @@ export const CrudTemplate = ({
         {stateBtnAdd && (
           <Btn1
             funcion={nuevoRegistro}
-            bgcolor="#121216"
-            color="#FFFFFF"
+            bgcolor="#3300E3"
             titulo="Nuevo"
             icono={<v.iconoagregar />}
           ></Btn1>
@@ -63,6 +61,7 @@ export const CrudTemplate = ({
           )}
         </section>
       )}
+
       <section className="main">
         {isExploding && <Confetti></Confetti>}
         {Table && (
@@ -88,6 +87,7 @@ const Container = styled.div`
     "main" auto;
   .area1 {
     grid-area: area1;
+
     display: flex;
     justify-content: end;
     align-items: center;
@@ -95,6 +95,7 @@ const Container = styled.div`
   }
   .area2 {
     grid-area: area2;
+
     display: flex;
     justify-content: end;
     align-items: center;

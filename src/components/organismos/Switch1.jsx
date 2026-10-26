@@ -1,33 +1,31 @@
 import styled from "styled-components";
-
-export function Switch1({ state, setState }) {
+export function Switch1({state,setState}) {
   return (
     <Container>
-      <label className="switch">
-        <input
-          checked={state}
-          className="toggle"
-          type="checkbox"
-          onClick={setState}
-          readOnly
-        />
-        <span className="slider"></span>
-        <span className="card-side"></span>
+      <label class="switch">
+        <input checked={state} class="toggle" type="checkbox" onClick={setState} />
+        <span class="slider"></span>
+        <span class="card-side"></span>
       </label>
     </Container>
   );
 }
-
 const Container = styled.div`
-  display: inline-flex;
-  align-items: center;
-
   .switch {
+    --input-focus: #2d8cf0;
+    --font-color: #323232;
+    --font-color-sub: #666;
+    --bg-color: #fff;
+    --bg-color-alt: #666;
+    --main-color: #323232;
     position: relative;
-    display: inline-block;
-    width: 44px;
-    height: 24px;
-    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    width: 50px;
+    height: 20px;
   }
 
   .toggle {
@@ -37,35 +35,40 @@ const Container = styled.div`
   }
 
   .slider {
+    box-sizing: border-box;
+    border-radius: 5px;
+    border: 2px solid var(--main-color);
+    box-shadow: 4px 4px var(--main-color);
     position: absolute;
-    inset: 0;
     cursor: pointer;
-    background-color: ${({ theme }) =>
-      theme.bgtotal === "#121216" ? "#27272F" : "#D4D4D8"};
-    border: 1px solid ${({ theme }) => theme.color2};
-    border-radius: 999px;
-    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--bg-colorcolor);
+    transition: 0.3s;
   }
 
   .slider:before {
+    box-sizing: border-box;
     position: absolute;
     content: "";
-    height: 18px;
-    width: 18px;
-    left: 2px;
+    height: 20px;
+    width: 20px;
+    border: 2px solid var(--main-color);
+    border-radius: 5px;
+    left: -2px;
     bottom: 2px;
-    border-radius: 50%;
-    background-color: #ffffff;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
-    transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    background-color: var(--bg-color);
+    box-shadow: 0 3px 0 var(--main-color);
+    transition: 0.3s;
   }
 
   .toggle:checked + .slider {
-    background-color: #10b981;
-    border-color: #10b981;
+    background-color: var(--input-focus);
   }
 
   .toggle:checked + .slider:before {
-    transform: translateX(20px);
+    transform: translateX(30px);
   }
 `;

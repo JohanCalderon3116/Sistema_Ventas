@@ -12,7 +12,9 @@ export function Footer() {
         </span>
       </section>
       <section className="derechos">
-        <span>SoftCreate POS v: 2..0.0.2.9</span>
+        <span>
+          SoftCreate POS v1.0 
+        </span>
         <div className="separador"></div>
         <span>Ing: Johan Camilo Calderón Álvarez</span>
         <div className="separador"></div>

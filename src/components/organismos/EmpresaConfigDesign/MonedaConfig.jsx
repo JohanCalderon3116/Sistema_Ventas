@@ -27,7 +27,6 @@ export const MonedaConfig = () => {
     country.countryName.toLowerCase().includes(search),
   );
   const mutate = useEditarMonedaConfigEmpresaMutationStack();
-
   return (
     <Container>
       <InputText2>
@@ -97,7 +96,6 @@ export const MonedaConfig = () => {
     </Container>
   );
 };
-
 const Container = styled.div`
   display: flex;
   flex-direction: column;

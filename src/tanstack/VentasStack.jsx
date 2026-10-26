@@ -21,8 +21,7 @@ import { abrirCaja } from "../components/atomos/AbrirCajaImpresora";
 import { useResumenVentaStore } from "../store/ResumenVentaStore";
 
 export const useEliminarVentasIncompletasMutateStack = () => {
-  const { resetDetalleVenta } = useDetalleVentasStore();
-  const { eliminarventasIncompletas, resetState } = useVentasStore();
+  const { eliminarventasIncompletas } = useVentasStore();
   const { datausuarios } = useUsuariosStore();
   const { dataCierreCaja } = useCierreCajaStore();
   const queryClient = useQueryClient();
@@ -38,8 +37,6 @@ export const useEliminarVentasIncompletasMutateStack = () => {
       toast.error(error.message);
     },
     onSuccess: () => {
-      resetState();
-      resetDetalleVenta();
       queryClient.invalidateQueries({ queryKey: ["mostrar detalle venta"] });
       queryClient.invalidateQueries({ queryKey: ["mostrar stock"] });
       queryClient.invalidateQueries({
@@ -72,17 +69,6 @@ export const useConfirmarVentasMutationStack = ({
   const theme = useTheme();
   async function ConfirmarVenta() {
     if (restante === 0) {
-      if (queryClient.isFetching({ queryKey: ["mostrar detalle venta"] }) > 0) {
-        throw new Error("La venta se está actualizando, intenta de nuevo");
-      }
-      const pagadoNeto = Object.entries(valoresPago).reduce(
-        (acc, [tipo, monto]) =>
-          acc + (tipo === "Efectivo" ? monto - vuelto : monto),
-        0,
-      );
-      if (Math.abs(pagadoNeto - total) > 0.5) {
-        throw new Error("El pago no coincide con el total, vuelve a intentar");
-      }
       const pventas = {
         _id_venta: idventa,
         _id_usuario: datausuarios?.id,
@@ -110,7 +96,7 @@ export const useConfirmarVentasMutationStack = ({
             id_usuario: datausuarios?.id,
             id_cierre_caja: dataCierreCaja?.id,
             id_venta: idventa,
-            vuelto: 0,
+            vuelto: tipo === "Efectivo" ? vuelto : 0,
           };
           await insertarMovcaja(pmovcaja);
         }
@@ -123,11 +109,7 @@ export const useConfirmarVentasMutationStack = ({
       dataImpresorasXCaja?.state
         ? await imprimirDirectoTicket()
         : await imprimirConVentanaEmergente(responseVentaConfirmada);
-      const totalPagado = Object.values(valoresPago).reduce(
-        (acc, curr) => acc + curr,
-        0,
-      );
-      mostrarResumenVenta({ total, vuelto, restante, totalPagado });
+      mostrarResumenVenta({ total, vuelto, restante });
       await new Promise((r) => requestAnimationFrame(() => setTimeout(r, 50)));
     } else {
       toast.warning("Falta completar el pago, el restante tiene que ser cero");
@@ -161,9 +143,6 @@ export const useConfirmarVentasMutationStack = ({
         Swal.fire({
           icon: "warning",
           title: "Stock bajo",
-          showCancelButton: true,
-          confirmButtonColor: theme.halloweenPrimary,
-          cancelButtonColor: theme.halloweenDanger,
           html: `Los siguientes productos quedaron con poco stock: <ul style="text-align:left;">${listaHtml}</ul>`,
           confirmButtonText: "Entendido",
           background: theme.bg2,
@@ -208,28 +187,19 @@ export const useConfirmarVentasMutationStack = ({
       queryClient.invalidateQueries({
         queryKey: ["mostrar movimientos caja live"],
       });
-      queryClient.invalidateQueries({
-        queryKey: ["mostrar movimientos caja por fecha"],
-      });
       toast.success("😁🎉 Venta generada correctamente");
       document.getElementById("input-buscador-pos")?.focus();
     },
     onError: (error) => {
-      console.error(error);
-      toast.error(error?.message || "Tuvimos un error al insertar la venta");
+      toast.error("Tuvimos un error al insertar la venta");
     },
   });
 };
 export const useInsertarVentasConDetalleVentasMutationStack = (buscadorRef) => {
   const { dataStockXAlmacenesYProducto, setStateModal } = useStockStore();
   const queryClien = useQueryClient();
-  const {
-    idventa,
-    insertarVentas,
-    setIdventa,
-    catidadInput,
-    setCantidadInput,
-  } = useVentasStore();
+  const { idventa, insertarVentas, catidadInput, setCantidadInput } =
+    useVentasStore();
   const { almacenSelelctItem } = useAlmacenesStore();
   const fechaActual = useFormattedDate();
   const { datausuarios } = useUsuariosStore();
@@ -264,7 +234,6 @@ export const useInsertarVentasConDetalleVentasMutationStack = (buscadorRef) => {
       const result = await insertarVentas(pventas);
       if (result?.id > 0) {
         await insertarDVentas(result?.id);
-        setIdventa(result?.id);
       }
     } else {
       await insertarDVentas(idventa);
@@ -281,7 +250,7 @@ export const useInsertarVentasConDetalleVentasMutationStack = (buscadorRef) => {
       queryClien.invalidateQueries({
         queryKey: ["mostrar Stock Almacenes y Producto"],
       });
-      if (error.message?.includes("Stock insuficiente")) {
+      if (dataStockXAlmacenesYProducto) {
         setStateModal(true);
       }
     },
@@ -300,13 +269,8 @@ export const useInsertarVentasConDetalleVentasMutationStack = (buscadorRef) => {
 export const useInsertarVentaDesdeAlmacenAlternoMutationStack = () => {
   const { dataStockXAlmacenesYProducto, setStateModal } = useStockStore();
   const queryClien = useQueryClient();
-  const {
-    idventa,
-    insertarVentas,
-    setIdventa,
-    catidadInput,
-    setCantidadInput,
-  } = useVentasStore();
+  const { idventa, insertarVentas, catidadInput, setCantidadInput } =
+    useVentasStore();
   const fechaActual = useFormattedDate();
   const { datausuarios } = useUsuariosStore();
   const { dataCierreCaja } = useCierreCajaStore();
@@ -343,7 +307,6 @@ export const useInsertarVentaDesdeAlmacenAlternoMutationStack = () => {
       const result = await insertarVentas(pventas);
       if (result?.id > 0) {
         await insertarDVentas(result?.id, idAlmacen);
-        setIdventa(result?.id);
       }
     } else {
       await insertarDVentas(idventa, idAlmacen);
@@ -360,7 +323,7 @@ export const useInsertarVentaDesdeAlmacenAlternoMutationStack = () => {
       queryClien.invalidateQueries({
         queryKey: ["mostrar Stock Almacenes y Producto"],
       });
-      if (error.message?.includes("Stock insuficiente")) {
+      if (dataStockXAlmacenesYProducto) {
         setStateModal(true);
       }
     },

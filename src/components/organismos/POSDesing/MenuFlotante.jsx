@@ -4,7 +4,6 @@ import { useCierreCajaStore } from "../../../store/CierreCajaStore";
 import { Device } from "../../../styles/breakpoints";
 import { Icon } from "@iconify/react";
 import { useEliminarVentasMutationStack } from "../../../tanstack/VentasStack";
-
 export const MenuFlotante = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { setStateIngresoSalida, setTipoRegistro, setStateCierreCaja } =
@@ -25,39 +24,43 @@ export const MenuFlotante = () => {
             setTipoRegistro("ingreso");
           }}
         >
-          <Icon icon="lucide:arrow-down-circle" />
+          <Icon icon="noto:money-with-wings" />
           <Text>Ingresar dinero</Text>
         </MenuItem>
         <MenuItem
           isOpen={isOpen}
-          delay="0.06s"
+          delay="0.1s"
           onClick={() => {
             toggleMenu();
             setStateIngresoSalida(true);
             setTipoRegistro("salida");
           }}
         >
-          <Icon icon="lucide:arrow-up-circle" />
+          <Icon icon="noto-v1:money-bag" />
           <Text>Retirar dinero</Text>
         </MenuItem>
         <MenuItem
           isOpen={isOpen}
-          delay="0.12s"
+          delay="0.2s"
           onClick={() => {
             toggleMenu();
             setStateCierreCaja(true);
           }}
         >
-          <Icon icon="lucide:lock" />
+          <Icon icon="fxemoji:closedmailboxraised" />
           <Text>Cerrar caja</Text>
         </MenuItem>
-        <MenuItem isOpen={isOpen} delay="0.18s" onClick={mutateEliminarVenta}>
-          <Icon icon="lucide:trash-2" />
+        {/* <MenuItem isOpen={isOpen} delay="0.4s">
+          <Icon icon="icon-park:preview-open" />
+          <Text>Ver ventas del día</Text>
+        </MenuItem> */}
+        <MenuItem isOpen={isOpen} delay="0.3s" onClick={mutateEliminarVenta}>
+          <Icon icon="flat-color-icons:delete-row" />
           <Text>Eliminar venta</Text>
         </MenuItem>
       </MenuItems>
       <FloatingButton onClick={toggleMenu}>
-        <Icon icon="lucide:chevron-up" fontSize={28} />
+        <Icon icon="mdi:menu-up-outline" fontSize={50} />
       </FloatingButton>
     </Container>
   );
@@ -65,7 +68,7 @@ export const MenuFlotante = () => {
 
 const slideUp = keyframes`
   from {
-    transform: translateY(14px);
+    transform: translateY(20px);
     opacity: 0;
   }
   to {
@@ -73,7 +76,6 @@ const slideUp = keyframes`
     opacity: 1;
   }
 `;
-
 const Container = styled.div`
   position: fixed;
   bottom: 95px;
@@ -82,68 +84,52 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 10px;
-  z-index: 40;
   @media ${Device.desktop} {
     display: none;
   }
 `;
-
 const FloatingButton = styled.button`
-  border: 1px solid ${({ theme }) => theme.color2};
-  background-color: ${({ theme }) => theme.bgcards};
-  color: ${({ theme }) => theme.text};
+  border: none;
   border-radius: 50%;
-  width: 52px;
-  height: 52px;
+  width: 60px;
+  height: 60px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
-  transition: all 0.2s ease-out;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease-in-out;
   &:hover {
-    border-color: rgba(139, 92, 246, 0.35);
-    transform: translateY(-2px);
+    transform: rotate(90deg);
   }
 `;
-
 const MenuItems = styled.div`
   margin-top: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 15px;
   ${({ isOpen }) => !isOpen && "display: none;"}
 `;
-
 const MenuItem = styled.div`
-  background-color: ${({ theme }) => theme.bgcards};
-  color: ${({ theme }) => theme.text};
-  border: 1px solid ${({ theme }) => theme.color2};
-  border-radius: 999px;
-  padding: 10px 18px;
+  background-color: #ffffff;
+  border: none;
+  border-radius: 50px;
+  padding: 10px 15px;
   display: flex;
   align-items: center;
   justify-content: flex-start;
   gap: 10px;
   cursor: pointer;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
-  transition: all 0.2s ease-out;
+  transition: background-color 0.3s ease;
   opacity: 0;
-  animation: ${({ isOpen }) => (isOpen ? slideUp : "none")} 0.25s ease forwards;
+  animation: ${({ isOpen }) => (isOpen ? slideUp : "none")} 0.4s ease forwards;
   animation-delay: ${({ delay }) => delay};
-  svg {
-    color: #8b5cf6;
-    font-size: 18px;
-  }
   &:hover {
-    border-color: rgba(139, 92, 246, 0.35);
-    transform: translateY(-1px);
+    background-color: #c7c7c7;
   }
 `;
-
 const Text = styled.span`
-  font-size: 14px;
-  font-weight: 600;
-  color: ${({ theme }) => theme.text};
+  font-size: 16px;
+  color: #000;
 `;

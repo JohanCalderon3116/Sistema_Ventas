@@ -51,6 +51,7 @@ export const ListSucursales = () => {
   }
   return (
     <Container>
+      <Toaster richColors></Toaster>
       {data?.map((sucursal, index) => {
         return (
           <Sucursal key={index}>

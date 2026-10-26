@@ -43,8 +43,8 @@ export function TablaCategorias({
       text: "Una vez eliminado, ¡no podrá recuperar este registro!",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: theme.halloweenPrimary,
-      cancelButtonColor: theme.halloweenDanger,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
       confirmButtonText: "Si, eliminar",
       background: theme.bg2,
       color: theme.text,
@@ -257,10 +257,10 @@ const Container = styled.div`
         overflow: auto;
       }
       th {
-        border-bottom: 2px solid ${({ theme }) => theme.halloweenBorder};
+        border-bottom: 2px solid ${({ theme }) => theme.color2};
         font-weight: 700;
         text-align: center;
-        color: ${({ theme }) => theme.halloweenPrimary};
+        color: ${({ theme }) => theme.text};
         &:first-of-type {
           text-align: center;
         }
@@ -308,10 +308,6 @@ const Container = styled.div`
         @media (min-width: ${v.bpbart}) {
           display: table-row;
           border-width: 1px;
-          transition: background-color 0.2s ease;
-          &:hover {
-            background: ${({ theme }) => theme.bgAlpha};
-          }
         }
         &:last-of-type {
           margin-bottom: 0;
@@ -347,6 +343,7 @@ const Container = styled.div`
       td {
         text-align: right;
         @media (min-width: ${v.bpbart}) {
+          /* border-bottom: 1px solid rgba(161, 161, 161, 0.32); */
           text-align: center;
         }
       }

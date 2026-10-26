@@ -9,16 +9,13 @@ export function InputText({ children, icono, textaling }) {
     </Container>
   );
 }
-
 const Container = styled.div`
   position: relative;
   display: flex;
   align-items: center;
   gap: 10px;
   p {
-    color: #ef4444;
-    font-size: 12px;
-    margin-top: 4px;
+    color: #f46943;
   }
   .form__group {
     position: relative;
@@ -37,20 +34,20 @@ const Container = styled.div`
     font-family: inherit;
     width: 100%;
     border: none;
-    border-bottom: 2px solid ${({ theme }) => theme.color2 || "#71717a"};
+    border-bottom: 2px solid #9b9b9b;
     outline: 0;
-    font-size: 16px;
+    font-size: 17px;
     color: ${(props) => props.theme.text};
     padding: 7px 0;
     background: transparent;
-    transition: border-color 0.2s ease;
+    transition: border-color 0.2s;
     text-align: ${(props) => props.$textaling};
     &.disabled {
-      color: #71717a;
-      background: ${({ theme }) => theme.bgAlpha};
+      color: #696969;
+      background: #2d2d2d;
       border-radius: 8px;
       margin-top: 8px;
-      border-bottom: 1px dashed #71717a;
+      border-bottom: 1px dashed #656565;
     }
   }
 
@@ -59,7 +56,7 @@ const Container = styled.div`
   }
 
   .form__field:placeholder-shown ~ .form__label {
-    font-size: 15px;
+    font-size: 17px;
     cursor: text;
     top: 20px;
   }
@@ -69,15 +66,17 @@ const Container = styled.div`
     top: 0;
     display: block;
     transition: 0.2s;
-    font-size: 14px;
-    color: ${({ theme }) => theme.colorSubtitle || "#71717a"};
+    font-size: 17px;
+    color: #9b9b9b;
     pointer-events: none;
   }
 
   .form__field:focus {
     padding-bottom: 6px;
-    font-weight: 600;
-    border-bottom: 2px solid ${(props) => props.theme.text};
+    font-weight: 700;
+    border-width: 1px;
+    border-image: linear-gradient(to right, #ec580e, #f23505);
+    border-image-slice: 1;
   }
 
   .form__field:focus ~ .form__label {
@@ -85,9 +84,9 @@ const Container = styled.div`
     top: 0;
     display: block;
     transition: 0.2s;
-    font-size: 14px;
-    color: ${(props) => props.theme.text};
-    font-weight: 600;
+    font-size: 17px;
+    color: #f9632c;
+    font-weight: 700;
   }
 
   .form__field:required,

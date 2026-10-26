@@ -64,9 +64,9 @@ export const useVentasStore = create((set, get) => ({
   },
   insertarVentas: async (p) => {
     const result = await InsertarVentas(p);
+    set({ idventa: result?.id });
     return result;
   },
-  setIdventa: (id) => set({ idventa: id }),
   eliminarventasIncompletas: async (p) => {
     await EliminarVentasIncompletas(p);
   },

@@ -164,6 +164,7 @@ const Container = styled.div`
       font-size: 0.8em;
       transform: scale(0.9);
     }
+
     thead {
       position: relative;
       padding: 0;
@@ -171,6 +172,7 @@ const Container = styled.div`
       height: auto;
       width: auto;
       overflow: auto;
+
       th {
         border-bottom: 1px solid ${({ theme }) => theme.color2};
         font-weight: 700;
@@ -192,6 +194,7 @@ const Container = styled.div`
           text-align: center;
           padding: 0.5em;
           border-bottom: 1px solid rgba(161, 161, 161, 0.32);
+
           @media (max-width: 768px) {
             padding: 0.4em;
           }
@@ -199,4 +202,13 @@ const Container = styled.div`
       }
     }
   }
+`;
+const Colorcontent = styled.div`
+  justify-content: center;
+  min-height: ${(props) => props.$alto};
+  width: ${(props) => props.$ancho};
+  display: flex;
+  background-color: ${(props) => props.color};
+  border-radius: 50%;
+  text-align: center;
 `;

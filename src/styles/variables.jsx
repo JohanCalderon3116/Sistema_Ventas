@@ -13,7 +13,6 @@ import { FaReact } from "react-icons/fa";
 import { BsArrowDown, BsArrowUpShort } from "react-icons/bs";
 import { FaBalanceScale } from "react-icons/fa";
 import logo from "../../public/SoftCreate POS logo.png";
-import logoFull from "../../public/SoftCreate POS full.png";
 import { FcGoogle } from "react-icons/fc";
 import { RiCloseLine } from "react-icons/ri";
 import { BiSave } from "react-icons/bi";
@@ -47,8 +46,8 @@ import { FaSearch } from "react-icons/fa";
 
 export const v = {
   iconoBuscar: FaSearch,
-  colorSecundario: `#A1A1AA`,
-  colorPrincipal: `#121216`,
+  colorSecundario: `#DAC1FF`,
+  colorPrincipal: `#027ADE`,
   iconoagregar: GrAdd,
   iconoimagenvacia: FcImageFile,
   iconoemijivacio: BsEmojiDizzy,
@@ -77,12 +76,12 @@ export const v = {
   emoji: BsEmojiLaughing,
   iconeditarTabla: RiEditLine,
   iconeliminarTabla: RiDeleteBin2Line,
-  colorIngresos: `#10B981`,
-  colorbgingresos: `rgba(16, 185, 129, 0.12)`,
-  colorGastos: `#EF4444`,
-  colorbgGastos: `rgba(239, 68, 68, 0.12)`,
-  colorError: `#EF4444`,
-  colorExito: `#10B981`,
+  colorIngresos: `#53B257`,
+  colorbgingresos: `#e6ffe7`,
+  colorGastos: `#fe6156`,
+  colorbgGastos: `#fbcbc9`,
+  colorError: `#F54E41`,
+  colorExito: `#9046FF`,
   bpmaggie: `15em`,
   bplisa: `30em`,
   bpbart: `48em`,
@@ -95,8 +94,8 @@ export const v = {
   iconoSettings: RiSettings3Line,
   iconoCerrarSesion: MdExitToApp,
   iconofotovacia: FcPicture,
-  verde: `#10B981`,
-  rojo: `#EF4444`,
+  verde: `#53B257`,
+  rojo: `#F54E41`,
   agregar: CgMathPlus,
   iconosupabase: TbBrandSupabase,
   iconoreact: FaReact,
@@ -104,7 +103,6 @@ export const v = {
   flechaarribalarga: BsArrowUpShort,
   balance: FaBalanceScale,
   logo: logo,
-  logoFull: logoFull,
   iconogoogle: FcGoogle,
   iconocerrar: RiCloseLine,
   iconoguardar: BiSave,
@@ -116,8 +114,8 @@ export const v = {
   iconocheck: BsCalendarCheck,
   iconoflechaderecha: IoIosArrowForward,
   iconoflechaizquierda: IoIosArrowBack,
-  colorselector: "#71717A",
-  rgbafondos: "rgba(18, 18, 22, 0.06)",
+  colorselector: "#BF94FF",
+  rgbafondos: "rgba(210, 110, 249, 0.1)",
   iconoprev: GrFormPrevious,
   icononext: GrCaretNext,
   iconotodos: MdOutlineBorderAll,

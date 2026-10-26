@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { Btn1 } from "../moleculas/Btn1";
+import { slideBackground } from "../../styles/Keyframes";
 import { Icon } from "@iconify/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useImpresorasStore } from "../../store/ImpresorasStore";
@@ -8,10 +9,11 @@ import { Switch } from "../ui/toogles/Switch";
 import { SelectList } from "../ui/lists/SelectList";
 import { toast, Toaster } from "sonner";
 import { useAsignacionCajaSucursalesStore } from "../../store/AsignacionCajaSucursales";
+import { useState } from "react";
 import ticket from "../../reports/TicketPrueba";
 import { HeaderImpresoras } from "../organismos/ImpresorasDesing/HeaderImpresoras";
-
 export const ImpresorasTemplate = () => {
+  const [selectedFile, setselectedFile] = useState(null);
   const {
     mostrarDatosPc,
     statePrintDirecto,
@@ -28,6 +30,7 @@ export const ImpresorasTemplate = () => {
   const {
     data: dataPcLocal,
     isLoading: isLoadingDatosPc,
+    error: errorDatosPc,
   } = useQuery({
     queryKey: ["mostrar datos de pc"],
     queryFn: mostrarDatosPc,
@@ -35,6 +38,8 @@ export const ImpresorasTemplate = () => {
 
   const {
     data: dataImpresorasXCaja,
+    isLoading: isLoadingImpresoraXCaja,
+    error: errorImpresoraXCaja,
   } = useQuery({
     queryKey: [
       "mostrar impresora por caja",
@@ -50,6 +55,8 @@ export const ImpresorasTemplate = () => {
 
   const {
     data: dataImpresorasLocales,
+    isLoading: isLoadingImpresorasLocales,
+    error: errorImpresorasLocales,
   } = useQuery({
     queryKey: ["mostrar impresoras locales"],
     queryFn: mostrarListaImpresoras,
@@ -63,7 +70,7 @@ export const ImpresorasTemplate = () => {
       toast.error(`Error en impresora: ${error.message}`);
     },
     onSuccess: () => {
-      toast.success("Configuración de impresora actualizada");
+      toast.success("Todo salio bien :3");
       queryClient.invalidateQueries(["mostrar impresora por caja"]);
     },
   });
@@ -81,6 +88,7 @@ export const ImpresorasTemplate = () => {
 
   const probarTicket = async () => {
     const response = await ticket("b64");
+    // Convertir el contenido base64 en un archivo Blob
     const binaryString = atob(response.content);
     const binaryLen = binaryString.length;
     const bytes = new Uint8Array(binaryLen);
@@ -88,6 +96,7 @@ export const ImpresorasTemplate = () => {
       bytes[i] = binaryString.charCodeAt(i);
     }
     const blob = new Blob([bytes], { type: "application/pdf" });
+    // Crear un archivo simulando un archivo subido
     const file = new File([blob], "GeneratedTicket.pdf", {
       type: "application/pdf",
     });
@@ -117,8 +126,9 @@ export const ImpresorasTemplate = () => {
     document.body.removeChild(link);
   };
   const isloading = isLoadingDatosPc;
+  const error = errorDatosPc;
   if (isloading) {
-    return <BarLoader color="#71717A"></BarLoader>;
+    return <BarLoader color="#b7b7b7"></BarLoader>;
   }
   return (
     <Container>
@@ -137,7 +147,7 @@ export const ImpresorasTemplate = () => {
             ></Switch>
           </ContentSwich>
 
-          <CardBox>
+          <Avatar $bg="#9d0ec5">
             {statePrintDirecto ? (
               <>
                 <Btn1 titulo="Probar" funcion={probarTicket}></Btn1>
@@ -149,43 +159,41 @@ export const ImpresorasTemplate = () => {
                 ></SelectList>
                 <Btn1
                   titulo="Guardar"
-                  bgcolor="#10B981"
-                  color="#FFFFFF"
                   funcion={doEditar}
                   disabled={isPending}
                 ></Btn1>
               </>
             ) : (
               <span className="anuncio">
-                Se mostrará un cuadro de diálogo al momento de imprimir.
+                Se mostrara un cudro de dialogo al momento de imprimit
               </span>
             )}
-          </CardBox>
+          </Avatar>
         </SubContainer>
       ) : (
         <SubContainer>
           <Title>Impresoras</Title>
           <SubTitle>Descargue e instale el servidor</SubTitle>
-          <CardBox>
+          <Avatar $bg="#9d0ec5">
             <Btn1
               titulo="Descargar"
-              bgcolor="#121216"
-              color="#FFFFFF"
               funcion={() =>
                 descargarArchivo(
                   "https://drive.google.com/file/d/1QKSQGn79VVduDoAQF9nb_GM5ZJMci_rx/view?usp=drive_link",
                 )
               }
             ></Btn1>
-            <span className="nombre">Ver tutorial</span>
-          </CardBox>
+            <span className="nombre"> Ver tutorial</span>
+          </Avatar>
           <span className="descripcion">
-            Servicio para imprimir directo a impresoras térmicas
+            {" "}
+            Servicio para imprimir directo a impresoras termicas
           </span>
+          <br />
           <section className="advertencia">
-            <Icon className="icono" icon="lucide:info" />
+            <Icon className="icono" icon="meteocons:barometer" />
             <span>
-              Si ya descargó e instaló el ejecutable, actualice esta página.
+              Si ya descargo e instalo el ejecutable, actualice esta pagina :p
             </span>
           </section>
         </SubContainer>
@@ -195,83 +203,75 @@ export const ImpresorasTemplate = () => {
 };
 
 const Container = styled.div`
-  max-width: 440px;
-  min-height: 100vh;
+  max-width: 400px;
+  height: 100vh;
   display: flex;
   align-items: center;
   margin: auto;
-  padding: 24px 16px;
   position: relative;
 `;
-
 const ContentSwich = styled.section`
   display: flex;
-  align-items: center;
-  justify-content: space-between;
   gap: 15px;
   margin-bottom: 10px;
 `;
-
 const SubContainer = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 10px;
   .advertencia {
-    background-color: ${({ theme }) => theme.bgcards};
-    border: 1px solid ${({ theme }) => theme.color2};
-    border-radius: 12px;
-    padding: 14px 16px;
+    background-color: rgba(237, 95, 6, 0.2);
+    border-radius: 10px;
+    margin-top: 10px;
+    margin: auto;
+    height: 70px;
     display: flex;
-    gap: 12px;
-    color: ${({ theme }) => theme.colorSubtitle};
+    color: #f75510;
     width: 100%;
     align-items: center;
-    font-size: 13px;
     .icono {
-      font-size: 22px;
-      flex-shrink: 0;
-      color: ${({ theme }) => theme.text};
+      font-size: 100px;
     }
   }
 `;
-
-const Title = styled.h1`
-  font-size: 28px;
-  margin: 0 0 8px;
-  font-weight: 700;
+const Title = styled.span`
+  font-size: 44px;
+  margin-bottom: 20px;
+  font-weight: bold;
+  position: absolute;
+  top: 50px;
+  right: 0;
+  left: 0;
   text-align: center;
 `;
-
 const SubTitle = styled.span`
-  font-size: 15px;
-  font-weight: 500;
-  color: ${({ theme }) => theme.colorSubtitle};
+  font-size: 20px;
 `;
-
-const CardBox = styled.div`
+const Avatar = styled.div`
   display: flex;
   align-items: center;
-  padding: 24px 20px;
+  margin-bottom: 20px;
   position: relative;
-  border-radius: 16px;
-  min-height: 180px;
+  border-radius: 10px;
+  height: 200px;
   flex-direction: column;
   justify-content: center;
-  gap: 14px;
-  background-color: ${({ theme }) => theme.bgcards};
-  border: 1px solid ${({ theme }) => theme.color2};
+  gap: 10px;
 
   .nombre {
-    font-size: 14px;
-    font-weight: 600;
+    font-size: 30px;
+    font-weight: bold;
     cursor: pointer;
-    color: ${({ theme }) => theme.colorSubtitle};
   }
   .anuncio {
     text-align: center;
-    font-weight: 500;
-    font-size: 14px;
-    color: ${({ theme }) => theme.colorSubtitle};
+    font-weight: bold;
+    color: #fff;
   }
+  background-color: ${(props) => props.$bg};
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 120 120'%3E%3Cpolygon fill='%23000' fill-opacity='0.19' points='120 0 120 60 90 30 60 0 0 0 0 0 60 60 0 120 60 120 90 90 120 60 120 0'/%3E%3C/svg%3E");
+
+  background-size: 60px 60px;
+  animation: ${slideBackground} 10s linear infinite;
 `;

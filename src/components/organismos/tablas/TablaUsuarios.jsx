@@ -39,8 +39,8 @@ export function TablaUsuarios({
       text: "Una vez eliminado, ¡no podrá recuperar este registro!",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: theme.halloweenPrimary,
-      cancelButtonColor: theme.halloweenDanger,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
       confirmButtonText: "Si, eliminar",
       background: theme.bg2,
       color: theme.text,
@@ -233,16 +233,15 @@ export function TablaUsuarios({
 }
 const Container = styled.div`
   position: relative;
-  margin: 3% 2%;
-  color: ${({ theme }) => theme.text};
 
+  margin: 5% 3%;
   @media (min-width: ${v.bpbart}) {
     margin: 2%;
   }
   @media (min-width: ${v.bphomer}) {
     margin: 2em auto;
+    /* max-width: ${v.bphomer}; */
   }
-
   .responsive-table {
     width: 100%;
     margin-bottom: 1.5em;
@@ -255,6 +254,7 @@ const Container = styled.div`
     }
     thead {
       position: absolute;
+
       padding: 0;
       border: 0;
       height: 1px;
@@ -268,10 +268,10 @@ const Container = styled.div`
         overflow: auto;
       }
       th {
-        border-bottom: 2px solid ${({ theme }) => theme.halloweenBorder};
+        border-bottom: 2px solid ${({ theme }) => theme.color2};
         font-weight: 700;
         text-align: center;
-        color: ${({ theme }) => theme.halloweenPrimary};
+        color: ${({ theme }) => theme.text};
         &:first-of-type {
           text-align: center;
         }
@@ -319,13 +319,13 @@ const Container = styled.div`
         @media (min-width: ${v.bpbart}) {
           display: table-row;
           border-width: 1px;
-          transition: background-color 0.2s ease;
-          &:hover {
-            background: ${({ theme }) => theme.bgAlpha};
-          }
         }
         &:last-of-type {
           margin-bottom: 0;
+        }
+        &:nth-of-type(even) {
+          @media (min-width: ${v.bpbart}) {
+          }
         }
       }
       th[scope="row"] {
@@ -344,6 +344,7 @@ const Container = styled.div`
         justify-content: space-between;
         align-items: center;
         height: 50px;
+
         border-bottom: 1px solid rgba(161, 161, 161, 0.32);
         @media (min-width: ${v.bpbart}) {
           justify-content: center;
@@ -353,6 +354,7 @@ const Container = styled.div`
       td {
         text-align: right;
         @media (min-width: ${v.bpbart}) {
+          /* border-bottom: 1px solid rgba(161, 161, 161, 0.32); */
           text-align: center;
         }
       }
@@ -369,4 +371,13 @@ const Container = styled.div`
       }
     }
   }
+`;
+const Colorcontent = styled.div`
+  justify-content: center;
+  min-height: ${(props) => props.$alto};
+  width: ${(props) => props.$ancho};
+  display: flex;
+  background-color: ${(props) => props.color};
+  border-radius: 50%;
+  text-align: center;
 `;

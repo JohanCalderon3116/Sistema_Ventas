@@ -1,4 +1,4 @@
-import { ThemeProvider } from "styled-components";
+import styled, { ThemeProvider } from "styled-components";
 import {
   AuthContextProvider,
   Dark,
@@ -8,33 +8,34 @@ import {
   useUsuariosStore,
 } from "./index";
 import { useThemeStore } from "./store/ThemeStore";
+import { useLocation } from "react-router-dom";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useEffect } from "react";
-import { LimpiezaVentas } from "./hooks/LimpiezaVentas";
-import { AuthGate } from "./hooks/AuthGate";
-
 function App() {
-  const { setTheme, themeStyle } = useThemeStore();
+  const { setTheme, themeStyle, theme } = useThemeStore();
   const { datausuarios } = useUsuariosStore();
-
+  const location = useLocation();
   useEffect(() => {
-    if (datausuarios?.tema) {
-      const themeStyle = datausuarios.tema === "light" ? Light : Dark;
+    if (location.pathname === "/login") {
       setTheme({
-        tema: datausuarios.tema,
-        style: themeStyle,
+        tema: "light",
+        style: Light,
       });
+    } else {
+      if (datausuarios) {
+        const themeStyle = datausuarios?.tema === "light" ? Light : Dark;
+        setTheme({
+          tema: datausuarios?.tema,
+          style: themeStyle,
+        });
+      }
     }
-  }, [datausuarios?.tema, setTheme]);
-
+  }, [datausuarios, location.pathname]);
   return (
     <ThemeProvider theme={themeStyle}>
       <AuthContextProvider>
         <GlobalStyles></GlobalStyles>
-        <LimpiezaVentas />
-        <AuthGate>
-          <Myroutes></Myroutes>
-        </AuthGate>
+        <Myroutes></Myroutes>
         <ReactQueryDevtools initialIsOpen={true}></ReactQueryDevtools>
       </AuthContextProvider>
     </ThemeProvider>
