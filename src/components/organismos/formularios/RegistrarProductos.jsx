@@ -1,4 +1,4 @@
-import styled, { useTheme } from "styled-components";
+import styled, { keyframes, useTheme } from "styled-components";
 import { v } from "../../../styles/variables";
 import {
   InputText,
@@ -24,6 +24,17 @@ import Swal from "sweetalert2";
 import { ContainerSelector } from "./RegistrarInventario";
 import { BeatLoader } from "react-spinners";
 import { toast } from "sonner";
+
+const aparecer = keyframes`
+  from {
+    opacity: 0;
+    margin-top: 10px;
+  }
+  to {
+    opacity: 1;
+    margin-top: 0;
+  }
+`;
 
 export function RegistrarProductos({
   onClose,
@@ -63,12 +74,8 @@ export function RegistrarProductos({
     stateInventarios,
     setStateInventarios,
   } = useProductosStore();
-  const {
-    dataalmacen,
-    eliminarAlmacen,
-    almacenSelelctItem,
-    setAlmacenSelelctItem,
-  } = useAlmacenesStore();
+  const { dataalmacen, almacenSelelctItem, setAlmacenSelelctItem } =
+    useAlmacenesStore();
   const [stateEnabledStock, setstatEEnabledStock] = useState(false);
   const { datacategorias, selectCategoria, categoriaItemSelect } =
     useCategoriasStore();
@@ -76,7 +83,9 @@ export function RegistrarProductos({
     useSucursalesStore();
   const theme = useTheme();
   const { data: dataStockXAlamacenYProducto } =
-    useMostrarStckAlmacenYProductoQueryStack({ dataSelect });
+    useMostrarStckAlmacenYProductoQueryStack({
+      dataSelect,
+    });
   const { data: dataAlmacenes } =
     useMostrarAlmacenesXSucursalItemSelectQueryStack();
   const {
@@ -97,7 +106,6 @@ export function RegistrarProductos({
     onClose();
     setIsExploding(true);
   }
-  //#region validar vacios
   function validarVacios(data) {
     if (!randomCodeInterno) {
       generarCodigoInterno();
@@ -122,8 +130,6 @@ export function RegistrarProductos({
       }
     }
   }
-  //#endregion
-  //#region generarcodigo
   function generarCodigoInterno() {
     generarCodigo();
     setRandomCodeInterno(codigogenerado);
@@ -140,10 +146,9 @@ export function RegistrarProductos({
   const handleChangebarras = (event) => {
     setRandomCodeBarras(event.target.value);
   };
-  //#endregion
-  //#region validar accion
   useEffect(() => {
     if (accion != "Editar") {
+      setSevendePor("Unidad");
       generarCodigoInterno();
       setRandomCodeBarras("");
     } else {
@@ -166,8 +171,6 @@ export function RegistrarProductos({
         : setstatEEnabledStock(false);
     }
   }, []);
-  //#endregion
-  //#region validar check
   function checkUseInventarios() {
     if (accion === "Editar") {
       if (dataalmacen) {
@@ -177,16 +180,18 @@ export function RegistrarProductos({
             text: "Si desactiva esta opción se elimina el stock",
             icon: "warning",
             showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
+            confirmButtonColor: "#18181B",
+            cancelButtonColor: "#71717A",
             confirmButtonText: "Si, eliminar",
-            background: theme.bg2,
+            background: theme.bgcards || theme.bg2,
             color: theme.text,
           }).then(async (result) => {
             if (result.isConfirmed) {
               setStateInventarios(false);
-              await EliminarStock({ id: dataStockXAlamacenYProducto.id });
-              toast.success("¡Listo! Borraste el stock correctamente 🗑️");
+              await EliminarStock({
+                id: dataStockXAlamacenYProducto.id,
+              });
+              toast.success("Stock eliminado correctamente");
             }
           });
         } else {
@@ -204,7 +209,7 @@ export function RegistrarProductos({
     setStockMinimo("");
     setUbicacion("");
   }, [almacenSelelctItem]);
-  //#endregion
+
   return (
     <Container>
       {isPending ? (
@@ -212,7 +217,7 @@ export function RegistrarProductos({
           <span>
             <strong>Guardando</strong>
           </span>
-          <BeatLoader color={theme.text} size={8} />
+          <BeatLoader color={theme.color1 || "#8B5CF6"} size={8} />
         </ConteinerLoader>
       ) : (
         <div className="sub-contenedor">
@@ -242,9 +247,7 @@ export function RegistrarProductos({
                     defaultValue={dataSelect.nombre}
                     type="text"
                     placeholder="nombre"
-                    {...register("nombre", {
-                      required: true,
-                    })}
+                    {...register("nombre", { required: true })}
                   />
                   <label className="form__label">Nombre</label>
                   {errors.nombre?.type === "required" && <p>Campo requerido</p>}
@@ -284,7 +287,6 @@ export function RegistrarProductos({
                     onChange={handleChangebarras}
                     type="number"
                     placeholder="codigo de barras"
-                    // {...register("codigo_barra", {})}
                   />
                   <label className="form__label">Codigo de barras</label>
                 </InputText>
@@ -303,7 +305,6 @@ export function RegistrarProductos({
                     onChange={handleChangeinterno}
                     type="text"
                     placeholder="codigo interno"
-                    // {...register("codigo_interno", {})}
                   />
                   <label className="form__label">Codigo interno</label>
                 </InputText>
@@ -368,8 +369,7 @@ export function RegistrarProductos({
                   </ContainerSelector>
                   {stateEnabledStock && dataStockXAlamacenYProducto && (
                     <ContainerMensajeStock>
-                      💀 Para poder editar el stock, te toca en el modulo
-                      'Inventario' 💀 XD
+                      Para modificar el stock existente, dirígete al módulo de Inventario.
                     </ContainerMensajeStock>
                   )}
                   <article>
@@ -431,11 +431,11 @@ export function RegistrarProductos({
                 </ContainerStock>
               )}
             </section>
-
             <Btn1
               icono={<v.iconoguardar />}
               titulo="Guardar"
-              bgcolor="#3300E3"
+              bgcolor="#18181B"
+              color="#FFFFFF"
             />
           </form>
         </div>
@@ -443,41 +443,45 @@ export function RegistrarProductos({
     </Container>
   );
 }
+
 const Container = styled.div`
   transition: 0.5s;
   top: 0;
   left: 0;
   position: fixed;
-  background-color: rgba(10, 9, 9, 0.5);
+  background-color: rgba(9, 9, 11, 0.55);
+  backdrop-filter: blur(5px);
   display: flex;
   width: 100%;
   min-height: 100vh;
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  backdrop-filter: blur(5px);
-
+  overflow: hidden;
   .sub-contenedor {
     position: relative;
     max-width: 90%;
-    max-height: 90vh; /* 👈 limite de altura */
+    max-height: 90vh;
     overflow-y: auto;
-    border-radius: 20px;
-    background: ${({ theme }) => theme.bgtotal};
-    box-shadow: -10px 15px 30px rgba(10, 9, 9, 0.4);
-    padding: 13px 36px 20px 36px;
+    border-radius: 16px;
+    background: ${({ theme }) => theme.bgcards || theme.body};
+    border: 1px solid ${({ theme }) => theme.color2};
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.28);
+    padding: 16px 36px 24px 36px;
     z-index: 100;
-    border-radius: 8px;
-
+    overflow-x: hidden;
+    animation: ${aparecer} 0.3s ease forwards;
     .headers {
+      position: relative;
+      z-index: 5;
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 20px;
-
       h1 {
-        font-size: 25px;
-        font-weight: 500;
+        font-size: 22px;
+        font-weight: 700;
+        color: ${({ theme }) => theme.text};
       }
       span {
         font-size: 20px;
@@ -485,6 +489,8 @@ const Container = styled.div`
       }
     }
     .formulario {
+      position: relative;
+      z-index: 5;
       display: grid;
       grid-template-columns: 1fr;
       gap: 15px;
@@ -501,70 +507,63 @@ const Container = styled.div`
         position: relative;
       }
     }
-  }
-`;
-const ContainerStock = styled.div`
-  border: 1px solid rgba(240, 104, 46, 0.9);
-  display: flex;
-  border-radius: 15px;
-  padding: 12px;
-  flex-direction: column;
-  background-color: rgba(240, 127, 46, 0.05);
-`;
-const ContentTitle = styled.div`
-  display: flex;
-  justify-content: start;
-  align-items: center;
-  gap: 20px;
-
-  svg {
-    font-size: 25px;
-  }
-  input {
-    border: none;
-    outline: none;
-    background: transparent;
-    padding: 2px;
-    width: 40px;
-    font-size: 28px;
-  }
-`;
-const PictureContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: start;
-  border: 2px dashed #f9d70b;
-  border-radius: 5px;
-  background-color: rgba(249, 215, 11, 0.1);
-  padding: 8px;
-  position: relative;
-  gap: 3px;
-  margin-bottom: 8px;
-
-  .ContentImage {
-    overflow: hidden;
-    img {
-      width: 100%;
-      object-fit: contain;
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: ${({ theme }) => theme.colorScroll || "#3F3F46"};
+      border-radius: 10px;
+    }
+    @media ${v.bplisa} {
+      max-width: 92%;
+      padding: 13px 25px 20px 25px;
+    }
+    @media ${v.bpmarge} {
+      max-width: 95%;
+      padding: 13px 18px 20px 18px;
+      .headers {
+        h1 {
+          font-size: 20px;
+        }
+      }
     }
   }
-  input {
-    display: none;
+`;
+
+const ContainerStock = styled.div`
+  border: 1px solid ${({ theme }) => theme.color2};
+  display: flex;
+  border-radius: 12px;
+  padding: 14px;
+  flex-direction: column;
+  background-color: transparent;
+  transition: 0.2s ease;
+  &:hover {
+    border-color: rgba(139, 92, 246, 0.32);
   }
 `;
+
 const ContainerBtnGenerar = styled.div`
   position: absolute;
   right: 0px;
   top: 10%;
 `;
+
 const ContainerMensajeStock = styled.div`
   text-align: center;
-  color: #f9184c;
-  background-color: rgba(249, 24, 35, 0.2);
+  color: ${({ theme }) => theme.colorSubtitle || "#A1A1AA"};
+  background-color: rgba(139, 92, 246, 0.08);
+  border: 1px solid rgba(139, 92, 246, 0.22);
   border-radius: 10px;
-  padding: 5px;
-  margin: 10px;
+  padding: 8px 12px;
+  margin: 10px 0;
+  font-size: 13px;
+  font-weight: 500;
 `;
+
 const ConteinerLoader = styled.div`
   display: flex;
   align-items: center;
@@ -572,4 +571,10 @@ const ConteinerLoader = styled.div`
   flex-direction: column;
   gap: 8px;
   height: 100vh;
+  color: ${({ theme }) => theme.text};
+  span {
+    strong {
+      font-size: 18px;
+    }
+  }
 `;

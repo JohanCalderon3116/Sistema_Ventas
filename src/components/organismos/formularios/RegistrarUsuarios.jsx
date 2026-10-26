@@ -44,7 +44,7 @@ export function RegistrarUsuarios({ accion, dataSelect, onClose }) {
           <span>
             <strong>Cargando</strong>
           </span>
-          <BeatLoader color={theme.text} size={8} />
+          <BeatLoader color={theme.color1 || "#8B5CF6"} size={8} />
         </ConteinerLoader>
       </Container>
     );
@@ -56,7 +56,7 @@ export function RegistrarUsuarios({ accion, dataSelect, onClose }) {
           <span>
             <strong>Guardando</strong>
           </span>
-          <BeatLoader color={theme.text} size={8} />
+          <BeatLoader color={theme.color1 || "#8B5CF6"} size={8} />
         </ConteinerLoader>
       ) : (
         <Form onSubmit={handleSubmit(manejadorInsertar)}>
@@ -70,7 +70,7 @@ export function RegistrarUsuarios({ accion, dataSelect, onClose }) {
             <section className="area1">
               <article>
                 <InputText
-                  icono={<Icon icon="line-md:account-add" height="30"></Icon>}
+                  icono={<Icon icon="lucide:user-plus" height="24"></Icon>}
                 >
                   <input
                     className="form__field"
@@ -89,7 +89,7 @@ export function RegistrarUsuarios({ accion, dataSelect, onClose }) {
               <article>
                 <InputText
                   icono={
-                    <Icon icon="fluent:password-16-filled" height="30"></Icon>
+                    <Icon icon="lucide:key-round" height="24"></Icon>
                   }
                 >
                   <input
@@ -109,7 +109,7 @@ export function RegistrarUsuarios({ accion, dataSelect, onClose }) {
               <article>
                 <InputText
                   icono={
-                    <Icon icon="icon-park-outline:edit-name" height="30"></Icon>
+                    <Icon icon="lucide:user" height="24"></Icon>
                   }
                 >
                   <input
@@ -130,7 +130,7 @@ export function RegistrarUsuarios({ accion, dataSelect, onClose }) {
                 </InputText>
               </article>
               <article>
-                <InputText icono={<Icon icon="tabler:id" height="30"></Icon>}>
+                <InputText icono={<Icon icon="lucide:id-card" height="24"></Icon>}>
                   <input
                     className="form__field"
                     defaultValue={
@@ -150,7 +150,7 @@ export function RegistrarUsuarios({ accion, dataSelect, onClose }) {
               </article>
               <article>
                 <InputText
-                  icono={<Icon icon="ic:baseline-phone" height="30"></Icon>}
+                  icono={<Icon icon="lucide:phone" height="24"></Icon>}
                 >
                   <input
                     className="form__field"
@@ -188,7 +188,7 @@ export function RegistrarUsuarios({ accion, dataSelect, onClose }) {
                   data={dataCaja}
                 ></SelectList>
               </article>
-              <Btn1 titulo="Guardar" color="#fff" bgcolor="#2c2ca8"></Btn1>
+              <Btn1 titulo="Guardar" color="#fff" bgcolor="#18181B"></Btn1>
             </section>
             <section className="area2">
               <PermisosUser></PermisosUser>
@@ -199,6 +199,7 @@ export function RegistrarUsuarios({ accion, dataSelect, onClose }) {
     </Container>
   );
 }
+
 const Container = styled.div`
   transition: 0.5s;
   top: 0;
@@ -210,21 +211,24 @@ const Container = styled.div`
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  background-color: rgba(9, 9, 11, 0.55);
   backdrop-filter: blur(5px);
 `;
+
 const Form = styled.form`
   display: flex;
   flex-direction: column;
   gap: 15px;
-  background-color: ${({ theme }) => theme.body};
-  padding: 20px;
-  border-radius: 8px;
+  background-color: ${({ theme }) => theme.bgcards || theme.body};
+  padding: 24px;
+  border-radius: 16px;
   position: relative;
   overflow-y: auto;
   max-height: 90vh;
   width: 100%;
   margin: 10px;
-  border: 1px solid ${({ theme }) => theme.bg};
+  border: 1px solid ${({ theme }) => theme.color2};
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.28);
   .main {
     display: flex;
     flex-direction: column;
@@ -238,13 +242,15 @@ const Form = styled.form`
     }
   }
 `;
+
 const Header = styled.div`
   width: 100%;
   display: flex;
 `;
+
 const Title = styled.span`
-  font-size: 30px;
-  font-weight: bold;
+  font-size: 24px;
+  font-weight: 700;
 `;
 
 const ConteinerLoader = styled.div`

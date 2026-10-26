@@ -7,70 +7,71 @@ import {
   Title,
   useClientesProveedoresStore,
 } from "../../index";
-import { v } from "../../styles/variables";
 import { useState } from "react";
 import Confetti from "react-confetti-boom";
 import { useLocation } from "react-router-dom";
 import { Toaster } from "sonner";
+import { Icon } from "@iconify/react";
+
 export const ClientesProveedoresTemplate = () => {
-  const { dataclipro, setBuscador } = useClientesProveedoresStore();
-  const { setTipo } = useClientesProveedoresStore();
+  const { dataclipro, setBuscador, setTipo } = useClientesProveedoresStore();
   const [openRegistro, setOpenRegistro] = useState(false);
   const [accion, setAccion] = useState("");
   const [dataSelect, setDataSelect] = useState([]);
   const [isExploding, setIsExploding] = useState(false);
   const location = useLocation();
+  const esCliente = location.pathname === "/configuracion/clientes";
+  const titulo = esCliente ? "Clientes" : "Proveedores";
+
   function nuevoRegistro() {
-    const tipo =
-      location.pathname === "/configuracion/clientes" ? "cliente" : "proveedor";
-    setTipo(tipo);
+    setTipo(esCliente ? "cliente" : "proveedor");
     setOpenRegistro(!openRegistro);
     setAccion("Nuevo");
     setDataSelect([]);
     setIsExploding(false);
   }
+
   return (
     <Container>
-      <Toaster richColors></Toaster>
+      <Toaster richColors position="top-center" />
       {openRegistro && (
         <RegistrarClientesProveedores
           setIsExploding={setIsExploding}
           onClose={() => setOpenRegistro(!openRegistro)}
           dataSelect={dataSelect}
           accion={accion}
-        ></RegistrarClientesProveedores>
+        />
       )}
       <section className="area1">
-        <Title>
-          {" "}
-          {location.pathname === "/configuracion/clientes"
-            ? "Clientes"
-            : "Proveedores"}{" "}
-        </Title>{" "}
+        <Title>{titulo}</Title>
         <Btn1
           funcion={nuevoRegistro}
-          bgcolor="#3300E3"
+          bgcolor="#18181B"
+          color="255,255,255"
           titulo="Nuevo"
-          icono={<v.iconoagregar />}
-        ></Btn1>
+          border="1px"
+          icono={<Icon icon="lucide:plus" />}
+        />
       </section>
       <section className="area2">
-        <Buscador setBuscador={setBuscador}></Buscador>
+        <Buscador setBuscador={setBuscador} />
       </section>
       <section className="main">
-        {isExploding && <Confetti></Confetti>}
+        {isExploding && <Confetti />}
         <TablaClientesProveedores
           data={dataclipro}
           SetopenRegistro={setOpenRegistro}
           setAccion={setAccion}
           setdataSelect={setDataSelect}
-        ></TablaClientesProveedores>{" "}
+        />
       </section>
     </Container>
   );
 };
 
 const Container = styled.div`
+  position: relative;
+  z-index: 1;
   height: calc(100vh - 30px);
   padding: 15px;
   display: grid;
@@ -78,22 +79,37 @@ const Container = styled.div`
     "area1" 60px
     "area2" 60px
     "main" auto;
+  overflow: auto;
   .area1 {
     grid-area: area1;
-
     display: flex;
     justify-content: end;
     align-items: center;
     gap: 15px;
+    position: relative;
+    z-index: 2;
   }
   .area2 {
     grid-area: area2;
-
     display: flex;
     justify-content: end;
     align-items: center;
+    position: relative;
+    z-index: 2;
   }
   .main {
     grid-area: main;
+    position: relative;
+    z-index: 2;
+    min-height: 0;
+  }
+  button {
+    transition: all 0.2s ease-out;
+  }
+  button:hover {
+    transform: translateY(-1px);
+  }
+  button:active {
+    transform: scale(0.98);
   }
 `;

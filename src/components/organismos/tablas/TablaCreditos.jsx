@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import {
   ContentAccionesTabla,
   Paginacion,
@@ -17,7 +17,6 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { FaArrowsAltV } from "react-icons/fa";
-import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Icon } from "@iconify/react";
 export function TablaCreditos({
@@ -27,26 +26,27 @@ export function TablaCreditos({
   setAccion,
 }) {
   if (data == null) return;
+  const theme = useTheme();
   const [pagina, setPagina] = useState(1);
   const [datas, setData] = useState(data);
   const [columnFilters, setColumnFilters] = useState([]);
-  const { deleteCreditos, setCreditosItemSelect } = useCreditosStore();
+  const { setCreditosItemSelect } = useCreditosStore();
   const { abrirHistorial } = useMovimientosCreditosStore();
-  const queryClient = useQueryClient();
   function eliminar(p) {
     Swal.fire({
       title: "¿Estás seguro(a)?",
       text: "Una vez eliminado, ¡no podrá recuperar este registro!",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
+      confirmButtonColor: theme.halloweenPrimary,
+      cancelButtonColor: theme.halloweenDanger,
       confirmButtonText: "Si, eliminar",
+      background: theme.bg2,
+      color: theme.text,
     }).then(async (result) => {
       if (result.isConfirmed) {
-        await deleteCreditos({ id: p.id });
-        queryClient.invalidateQueries({ queryKey: ["mostrar creditos"] });
-        toast.success("Se eliminó correctamente el crédito 🙌");
+        await eliminarCliPro({ id: p.id });
+        toast.success("Se eliminó correctamente 🙌");
       } else {
         toast.info("Eliminación cancelada, no se hizo ningún cambio. 😮✅");
       }
@@ -258,15 +258,16 @@ export function TablaCreditos({
 }
 const Container = styled.div`
   position: relative;
+  margin: 3% 2%;
+  color: ${({ theme }) => theme.text};
 
-  margin: 5% 3%;
   @media (min-width: ${v.bpbart}) {
     margin: 2%;
   }
   @media (min-width: ${v.bphomer}) {
     margin: 2em auto;
-    /* max-width: ${v.bphomer}; */
   }
+
   .responsive-table {
     width: 100%;
     margin-bottom: 1.5em;
@@ -279,7 +280,6 @@ const Container = styled.div`
     }
     thead {
       position: absolute;
-
       padding: 0;
       border: 0;
       height: 1px;
@@ -293,10 +293,10 @@ const Container = styled.div`
         overflow: auto;
       }
       th {
-        border-bottom: 2px solid ${({ theme }) => theme.color2};
+        border-bottom: 2px solid ${({ theme }) => theme.halloweenBorder};
         font-weight: 700;
         text-align: center;
-        color: ${({ theme }) => theme.text};
+        color: ${({ theme }) => theme.halloweenPrimary};
         &:first-of-type {
           text-align: center;
         }
@@ -344,13 +344,13 @@ const Container = styled.div`
         @media (min-width: ${v.bpbart}) {
           display: table-row;
           border-width: 1px;
+          transition: background-color 0.2s ease;
+          &:hover {
+            background: ${({ theme }) => theme.bgAlpha};
+          }
         }
         &:last-of-type {
           margin-bottom: 0;
-        }
-        &:nth-of-type(even) {
-          @media (min-width: ${v.bpbart}) {
-          }
         }
       }
       th[scope="row"] {
@@ -369,7 +369,6 @@ const Container = styled.div`
         justify-content: space-between;
         align-items: center;
         height: 50px;
-
         border-bottom: 1px solid rgba(161, 161, 161, 0.32);
         @media (min-width: ${v.bpbart}) {
           justify-content: center;
@@ -379,7 +378,6 @@ const Container = styled.div`
       td {
         text-align: right;
         @media (min-width: ${v.bpbart}) {
-          /* border-bottom: 1px solid rgba(161, 161, 161, 0.32); */
           text-align: center;
         }
       }

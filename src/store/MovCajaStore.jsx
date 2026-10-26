@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import {
   InsertarMovCaja,
+  MostrarDetalleEfectivoSinVentasMovCierreCaja,
   MostrarEfectivoSinVentasMovCierreCaja,
   MostrarMovimientosCajaLive,
   MostrarMovimientosCajaXEmpresYFecha,
@@ -77,6 +78,10 @@ export const useMovCajaStore = create((set, get) => ({
     set({ totalEfectivoCajaSinVentas: totalEfectivoCajaSinVentas });
     get().setTotalEfectivoCajaSinVentas(totalEfectivoCajaSinVentas);
     return result;
+  },
+  mostrarDetalleEfectivoSinVentasMovCierreCaja: async (p) => {
+    const respone = await MostrarDetalleEfectivoSinVentasMovCierreCaja(p);
+    return respone;
   },
   mostrarVentasMetodoPagoMovCaja: async (p) => {
     const result = await MostrarVentasMetodoPagoMovCaja(p);

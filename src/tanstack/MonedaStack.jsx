@@ -11,5 +11,6 @@ export const useMostrarMonedaQueryStack = () => {
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
+    retry: 1,
   });
 };

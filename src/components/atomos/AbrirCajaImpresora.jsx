@@ -10,11 +10,11 @@ async function obtenerImpresora() {
   const lista = await qz.printers.find();
   console.log("Impresoras que ve QZ:", lista);
 
-  const def = await qz.printers.getDefault().catch(() => null);
-  if (def) return def;
-
   const termica = lista.find((n) => /pos|thermal|termic|80/i.test(n));
   if (termica) return termica;
+
+  const def = await qz.printers.getDefault().catch(() => null);
+  if (def) return def;
 
   throw new Error("QZ no ve ninguna impresora: " + JSON.stringify(lista));
 }

@@ -132,6 +132,7 @@ const Container = styled.div`
     column-count: 3;
   }
 `;
+
 const Acciones = styled.section`
   position: absolute;
   right: ${(props) => props.$right};
@@ -147,6 +148,7 @@ const Acciones = styled.section`
     }
   }
 `;
+
 const Sucursal = styled.div`
   background-color: ${({ theme }) => theme.body};
   border: 2px solid ${({ theme }) => theme.colortitlecard};
@@ -160,6 +162,7 @@ const Sucursal = styled.div`
   margin-bottom: 20px;
   position: relative;
 `;
+
 const SucursalHeader = styled.div`
   margin-bottom: 10px;
   display: flex;
@@ -167,6 +170,7 @@ const SucursalHeader = styled.div`
   justify-content: space-between;
   position: relative;
 `;
+
 const SucursalTitle = styled.h3`
   font-size: 18px;
   color: ${({ theme }) => theme.text};
@@ -178,6 +182,7 @@ const SucursalTitle = styled.h3`
   overflow-wrap: break-word;
   white-space: normal;
 `;
+
 const CajaList = styled.ul`
   list-style: none;
   margin: 0;
@@ -186,6 +191,7 @@ const CajaList = styled.ul`
   flex-direction: column;
   gap: 10px;
 `;
+
 const CajaItem = styled.li`
   display: flex;
   flex-direction: column;
@@ -196,22 +202,26 @@ const CajaItem = styled.li`
   justify-content: space-between;
   position: relative;
 `;
+
 const CajaInfo = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
 `;
+
 const FechaCreacion = styled.span`
   font-size: 14px;
   color: #9ca3af;
   text-align: start;
 `;
+
 const CajaDescripcion = styled.span`
   font-size: 16px;
   color: ${({ theme }) => theme.text};
   font-weight: bold;
   text-align: center;
 `;
+
 const ConteinerLoader = styled.div`
   display: flex;
   align-items: center;

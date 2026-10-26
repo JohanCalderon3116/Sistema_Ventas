@@ -1,4 +1,5 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { AnimatePresence } from "framer-motion";
 import {
   Categorias,
   Configuraciones,
@@ -29,238 +30,242 @@ import { Creditos } from "../pages/Creditos";
 import { MovimientosCaja } from "../pages/MovimientosCaja";
 
 export function Myroutes() {
+  const location = useLocation();
+
   return (
-    <Routes>
-      <Route
-        path="/login"
-        element={
-          <ProtectedRoute accesby="non-authenticated">
-            <Login></Login>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/configuracion"
-        element={
-          <Layout>
-            <ProtectedRoute accesby="authenticated">
-              <Configuraciones></Configuraciones>
-            </ProtectedRoute>
-          </Layout>
-        }
-      />
-      <Route
-        path="/miperfil"
-        element={
-          <Layout>
-            <ProtectedRoute accesby="authenticated">
-              <Perfil></Perfil>
-            </ProtectedRoute>
-          </Layout>
-        }
-      />
-      <Route
-        path="/inventario"
-        element={
-          <Layout>
-            <ProtectedRoute accesby="authenticated">
-              <Inventario></Inventario>
-            </ProtectedRoute>
-          </Layout>
-        }
-      />
-      <Route
-        path="/configuracion/categorias"
-        element={
-          <Layout>
-            <ProtectedRoute accesby="authenticated">
-              <Categorias></Categorias>
-            </ProtectedRoute>
-          </Layout>
-        }
-      />
-      <Route
-        path="/configuracion/creditos"
-        element={
-          <Layout>
-            <ProtectedRoute accesby="authenticated">
-              <Creditos></Creditos>
-            </ProtectedRoute>
-          </Layout>
-        }
-      />
-      <Route
-        path="/configuracion/movimientoscaja"
-        element={
-          <Layout>
-            <ProtectedRoute accesby="authenticated">
-              <MovimientosCaja></MovimientosCaja>
-            </ProtectedRoute>
-          </Layout>
-        }
-      />
-      <Route
-        path="/configuracion/productos"
-        element={
-          <Layout>
-            <ProtectedRoute accesby="authenticated">
-              <Productos></Productos>
-            </ProtectedRoute>
-          </Layout>
-        }
-      />
-      <Route
-        path="/configuracion/empresa"
-        element={
-          <Layout>
-            <ProtectedRoute accesby="authenticated">
-              <Empresa></Empresa>
-            </ProtectedRoute>
-          </Layout>
-        }
-      >
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
         <Route
-          index
-          element={<Navigate to="empresabasicos"></Navigate>}
-        ></Route>
+          path="/login"
+          element={
+            <ProtectedRoute accesby="non-authenticated">
+              <Login></Login>
+            </ProtectedRoute>
+          }
+        />
         <Route
-          path="empresabasicos"
-          element={<BasicosConfig></BasicosConfig>}
-        ></Route>
+          path="/configuracion"
+          element={
+            <Layout>
+              <ProtectedRoute accesby="authenticated">
+                <Configuraciones></Configuraciones>
+              </ProtectedRoute>
+            </Layout>
+          }
+        />
         <Route
-          path="monedaconfig"
-          element={<MonedaConfig></MonedaConfig>}
-        ></Route>
-      </Route>
-      <Route
-        path="/pos"
-        element={
-          <Layout>
-            <ProtectedRoute accesby="authenticated">
-              <POS></POS>
-            </ProtectedRoute>
-          </Layout>
-        }
-      />
-      <Route
-        path="/configuracion/clientes"
-        element={
-          <Layout>
-            <ProtectedRoute accesby="authenticated">
-              <ClientesProveedores></ClientesProveedores>
-            </ProtectedRoute>
-          </Layout>
-        }
-      />
-      <Route
-        path="/configuracion/proveedores"
-        element={
-          <Layout>
-            <ProtectedRoute accesby="authenticated">
-              <ClientesProveedores></ClientesProveedores>
-            </ProtectedRoute>
-          </Layout>
-        }
-      />
-      <Route
-        path="/configuracion/metodospago"
-        element={
-          <Layout>
-            <ProtectedRoute accesby="authenticated">
-              <MetodosPago></MetodosPago>
-            </ProtectedRoute>
-          </Layout>
-        }
-      />
-      <Route
-        path="/configuracion/ticket"
-        element={
-          <Layout>
-            <ProtectedRoute accesby="authenticated">
-              <ConfiguracionTicket></ConfiguracionTicket>
-            </ProtectedRoute>
-          </Layout>
-        }
-      />
-      <Route
-        path="/configuracion/sucursales-cajas"
-        element={
-          <Layout>
-            <ProtectedRoute accesby="authenticated">
-              <SucursalesCaja></SucursalesCaja>
-            </ProtectedRoute>
-          </Layout>
-        }
-      />
-      <Route
-        path="/configuracion/impresoras"
-        element={
-          <Layout>
-            <ProtectedRoute accesby="authenticated">
-              <Impresoras></Impresoras>
-            </ProtectedRoute>
-          </Layout>
-        }
-      />
-      <Route
-        path="/configuracion/serealizacion"
-        element={
-          <Layout>
-            <ProtectedRoute accesby="authenticated">
-              <SerializacionComprobantes></SerializacionComprobantes>
-            </ProtectedRoute>
-          </Layout>
-        }
-      />
-      <Route
-        path="/configuracion/usuarios"
-        element={
-          <Layout>
-            <ProtectedRoute accesby="authenticated">
-              <Usuarios></Usuarios>
-            </ProtectedRoute>
-          </Layout>
-        }
-      />
-      <Route
-        path="/configuracion/almacenes"
-        element={
-          <Layout>
-            <ProtectedRoute accesby="authenticated">
-              <Almacenes></Almacenes>
-            </ProtectedRoute>
-          </Layout>
-        }
-      />
-      <Route
-        path="/"
-        element={
-          <Layout>
-            <ProtectedRoute accesby="authenticated">
-              <Home></Home>
-            </ProtectedRoute>
-          </Layout>
-        }
-      />
-      <Route
-        path="/dashboard"
-        element={
-          <Layout>
-            <ProtectedRoute accesby="authenticated">
-              <Dashboard></Dashboard>
-            </ProtectedRoute>
-          </Layout>
-        }
-      />
-      <Route
-        path="/sin-permiso"
-        element={
-          <Layout>
-            <SinPermiso></SinPermiso>
-          </Layout>
-        }
-      />
-      <Route path="*" element={<PageNot></PageNot>}></Route>
-    </Routes>
+          path="/miperfil"
+          element={
+            <Layout>
+              <ProtectedRoute accesby="authenticated">
+                <Perfil></Perfil>
+              </ProtectedRoute>
+            </Layout>
+          }
+        />
+        <Route
+          path="/inventario"
+          element={
+            <Layout>
+              <ProtectedRoute accesby="authenticated">
+                <Inventario></Inventario>
+              </ProtectedRoute>
+            </Layout>
+          }
+        />
+        <Route
+          path="/configuracion/categorias"
+          element={
+            <Layout>
+              <ProtectedRoute accesby="authenticated">
+                <Categorias></Categorias>
+              </ProtectedRoute>
+            </Layout>
+          }
+        />
+        <Route
+          path="/configuracion/creditos"
+          element={
+            <Layout>
+              <ProtectedRoute accesby="authenticated">
+                <Creditos></Creditos>
+              </ProtectedRoute>
+            </Layout>
+          }
+        />
+        <Route
+          path="/configuracion/movimientoscaja"
+          element={
+            <Layout>
+              <ProtectedRoute accesby="authenticated">
+                <MovimientosCaja></MovimientosCaja>
+              </ProtectedRoute>
+            </Layout>
+          }
+        />
+        <Route
+          path="/configuracion/productos"
+          element={
+            <Layout>
+              <ProtectedRoute accesby="authenticated">
+                <Productos></Productos>
+              </ProtectedRoute>
+            </Layout>
+          }
+        />
+        <Route
+          path="/configuracion/empresa"
+          element={
+            <Layout>
+              <ProtectedRoute accesby="authenticated">
+                <Empresa></Empresa>
+              </ProtectedRoute>
+            </Layout>
+          }
+        >
+          <Route
+            index
+            element={<Navigate to="empresabasicos"></Navigate>}
+          ></Route>
+          <Route
+            path="empresabasicos"
+            element={<BasicosConfig></BasicosConfig>}
+          ></Route>
+          <Route
+            path="monedaconfig"
+            element={<MonedaConfig></MonedaConfig>}
+          ></Route>
+        </Route>
+        <Route
+          path="/pos"
+          element={
+            <Layout>
+              <ProtectedRoute accesby="authenticated">
+                <POS></POS>
+              </ProtectedRoute>
+            </Layout>
+          }
+        />
+        <Route
+          path="/configuracion/clientes"
+          element={
+            <Layout>
+              <ProtectedRoute accesby="authenticated">
+                <ClientesProveedores></ClientesProveedores>
+              </ProtectedRoute>
+            </Layout>
+          }
+        />
+        <Route
+          path="/configuracion/proveedores"
+          element={
+            <Layout>
+              <ProtectedRoute accesby="authenticated">
+                <ClientesProveedores></ClientesProveedores>
+              </ProtectedRoute>
+            </Layout>
+          }
+        />
+        <Route
+          path="/configuracion/metodospago"
+          element={
+            <Layout>
+              <ProtectedRoute accesby="authenticated">
+                <MetodosPago></MetodosPago>
+              </ProtectedRoute>
+            </Layout>
+          }
+        />
+        <Route
+          path="/configuracion/ticket"
+          element={
+            <Layout>
+              <ProtectedRoute accesby="authenticated">
+                <ConfiguracionTicket></ConfiguracionTicket>
+              </ProtectedRoute>
+            </Layout>
+          }
+        />
+        <Route
+          path="/configuracion/sucursales-cajas"
+          element={
+            <Layout>
+              <ProtectedRoute accesby="authenticated">
+                <SucursalesCaja></SucursalesCaja>
+              </ProtectedRoute>
+            </Layout>
+          }
+        />
+        <Route
+          path="/configuracion/impresoras"
+          element={
+            <Layout>
+              <ProtectedRoute accesby="authenticated">
+                <Impresoras></Impresoras>
+              </ProtectedRoute>
+            </Layout>
+          }
+        />
+        <Route
+          path="/configuracion/serealizacion"
+          element={
+            <Layout>
+              <ProtectedRoute accesby="authenticated">
+                <SerializacionComprobantes></SerializacionComprobantes>
+              </ProtectedRoute>
+            </Layout>
+          }
+        />
+        <Route
+          path="/configuracion/usuarios"
+          element={
+            <Layout>
+              <ProtectedRoute accesby="authenticated">
+                <Usuarios></Usuarios>
+              </ProtectedRoute>
+            </Layout>
+          }
+        />
+        <Route
+          path="/configuracion/almacenes"
+          element={
+            <Layout>
+              <ProtectedRoute accesby="authenticated">
+                <Almacenes></Almacenes>
+              </ProtectedRoute>
+            </Layout>
+          }
+        />
+        <Route
+          path="/"
+          element={
+            <Layout>
+              <ProtectedRoute accesby="authenticated">
+                <Home></Home>
+              </ProtectedRoute>
+            </Layout>
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            <Layout>
+              <ProtectedRoute accesby="authenticated">
+                <Dashboard></Dashboard>
+              </ProtectedRoute>
+            </Layout>
+          }
+        />
+        <Route
+          path="/sin-permiso"
+          element={
+            <Layout>
+              <SinPermiso></SinPermiso>
+            </Layout>
+          }
+        />
+        <Route path="*" element={<PageNot></PageNot>}></Route>
+      </Routes>
+    </AnimatePresence>
   );
 }

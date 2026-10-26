@@ -77,6 +77,7 @@ export const useInsertarMovimientoCreditoMutationStack = ({
       toast.success("🎉 ¡Registro guardado correctamente! ✨");
       queryClient.invalidateQueries({ queryKey: ["mostrar creditos"] });
       queryClient.invalidateQueries({ queryKey: ["buscar creditos"] });
+      queryClient.invalidateQueries({ queryKey: ["movimientos credito"] });
       resetFuction();
       onClose();
     },
@@ -178,12 +179,19 @@ export const useInsertarAbonoCreditoMuatationStack = (onImprimir) => {
       toast.success("El abono al crédito quedó registrado correctamente 🫶");
       queryClient.invalidateQueries({ queryKey: ["mostrar creditos"] });
       queryClient.invalidateQueries({ queryKey: ["buscar creditos"] });
+      queryClient.invalidateQueries({ queryKey: ["movimientos credito"] }); 
       queryClient.invalidateQueries({
         queryKey: ["mostrar efectivo sin ventas movCaja"],
       });
       queryClient.invalidateQueries({
+        queryKey: ["mostrar detalle efectivo sin ventas movCaja"],
+      });
+      queryClient.invalidateQueries({
         queryKey: ["mostrar ventas metodoPago movCaja"],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar movimientos caja por fecha"],
+      }); 
 
       if (onImprimir) {
         try {

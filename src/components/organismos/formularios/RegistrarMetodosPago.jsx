@@ -6,10 +6,10 @@ import {
   Btn1,
   Icono,
   useMetodosPagoStore,
-  BtnClose,
   useInsertarMetodosPagoMutationStack,
 } from "../../../index";
 import { useForm } from "react-hook-form";
+import { BtnClose } from "../../ui/buttons/BtnClose";
 import { BeatLoader } from "react-spinners";
 
 export function RegistrarMetodosPago({
@@ -40,6 +40,7 @@ export function RegistrarMetodosPago({
   const handlesub = (data) => {
     doInsertar(data);
   };
+
   function abrirImagenes() {
     ref.current.click();
   }
@@ -63,6 +64,7 @@ export function RegistrarMetodosPago({
       setFileurl(undefined);
     }
   }, []);
+
   return (
     <Container>
       {isPending ? (
@@ -70,14 +72,14 @@ export function RegistrarMetodosPago({
           <span>
             <strong>Guardando</strong>
           </span>
-          <BeatLoader color={theme.text} size={8} />
+          <BeatLoader color={theme.color1 || "#8B5CF6"} size={8} />
         </ConteinerLoader>
       ) : (
         <div className="sub-contenedor">
           <div className="headers">
             <section>
               <h1>
-                {accion == "Editar"
+                {accion === "Editar"
                   ? "Editar método de pago"
                   : "Registrar nuevo método de pago"}
               </h1>
@@ -116,9 +118,7 @@ export function RegistrarMetodosPago({
                     defaultValue={dataSelect.nombre}
                     type="text"
                     placeholder="nombre"
-                    {...register("nombre", {
-                      required: true,
-                    })}
+                    {...register("nombre", { required: true })}
                   />
                   <label className="form__label">Metodo de pago</label>
                   {errors.nombre?.type === "required" && <p>Campo requerido</p>}
@@ -127,7 +127,8 @@ export function RegistrarMetodosPago({
               <Btn1
                 icono={<v.iconoguardar />}
                 titulo="Guardar"
-                bgcolor="#3300E3"
+                bgcolor="#18181B"
+                color="#FFFFFF"
               />
             </section>
           </form>
@@ -136,35 +137,43 @@ export function RegistrarMetodosPago({
     </Container>
   );
 }
+
 const Container = styled.div`
   transition: 0.5s;
   top: 0;
   left: 0;
   position: fixed;
-  background-color: rgba(10, 9, 9, 0.5);
   display: flex;
   width: 100%;
   min-height: 100vh;
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  background-color: rgba(9, 9, 11, 0.55);
+  backdrop-filter: blur(5px);
+  overflow: hidden;
   .sub-contenedor {
     position: relative;
     width: 500px;
     max-width: 85%;
-    border-radius: 20px;
-    background: ${({ theme }) => theme.bgtotal};
-    box-shadow: -10px 15px 30px rgba(10, 9, 9, 0.4);
-    padding: 13px 36px 20px 36px;
+    border-radius: 16px;
+    background: ${({ theme }) => theme.bgcards || theme.body};
+    border: 1px solid ${({ theme }) => theme.color2};
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.28);
+    padding: 16px 36px 24px 36px;
     z-index: 100;
+    overflow: hidden;
     .headers {
+      position: relative;
+      z-index: 5;
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 20px;
       h1 {
         font-size: 20px;
-        font-weight: 500;
+        font-weight: 700;
+        color: ${({ theme }) => theme.text};
       }
       span {
         font-size: 20px;
@@ -172,31 +181,43 @@ const Container = styled.div`
       }
     }
     .formulario {
+      position: relative;
+      z-index: 5;
       .form-subcontainer {
         gap: 20px;
         display: flex;
         flex-direction: column;
-        .colorContainer {
-          .colorPickerContent {
-            padding-top: 15px;
-            min-height: 50px;
-          }
+      }
+    }
+    @media ${v.bplisa} {
+      width: 450px;
+      max-width: 90%;
+      padding: 13px 25px 20px 25px;
+    }
+    @media ${v.bpmarge} {
+      width: 95%;
+      max-width: 95%;
+      padding: 13px 18px 20px 18px;
+      .headers {
+        h1 {
+          font-size: 18px;
         }
       }
     }
   }
 `;
+
 const PictureContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: start;
-  border: 2px dashed #f9d70b;
-  border-radius: 5px;
-  background-color: rgba(249, 215, 11, 0.1);
+  border: 1px dashed ${({ theme }) => theme.color2};
+  border-radius: 8px;
+  background-color: transparent;
   padding: 8px;
   position: relative;
   gap: 3px;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
   .ContentImage {
     overflow: hidden;
     img {
@@ -208,6 +229,7 @@ const PictureContainer = styled.div`
     display: none;
   }
 `;
+
 const ConteinerLoader = styled.div`
   display: flex;
   align-items: center;
@@ -215,4 +237,10 @@ const ConteinerLoader = styled.div`
   flex-direction: column;
   gap: 8px;
   height: 100vh;
+  color: ${({ theme }) => theme.text};
+  span {
+    strong {
+      font-size: 18px;
+    }
+  }
 `;

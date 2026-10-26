@@ -7,10 +7,11 @@ import {
   Title,
   useProductosStore,
 } from "../../index";
-import { v } from "../../styles/variables";
 import { useState } from "react";
 import Confetti from "react-confetti-boom";
 import { Toaster } from "sonner";
+import { Icon } from "@iconify/react";
+
 export const ProductosTemplate = () => {
   const {
     dataProductos,
@@ -33,7 +34,7 @@ export const ProductosTemplate = () => {
   }
   return (
     <Container>
-      <Toaster richColors></Toaster>
+      <Toaster richColors position="top-center"></Toaster>
       <RegistrarProductos
         setIsExploding={setIsExploding}
         onClose={() => setOpenRegistro(!openRegistro)}
@@ -45,10 +46,12 @@ export const ProductosTemplate = () => {
         <Title>Productos</Title>{" "}
         <Btn1
           funcion={nuevoRegistro}
-          bgcolor="#3300E3"
+          bgcolor="#18181B"
+          color="255,255,255"
           titulo="Nuevo"
-          icono={<v.iconoagregar />}
-        ></Btn1>
+          border="1px"
+          icono={<Icon icon="lucide:plus" />}
+        />
       </section>
       <section className="area2">
         <Buscador setBuscador={setBuscador}></Buscador>
@@ -75,7 +78,6 @@ const Container = styled.div`
     "main" auto;
   .area1 {
     grid-area: area1;
-
     display: flex;
     justify-content: end;
     align-items: center;
@@ -83,7 +85,6 @@ const Container = styled.div`
   }
   .area2 {
     grid-area: area2;
-
     display: flex;
     justify-content: end;
     align-items: center;

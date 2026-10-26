@@ -1,5 +1,5 @@
 import styled, { useTheme } from "styled-components";
-import { ConfiguracionesTemplate, Spinner1 } from "../index";
+import { ConfiguracionesTemplate } from "../index";
 import { useMostrarPermisosConfiguracionesQueryStack } from "../tanstack/PermisosStack";
 import { BeatLoader } from "react-spinners";
 import { toast, Toaster } from "sonner";
@@ -24,7 +24,7 @@ export const Configuraciones = () => {
   }
   return (
     <>
-      <Toaster richColors></Toaster>
+      <Toaster richColors position="top-center"></Toaster>
       <ConfiguracionesTemplate></ConfiguracionesTemplate>
     </>
   );

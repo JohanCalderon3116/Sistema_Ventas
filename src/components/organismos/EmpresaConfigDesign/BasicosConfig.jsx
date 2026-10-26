@@ -4,11 +4,11 @@ import { InputText2 } from "../formularios/InputText2";
 import { Btn1 } from "../../moleculas/Btn1";
 import { useForm } from "react-hook-form";
 import { useEmpresaStore } from "../../../store/EmpresaStore";
-import { slideBackground } from "../../../styles/Keyframes";
 import { useUpdatEmpresaMutateStack } from "../../../tanstack/EmpresaStack";
 import { ImageSelector } from "../../../hooks/useImageSelector";
 import { useGlobalStore } from "../../../store/GlobalStore";
 import { BeatLoader } from "react-spinners";
+
 export const BasicosConfig = () => {
   const { dataempresa } = useEmpresaStore();
   const { fileurl } = useGlobalStore();
@@ -24,9 +24,11 @@ export const BasicosConfig = () => {
       impuesto: dataempresa?.impuesto,
       valor_impuesto: dataempresa?.valor_impuesto,
       telefono_celular: dataempresa?.telefono_celular,
+      cantidad_codigo: dataempresa.cantidad_codigo,
     },
   });
   const { mutate: doEditar, isPending } = useUpdatEmpresaMutateStack();
+
   return (
     <Container>
       {isPending ? (
@@ -106,19 +108,28 @@ export const BasicosConfig = () => {
                 {...register("telefono_celular")}
               />
             </InputText2>
+            <Label>Cantidad de codigo: </Label>
+            <InputText2>
+              <input
+                className="form__field"
+                placeholder="Codigo"
+                type="number"
+                {...register("cantidad_codigo")}
+              />
+            </InputText2>
             <br></br>
             <Btn1
-              color="#FFFFFF"
-              border="2px"
-              bgcolor="#3300E3"
+              color="255,255,255"
+              border="1px"
+              bgcolor="#18181B"
               titulo="Guardar cambios"
             />
           </form>
           <br></br>
           <section className="advertencia">
-            <Icon className="icono" icon="meteocons:barometer" />
+            <Icon className="icono" icon="lucide:info" />
             <span>
-              Espera unos 10 segunditos y ahí verás tu logotipo reflejado 🥱
+              Los cambios en el logotipo se reflejarán automáticamente en unos segundos.
             </span>
           </section>
         </>
@@ -135,35 +146,40 @@ const ConteinerLoader = styled.div`
   gap: 8px;
   height: 100vh;
 `;
+
 const Container = styled.div`
   padding: 20px;
-  border-radius: 10px;
+  border-radius: 12px;
   max-width: 400px;
   height: 100%;
   margin: 0 auto;
   p {
-    color: #f75510;
+    color: #ef4444;
     font-weight: 700;
   }
   .advertencia {
-    background-color: rgba(237, 95, 6, 0.2);
-    border-radius: 10px;
-    padding: 10px;
+    background-color: rgba(139, 92, 246, 0.08);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    border-radius: 12px;
+    padding: 12px 14px;
     margin-top: 10px;
-    margin: auto;
-    height: 70px;
     display: flex;
-    color: #f75510;
+    gap: 10px;
+    color: ${({ theme }) => theme.colorSubtitle};
+    font-size: 13px;
     width: 100%;
     align-items: center;
     .icono {
-      font-size: 100px;
+      font-size: 22px;
+      color: #8b5cf6;
+      flex-shrink: 0;
     }
   }
 `;
 
 const Title = styled.h1`
   font-size: 24px;
+  font-weight: 700;
   margin-bottom: 20px;
 `;
 
@@ -173,8 +189,10 @@ const Avatar = styled.div`
   margin-bottom: 20px;
   position: relative;
   width: 100%;
-  border-radius: 10px;
-  padding: 10px;
+  border-radius: 14px;
+  padding: 12px;
+  background-color: #18181b;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   .nombre {
     font-weight: 700;
     position: absolute;
@@ -185,16 +203,12 @@ const Avatar = styled.div`
     left: 100px;
     bottom: 0;
     right: 10px;
-    font-size: 25px;
-    overflow: hidden; 
-    white-space: normal; 
-    word-wrap: break-word; 
+    font-size: 22px;
+    overflow: hidden;
+    white-space: normal;
+    word-wrap: break-word;
     color: #fff !important;
   }
-  background-color: #6d05e5;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 120 120'%3E%3Cpolygon fill='%23000' fill-opacity='0.19' points='120 0 120 60 90 30 60 0 0 0 0 0 60 60 0 120 60 120 90 90 120 60 120 0'/%3E%3C/svg%3E");
-  animation: ${slideBackground} 10s linear infinite;
-  background-size: 60px 60px;
   img {
     object-fit: cover;
   }
@@ -206,4 +220,6 @@ const Avatar = styled.div`
 const Label = styled.label`
   display: block;
   margin: 10px 0 5px;
+  font-size: 14px;
+  font-weight: 500;
 `;

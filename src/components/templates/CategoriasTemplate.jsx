@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import {
   Btn1,
   Buscador,
@@ -7,10 +7,16 @@ import {
   Title,
   useCategoriasStore,
 } from "../../index";
-import { v } from "../../styles/variables";
 import { useState } from "react";
 import Confetti from "react-confetti-boom";
 import { Toaster } from "sonner";
+import { Icon } from "@iconify/react";
+
+const aparecer = keyframes`
+  from { opacity: 0; margin-top: 8px; }
+  to { opacity: 1; margin-top: 0; }
+`;
+
 export const CategoriasTemplate = () => {
   const { datacategorias, setBuscador } = useCategoriasStore();
   const [openRegistro, setOpenRegistro] = useState(false);
@@ -25,7 +31,7 @@ export const CategoriasTemplate = () => {
   }
   return (
     <Container>
-      <Toaster richColors></Toaster>
+      <Toaster richColors position="top-center"></Toaster>
       {openRegistro && (
         <RegistrarCategorias
           setIsExploding={setIsExploding}
@@ -38,10 +44,12 @@ export const CategoriasTemplate = () => {
         <Title>Categorías</Title>{" "}
         <Btn1
           funcion={nuevoRegistro}
-          bgcolor="#3300E3"
+          bgcolor="#18181B"
+          color="255,255,255"
           titulo="Nuevo"
-          icono={<v.iconoagregar />}
-        ></Btn1>
+          border="1px"
+          icono={<Icon icon="lucide:plus" />}
+        />
       </section>
       <section className="area2">
         <Buscador setBuscador={setBuscador}></Buscador>
@@ -60,6 +68,7 @@ export const CategoriasTemplate = () => {
 };
 
 const Container = styled.div`
+  position: relative;
   height: calc(100vh - 30px);
   padding: 15px;
   display: grid;
@@ -67,9 +76,12 @@ const Container = styled.div`
     "area1" 60px
     "area2" 60px
     "main" auto;
+  overflow: auto;
+  animation: ${aparecer} 0.3s ease both;
   .area1 {
     grid-area: area1;
-
+    position: relative;
+    z-index: 2;
     display: flex;
     justify-content: end;
     align-items: center;
@@ -77,12 +89,15 @@ const Container = styled.div`
   }
   .area2 {
     grid-area: area2;
-
+    position: relative;
+    z-index: 2;
     display: flex;
     justify-content: end;
     align-items: center;
   }
   .main {
     grid-area: main;
+    position: relative;
+    z-index: 2;
   }
 `;

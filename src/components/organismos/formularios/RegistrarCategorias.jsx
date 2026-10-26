@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import styled, { useTheme } from "styled-components";
+import styled, { keyframes, useTheme } from "styled-components";
 import { v } from "../../../styles/variables";
 import {
   InputText,
@@ -13,17 +13,18 @@ import { useForm } from "react-hook-form";
 import { CirclePicker } from "react-color";
 import { BeatLoader } from "react-spinners";
 
+const aparecer = keyframes`
+  from { opacity: 0; margin-top: 10px; }
+  to { opacity: 1; margin-top: 0; }
+`;
+
 export function RegistrarCategorias({
   onClose,
   dataSelect,
   accion,
   setIsExploding,
 }) {
-  const {
-    currentColor,
-    setColor,
-    setFile,
-  } = useCategoriasStore();
+  const { currentColor, setColor, setFile } = useCategoriasStore();
   const theme = useTheme();
   const ref = useRef(null);
   const [fileurl, setFileurl] = useState();
@@ -67,7 +68,7 @@ export function RegistrarCategorias({
       setColor(dataSelect.color);
       setFileurl(dataSelect.icono);
     } else {
-      setColor("#F44336"); 
+      setColor("#F44336");
       setFileurl(null);
     }
     setFile([]);
@@ -79,7 +80,7 @@ export function RegistrarCategorias({
           <span>
             <strong>Guardando</strong>
           </span>
-          <BeatLoader color={theme.text} size={8} />
+          <BeatLoader color={theme.color1 || "#8B5CF6"} size={8} />
         </ConteinerLoader>
       ) : (
         <div className="sub-contenedor">
@@ -125,9 +126,7 @@ export function RegistrarCategorias({
                     defaultValue={dataSelect.nombre}
                     type="text"
                     placeholder="categoria"
-                    {...register("descripcion", {
-                      required: true,
-                    })}
+                    {...register("descripcion", { required: true })}
                   />
                   <label className="form__label">categoría</label>
                   {errors.descripcion?.type === "required" && (
@@ -147,7 +146,8 @@ export function RegistrarCategorias({
               <Btn1
                 icono={<v.iconoguardar />}
                 titulo="Guardar"
-                bgcolor="#3300E3"
+                bgcolor="#18181B"
+                color="#FFFFFF"
               />
             </section>
           </form>
@@ -156,38 +156,44 @@ export function RegistrarCategorias({
     </Container>
   );
 }
+
 const Container = styled.div`
   transition: 0.5s;
   top: 0;
   left: 0;
   position: fixed;
-  background-color: rgba(10, 9, 9, 0.5);
+  background-color: rgba(9, 9, 11, 0.55);
+  backdrop-filter: blur(5px);
   display: flex;
   width: 100%;
   min-height: 100vh;
   align-items: center;
   justify-content: center;
   z-index: 1000;
-
+  overflow: hidden;
   .sub-contenedor {
     position: relative;
     width: 500px;
     max-width: 85%;
-    border-radius: 20px;
-    background: ${({ theme }) => theme.bgtotal};
-    box-shadow: -10px 15px 30px rgba(10, 9, 9, 0.4);
-    padding: 13px 36px 20px 36px;
+    border-radius: 16px;
+    background: ${({ theme }) => theme.bgcards || theme.body};
+    border: 1px solid ${({ theme }) => theme.color2};
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.28);
+    padding: 16px 36px 24px 36px;
     z-index: 100;
-
+    overflow: hidden;
+    animation: ${aparecer} 0.3s ease forwards;
     .headers {
+      position: relative;
+      z-index: 5;
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 20px;
-
       h1 {
         font-size: 20px;
-        font-weight: 500;
+        font-weight: 700;
+        color: ${({ theme }) => theme.text};
       }
       span {
         font-size: 20px;
@@ -195,15 +201,36 @@ const Container = styled.div`
       }
     }
     .formulario {
+      position: relative;
+      z-index: 5;
       .form-subcontainer {
         gap: 20px;
         display: flex;
         flex-direction: column;
         .colorContainer {
+          padding: 12px;
+          border-radius: 10px;
+          border: 1px solid ${({ theme }) => theme.color2};
+          background: transparent;
           .colorPickerContent {
             padding-top: 15px;
             min-height: 50px;
           }
+        }
+      }
+    }
+    @media ${v.bplisa} {
+      width: 450px;
+      max-width: 90%;
+      padding: 13px 25px 20px 25px;
+    }
+    @media ${v.bpmarge} {
+      width: 95%;
+      max-width: 95%;
+      padding: 13px 18px 20px 18px;
+      .headers {
+        h1 {
+          font-size: 18px;
         }
       }
     }
@@ -215,9 +242,11 @@ const ContentTitle = styled.div`
   justify-content: start;
   align-items: center;
   gap: 20px;
-
+  color: ${({ theme }) => theme.text};
   svg {
     font-size: 25px;
+    color: #8B5CF6;
+    opacity: 0.85;
   }
   input {
     border: none;
@@ -228,18 +257,18 @@ const ContentTitle = styled.div`
     font-size: 28px;
   }
 `;
+
 const PictureContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: start;
-  border: 2px dashed #f9d70b;
-  border-radius: 5px;
-  background-color: rgba(249, 215, 11, 0.1);
+  border: 1px dashed ${({ theme }) => theme.color2};
+  border-radius: 8px;
+  background-color: transparent;
   padding: 8px;
   position: relative;
   gap: 3px;
-  margin-bottom: 8px;
-
+  margin-bottom: 12px;
   .ContentImage {
     overflow: hidden;
     img {
@@ -251,6 +280,7 @@ const PictureContainer = styled.div`
     display: none;
   }
 `;
+
 const ConteinerLoader = styled.div`
   display: flex;
   align-items: center;
@@ -258,4 +288,10 @@ const ConteinerLoader = styled.div`
   flex-direction: column;
   gap: 8px;
   height: 100vh;
+  color: ${({ theme }) => theme.text};
+  span {
+    strong {
+      font-size: 18px;
+    }
+  }
 `;

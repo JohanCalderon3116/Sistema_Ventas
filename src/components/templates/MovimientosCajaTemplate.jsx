@@ -56,7 +56,6 @@ const Container = styled.div`
     "main" auto;
   .area1 {
     grid-area: area1;
-
     display: flex;
     justify-content: end;
     align-items: center;
@@ -66,6 +65,7 @@ const Container = styled.div`
     grid-area: main;
   }
 `;
+
 const ConteinerLoader = styled.div`
   display: flex;
   align-items: center;
@@ -74,8 +74,9 @@ const ConteinerLoader = styled.div`
   gap: 8px;
   height: 100vh;
 `;
+
 const ActionsContainer = styled.div`
-  border: 2px solid ${({ theme }) => theme.colortitlecard};
-  border-radius: 10px;
-  background-color: ${({ theme }) => theme.body};
+  border: 1px solid ${({ theme }) => theme.color2};
+  border-radius: 12px;
+  background-color: ${({ theme }) => theme.bgcards};
 `;

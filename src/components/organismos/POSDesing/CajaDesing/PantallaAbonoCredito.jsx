@@ -202,6 +202,7 @@ export const ContainerSelector = styled.div`
   align-items: center;
   position: relative;
 `;
+
 const Container = styled.div`
   height: 100vh;
   position: absolute;
@@ -237,6 +238,7 @@ const Container = styled.div`
     font-weight: bold;
   }
 `;
+
 const ConteinerLoader = styled.div`
   display: flex;
   align-items: center;

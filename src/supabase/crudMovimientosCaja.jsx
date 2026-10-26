@@ -17,6 +17,16 @@ export async function MostrarEfectivoSinVentasMovCierreCaja(p) {
   }
   return data;
 }
+export async function MostrarDetalleEfectivoSinVentasMovCierreCaja(p) {
+  const { data, error } = await supabase.rpc(
+    "mostrardetalleefectivosinventasmovcierrecaja",
+    p,
+  );
+  if (error) {
+    throw new Error(error.message);
+  }
+  return data;
+}
 export async function MostrarVentasMetodoPagoMovCaja(p) {
   const { data, error } = await supabase.rpc(
     "sumarventasmetodopagomovcierrecaja",

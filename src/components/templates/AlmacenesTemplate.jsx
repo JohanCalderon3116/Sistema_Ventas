@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import {
   ListAlmacenes,
   RegistrarAlmacen,
@@ -9,12 +9,17 @@ import {
 import { Toaster } from "sonner";
 import { AnimatedGrid } from "../ui/animated/AnimatedGrid";
 
+const aparecer = keyframes`
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+`;
+
 export const AlmacenesTemplate = () => {
   const { stateSucursal } = useSucursalesStore();
   const { stateAlmacen } = useAlmacenesStore();
   return (
     <Container>
-      <Toaster richColors></Toaster>
+      <Toaster richColors position="top-center"></Toaster>
       {stateSucursal && <RegistrarSucursal></RegistrarSucursal>}
       {stateAlmacen && <RegistrarAlmacen></RegistrarAlmacen>}
       <section className="area1">
@@ -38,16 +43,23 @@ const Container = styled.div`
   grid-template:
     "area1" 300px
     "area2" auto;
+  overflow: auto;
+  animation: ${aparecer} 0.3s ease both;
   .area1 {
     grid-area: area1;
+    position: relative;
+    z-index: 2;
     display: flex;
     flex-direction: column;
   }
   .area2 {
     grid-area: area2;
+    position: relative;
+    z-index: 2;
     padding-bottom: 20px;
   }
 `;
+
 const Header = styled.div`
   margin-bottom: 20px;
   text-align: center;
@@ -57,14 +69,16 @@ const Header = styled.div`
   flex-direction: column;
   gap: 20px;
 `;
+
 const Title = styled.h3`
   font-size: 25px;
   font-weight: bold;
   color: ${({ theme }) => theme.text};
   margin: 0;
 `;
+
 const Subtitle = styled.p`
-  font-size: 18px;
-  color: #6b7280;
+  font-size: 16px;
+  color: ${({ theme }) => theme.colorSubtitle};
   margin: 5px 0 0;
 `;
