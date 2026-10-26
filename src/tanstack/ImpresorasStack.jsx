@@ -18,5 +18,6 @@ export const useMostrarImpresorasXCajaQueryStack = () => {
       }),
     enabled: !!dataCierreCaja,
     refetchOnWindowFocus: false,
+    retry: 1,
   });
 };

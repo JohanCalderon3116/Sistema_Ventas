@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import styled, { useTheme } from "styled-components";
+import styled, { keyframes, useTheme } from "styled-components";
 import { v } from "../../../styles/variables";
 import {
   InputText,
@@ -13,6 +13,11 @@ import {
 import { useForm } from "react-hook-form";
 import { Toaster } from "sonner";
 import { BeatLoader } from "react-spinners";
+
+const aparecer = keyframes`
+  from { opacity: 0; margin-top: 10px; }
+  to { opacity: 1; margin-top: 0; }
+`;
 
 export function RegistrarCreditos({
   onClose,
@@ -53,15 +58,16 @@ export function RegistrarCreditos({
       setClienteSeleccionado(dataclipro[0]);
     }
   }, [accion, dataSelect, dataclipro]);
+  
   return (
     <Container>
-      <Toaster richColors></Toaster>
+      <Toaster richColors />
       {isPending ? (
         <ConteinerLoader>
           <span>
             <strong>Guardando</strong>
           </span>
-          <BeatLoader color={theme.text} size={8} />
+          <BeatLoader color={theme.color1 || "#8B5CF6"} size={8} />
         </ConteinerLoader>
       ) : (
         <div className="sub-contenedor">
@@ -72,7 +78,7 @@ export function RegistrarCreditos({
                 : "Registrar nuevo crédito "}
             </section>
             <section>
-              <BtnClose funcion={onClose}></BtnClose>
+              <BtnClose funcion={onClose} />
             </section>
           </div>
           <form className="formulario" onSubmit={handleSubmit(handlesub)}>
@@ -84,7 +90,7 @@ export function RegistrarCreditos({
                   itemSelect={clienteSeleccionado}
                   onSelect={setClienteSeleccionado}
                   displayField="nombres"
-                ></SelectList>
+                />
               </ContainerSelector>
               <article>
                 <InputText icono={<v.iconoflechaderecha />}>
@@ -93,9 +99,7 @@ export function RegistrarCreditos({
                     type="number"
                     placeholder="Cupo maximno"
                     defaultValue={dataSelect.cupo_maximo}
-                    {...register("cupo_maximo", {
-                      required: true,
-                    })}
+                    {...register("cupo_maximo", { required: true })}
                   />
                   <label className="form__label">Cupo Maximo</label>
                   {errors.cupo_maximo?.type === "required" && (
@@ -104,13 +108,12 @@ export function RegistrarCreditos({
                 </InputText>
               </article>
               <span>
-                {" "}
-                <strong>¿Crédito antiguo?</strong>{" "}
+                <strong>¿Crédito antiguo?</strong>
               </span>
               <Switch1
                 state={stateCreditos}
                 setState={() => setStateCreditos(!stateCreditos)}
-              ></Switch1>
+              />
               {stateCreditos && (
                 <article>
                   <InputText icono={<v.iconoflechaderecha />}>
@@ -119,9 +122,7 @@ export function RegistrarCreditos({
                       type="number"
                       placeholder="Debe..."
                       defaultValue={dataSelect.saldo_actual}
-                      {...register("saldo_actual", {
-                        required: true,
-                      })}
+                      {...register("saldo_actual", { required: true })}
                     />
                     <label className="form__label">Debe...</label>
                     {errors.saldo_actual?.type === "required" && (
@@ -133,7 +134,8 @@ export function RegistrarCreditos({
               <Btn1
                 icono={<v.iconoguardar />}
                 titulo="Guardar"
-                bgcolor="#3300E3"
+                bgcolor="#18181B"
+                color="#FFFFFF"
               />
             </section>
           </form>
@@ -142,35 +144,44 @@ export function RegistrarCreditos({
     </Container>
   );
 }
+
 const Container = styled.div`
   transition: 0.5s;
   top: 0;
   left: 0;
   position: fixed;
-  background-color: rgba(10, 9, 9, 0.5);
   display: flex;
   width: 100%;
   min-height: 100vh;
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  overflow: hidden;
+  background-color: rgba(9, 9, 11, 0.55);
+  backdrop-filter: blur(5px);
   .sub-contenedor {
     position: relative;
     width: 500px;
     max-width: 85%;
-    border-radius: 20px;
-    background: ${({ theme }) => theme.bgtotal};
-    box-shadow: -10px 15px 30px rgba(10, 9, 9, 0.4);
-    padding: 13px 36px 20px 36px;
+    border-radius: 16px;
+    background: ${({ theme }) => theme.bgcards || theme.body};
+    border: 1px solid ${({ theme }) => theme.color2};
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.28);
+    padding: 16px 36px 24px 36px;
     z-index: 100;
+    animation: ${aparecer} 0.3s ease forwards;
     .headers {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 20px;
+      position: relative;
+      z-index: 2;
+      font-weight: 700;
+      color: ${({ theme }) => theme.text};
       h1 {
         font-size: 20px;
-        font-weight: 500;
+        font-weight: 600;
       }
       span {
         font-size: 20px;
@@ -178,26 +189,24 @@ const Container = styled.div`
       }
     }
     .formulario {
+      position: relative;
+      z-index: 2;
       .form-subcontainer {
         gap: 20px;
         display: flex;
         flex-direction: column;
-        .colorContainer {
-          .colorPickerContent {
-            padding-top: 15px;
-            min-height: 50px;
-          }
-        }
       }
     }
   }
 `;
+
 export const ContainerSelector = styled.div`
   display: flex;
   gap: 10px;
   align-items: center;
   position: relative;
 `;
+
 const ConteinerLoader = styled.div`
   display: flex;
   align-items: center;

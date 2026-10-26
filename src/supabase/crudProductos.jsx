@@ -9,9 +9,9 @@ export async function InsertarProductos(p) {
   return data;
 }
 export async function MostrarProductos(p) {
-  const { data, error } = await supabase.rpc("mostrarproductos", {
-    _id_empresa: p.id_empresa,
-  });
+  const { data, error } = await supabase
+    .rpc("mostrarproductos", { _id_empresa: p.id_empresa })
+    .order("id", { ascending: false });
   if (error) {
     throw new Error(error.message);
   }
@@ -35,16 +35,4 @@ export async function EditarProductos(p) {
   if (error) {
     throw new Error(error.message);
   }
-}
-export async function MostrarUltimoProducto(p) {
-  const { data, error } = await supabase
-    .from(tabla)
-    .select()
-    .eq("id_empresa", p.id_empresa)
-    .order("id", { ascending: false })
-    .maybeSingle();
-  if (error) {
-    throw new Error(error.message);
-  }
-  return data;
 }

@@ -1,8 +1,4 @@
 import { v } from "../styles/variables";
-import {
-  AiOutlineHome,
-  AiOutlineSetting,
-} from "react-icons/ai";
 
 export const DesplegableUser = [
   {
@@ -22,65 +18,52 @@ export const DesplegableUser = [
   },
 ];
 
-
-
-//data SIDEBAR
 export const LinksArray = [
   {
     label: "Inicio",
-    icon: "noto-v1:house",
+    icon: "lucide:home",
     to: "/",
   },
   {
     label: "Dashboard",
-    icon: "streamline-flex-color:dashboard-3-flat",
+    icon: "lucide:layout-dashboard",
     to: "/dashboard",
   },
   {
     label: "Vender",
-    icon: "flat-color-icons:shop",
+    icon: "lucide:shopping-cart",
     to: "/pos",
   },
   {
     label: "Inventario",
-    icon: "flat-ui:box",
+    icon: "lucide:package",
     to: "/inventario",
   },
-
 ];
 export const SecondarylinksArray = [
- 
   {
     label: "Configuración",
-    icon:"icon-park:setting-two",
+    icon: "lucide:settings",
     to: "/configuracion",
-    color:"#CE82FF"
   },
   {
     label: "Mi perfil",
-    icon:"glyphs-poly:person",
+    icon: "lucide:user",
     to: "/miperfil",
-    color:"#CE82FF"
   },
-  
-  
-
 ];
-//temas
+
 export const TemasData = [
   {
     icono: "🌞",
     descripcion: "light",
-   
   },
   {
     icono: "🌚",
     descripcion: "dark",
-    
   },
 ];
 
-//tipo usuario
 export const TipouserData = [
   {
     descripcion: "empleado",
@@ -91,7 +74,7 @@ export const TipouserData = [
     icono: "👑",
   },
 ];
-//tipodoc
+
 export const TipoDocData = [
   {
     descripcion: "Dni",

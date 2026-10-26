@@ -9,39 +9,42 @@ import {
 } from "../../../index";
 import { FormatearNumeroDinero } from "../../../utils/Conversiones";
 import { useValidarPermisosOpertivos } from "../../../hooks/UseValidarPermisosOpertivos";
+
 export const TotalPos = () => {
   const { setStateMetodosPago } = useVentasStore();
   const { total } = useDetalleVentasStore();
   const { dataempresa } = useEmpresaStore();
   const { validarPermiso } = useValidarPermisosOpertivos();
+
   const validarPermisosCobrar = () => {
     const hasPermission = validarPermiso("Cobrar venta");
     if (!hasPermission) return;
     setStateMetodosPago();
   };
+
   return (
     <Container>
       <section className="imagen">
-        <img src="https://i.ibb.co/tw1xqhHx/Cobrar-Roshi.png" alt="" />
+        <div className="icon-box">
+          <Icon icon="lucide:receipt" width="26" height="26" />
+        </div>
       </section>
       <section className="contentTotal">
         <section className="contentTituloTotal">
           <Btn1
             funcion={validarPermisosCobrar}
-            border="2px"
-            bgcolor="#6d05e5"
-            color="#3300E3"
-            icono={<Icon icon="emojione:money-bag" width="20" height="20" />}
+            bgcolor="#10B981"
+            color="#FFFFFF"
+            icono={<Icon icon="lucide:banknote" width="20" height="20" />}
             titulo="Cobrar"
-          ></Btn1>
+          />
         </section>
         <span>
-          {" "}
           {FormatearNumeroDinero(
             total,
             dataempresa?.currency,
             dataempresa?.iso,
-          )}{" "}
+          )}
         </span>
       </section>
     </Container>
@@ -51,61 +54,50 @@ export const TotalPos = () => {
 const Container = styled.div`
   display: flex;
   text-align: center;
+  align-items: center;
   justify-content: space-between;
-  border-radius: 15px;
+  border-radius: 14px;
   font-weight: 700;
-  font-size: 38px;
-  background-color: #3300E3;
-  padding: 10px;
-  color: ${({ theme }) => theme.bg};
+  font-size: 36px;
+  background-color: ${({ theme }) => theme.bgcards};
+  border: 1px solid ${({ theme }) => theme.color2};
+  padding: 12px 16px;
+  color: ${({ theme }) => theme.text};
   position: relative;
   overflow: hidden;
-  &::after {
-    content: "";
-    display: block;
-    width: 100px;
-    height: 100px;
-    background-color: #2f09b9;
-    position: absolute;
-    border-radius: 50%;
-    top: -20px;
-    left: -15px;
-  }
-  &::before {
-    content: "";
-    display: block;
-    width: 20px;
-    height: 20px;
-    background-color: ${({ theme }) => theme.bgtotal};
-    position: absolute;
-    border-radius: 50%;
-    top: 5px;
-    right: 5px;
-  }
+
   .imagen {
     z-index: 1;
-    width: 55px;
-   
-    position: relative;
-    @media ${Device.desktop} {
-      bottom: initial;
-    }
-    img {
-      width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .icon-box {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: ${({ theme }) => theme.bgAlpha};
+      border: 1px solid ${({ theme }) => theme.color2};
+      color: ${({ theme }) => theme.text};
     }
   }
+
   .contentTotal {
-    z-index:10;
-    margin-top: 10px;
+    z-index: 10;
     display: flex;
     flex-direction: column;
+    align-items: flex-end;
+
     .contentTituloTotal {
       display: flex;
       align-items: center;
       position: relative;
-      margin-top: 30px;
-      justify-content:end;
-      align-content:end;
+      margin-bottom: 6px;
+      justify-content: flex-end;
+
       @media ${Device.desktop} {
         display: none;
       }

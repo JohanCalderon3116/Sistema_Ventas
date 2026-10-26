@@ -25,7 +25,6 @@ export const SerealizacionesTemplate = ({
     setIsExplonding,
     setStateClose,
   } = useGlobalStore();
-
   function nuevoRegistro() {
     setStateClose(true);
     setAccion("Nuevo");

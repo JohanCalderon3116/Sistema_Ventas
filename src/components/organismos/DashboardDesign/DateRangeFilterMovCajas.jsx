@@ -4,14 +4,13 @@ import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { useMovCajaStore } from "../../../store/MovCajaStore";
 const { RangePicker } = DatePicker;
+
 export const DateRangeFilterMovCajas = () => {
   const [dates, setDates] = useState([]);
   const [singleDate, setSingleDate] = useState(dayjs());
   const [activeRange, setActiveRang] = useState("Hoy");
-
   const { setRangoFechas, fechaInicio, fechaFin, limpiarFechas } =
     useMovCajaStore();
-
   const setSiempreRange = () => {
     const startDate = dayjs("1900-01-01");
     const endDate = dayjs("9999-12-31");
@@ -22,14 +21,12 @@ export const DateRangeFilterMovCajas = () => {
       endDate.format("YYYY-MM-DD"),
     );
   };
-
   const handleDateChange = (val) => {
     setDates(val || []);
     if (val) {
       setRangoFechas(val[0].format("YYYY-MM-DD"), val[1].format("YYYY-MM-DD"));
     }
   };
-
   const handleSingleDateChange = (date) => {
     setSingleDate(date);
     setDates([]);
@@ -58,6 +55,7 @@ export const DateRangeFilterMovCajas = () => {
   useEffect(() => {
     selectToday();
   }, []);
+
   return (
     <Container>
       <ButtonGroup>
@@ -165,6 +163,7 @@ const StyleRangePicker = styled(RangePicker)`
     background-color: ${({ theme }) => theme.bg2};
   }
 `;
+
 const StyleDatePicker = styled(DatePicker)`
   background-color: ${({ theme }) => theme.bg2};
   border: 2px dashed ${({ theme }) => theme.body};

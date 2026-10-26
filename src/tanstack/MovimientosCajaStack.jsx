@@ -5,7 +5,7 @@ import { useUsuariosStore } from "../store/UsuariosStore";
 import { useMovCajaStore } from "../store/MovCajaStore";
 import { toast } from "sonner";
 import { useFormattedDate } from "../hooks/useFormattedDate";
-import { useAuthStore } from "../store/AuthStore";
+import { useCerrarSesion } from "../hooks/useCerrarSesion";
 import { useEmpresaStore } from "../store/EmpresaStore";
 import { abrirCaja } from "../components/atomos/AbrirCajaImpresora";
 
@@ -48,7 +48,13 @@ export const useInsertarIngresosSalidasCajasMutationStack = (
         queryKey: ["mostrar efectivo sin ventas movCaja"],
       });
       queryClient.invalidateQueries({
+        queryKey: ["mostrar detalle efectivo sin ventas movCaja"],
+      });
+      queryClient.invalidateQueries({
         queryKey: ["mostrar ventas metodoPago movCaja"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar movimientos caja por fecha"],
       });
       if (onImprimir) {
         try {
@@ -80,6 +86,22 @@ export const useMostrarEfectivoSinVentasMovCajasQueryStack = () => {
     retry: 1,
   });
 };
+export const useMostrarDetalleEfectivoSinVentasMovCajasQueryStack = () => {
+  const { dataCierreCaja } = useCierreCajaStore();
+  const { mostrarDetalleEfectivoSinVentasMovCierreCaja } = useMovCajaStore();
+  return useQuery({
+    queryKey: [
+      "mostrar detalle efectivo sin ventas movCaja",
+      dataCierreCaja?.id,
+    ],
+    queryFn: () =>
+      mostrarDetalleEfectivoSinVentasMovCierreCaja({
+        _id_cierre_caja: dataCierreCaja?.id,
+      }),
+    enabled: !!dataCierreCaja?.id,
+    retry: 1,
+  });
+};
 export const useMostrarVentasMetodoPagoMovCajaQueryStack = () => {
   const { mostrarVentasMetodoPagoMovCaja } = useMovCajaStore();
   const { dataCierreCaja } = useCierreCajaStore();
@@ -103,7 +125,7 @@ export const useTerminarTurnoMutationStack = (diferencia, reset) => {
   const fechaActual = useFormattedDate();
   const { datausuarios } = useUsuariosStore();
   const { totalEfectivoTotalCaja } = useMovCajaStore();
-  const { cerrarSesion } = useAuthStore();
+  const cerrarSesion = useCerrarSesion();
   const queryClient = useQueryClient();
   const insertar = async (data) => {
     const p = {
@@ -136,6 +158,12 @@ export const useTerminarTurnoMutationStack = (diferencia, reset) => {
       });
       queryClient.invalidateQueries({
         queryKey: ["mostrar caja aperturada por usuario"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar detalle efectivo sin ventas movCaja"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar movimientos caja por fecha"],
       });
       cerrarSesion();
     },

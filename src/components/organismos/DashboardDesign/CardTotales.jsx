@@ -5,6 +5,7 @@ import { Device } from "../../../styles/breakpoints";
 export const CardTotales = ({ title, icon, value, porcentage }) => {
   const isPositive = porcentage > 0;
   const isNeutral = porcentage === 0;
+  
   return (
     <Container>
       <Title>

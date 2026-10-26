@@ -31,7 +31,7 @@ export const SerializacionComprobantes = () => {
   }
   return (
     <Container>
-      <Toaster richColors></Toaster>
+      <Toaster richColors position="top-center"></Toaster>
       {dataCierreCaja ? (
         <SerealizacionesTemplate
           data={data}
@@ -55,6 +55,7 @@ const ConteinerLoader = styled.div`
   gap: 8px;
   height: 100vh;
 `;
+
 const Container = styled.div`
   display: flex;
   justify-content: center;

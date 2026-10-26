@@ -1,6 +1,8 @@
 import styled, { useTheme } from "styled-components";
-import { v } from "../../../styles/variables";
-import { InputText, Btn1, useFormattedDate } from "../../../index";
+import {
+  InputText,
+  Btn1,
+} from "../../../index";
 import { useForm } from "react-hook-form";
 import { BtnClose } from "../../ui/buttons/BtnClose";
 import { toast, Toaster } from "sonner";
@@ -13,6 +15,8 @@ import {
   useInsertarMovimientoCreditoMutationStack,
   useMostrarCreditosQueryStack,
 } from "../../../tanstack/CreditosStack";
+import { v } from "../../../styles/variables";
+
 export function RegistrarmovimientocreditoVenta({ onClose }) {
   const {
     creditosItemSelect,
@@ -40,6 +44,7 @@ export function RegistrarmovimientocreditoVenta({ onClose }) {
   if (error) {
     toast.error(`error: ${error.message}`);
   }
+
   return (
     <Container>
       <Toaster richColors></Toaster>
@@ -48,7 +53,7 @@ export function RegistrarmovimientocreditoVenta({ onClose }) {
           <span>
             <strong>Guardando</strong>
           </span>
-          <BeatLoader color={theme.text} size={8} />
+          <BeatLoader color={theme.color1 || "#8B5CF6"} size={8} />
         </ConteinerLoader>
       ) : (
         <div className="sub-contenedor">
@@ -69,7 +74,7 @@ export function RegistrarmovimientocreditoVenta({ onClose }) {
                 setBuscador={setBuscadorCreditos}
                 displayField="nombres"
               ></BuscadorList>
-              <span>
+              <Detalle>
                 Nombre:{" "}
                 <strong>
                   {" "}
@@ -77,8 +82,8 @@ export function RegistrarmovimientocreditoVenta({ onClose }) {
                     ? creditosItemSelect?.nombres
                     : "-"}{" "}
                 </strong>
-              </span>
-              <span>
+              </Detalle>
+              <Detalle>
                 Credito máximo aprobado:{" "}
                 <strong>
                   {" "}
@@ -90,8 +95,8 @@ export function RegistrarmovimientocreditoVenta({ onClose }) {
                       )
                     : "-"}{" "}
                 </strong>
-              </span>
-              <span>
+              </Detalle>
+              <Detalle>
                 Credito disponible:
                 <strong>
                   {" "}
@@ -103,7 +108,7 @@ export function RegistrarmovimientocreditoVenta({ onClose }) {
                       )
                     : "-"}{" "}
                 </strong>
-              </span>
+              </Detalle>
               <article>
                 <InputText icono={<v.iconoflechaderecha />}>
                   <input
@@ -119,7 +124,8 @@ export function RegistrarmovimientocreditoVenta({ onClose }) {
                 disabled={!creditosItemSelect?.nombres}
                 icono={<v.iconoguardar />}
                 titulo="Guardar"
-                bgcolor="#F9D70B"
+                bgcolor="#18181B"
+                color="#FFFFFF"
               />
             </section>
           </form>
@@ -128,6 +134,7 @@ export function RegistrarmovimientocreditoVenta({ onClose }) {
     </Container>
   );
 }
+
 const Container = styled.div`
   transition: 0.5s;
   top: 0;
@@ -139,28 +146,31 @@ const Container = styled.div`
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  background-color: rgba(9, 9, 11, 0.55);
   backdrop-filter: blur(5px);
+  overflow: hidden;
   .sub-contenedor {
     position: relative;
     width: 500px;
     max-width: 85%;
-    border-radius: 20px;
-    background: ${({ theme }) => theme.bg2};
-    box-shadow: -10px 15px 30px rgba(10, 9, 9, 0.4);
-    padding: 13px 36px 20px 36px;
+    border-radius: 16px;
+    background: ${({ theme }) => theme.bgcards || theme.body};
+    border: 1px solid ${({ theme }) => theme.color2};
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.28);
+    padding: 16px 36px 24px 36px;
     z-index: 100;
-    max-height: 80vh;
-    overflow-y: auto;
-
+    overflow: hidden;
     .headers {
+      position: relative;
+      z-index: 5;
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 20px;
-
       h1 {
-        font-size: 30px;
+        font-size: 20px;
         font-weight: 700;
+        color: ${({ theme }) => theme.text};
       }
       span {
         font-size: 20px;
@@ -168,27 +178,41 @@ const Container = styled.div`
       }
     }
     .formulario {
+      position: relative;
+      z-index: 5;
       .form-subcontainer {
         gap: 20px;
         display: flex;
         flex-direction: column;
-        .colorContainer {
-          .colorPickerContent {
-            padding-top: 15px;
-            min-height: 50px;
-          }
+      }
+    }
+    @media ${v.bplisa} {
+      width: 450px;
+      max-width: 90%;
+      padding: 13px 25px 20px 25px;
+    }
+    @media ${v.bpmarge} {
+      width: 95%;
+      max-width: 95%;
+      padding: 13px 18px 20px 18px;
+      .headers {
+        h1 {
+          font-size: 18px;
         }
       }
     }
   }
 `;
 
-export const ContainerSelector = styled.div`
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  position: relative;
+const Detalle = styled.span`
+  color: ${({ theme }) => theme.text};
+
+  strong {
+    color: #8B5CF6;
+    font-weight: 700;
+  }
 `;
+
 const ConteinerLoader = styled.div`
   display: flex;
   align-items: center;
@@ -196,4 +220,10 @@ const ConteinerLoader = styled.div`
   flex-direction: column;
   gap: 8px;
   height: 100vh;
+  color: ${({ theme }) => theme.text};
+  span {
+    strong {
+      font-size: 18px;
+    }
+  }
 `;

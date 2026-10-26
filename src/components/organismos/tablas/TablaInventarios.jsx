@@ -1,8 +1,5 @@
 import styled from "styled-components";
-import {
-  formatearFechaColombia,
-  Paginacion,
-} from "../../../index";
+import { formatearFechaColombia, Paginacion } from "../../../index";
 import { v } from "../../../styles/variables";
 import { useState } from "react";
 import {
@@ -14,11 +11,13 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { FaArrowsAltV } from "react-icons/fa";
+
 export function TablaInventarios({ data }) {
   if (data == null) return;
   const [pagina, setPagina] = useState(1);
   const [datas, setData] = useState(data);
   const [columnFilters, setColumnFilters] = useState([]);
+
   const columns = [
     {
       accessorKey: "fecha",
@@ -109,6 +108,7 @@ export function TablaInventarios({ data }) {
       },
     },
   ];
+
   const table = useReactTable({
     data,
     columns,
@@ -134,76 +134,78 @@ export function TablaInventarios({ data }) {
         ),
     },
   });
+
   return (
-    <>
-      <Container>
-        <table className="responsive-table">
-          <thead>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <th key={header.id}>
-                    {header.column.columnDef.header}
-                    {header.column.getCanSort() && (
-                      <span
-                        style={{ cursor: "pointer" }}
-                        onClick={header.column.getToggleSortingHandler()}
-                      >
-                        <FaArrowsAltV />
-                      </span>
-                    )}
+    <Container>
+      <table className="responsive-table">
+        <thead>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <tr key={headerGroup.id}>
+              {headerGroup.headers.map((header) => (
+                <th key={header.id}>
+                  {header.column.columnDef.header}
+                  {header.column.getCanSort() && (
+                    <span
+                      style={{ cursor: "pointer" }}
+                      onClick={header.column.getToggleSortingHandler()}
+                    >
+                      <FaArrowsAltV />
+                    </span>
+                  )}
+                  {
                     {
-                      {
-                        asc: " 🔼",
-                        desc: " 🔽",
-                      }[header.column.getIsSorted()]
-                    }
-                    <div
-                      onMouseDown={header.getResizeHandler()}
-                      onTouchStart={header.getResizeHandler()}
-                      className={`resizer ${
-                        header.column.getIsResizing() ? "isResizing" : ""
-                      }`}
-                    />
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody>
-            {table.getRowModel().rows.map((item) => (
-              <tr key={item.id}>
-                {item.getVisibleCells().map((cell) => (
-                  <td key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <Paginacion
-          table={table}
-          irinicio={() => table.setPageIndex(0)}
-          pagina={table.getState().pagination.pageIndex + 1}
-          setPagina={setPagina}
-          maximo={table.getPageCount()}
-        />
-      </Container>
-    </>
+                      asc: " 🔼",
+                      desc: " 🔽",
+                    }[header.column.getIsSorted()]
+                  }
+                  <div
+                    onMouseDown={header.getResizeHandler()}
+                    onTouchStart={header.getResizeHandler()}
+                    className={`resizer ${
+                      header.column.getIsResizing() ? "isResizing" : ""
+                    }`}
+                  />
+                </th>
+              ))}
+            </tr>
+          ))}
+        </thead>
+        <tbody>
+          {table.getRowModel().rows.map((item) => (
+            <tr key={item.id}>
+              {item.getVisibleCells().map((cell) => (
+                <td key={cell.id}>
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <Paginacion
+        table={table}
+        irinicio={() => table.setPageIndex(0)}
+        pagina={table.getState().pagination.pageIndex + 1}
+        setPagina={setPagina}
+        maximo={table.getPageCount()}
+      />
+    </Container>
   );
 }
+
 const Container = styled.div`
   position: relative;
+  margin: 3% 2%;
+  color: ${({ theme }) => theme.text};
 
-  margin: 5% 3%;
   @media (min-width: ${v.bpbart}) {
     margin: 2%;
   }
   @media (min-width: ${v.bphomer}) {
     margin: 2em auto;
-    /* max-width: ${v.bphomer}; */
   }
+
   .responsive-table {
     width: 100%;
     margin-bottom: 1.5em;
@@ -216,7 +218,6 @@ const Container = styled.div`
     }
     thead {
       position: absolute;
-
       padding: 0;
       border: 0;
       height: 1px;
@@ -230,10 +231,10 @@ const Container = styled.div`
         overflow: auto;
       }
       th {
-        border-bottom: 2px solid ${({ theme }) => theme.color2};
+        border-bottom: 2px solid ${({ theme }) => theme.halloweenBorder};
         font-weight: 700;
         text-align: center;
-        color: ${({ theme }) => theme.text};
+        color: ${({ theme }) => theme.halloweenPrimary};
         &:first-of-type {
           text-align: center;
         }
@@ -281,13 +282,13 @@ const Container = styled.div`
         @media (min-width: ${v.bpbart}) {
           display: table-row;
           border-width: 1px;
+          transition: background-color 0.2s ease;
+          &:hover {
+            background: ${({ theme }) => theme.bgAlpha};
+          }
         }
         &:last-of-type {
           margin-bottom: 0;
-        }
-        &:nth-of-type(even) {
-          @media (min-width: ${v.bpbart}) {
-          }
         }
       }
       th[scope="row"] {
@@ -306,7 +307,6 @@ const Container = styled.div`
         justify-content: space-between;
         align-items: center;
         height: 50px;
-
         border-bottom: 1px solid rgba(161, 161, 161, 0.32);
         @media (min-width: ${v.bpbart}) {
           justify-content: center;
@@ -316,7 +316,6 @@ const Container = styled.div`
       td {
         text-align: right;
         @media (min-width: ${v.bpbart}) {
-          /* border-bottom: 1px solid rgba(161, 161, 161, 0.32); */
           text-align: center;
         }
       }
@@ -334,6 +333,7 @@ const Container = styled.div`
     }
   }
 `;
+
 const Colorcontent = styled.div`
   justify-content: center;
   min-height: ${(props) => props.$alto};

@@ -33,22 +33,35 @@ const fila = (label, value) => ({
 });
 
 const TicketEntradasSalidas = async (output, data) => {
-  const esEntrada = `${data.tipo}`.toLowerCase() === "entrada";
+  const esEntrada = `${data.tipo}`.toLowerCase() === "ingreso";
   const titulo = esEntrada ? "ENTRADA" : "SALIDA";
 
-  const logoempresa = await urlToBase64(
-    !data.logo || data.logo === "-"
-      ? "https://i.ibb.co/HLNmDKRK/administracion-de-empresas.gif"
-      : data.logo,
-  );
+  let logoempresa = null;
+  if (data.logo && data.logo !== "-") {
+    try {
+      const resultado = await urlToBase64(data.logo);
+      if (resultado && resultado.startsWith("data:image")) {
+        logoempresa = resultado;
+      } else {
+        console.warn("Logo con formato inválido, se omite del ticket");
+      }
+    } catch (e) {
+      console.warn("No se pudo cargar el logo, se omite en el ticket:", e);
+    }
+  }
 
   const content = [
-    {
-      image: logoempresa,
-      fit: [45, 45],
-      alignment: "center",
-      margin: [0, 0, 0, 3],
-    },
+    // El bloque del logo solo se agrega si logoempresa es válido.
+    ...(logoempresa
+      ? [
+          {
+            image: logoempresa,
+            fit: [45, 45],
+            alignment: "center",
+            margin: [0, 0, 0, 3],
+          },
+        ]
+      : []),
     { text: `${data.direccion_empresa}`, style: "empresaDato" },
     { text: `${data.pais}`, style: "empresaDato" },
     linea(),
@@ -110,7 +123,8 @@ const TicketEntradasSalidas = async (output, data) => {
 
   const response = await createPdf(
     {
-      pageSize: { width: ANCHO_PAGINA, height: "auto" },
+      pageSize: { width: ANCHO_PAGINA, height: 595.28 },
+      pageOrientation: "portrait",
       pageMargins: [MARGEN, MARGEN, MARGEN, MARGEN],
       defaultStyle: { color: NEGRO, bold: true },
       content,

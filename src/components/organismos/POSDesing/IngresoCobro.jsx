@@ -38,7 +38,7 @@ export const IngresoCobro = forwardRef((props, ref) => {
     vuelto,
   } = useVentasStore();
   const { total, mostrardetalleventa } = useDetalleVentasStore();
-  const [precioVenta, setPrecioVenta] = useState(total);
+  // FIX: se eliminó `const [precioVenta, setPrecioVenta] = useState(total)`
   const { data: dataMonedas } = useMostrarMonedaQueryStack();
   const {
     dataComprobantes,
@@ -56,23 +56,24 @@ export const IngresoCobro = forwardRef((props, ref) => {
   const denominacionesOrdenadas = [...(dataMonedas ?? [])].sort(
     (a, b) => a.numero - b.numero,
   );
+  // FIX: usa `total` directo en vez de `precioVenta`
   const calcularVueltoYRestante = () => {
     const totalPagado = Object.values(valoresPago).reduce(
       (acc, curr) => acc + curr,
       0,
     );
     const totalSinEfectivo = totalPagado - (valoresPago["Efectivo"] || 0);
-    if (totalSinEfectivo > precioVenta) {
+    if (totalSinEfectivo > total) {
       setVuelto(0);
-      setRestante(precioVenta - totalSinEfectivo);
+      setRestante(total - totalSinEfectivo);
     } else {
-      if (totalPagado >= precioVenta) {
-        const exceso = totalPagado - precioVenta;
+      if (totalPagado >= total) {
+        const exceso = totalPagado - total;
         setVuelto(valoresPago["Efectivo"] ? exceso : 0);
         setRestante(0);
       } else {
         setVuelto(0);
-        setRestante(precioVenta - totalPagado);
+        setRestante(total - totalPagado);
       }
     }
   };
@@ -159,9 +160,10 @@ export const IngresoCobro = forwardRef((props, ref) => {
       setValoresPago({ Efectivo: recibido > 0 ? recibido : total });
     }
   }, [recibido, total]);
+  // FIX: depende de `total` en vez de `precioVenta`
   useEffect(() => {
     calcularVueltoYRestante();
-  }, [precioVenta, tipocobro, valoresPago]);
+  }, [total, tipocobro, valoresPago]);
   return (
     <Container $ancho={usaEfectivo ? "1000px" : "480px"}>
       {mutation.isPending ? (
@@ -371,6 +373,10 @@ export const IngresoCobro = forwardRef((props, ref) => {
                     ></Btn1>
                     <Linea></Linea>
                     <Btn1
+                      funcion={() => {
+                        if (mutation.isPending) return;
+                        mutation.mutateAsync();
+                      }}
                       border="2px"
                       titulo="Cobrar (Enter)"
                       bgcolor="#0aca21"

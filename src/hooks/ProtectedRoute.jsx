@@ -7,7 +7,6 @@ import { useMostrarPermisosGlobalesQueryStack } from "../tanstack/PermisosStack"
 
 export const ProtectedRoute = ({ children, accesby }) => {
   const { user } = userAuth();
-
   const location = useLocation();
   const { datausuarios } = useUsuariosStore();
   const { data: dataPermisosGlobales, isLoading: isLoadingPermisosGlobales } =
@@ -21,26 +20,20 @@ export const ProtectedRoute = ({ children, accesby }) => {
       return <Navigate to="/"></Navigate>;
     }
   }
-
   if (accesby === "authenticated") {
     if (!user) {
       return <Navigate to="/login"></Navigate>;
     }
-
     if (isLoading) {
-      return <SpinnerSecundario texto={"🔐 Verificando permisos..."} />;
+      return <SpinnerSecundario texto={" 🔐 Verificando permisos"} />;
     }
-
     const hasPermission = dataPermisosGlobales?.some((item) => {
       return item.modulos?.link === location.pathname;
     });
-
     if (!hasPermission) {
       return <Navigate to="/sin-permiso"></Navigate>;
     }
-
     return children;
   }
-
   return <Navigate to="/login"></Navigate>;
 };

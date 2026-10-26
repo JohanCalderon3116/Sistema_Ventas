@@ -192,14 +192,12 @@ export function TablaSerializaciones({ data }) {
 }
 const Container = styled.div`
   position: relative;
-
   margin: 5% 3%;
   @media (min-width: ${v.bpbart}) {
     margin: 2%;
   }
   @media (min-width: ${v.bphomer}) {
     margin: 2em auto;
-    /* max-width: ${v.bphomer}; */
   }
   .responsive-table {
     width: 100%;
@@ -215,7 +213,6 @@ const Container = styled.div`
       font-size: 0.8em;
       transform: scale(0.9);
     }
-
     thead {
       position: relative;
       padding: 0;
@@ -223,7 +220,6 @@ const Container = styled.div`
       height: auto;
       width: auto;
       overflow: auto;
-
       th {
         border-bottom: 1px solid ${({ theme }) => theme.color2};
         font-weight: 700;
@@ -253,13 +249,4 @@ const Container = styled.div`
       }
     }
   }
-`;
-const Colorcontent = styled.div`
-  justify-content: center;
-  min-height: ${(props) => props.$alto};
-  width: ${(props) => props.$ancho};
-  display: flex;
-  background-color: ${(props) => props.color};
-  border-radius: 50%;
-  text-align: center;
 `;

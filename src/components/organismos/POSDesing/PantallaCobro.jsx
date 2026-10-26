@@ -8,7 +8,7 @@ import { useDetalleVentasStore } from "../../../store/DetalleVentasStore";
 export const PantallaCobro = () => {
   const { setStatePantallaCobro, tipocobro } = useVentasStore();
   const ingresoCobroRef = useRef();
-  const enviandoRef = useRef(false); // guard sincrónico anti doble disparo
+  const enviandoRef = useRef(false); 
   const { detalleventa } = useDetalleVentasStore();
 
   useEffect(() => {
@@ -16,8 +16,8 @@ export const PantallaCobro = () => {
       if (event.key !== "Enter") return;
       event.preventDefault();
 
-      if (event.repeat) return; // ignora repeticiones por tecla sostenida
-      if (enviandoRef.current) return; // ya se disparó, ignora hasta que termine
+      if (event.repeat) return; 
+      if (enviandoRef.current) return; 
 
       if (ingresoCobroRef.current) {
         enviandoRef.current = true;

@@ -1,29 +1,20 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 export const Switch = ({ state, setState }) => {
   return (
     <SwitchLabel>
-      <ToggleInput type="checkbox" checked={state} onClick={setState} />
+      <ToggleInput type="checkbox" checked={state} onClick={setState} readOnly />
       <Slider />
     </SwitchLabel>
   );
 };
 
 const SwitchLabel = styled.label`
-  --input-focus: #2d8cf0;
-  --font-color: #323232;
-  --font-color-sub: #666;
-  --bg-color: #fff;
-  --bg-color-alt: #666;
-  --main-color: #323232;
   position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 30px;
-  width: 50px;
-  height: 20px;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  cursor: pointer;
 `;
 
 const ToggleInput = styled.input`
@@ -33,39 +24,34 @@ const ToggleInput = styled.input`
 `;
 
 const Slider = styled.span`
-  box-sizing: border-box;
-  border-radius: 5px;
-  border: 2px solid var(--main-color);
-  box-shadow: 4px 4px var(--main-color);
   position: absolute;
+  inset: 0;
   cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: var(--bg-color);
-  transition: 0.3s;
+  background-color: ${({ theme }) =>
+    theme?.text === "#FFFFFF" ? "#1A1A1A" : "#D4D4D8"};
+  border: 1px solid ${({ theme }) => theme.color2};
+  border-radius: 999px;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 
   &:before {
-    box-sizing: border-box;
     position: absolute;
     content: "";
-    height: 20px;
-    width: 20px;
-    border: 2px solid var(--main-color);
-    border-radius: 5px;
-    left: -2px;
+    height: 18px;
+    width: 18px;
+    left: 2px;
     bottom: 2px;
-    background-color: var(--bg-color);
-    box-shadow: 0 3px 0 var(--main-color);
-    transition: 0.3s;
+    border-radius: 50%;
+    background-color: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+    transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   ${ToggleInput}:checked + & {
-    background-color: var(--input-focus);
+    background-color: #10b981;
+    border-color: #10b981;
   }
 
   ${ToggleInput}:checked + &:before {
-    transform: translateX(30px);
+    transform: translateX(20px);
   }
 `;

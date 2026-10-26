@@ -57,39 +57,52 @@ const TicketAbonoCredito = async (output, data) => {
   const colorAccento = "#000000";
   const colorBorde = "#000000";
 
-  const logoempresa = await urlToBase64(
-    !data.logo || data.logo === "-"
-      ? "https://i.ibb.co/HLNmDKRK/administracion-de-empresas.gif"
-      : data.logo,
-  );
+  let logoempresa = null;
+  if (data.logo && data.logo !== "-") {
+    try {
+      const resultado = await urlToBase64(data.logo);
+      if (resultado && resultado.startsWith("data:image")) {
+        logoempresa = resultado;
+      } else {
+        console.warn("Logo con formato inválido, se omite del ticket");
+      }
+    } catch (e) {
+      console.warn("No se pudo cargar el logo, se omite en el ticket:", e);
+    }
+  }
 
   const content = [
-    {
-      table: {
-        widths: [ANCHO_UTIL],
-        body: [
-          [
-            {
-              image: logoempresa,
-              fit: [65, 65],
-              alignment: "center",
-              margin: [0, 4, 0, 4],
+    // El bloque del logo solo se agrega si logoempresa es válido.
+    ...(logoempresa
+      ? [
+          {
+            table: {
+              widths: [ANCHO_UTIL],
+              body: [
+                [
+                  {
+                    image: logoempresa,
+                    fit: [65, 65],
+                    alignment: "center",
+                    margin: [0, 4, 0, 4],
+                  },
+                ],
+              ],
             },
-          ],
-        ],
-      },
-      layout: {
-        hLineWidth: () => 1,
-        vLineWidth: () => 1,
-        hLineColor: () => "#000000",
-        vLineColor: () => "#000000",
-        paddingLeft: () => 0,
-        paddingRight: () => 0,
-        paddingTop: () => 0,
-        paddingBottom: () => 0,
-      },
-      margin: [0, 0, 0, 7],
-    },
+            layout: {
+              hLineWidth: () => 1,
+              vLineWidth: () => 1,
+              hLineColor: () => "#000000",
+              vLineColor: () => "#000000",
+              paddingLeft: () => 0,
+              paddingRight: () => 0,
+              paddingTop: () => 0,
+              paddingBottom: () => 0,
+            },
+            margin: [0, 0, 0, 7],
+          },
+        ]
+      : []),
     {
       text: `${data.direccion_empresa}`,
       style: "empresaDato",
