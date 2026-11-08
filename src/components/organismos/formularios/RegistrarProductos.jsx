@@ -93,6 +93,9 @@ export function RegistrarProductos({
     formState: { errors },
     handleSubmit,
   } = useForm();
+  const stockMinimoReg = register("stock_minimo", {});
+  const stockReg = register("stock", {});
+  const ubicacionREg = register("ubicacion", {});
   const { isPending, mutate: doInsertar } = useInsertarProductosMutationStack({
     accion,
     dataSelect,
@@ -369,7 +372,8 @@ export function RegistrarProductos({
                   </ContainerSelector>
                   {stateEnabledStock && dataStockXAlamacenYProducto && (
                     <ContainerMensajeStock>
-                      Para modificar el stock existente, dirígete al módulo de Inventario.
+                      Para modificar el stock existente, dirígete al módulo de
+                      Inventario.
                     </ContainerMensajeStock>
                   )}
                   <article>
@@ -386,7 +390,10 @@ export function RegistrarProductos({
                         step="0.01"
                         placeholder="stock "
                         {...register("stock", {})}
-                        onChange={(e) => setStock(e.target.value)}
+                        onChange={(e) => {
+                          stockReg.onChange(e);
+                          setStock(e.target.value);
+                        }}
                       />
                       <label className="form__label">Stock</label>
                     </InputText>
@@ -405,7 +412,10 @@ export function RegistrarProductos({
                         step="0.01"
                         placeholder="stock minimo"
                         {...register("stock_minimo", {})}
-                        onChange={(e) => setStockMinimo(e.target.value)}
+                        onChange={(e) => {
+                          stockMinimoReg.onChange(e);
+                          setStockMinimo(e.target.value);
+                        }}
                       />
                       <label className="form__label">Stock minimo</label>
                     </InputText>
@@ -423,7 +433,10 @@ export function RegistrarProductos({
                         type="text"
                         placeholder="ubicacion"
                         {...register("ubicacion", {})}
-                        onChange={(e) => setUbicacion(e.target.value)}
+                        onChange={(e) => {
+                          ubicacionREg.onChange(e);
+                          setUbicacion(e.target.value);
+                        }}
                       />
                       <label className="form__label">Ubicación</label>
                     </InputText>
