@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+whatsapp-service/node_modules
+whatsapp-service/auth_info_baileys
+whatsapp-service/historial_envios.json

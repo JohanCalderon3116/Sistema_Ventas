@@ -70,6 +70,7 @@ export interface EmpresaFacturacionData {
   id: number;
   nombre: string;
   correo: string;
+  telefono: string;
   id_fiscal: string;
   fechaCreacionStr: string;
   diasAntiguedad: number;
@@ -85,6 +86,81 @@ export interface EmpresaFacturacionData {
   tarifaMensualCalculada: number;
   descuentoMesGratis: number;
   totalAPagar: number;
+}
+
+export function normalizarTelefonoWhatsapp(raw: unknown): string {
+  if (!raw || raw === "-") return "";
+  const digits = String(raw).replace(/\D/g, "");
+  if (digits.length < 10) return "";
+  if (digits.length === 10 && digits.startsWith("3")) {
+    return `57${digits}`;
+  }
+  return digits;
+}
+
+export function obtenerDiaColombia(fecha = new Date()): {
+  fechaBogotaStr: string;
+  diaMes: number;
+} {
+  const bogotaTime = new Date(fecha.getTime() - 5 * 60 * 60 * 1000);
+  const yyyy = bogotaTime.getUTCFullYear();
+  const mm = String(bogotaTime.getUTCMonth() + 1).padStart(2, "0");
+  const dd = String(bogotaTime.getUTCDate()).padStart(2, "0");
+  return {
+    fechaBogotaStr: `${yyyy}-${mm}-${dd}`,
+    diaMes: bogotaTime.getUTCDate(),
+  };
+}
+
+export function construirMensajeWhatsapp(
+  emp: EmpresaFacturacionData,
+  diaMes = 22,
+): string {
+  const etiquetaRecordatorio =
+    diaMes === 28
+      ? "⏰ *ÚLTIMO RECORDATORIO DE PAGO (VENCE EL DÍA 1)*"
+      : diaMes === 26
+        ? "🔔 *SEGUNDO RECORDATORIO DE FACTURACIÓN MENSUAL*"
+        : "📅 *RECORDATORIO DE FACTURACIÓN MENSUAL (DÍA 22)*";
+
+  if (emp.esMesGratis) {
+    return [
+      "*SOFTCREATE POS — FACTURA DE SUSCRIPCIÓN* 📄✨",
+      "",
+      `Hola, *${emp.nombre}* 👋`,
+      "¡Gracias por confiar en *SoftCreate POS*! Adjuntamos en PDF el soporte de tu suscripción mensual.",
+      "",
+      "🎁 *BENEFICIO PRIMER MES GRATIS:*",
+      `Como tu empresa fue registrada recientemente (${emp.fechaCreacionStr}), *este primer mes es 100% GRATIS*.`,
+      "",
+      `• Valor mensualidad (${emp.nivelFlujo}): ${formatCOP(emp.tarifaMensualCalculada)} COP`,
+      `• Descuento de bienvenida (-100%): - ${formatCOP(emp.descuentoMesGratis)} COP`,
+      "• *TOTAL A PAGAR ESTE MES: $ 0 COP* ✅",
+      "",
+      `📊 *Actividad registrada:* ${emp.ventasCount} ventas | ${emp.productosCount} productos | ${emp.cierresCount} turnos de caja.`,
+    ].join("\n");
+  }
+
+  return [
+    "*SOFTCREATE POS — FACTURA Y RECORDATORIO DE PAGO* 📄",
+    etiquetaRecordatorio,
+    "",
+    `Hola, *${emp.nombre}* 👋`,
+    "Te recordamos el pago de la mensualidad de tu sistema *SoftCreate POS*. Adjuntamos en PDF tu factura actualizada según el flujo operativo de tu negocio.",
+    "",
+    "💰 *RESUMEN DE COBRO:*",
+    `• Nivel de actividad: ${emp.nivelFlujo}`,
+    `• *TOTAL A PAGAR: ${formatCOP(emp.totalAPagar)} COP*`,
+    "• Fecha límite de pago: Día 1 del mes",
+    "",
+    `📊 *Actividad registrada:* ${emp.ventasCount} ventas | ${emp.productosCount} productos | ${emp.cierresCount} turnos de caja.`,
+    "",
+    "🏦 *MEDIOS DE PAGO AUTORIZADOS:*",
+    "• *Nequi:* 3116025328",
+    "• *Efectivo:* Pago presencial (entrega personal)",
+    "",
+    "_Una vez realizado el pago, por favor envíanos el comprobante por este mismo chat para registrar tu abono inmediatamente._ ¡Gracias por preferirnos! 🚀",
+  ].join("\n");
 }
 
 export function calcularFacturacionEmpresas(
@@ -156,10 +232,29 @@ export function calcularFacturacionEmpresas(
     const diasAntiguedad = Math.floor(diffMs / (1000 * 60 * 60 * 24));
     const esMesGratis = diasAntiguedad < DIAS_MES_GRATIS;
 
+    // Extraer teléfono de la empresa o, como respaldo, del usuario asignado a la sucursal
+    let telefonoCandidato = normalizarTelefonoWhatsapp(emp.telefono_celular);
+    if (!telefonoCandidato) {
+      for (const s of sucursalesEmp) {
+        const asignaciones = Array.isArray(s.asignacion_sucursal)
+          ? s.asignacion_sucursal
+          : [];
+        for (const asig of asignaciones) {
+          const telUser = normalizarTelefonoWhatsapp(asig?.usuarios?.telefono);
+          if (telUser) {
+            telefonoCandidato = telUser;
+            break;
+          }
+        }
+        if (telefonoCandidato) break;
+      }
+    }
+
     return {
       id: idEmp,
       nombre: emp.nombre || "Empresa Registrada",
       correo: emp.correo,
+      telefono: telefonoCandidato,
       id_fiscal: emp.id_fiscal || "Consumidor Final",
       fechaCreacionStr: formatDateOnly(fechaCreacionDate.toISOString()),
       diasAntiguedad,
@@ -864,18 +959,40 @@ serve(async (req) => {
   }
 
   try {
+    let reqBody: any = {};
+    try {
+      if (req.method === "POST") {
+        reqBody = await req.json();
+      }
+    } catch (_e) {
+      reqBody = {};
+    }
+
     const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     const resendKey = Deno.env.get("RESEND_API_KEY") ?? "";
+    const whatsappServiceUrl = (
+      reqBody?.whatsapp_service_url ||
+      Deno.env.get("WHATSAPP_SERVICE_URL") ||
+      ""
+    )
+      .trim()
+      .replace(/\/+$/, "");
+    const whatsappApiKey =
+      reqBody?.whatsapp_api_key ||
+      Deno.env.get("WHATSAPP_API_KEY") ||
+      "softcreate-pos-secret-2026";
+    const incluirWhatsappPayload = Boolean(reqBody?.incluir_whatsapp_payload);
+    const omitirCorreo = Boolean(reqBody?.omitir_correo);
 
     // 1. Obtener empresas con correo y métricas globales de la base de datos
     const [resEmpresas, resVentas, resProductos, resSucursales] =
       await Promise.all([
         supabase
           .from("empresa")
-          .select("id, nombre, correo, id_fiscal")
+          .select("id, nombre, correo, id_fiscal, telefono_celular")
           .not("correo", "is", null),
         supabase
           .from("ventas")
@@ -883,7 +1000,9 @@ serve(async (req) => {
         supabase.from("productos").select("id, id_empresa"),
         supabase
           .from("sucursales")
-          .select("id, id_empresa, caja(id, fecha_creacion, cierrecaja(id, fechainicio))"),
+          .select(
+            "id, id_empresa, caja(id, fecha_creacion, cierrecaja(id, fechainicio)), asignacion_sucursal(id_usuario, usuarios(id, telefono))",
+          ),
       ]);
 
     if (resEmpresas.error) throw resEmpresas.error;
@@ -925,6 +1044,21 @@ serve(async (req) => {
 
     const hoy = new Date();
     const fechaEmision = formatDateOnly(hoy.toISOString());
+    const { fechaBogotaStr, diaMes } = obtenerDiaColombia(hoy);
+    const forzarCorreo = Boolean(reqBody?.forzar_correo);
+
+    let correoYaEnviadoHoy = false;
+    try {
+      const { data: ctrlBlob } = await supabase.storage
+        .from("imagenes")
+        .download("branding/control-envios-facturas.json");
+      if (ctrlBlob) {
+        const ctrlJson = JSON.parse(await ctrlBlob.text());
+        if (ctrlJson?.ultimaFechaCorreo === fechaBogotaStr) {
+          correoYaEnviadoHoy = true;
+        }
+      }
+    } catch (_e) {}
 
     // 3. Calcular facturación precisa ($150.000 a $250.000 COP) + verificación de primer mes gratis
     const empresasFacturacion = calcularFacturacionEmpresas(
@@ -936,6 +1070,7 @@ serve(async (req) => {
     );
 
     const resumenEnvios: any[] = [];
+    let algunCorreoEnviadoHoy = false;
 
     for (const emp of empresasFacturacion) {
       const pdfBytes = await buildFacturaPdf(emp, fechaEmision);
@@ -1074,51 +1209,128 @@ serve(async (req) => {
       const safeNombre = sanitizePdfText(emp.nombre)
         .replace(/[^a-zA-Z0-9_-]/g, "_")
         .replace(/_+/g, "_");
+      const nombreArchivoPdf = `Factura_SoftCreate_${safeNombre}.pdf`;
 
       const subject = emp.esMesGratis
         ? `Tu factura mensual de SoftCreate POS — ¡Primer Mes Gratis! ($ 0 COP) | ${emp.nombre}`
         : `Tu factura mensual de SoftCreate POS (${formatCOP(emp.totalAPagar)} COP) | ${emp.nombre}`;
 
-      const res = await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${resendKey}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          from: "Facturación SoftCreate <facturacion@softcreatepos.com>",
-          to: emp.correo,
-          subject,
-          html: htmlBody,
-          attachments: [
-            {
-              filename: `Factura_SoftCreate_${safeNombre}.pdf`,
-              content: base64Pdf,
-            },
-          ],
-        }),
-      });
+      let correoEnviado = false;
+      const debeEnviarCorreo =
+        !omitirCorreo && Boolean(resendKey) && (!correoYaEnviadoHoy || forzarCorreo);
 
-      if (!res.ok) {
-        console.error(
-          `Error enviando factura a ${emp.correo}:`,
-          await res.text(),
-        );
+      if (debeEnviarCorreo) {
+        const res = await fetch("https://api.resend.com/emails", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${resendKey}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            from: "Facturación SoftCreate <facturacion@softcreatepos.com>",
+            to: emp.correo,
+            subject,
+            html: htmlBody,
+            attachments: [
+              {
+                filename: nombreArchivoPdf,
+                content: base64Pdf,
+              },
+            ],
+          }),
+        });
+
+        if (res.ok) {
+          correoEnviado = true;
+          algunCorreoEnviadoHoy = true;
+        } else {
+          console.error(
+            `Error enviando factura a ${emp.correo}:`,
+            await res.text(),
+          );
+        }
+      } else if (correoYaEnviadoHoy && !omitirCorreo) {
+        correoEnviado = true;
       }
 
-      resumenEnvios.push({
+      const mensajeWhatsapp = construirMensajeWhatsapp(emp, diaMes);
+      let whatsappEnviado = false;
+      let whatsappDetalle = emp.telefono
+        ? "Listo para enviar"
+        : "Sin teléfono registrado";
+
+      if (whatsappServiceUrl && emp.telefono) {
+        try {
+          const waRes = await fetch(`${whatsappServiceUrl}/enviar-factura`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "x-api-key": whatsappApiKey,
+            },
+            body: JSON.stringify({
+              telefono: emp.telefono,
+              empresa: emp.nombre,
+              mensaje: mensajeWhatsapp,
+              nombreArchivo: nombreArchivoPdf,
+              pdfBase64: base64Pdf,
+            }),
+          });
+          if (waRes.ok) {
+            whatsappEnviado = true;
+            whatsappDetalle = `Enviado a +${emp.telefono}`;
+          } else {
+            whatsappDetalle = `Error gateway: ${await waRes.text()}`;
+          }
+        } catch (waErr: any) {
+          whatsappDetalle = `Error conexión WhatsApp: ${waErr?.message || "No disponible"}`;
+        }
+      }
+
+      const itemResumen: any = {
+        id: emp.id,
         empresa: emp.nombre,
         correo: emp.correo,
+        telefono: emp.telefono,
         diasAntiguedad: emp.diasAntiguedad,
         esMesGratis: emp.esMesGratis,
         tarifaCalculada: emp.tarifaMensualCalculada,
         totalAPagar: emp.totalAPagar,
-      });
+        correoEnviado,
+        whatsappEnviado,
+        whatsappDetalle,
+      };
+
+      if (incluirWhatsappPayload) {
+        itemResumen.nombreArchivo = nombreArchivoPdf;
+        itemResumen.mensajeWhatsapp = mensajeWhatsapp;
+        itemResumen.pdfBase64 = base64Pdf;
+      }
+
+      resumenEnvios.push(itemResumen);
+    }
+
+    if (algunCorreoEnviadoHoy) {
+      try {
+        const ctrlBytes = new TextEncoder().encode(
+          JSON.stringify({
+            ultimaFechaCorreo: fechaBogotaStr,
+            actualizadoEn: new Date().toISOString(),
+          }),
+        );
+        await supabase.storage
+          .from("imagenes")
+          .upload("branding/control-envios-facturas.json", ctrlBytes, {
+            contentType: "application/json",
+            cacheControl: "0",
+            upsert: true,
+          });
+      } catch (_e) {}
     }
 
     return new Response(
       JSON.stringify({
-        message: "Facturación procesada y enviada con éxito a todas las empresas.",
+        message:
+          "Facturación procesada y enviada con éxito a todas las empresas.",
         facturas: resumenEnvios,
       }),
       {
