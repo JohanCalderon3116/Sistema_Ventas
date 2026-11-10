@@ -1,8 +1,13 @@
 import styled, { useTheme } from "styled-components";
 import { BeatLoader } from "react-spinners";
 import writtenNumber from "written-number";
+import { useState } from "react";
+import { Icon } from "@iconify/react";
+import { Toaster, toast } from "sonner";
 import { useMovimientosCreditosStore } from "../../store/MovimientosCreditosStore";
+import { useEmpresaStore } from "../../store/EmpresaStore";
 import { useMostrarVentaCompletaCreditoQueryStack } from "../../tanstack/CreditosStack";
+import TicketVentaModal from "../../reports/TicketVentaModal";
 
 writtenNumber.defaults.lang = "es";
 
@@ -13,16 +18,54 @@ const formatMoney = (n) =>
     minimumFractionDigits: 0,
   }).format(n || 0);
 
+const esDispositivoMovilOTablet = () => {
+  if (typeof window === "undefined") return false;
+  const ua = navigator.userAgent || "";
+  const isMobileUA =
+    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|Tablet/i.test(
+      ua,
+    );
+  const isTouchTablet =
+    navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1;
+  const isSmallScreen = window.innerWidth <= 1024;
+  return isMobileUA || isTouchTablet || isSmallScreen;
+};
+
 export const TicketModalCredito = () => {
   const { isTicketCreditoOpen, cerrarTicketCredito } =
     useMovimientosCreditosStore();
+  const { dataempresa } = useEmpresaStore();
   const { data, isLoading } = useMostrarVentaCompletaCreditoQueryStack();
+  const [generandoPdf, setGenerandoPdf] = useState(false);
   const theme = useTheme();
 
   if (!isTicketCreditoOpen) return null;
 
+  const handleGenerarPdf = async () => {
+    if (esDispositivoMovilOTablet()) {
+      toast.warning(
+        "La generación e impresión de PDF solo está disponible desde un computador (PC).",
+      );
+      return;
+    }
+    if (!data || generandoPdf) return;
+    try {
+      setGenerandoPdf(true);
+      await TicketVentaModal("print", {
+        ...data,
+        telefono: data?.telefono || dataempresa?.telefono_celular,
+      });
+    } catch (error) {
+      console.error("Error generando el PDF de la venta:", error);
+      toast.error("No se pudo generar el PDF de la venta.");
+    } finally {
+      setGenerandoPdf(false);
+    }
+  };
+
   return (
     <Overlay onClick={cerrarTicketCredito}>
+      <Toaster richColors position="top-center" />
       <Ticket onClick={(e) => e.stopPropagation()}>
         <CloseButton onClick={cerrarTicketCredito}>✕</CloseButton>
 
@@ -138,6 +181,17 @@ export const TicketModalCredito = () => {
             <Divider dashed />
 
             <PiePagina>{data.pie_pagina || "- - SoftCreate POS"}</PiePagina>
+
+            <PdfButtonContainer>
+              <PdfButton
+                type="button"
+                onClick={handleGenerarPdf}
+                disabled={generandoPdf}
+              >
+                <Icon icon="mdi:file-pdf-box" width="18" height="18" />
+                <span>{generandoPdf ? "Generando PDF..." : "Imprimir PDF"}</span>
+              </PdfButton>
+            </PdfButtonContainer>
           </>
         )}
       </Ticket>
@@ -305,4 +359,38 @@ const PiePagina = styled.p`
   margin-top: 8px;
   color: ${({ theme }) => theme.text};
   opacity: 0.7;
+`;
+
+const PdfButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 14px;
+`;
+
+const PdfButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 9px 14px;
+  border-radius: 6px;
+  border: 1px solid
+    ${({ theme }) =>
+      theme.body === "#fff" ? "rgba(0,0,0,0.18)" : "rgba(255,255,255,0.2)"};
+  background: #18181b;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.15s ease;
+  &:hover:not(:disabled) {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
 `;

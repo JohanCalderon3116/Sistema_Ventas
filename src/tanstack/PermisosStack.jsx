@@ -11,7 +11,7 @@ export const useMostrarPermisosConfiguracionesQueryStack = () => {
       mostrarPermisosConfiguraciones({
         id_usuario: datausuarios?.id,
       }),
-    enabled: !!datausuarios,
+    enabled: !!datausuarios?.id,
     staleTime: 1000 * 60 * 5,
     retry: 1,
   });
@@ -22,7 +22,7 @@ export const useMostrarPermisosGlobalesQueryStack = () => {
   return useQuery({
     queryKey: ["permisos globales", datausuarios?.id],
     queryFn: () => mostrarPermisosGlobales({ id_usuario: datausuarios?.id }),
-    enabled: !!datausuarios,
+    enabled: !!datausuarios?.id,
     staleTime: 1000 * 60 * 5,
     retry: 1,
   });

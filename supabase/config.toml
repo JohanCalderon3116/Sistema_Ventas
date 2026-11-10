@@ -424,3 +424,9 @@ entrypoint = "./functions/enviar-facturas/index.ts"
 # Specifies static files to be bundled with the function. Supports glob patterns.
 # For example, if you want to serve static HTML pages in your function:
 # static_files = [ "./functions/enviar-facturas/*.html" ]
+
+[functions.enviar-cierre-caja]
+enabled = true
+verify_jwt = false
+import_map = "./functions/enviar-cierre-caja/deno.json"
+entrypoint = "./functions/enviar-cierre-caja/index.ts"

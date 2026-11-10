@@ -91,7 +91,7 @@ export const useMostrarEmpresaQueryStack = () => {
   return useQuery({
     queryKey: ["mostrar empresa", datausuarios?.id],
     queryFn: () => mostrarempresa({ _id_usuario: datausuarios?.id }),
-    enabled: !!datausuarios,
+    enabled: !!datausuarios?.id,
     refetchOnWindowFocus: false,
     staleTime: 1000 * 60 * 5,
     retry: 1,

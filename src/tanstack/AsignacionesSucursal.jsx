@@ -14,7 +14,7 @@ export const useMostrarSucursalesAsignadsQueryStack = () => {
       mostrarSucursalCajaAsignada({
         id_usuario: datausuarios?.id,
       }),
-    enabled: !!datausuarios,
+    enabled: !!datausuarios?.id,
     staleTime: 1000 * 60 * 5,
     retry: 1,
   });

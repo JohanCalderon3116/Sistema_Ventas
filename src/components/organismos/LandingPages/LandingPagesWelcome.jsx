@@ -1,20 +1,43 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import { useState, useEffect, useMemo } from "react";
 import { Icon } from "@iconify/react";
 import { NavLink } from "react-router-dom";
-import { UserAvatarBadge } from "../../../pages/Perfil";
 import { useUsuariosStore } from "../../../store/UsuariosStore";
 import { useEmpresaStore } from "../../../store/EmpresaStore";
 import { useAsignacionCajaSucursalesStore } from "../../../store/AsignacionCajaSucursales";
 import { v } from "../../../styles/variables";
 
-/* =========================================================================
-   EXPORTS DE COMPATIBILIDAD (Requeridos por el índice global del proyecto)
-========================================================================= */
 export const Telarana = () => null;
 export const AranaSvg = () => null;
 export const MurcielagoSvg = () => null;
 export const CementerioSvg = () => null;
+
+const AVATAR_DEFAULT =
+  "https://i.ibb.co/KjJmzQYz/persona-de-libre-dedicacion.png";
+
+const blink = keyframes`
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+`;
+
+const pulseDot = keyframes`
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.55);
+  }
+  50% {
+    transform: scale(1.06);
+    box-shadow: 0 0 0 5px rgba(16, 185, 129, 0);
+  }
+`;
+
+const formatearNombre = (nombre = "") =>
+  nombre
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((p) => p.charAt(0).toUpperCase() + p.slice(1).toLowerCase())
+    .join(" ");
 
 const isDarkTheme = (theme) =>
   theme?.text === "#FFFFFF" ||
@@ -24,9 +47,6 @@ const isDarkTheme = (theme) =>
   theme?.bgtotal === "#09090B" ||
   theme?.bgtotal === "#101010";
 
-/* =========================================================================
-   MÓDULOS OPERATIVOS PRINCIPALES DEL SISTEMA POS
-========================================================================= */
 const MAIN_MODULES = [
   {
     title: "Punto de Venta (POS)",
@@ -90,9 +110,6 @@ const MAIN_MODULES = [
   },
 ];
 
-/* =========================================================================
-   ACCESOS RÁPIDOS DE ADMINISTRACIÓN Y CONFIGURACIÓN
-========================================================================= */
 const ADMIN_SHORTCUTS = [
   {
     label: "Clientes",
@@ -102,7 +119,7 @@ const ADMIN_SHORTCUTS = [
   },
   {
     label: "Proveedores",
-    sub: " Abastecimiento y compras",
+    sub: "Abastecimiento y compras",
     to: "/configuracion/proveedores",
     icon: "lucide:truck",
   },
@@ -153,7 +170,6 @@ const SYSTEM_SETTINGS_LINKS = [
   },
 ];
 
-/* Subcomponente aislado para la fecha y hora (no re-renderiza la página) */
 const LiveDateBadge = () => {
   const [now, setNow] = useState(() => new Date());
 
@@ -201,15 +217,62 @@ export const LandingPagesWelcome = () => {
   const { dataempresa } = useEmpresaStore();
   const { sucursalesItemSelectAsignadas } = useAsignacionCajaSucursalesStore();
 
-  const greeting = useMemo(() => {
+  const greetingByHour = useMemo(() => {
     const hour = new Date().getHours();
-    if (hour < 12) return "Buenos días";
-    if (hour < 19) return "Buenas tardes";
-    return "Buenas noches";
+    if (hour < 12) return "¡Buenos días!";
+    if (hour < 19) return "¡Buenas tardes!";
+    return "¡Buenas noches!";
   }, []);
 
-  const userName = datausuarios?.nombres || "Usuario";
+  const saludos = useMemo(
+    () => [
+      greetingByHour,
+      "¡Bienvenido de nuevo!",
+      "Welcome back!",
+      "Bem-vindo de volta!",
+      "Bienvenue !",
+      "Benvenuto!",
+      "Willkommen!",
+    ],
+    [greetingByHour],
+  );
+
+  const [textoSaludo, setTextoSaludo] = useState("");
+  const [idioma, setIdioma] = useState(0);
+  const [borrando, setBorrando] = useState(false);
+
+  useEffect(() => {
+    const mensajeActual = saludos[idioma];
+    let timeout;
+
+    if (!borrando) {
+      if (textoSaludo.length < mensajeActual.length) {
+        timeout = setTimeout(() => {
+          setTextoSaludo(mensajeActual.slice(0, textoSaludo.length + 1));
+        }, 50);
+      } else {
+        timeout = setTimeout(() => setBorrando(true), 2200);
+      }
+    } else if (textoSaludo.length > 0) {
+      timeout = setTimeout(() => {
+        setTextoSaludo(mensajeActual.slice(0, textoSaludo.length - 1));
+      }, 28);
+    } else {
+      timeout = setTimeout(() => {
+        setBorrando(false);
+        setIdioma((prev) => (prev + 1) % saludos.length);
+      }, 350);
+    }
+
+    return () => clearTimeout(timeout);
+  }, [textoSaludo, idioma, borrando, saludos]);
+
+  const userName = formatearNombre(datausuarios?.nombres || "Usuario");
   const userRole = datausuarios?.roles?.nombre || "Administrador";
+  const logoUsuario =
+    !datausuarios?.logo || datausuarios.logo === "-"
+      ? AVATAR_DEFAULT
+      : datausuarios.logo;
   const companyName = dataempresa?.nombre || "SoftCreate POS";
   const currencySymbol = dataempresa?.simbolo_moneda || "$";
   const currencyIso = dataempresa?.iso || "Moneda local";
@@ -221,22 +284,31 @@ export const LandingPagesWelcome = () => {
   return (
     <Container>
       <ContentWrapper>
-        {/* =================================================================
-            1. CABECERA SUPERIOR: BIENVENIDA Y ESTADO DEL SISTEMA
-        ================================================================= */}
         <TopBar>
           <WelcomeUserBlock>
-            <UserAvatarBadge size={48} />
+            <AvatarWrapper>
+              <Avatar
+                src={logoUsuario}
+                alt={userName}
+                onError={(e) => {
+                  e.currentTarget.src = AVATAR_DEFAULT;
+                }}
+              />
+              <StatusDot title="En línea" />
+            </AvatarWrapper>
+
             <div className="user-Copy">
-              <div className="greeting-line">
-                <span className="greeting">{greeting},</span>
-                <h1>{userName}</h1>
-              </div>
-              <div className="meta-line">
+              <div className="greeting-top">
+                <span className="greeting-badge">
+                  <Icon icon="lucide:sparkles" />
+                  <span>{textoSaludo}</span>
+                  <Cursor aria-hidden="true">|</Cursor>
+                </span>
                 <span className="role-badge">{userRole}</span>
                 <span className="dot">•</span>
                 <span className="company-label">{companyName}</span>
               </div>
+              <h1 title={userName}>{userName}</h1>
             </div>
           </WelcomeUserBlock>
 
@@ -249,9 +321,6 @@ export const LandingPagesWelcome = () => {
           </TopBarRight>
         </TopBar>
 
-        {/* =================================================================
-            2. SECCIÓN PRINCIPAL: TERMINAL POS + RESUMEN DE ESTACIÓN ACTIVA
-        ================================================================= */}
         <HeroSection>
           <MainPosBanner>
             <div className="banner-top">
@@ -304,7 +373,6 @@ export const LandingPagesWelcome = () => {
             </HighlightsStrip>
           </MainPosBanner>
 
-          {/* TARJETA DE ESTACIÓN DE TRABAJO / SESIÓN ACTUAL */}
           <WorkstationCard>
             <div className="card-header">
               <div>
@@ -362,7 +430,10 @@ export const LandingPagesWelcome = () => {
             </StationInfoList>
 
             <StationFooter>
-              <NavLink to="/configuracion/empresa" className="config-company-link">
+              <NavLink
+                to="/configuracion/empresa"
+                className="config-company-link"
+              >
                 <Icon icon="lucide:settings" />
                 <span>Configurar datos de empresa y moneda</span>
               </NavLink>
@@ -370,9 +441,6 @@ export const LandingPagesWelcome = () => {
           </WorkstationCard>
         </HeroSection>
 
-        {/* =================================================================
-            3. MÓDULOS PRINCIPALES DEL SISTEMA
-        ================================================================= */}
         <SectionHeading>
           <div>
             <h2>Módulos Principales</h2>
@@ -415,11 +483,7 @@ export const LandingPagesWelcome = () => {
           ))}
         </ModulesGrid>
 
-        {/* =================================================================
-            4. ADMINISTRACIÓN RÁPIDA Y AJUSTES OPERATIVOS
-        ================================================================= */}
         <BottomPanelsGrid>
-          {/* PANEL IZQUIERDO: GESTIÓN COMERCIAL */}
           <AdminPanelCard>
             <div className="panel-head">
               <div>
@@ -445,7 +509,6 @@ export const LandingPagesWelcome = () => {
             </ShortcutsGrid>
           </AdminPanelCard>
 
-          {/* PANEL DERECHO: AJUSTES DE FACTURACIÓN Y PERIFÉRICOS */}
           <AdminPanelCard>
             <div className="panel-head">
               <div>
@@ -476,9 +539,6 @@ export const LandingPagesWelcome = () => {
   );
 };
 
-/* =========================================================================
-   ESTILOS CORPORATIVOS LIMPIOS Y FLUIDOS
-========================================================================= */
 const Container = styled.div`
   min-height: 100vh;
   width: 100%;
@@ -500,74 +560,145 @@ const ContentWrapper = styled.div`
   }
 `;
 
-/* =========================================================================
-   1. CABECERA SUPERIOR
-========================================================================= */
 const TopBar = styled.header`
+  position: relative;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 16px 20px;
+  padding: 16px 22px;
   border-radius: 16px;
   background-color: ${({ theme }) => theme.bgcards};
   border: 1px solid ${({ theme }) => theme.color2};
+  box-shadow: 0 4px 16px -4px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 3px;
+    background: ${({ theme }) => theme.text};
+    opacity: 0.85;
+  }
 `;
 
 const WelcomeUserBlock = styled.div`
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
+  min-width: 0;
+  flex: 1;
 
   .user-Copy {
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: 4px;
+    min-width: 0;
   }
 
-  .greeting-line {
+  .greeting-top {
     display: flex;
     flex-wrap: wrap;
-    align-items: baseline;
-    gap: 6px;
-
-    .greeting {
-      font-size: 15px;
-      font-weight: 500;
-      color: ${({ theme }) => theme.colorSubtitle};
-    }
-
-    h1 {
-      margin: 0;
-      font-size: clamp(18px, 2vw, 22px);
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      color: ${({ theme }) => theme.text};
-    }
-  }
-
-  .meta-line {
-    display: flex;
     align-items: center;
     gap: 8px;
+    min-height: 22px;
     font-size: 12.5px;
     color: ${({ theme }) => theme.colorSubtitle};
 
+    .greeting-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      color: ${({ theme }) => theme.colorSubtitle};
+
+      svg {
+        font-size: 14px;
+        color: #10b981;
+        flex-shrink: 0;
+      }
+    }
+
     .role-badge {
       padding: 2px 8px;
-      border-radius: 6px;
-      background-color: ${({ theme }) => theme.bgAlpha};
+      border-radius: 999px;
+      background-color: ${({ theme }) => theme.bg2};
       border: 1px solid ${({ theme }) => theme.color2};
       color: ${({ theme }) => theme.text};
-      font-size: 11.5px;
-      font-weight: 600;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
     }
 
     .company-label {
       font-weight: 500;
     }
   }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(18px, 1.9vw, 24px);
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    line-height: 1.2;
+    color: ${({ theme }) => theme.text};
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+`;
+
+const AvatarWrapper = styled.div`
+  position: relative;
+  flex-shrink: 0;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  padding: 2px;
+  background: ${({ theme }) => theme.bg2};
+  border: 1.5px solid ${({ theme }) => theme.color2};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  @media (max-width: 480px) {
+    width: 46px;
+    height: 46px;
+  }
+`;
+
+const Avatar = styled.img`
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+`;
+
+const StatusDot = styled.span`
+  position: absolute;
+  bottom: 1px;
+  right: 1px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: #10b981;
+  border: 2px solid ${({ theme }) => theme.bgcards};
+  animation: ${pulseDot} 2.4s infinite ease-in-out;
+`;
+
+const Cursor = styled.span`
+  display: inline-block;
+  font-weight: 400;
+  opacity: 0.7;
+  margin-left: -3px;
+  animation: ${blink} 0.9s step-end infinite;
 `;
 
 const TopBarRight = styled.div`
@@ -580,20 +711,21 @@ const TopBarRight = styled.div`
 const StatusBadge = styled.div`
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  padding: 7px 12px;
+  gap: 8px;
+  padding: 7px 13px;
   border-radius: 999px;
   background: rgba(16, 185, 129, 0.1);
-  border: 1px solid rgba(16, 185, 129, 0.25);
+  border: 1px solid rgba(16, 185, 129, 0.28);
   color: #10b981;
   font-size: 12px;
   font-weight: 600;
 
   .status-dot {
-    width: 7px;
-    height: 7px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
     background: #10b981;
+    animation: ${pulseDot} 2.4s infinite ease-in-out;
   }
 `;
 
@@ -623,9 +755,6 @@ const DatePill = styled.div`
   }
 `;
 
-/* =========================================================================
-   2. HERO TERMINAL POS + ESTACIÓN DE TRABAJO
-========================================================================= */
 const HeroSection = styled.section`
   display: grid;
   grid-template-columns: 1.35fr 0.65fr;
@@ -711,7 +840,9 @@ const PrimaryActionBtn = styled(NavLink)`
   font-size: 14px;
   font-weight: 600;
   text-decoration: none;
-  transition: background-color 0.18s ease, transform 0.18s ease;
+  transition:
+    background-color 0.18s ease,
+    transform 0.18s ease;
 
   svg {
     font-size: 17px;
@@ -743,7 +874,9 @@ const SecondaryActionBtn = styled(NavLink)`
   font-size: 13.5px;
   font-weight: 600;
   text-decoration: none;
-  transition: border-color 0.18s ease, transform 0.18s ease;
+  transition:
+    border-color 0.18s ease,
+    transform 0.18s ease;
 
   svg {
     font-size: 16px;
@@ -907,9 +1040,6 @@ const StationFooter = styled.div`
   }
 `;
 
-/* =========================================================================
-   3. MÓDULOS PRINCIPALES
-========================================================================= */
 const SectionHeading = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -970,7 +1100,10 @@ const ModuleCard = styled(NavLink)`
   background-color: ${({ theme }) => theme.bgcards};
   border: 1px solid ${({ theme }) => theme.color2};
   text-decoration: none;
-  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
 
   .mod-top {
     display: flex;
@@ -1058,9 +1191,6 @@ const ModuleCard = styled(NavLink)`
   }
 `;
 
-/* =========================================================================
-   4. PANELES INFERIORES DE ADMINISTRACIÓN Y CONFIGURACIÓN
-========================================================================= */
 const BottomPanelsGrid = styled.section`
   display: grid;
   grid-template-columns: 1.15fr 0.85fr;
@@ -1123,7 +1253,9 @@ const ShortcutItem = styled(NavLink)`
   background-color: ${({ theme }) => theme.bgAlpha};
   border: 1px solid ${({ theme }) => theme.color2};
   text-decoration: none;
-  transition: border-color 0.16s ease, transform 0.16s ease;
+  transition:
+    border-color 0.16s ease,
+    transform 0.16s ease;
 
   .s-icon {
     width: 36px;
@@ -1187,7 +1319,9 @@ const SettingRowLink = styled(NavLink)`
   background-color: ${({ theme }) => theme.bgAlpha};
   border: 1px solid ${({ theme }) => theme.color2};
   text-decoration: none;
-  transition: border-color 0.16s ease, transform 0.16s ease;
+  transition:
+    border-color 0.16s ease,
+    transform 0.16s ease;
 
   .s-icon {
     width: 34px;

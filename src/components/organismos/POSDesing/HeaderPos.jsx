@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import {
   Btn1,
   InputText2,
@@ -14,15 +14,55 @@ import {
 } from "../../../index";
 import { v } from "../../../styles/variables";
 import { Device } from "../../../styles/breakpoints";
+import { Icon } from "@iconify/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { abrirCaja } from "../../atomos/AbrirCajaImpresora";
-import { UserAvatarBadge } from "../../../pages/Perfil";
+
+const AVATAR_DEFAULT =
+  "https://i.ibb.co/KjJmzQYz/persona-de-libre-dedicacion.png";
+
+const blink = keyframes`
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+`;
+
+const pulseDot = keyframes`
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6);
+  }
+  50% {
+    transform: scale(1.08);
+    box-shadow: 0 0 0 5px rgba(16, 185, 129, 0);
+  }
+`;
+
+const saludosPos = [
+  "Terminal activa",
+  "¡Bienvenido!",
+  "Welcome!",
+  "Bem-vindo!",
+  "Bienvenue !",
+  "Turno en línea",
+];
+
+const formatearNombre = (nombre = "") =>
+  nombre
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((p) => p.charAt(0).toUpperCase() + p.slice(1).toLowerCase())
+    .join(" ");
 
 export const HeaderPos = () => {
   const [stateListaProductos, setStateListaProductos] = useState(false);
   const [montoManual, setMontoManual] = useState("");
   const [nombreManual, setNombreManual] = useState("");
+  const [textoSaludo, setTextoSaludo] = useState("");
+  const [idxSaludo, setIdxSaludo] = useState(0);
+  const [borrandoSaludo, setBorrandoSaludo] = useState(false);
+
   const {
     setBuscador,
     dataProductos,
@@ -34,14 +74,19 @@ export const HeaderPos = () => {
   const { dataCierreCaja } = useCierreCajaStore();
   const { datausuarios } = useUsuariosStore();
   const { dataempresa } = useEmpresaStore();
+
   const buscadorRef = useRef(null);
   const montoManualRef = useRef(null);
+
   useMostrarProductosQueryStack();
+
   function buscar(e) {
     setBuscador(e.target.value);
   }
+
   const { mutate: mutateInsertarVentas } =
     useInsertarVentasConDetalleVentasMutationStack(buscadorRef);
+
   const ValidarCantidad = (e) => {
     const value = Math.max(0, parseFloat(e.target.value));
     setCantidadInput(value);
@@ -79,12 +124,46 @@ export const HeaderPos = () => {
     setNombreManual("");
   };
 
+  const nombreUsuario = formatearNombre(datausuarios?.nombres || "Usuario");
+  const rolUsuario = datausuarios?.roles?.nombre || "";
+  const logoUsuario =
+    !datausuarios?.logo || datausuarios.logo === "-"
+      ? AVATAR_DEFAULT
+      : datausuarios.logo;
+
   useEffect(() => {
-    buscadorRef.current.focus();
+    const actual = saludosPos[idxSaludo];
+    let timer;
+
+    if (!borrandoSaludo) {
+      if (textoSaludo.length < actual.length) {
+        timer = setTimeout(() => {
+          setTextoSaludo(actual.slice(0, textoSaludo.length + 1));
+        }, 50);
+      } else {
+        timer = setTimeout(() => setBorrandoSaludo(true), 2200);
+      }
+    } else if (textoSaludo.length > 0) {
+      timer = setTimeout(() => {
+        setTextoSaludo(actual.slice(0, textoSaludo.length - 1));
+      }, 28);
+    } else {
+      timer = setTimeout(() => {
+        setBorrandoSaludo(false);
+        setIdxSaludo((prev) => (prev + 1) % saludosPos.length);
+      }, 350);
+    }
+
+    return () => clearTimeout(timer);
+  }, [textoSaludo, idxSaludo, borrandoSaludo]);
+
+  useEffect(() => {
+    buscadorRef.current?.focus();
   }, []);
+
   useEffect(() => {
     const texto = buscador.trim();
-    const codigo = dataempresa.cantidad_codigo;
+    const codigo = dataempresa?.cantidad_codigo;
     const isCodigoDeBarras = new RegExp(`^[0-9]{${codigo},}$`).test(texto);
     const timeout = setTimeout(
       () => {
@@ -110,34 +189,60 @@ export const HeaderPos = () => {
 
     return () => clearTimeout(timeout);
   }, [buscador]);
+
   return (
     <Header>
       <ContentSucursal>
-        <div>
+        <div className="sucursal-pill">
+          <span className="live-dot" />
           <strong>Sucursal:&nbsp;</strong>
-          {dataCierreCaja?.caja?.sucursales?.nombre}
+          <span>{dataCierreCaja?.caja?.sucursales?.nombre}</span>
         </div>
-        <div>
+        <div className="sucursal-pill">
           <strong>Caja:&nbsp;</strong>
-          {dataCierreCaja?.caja?.descripcion}
+          <span>{dataCierreCaja?.caja?.descripcion}</span>
         </div>
       </ContentSucursal>
+
       <section className="contentprincipal">
         <Contentuser className="area1">
-          <UserAvatarBadge size={38} />
+          <AvatarWrapper>
+            <img
+              className="avatar"
+              src={logoUsuario}
+              alt={nombreUsuario}
+              onError={(e) => {
+                e.currentTarget.src = AVATAR_DEFAULT;
+              }}
+            />
+            <StatusDot title="En línea" />
+          </AvatarWrapper>
+
           <div className="textos">
-            <span className="usuario"> {datausuarios?.nombres} </span>
-            <span className="rol-label"> {datausuarios?.roles?.nombre} </span>
+            <div className="top-row">
+              <span className="saludo-animado">
+                <Icon icon="lucide:sparkles" />
+                <span>{textoSaludo}</span>
+                <Cursor aria-hidden="true">|</Cursor>
+              </span>
+              {rolUsuario && <span className="rol-badge">{rolUsuario}</span>}
+            </div>
+            <span className="usuario" title={nombreUsuario}>
+              {nombreUsuario}
+            </span>
           </div>
         </Contentuser>
+
         <article className="contentlogo area2">
           <img src={v.logo} alt="SoftCreate POS" />
           <span>SoftCreate POS</span>
         </article>
+
         <article className="contentfecha area3">
-          <Reloj></Reloj>
+          <Reloj />
         </article>
       </section>
+
       <section className="contentbuscador">
         <article className="area1">
           <div className="contentCantidad">
@@ -149,7 +254,7 @@ export const HeaderPos = () => {
                 type="number"
                 min="1"
                 placeholder="Cantidad..."
-              ></input>
+              />
             </InputText2>
           </div>
           <InputText2 className="inputBuscador">
@@ -168,14 +273,14 @@ export const HeaderPos = () => {
                   document.querySelector("[tabindex = '0'").focus();
                 }
               }}
-            ></input>
+            />
             <ListaDesplegable
               funcioncrud={mutateInsertarVentas}
               funcion={selectProductos}
               setState={() => setStateListaProductos(!stateListaProductos)}
               data={resultadosBusqueda}
               state={stateListaProductos}
-            ></ListaDesplegable>
+            />
           </InputText2>
           <Btn1
             titulo={"Abrir caja registradora"}
@@ -190,6 +295,7 @@ export const HeaderPos = () => {
             }}
           />
         </article>
+
         <article className="area2">
           <ContentVentaManual>
             <InputText2 className="nombreManual">
@@ -205,7 +311,7 @@ export const HeaderPos = () => {
                     montoManualRef.current?.focus();
                   }
                 }}
-              ></input>
+              />
             </InputText2>
             <InputText2 className="montoManual">
               <input
@@ -222,7 +328,7 @@ export const HeaderPos = () => {
                     handleAgregarVentaManual();
                   }
                 }}
-              ></input>
+              />
             </InputText2>
             <button
               type="button"
@@ -332,27 +438,118 @@ const Header = styled.div`
 `;
 
 const Contentuser = styled.div`
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   grid-area: area1;
+  padding: 6px 14px 6px 8px;
+  border-radius: 14px;
+  background-color: ${({ theme }) => theme.bgcards};
+  border: 1px solid ${({ theme }) => theme.color2};
+  min-width: 0;
+  max-width: 100%;
+
   .textos {
     display: none;
     flex-direction: column;
-    line-height: 1.2;
-    .usuario {
-      font-weight: 700;
-      font-size: 14px;
+    justify-content: center;
+    gap: 2px;
+    min-width: 0;
+
+    .top-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 18px;
     }
-    .rol-label {
-      font-size: 12px;
+
+    .saludo-animado {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11.5px;
+      font-weight: 600;
       color: ${({ theme }) => theme.colorSubtitle};
+      white-space: nowrap;
+
+      svg {
+        font-size: 12px;
+        color: #10b981;
+        flex-shrink: 0;
+      }
     }
+
+    .rol-badge {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 1px 6px;
+      border-radius: 999px;
+      background: ${({ theme }) => theme.bg2};
+      color: ${({ theme }) => theme.text};
+      border: 1px solid ${({ theme }) => theme.color2};
+      line-height: 1.3;
+    }
+
+    .usuario {
+      font-weight: 800;
+      font-size: 14.5px;
+      letter-spacing: -0.015em;
+      color: ${({ theme }) => theme.text};
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 240px;
+    }
+
     @media ${Device.laptop} {
       display: flex;
-      flex-direction: column;
     }
   }
+`;
+
+const AvatarWrapper = styled.div`
+  position: relative;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  padding: 2px;
+  background: ${({ theme }) => theme.bg2};
+  border: 1.5px solid ${({ theme }) => theme.color2};
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .avatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+  }
+`;
+
+const StatusDot = styled.span`
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background-color: #10b981;
+  border: 2px solid ${({ theme }) => theme.bgcards};
+  animation: ${pulseDot} 2.4s infinite ease-in-out;
+`;
+
+const Cursor = styled.span`
+  display: inline-block;
+  font-weight: 400;
+  opacity: 0.7;
+  margin-left: -2px;
+  animation: ${blink} 0.9s step-end infinite;
 `;
 
 const ContentSucursal = styled.section`
@@ -367,6 +564,21 @@ const ContentSucursal = styled.section`
   border-bottom: 1px solid ${({ theme }) => theme.color2};
   font-size: 13px;
   gap: 14px;
+
+  .sucursal-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .live-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: #10b981;
+    margin-right: 4px;
+    animation: ${pulseDot} 2.4s infinite ease-in-out;
+  }
 `;
 
 const ContentVentaManual = styled.div`

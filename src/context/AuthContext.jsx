@@ -1,24 +1,39 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "../supabase/supabase.config";
-import {
-  MostrarUsuarios,
-  useEmpresaStore,
-} from "../index";
+import { MostrarUsuarios, useEmpresaStore } from "../index";
+import { limpiarEstadoSesion } from "../store/AuthStore";
+
 const AuthContext = createContext();
 
 export const AuthContextProvider = ({ children }) => {
   const { insertarEmpresa } = useEmpresaStore();
+  const queryClient = useQueryClient();
   const [user, setUser] = useState(undefined);
-  // true hasta que Supabase confirme el estado real de la sesión (INITIAL_SESSION)
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const prevUserIdRef = useRef(null);
+
   useEffect(() => {
-    const { data } = supabase.auth.onAuthStateChange((value, session) => {
+    const { data } = supabase.auth.onAuthStateChange((event, session) => {
       const usuarioSesion = session?.user ?? null;
+      const nuevoId = usuarioSesion?.id ?? null;
+
+      if (
+        event === "SIGNED_OUT" ||
+        !nuevoId ||
+        (prevUserIdRef.current && prevUserIdRef.current !== nuevoId)
+      ) {
+        limpiarEstadoSesion();
+        queryClient.removeQueries({
+          predicate: (query) => query.queryKey[0] !== "mostrar contraseña",
+        });
+      }
+
+      prevUserIdRef.current = nuevoId;
       setUser(usuarioSesion);
       setIsCheckingAuth(false);
+
       if (usuarioSesion) {
-        // Se difiere la llamada para no ejecutar consultas de Supabase dentro
-        // del callback de onAuthStateChange (recomendación oficial: evita bloqueos).
         setTimeout(() => {
           insertarDatos(usuarioSesion.id, usuarioSesion.email).catch((error) =>
             console.error(error),
@@ -26,10 +41,12 @@ export const AuthContextProvider = ({ children }) => {
         }, 0);
       }
     });
+
     return () => {
       data.subscription.unsubscribe();
     };
-  }, []);
+  }, [queryClient]);
+
   const insertarDatos = async (id_auth, correo) => {
     const response = await MostrarUsuarios({ id_auth: id_auth });
     if (response) {

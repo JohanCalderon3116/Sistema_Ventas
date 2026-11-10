@@ -11,7 +11,10 @@ export const ProtectedRoute = ({ children, accesby }) => {
   const { datausuarios } = useUsuariosStore();
   const { data: dataPermisosGlobales, isLoading: isLoadingPermisosGlobales } =
     useMostrarPermisosGlobalesQueryStack();
-  const isLoading = !datausuarios || isLoadingPermisosGlobales;
+  const usuarioSincronizado = Boolean(
+    user?.id && datausuarios?.id && datausuarios?.id_auth === user.id,
+  );
+  const isLoading = !usuarioSincronizado || isLoadingPermisosGlobales;
   if (user === undefined) return <Spinner1></Spinner1>;
   if (accesby === "non-authenticated") {
     if (!user) {

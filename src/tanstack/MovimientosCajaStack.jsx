@@ -8,6 +8,7 @@ import { useFormattedDate } from "../hooks/useFormattedDate";
 import { useCerrarSesion } from "../hooks/useCerrarSesion";
 import { useEmpresaStore } from "../store/EmpresaStore";
 import { abrirCaja } from "../components/atomos/AbrirCajaImpresora";
+import { EnviarReporteCierreCajaCorreo } from "../supabase/crudCierresCaja";
 
 export const useInsertarIngresosSalidasCajasMutationStack = (
   reset,
@@ -124,6 +125,7 @@ export const useTerminarTurnoMutationStack = (diferencia, reset) => {
   } = useCierreCajaStore();
   const fechaActual = useFormattedDate();
   const { datausuarios } = useUsuariosStore();
+  const { dataempresa } = useEmpresaStore();
   const { totalEfectivoTotalCaja } = useMovCajaStore();
   const cerrarSesion = useCerrarSesion();
   const queryClient = useQueryClient();
@@ -138,6 +140,20 @@ export const useTerminarTurnoMutationStack = (diferencia, reset) => {
       diferencia_efectivo: diferencia,
     };
     await cerrarTurnoCaja(p);
+    try {
+      await EnviarReporteCierreCajaCorreo({
+        id_cierre_caja: p.id,
+        id_usuario: p.id_usuario,
+        id_empresa: dataempresa?.id,
+        correo_empresa: dataempresa?.correo,
+        fechacierre: p.fechacierre,
+        total_efectivo_calculado: p.total_efectivo_calculado,
+        total_efectivo_real: p.total_efectivo_real,
+        diferencia_efectivo: p.diferencia_efectivo,
+      });
+    } catch (errorCorreo) {
+      console.error("Error enviando reporte PDF de cierre de caja:", errorCorreo);
+    }
   };
   return useMutation({
     mutationKey: ["cerrar turno caja"],

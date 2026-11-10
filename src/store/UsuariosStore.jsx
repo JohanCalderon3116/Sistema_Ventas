@@ -13,9 +13,17 @@ import {
 
 export const useUsuariosStore = create((set) => ({
   refetchs: null,
-  datausuarios: [],
-  mostrarusuarios: async () => {
-    const idauth = await ObtenerIdAuthSupabase();
+  datausuarios: null,
+  usuariosEnLinea: {},
+  setUsuariosEnLinea: (p) => set({ usuariosEnLinea: p }),
+  limpiarUsuarios: () =>
+    set({ datausuarios: null, refetchs: null, usuariosEnLinea: {} }),
+  mostrarusuarios: async (p) => {
+    const idauth = p?.id_auth || (await ObtenerIdAuthSupabase());
+    if (!idauth) {
+      set({ datausuarios: null });
+      return null;
+    }
     const response = await MostrarUsuarios({ id_auth: idauth });
     set({ datausuarios: response });
     return response;
@@ -54,7 +62,7 @@ export const useUsuariosStore = create((set) => ({
   eliminarUsuariosAsignados: async (p) => {
     await EliminarUsuariosAsignados(p);
   },
-  editarUsuario: async (p) => {
-    await EditarUsuario(p);
+  editarUsuario: async (p, fileold, filnew) => {
+    await EditarUsuario(p, fileold, filnew);
   },
 }));

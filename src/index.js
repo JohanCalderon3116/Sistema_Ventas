@@ -160,6 +160,7 @@ export { default as TicketAbonoCredito } from './reports/TicketAbonoCredito';
 export { default as TicketEntradasSalidas } from './reports/TicketEntradasSalidas';
 export { default as TicketPrueba } from './reports/TicketPrueba';
 export { default as TicketVenta } from './reports/TicketVenta';
+export { default as TicketVentaModal } from './reports/TicketVentaModal';
 export * from './routers/routes';
 export * from './store/AlmacenesStore';
 export * from './store/AsignacionCajaSucursales';

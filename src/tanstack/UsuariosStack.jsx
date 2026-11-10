@@ -10,10 +10,12 @@ import { useCajasStore } from "../store/CajaStore";
 import { userAuth } from "../context/AuthContext";
 import { useThemeStore } from "../store/ThemeStore";
 import { Dark, Light } from "../styles/themes";
+import { useGlobalStore } from "../store/GlobalStore";
 
 export const useEditarUsuarioMutationStack = () => {
   const queryClient = useQueryClient();
   const { editarUsuario, datausuarios } = useUsuariosStore();
+  const { file } = useGlobalStore();
   return useMutation({
     mutationKey: ["editar perfil usuario"],
     mutationFn: async (data) => {
@@ -23,10 +25,12 @@ export const useEditarUsuarioMutationStack = () => {
         nro_doc: data?.nro_doc,
         telefono: data?.telefono,
       };
-      await editarUsuario(p);
+      await editarUsuario(p, datausuarios?.logo, file);
     },
     onError: (error) => {
-      toast.error(`Aish, algo falló actualizando tu perfil 😩`);
+      toast.error(
+        `Aish, algo falló actualizando tu perfil 😩 ${error.message}`,
+      );
     },
     onSuccess: () => {
       toast.success("¡Perfil actualizado sin problema! 😎");
@@ -136,7 +140,7 @@ export const useMostrarUsuariosQueryStack = () => {
   const { user } = userAuth();
   const id_auth = user?.id;
   return useQuery({
-    queryKey: ["mostrar usuarios"],
+    queryKey: ["mostrar usuarios", id_auth],
     queryFn: () =>
       mostrarusuarios({
         id_auth: id_auth,

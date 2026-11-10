@@ -14,12 +14,17 @@ import { useEffect, useState } from "react";
 import { Device } from "../styles/breakpoints";
 import { IndicadorConexion } from "../components/moleculas/IndicadorConexion";
 import { userAuth } from "../context/AuthContext";
+import { supabase } from "../supabase/supabase.config";
+import { useUsuariosStore } from "../store/UsuariosStore";
 
 export const Layout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [stateMenu, setStateMenu] = useState(false);
   const location = useLocation();
   const { user } = userAuth();
+  const setUsuariosEnLinea = useUsuariosStore(
+    (state) => state.setUsuariosEnLinea,
+  );
   const {
     refetch: refetchUsuarios,
     data: datausuarios,
@@ -30,11 +35,71 @@ export const Layout = ({ children }) => {
   const { isLoading: isLoadingEmpresa } = useMostrarEmpresaQueryStack();
 
   useEffect(() => {
-    if (!datausuarios) refetchUsuarios();
-  }, [datausuarios]);
+    if (user?.id && (!datausuarios?.id || datausuarios?.id_auth !== user.id)) {
+      refetchUsuarios();
+    }
+  }, [user?.id, datausuarios?.id, datausuarios?.id_auth, refetchUsuarios]);
+
+  const usuarioSincronizado = Boolean(
+    user?.id && datausuarios?.id && datausuarios?.id_auth === user.id,
+  );
+
+  useEffect(() => {
+    if (!usuarioSincronizado || !datausuarios?.id) return;
+
+    const userId = Number(datausuarios.id);
+    setUsuariosEnLinea({ [userId]: true });
+
+    const channel = supabase.channel("presencia-usuarios-pos", {
+      config: {
+        presence: {
+          key: String(userId),
+        },
+      },
+    });
+
+    const sincronizarPresencia = () => {
+      const state = channel.presenceState();
+      const conectados = { [userId]: true };
+      Object.keys(state).forEach((key) => {
+        const idNum = Number(key);
+        if (!Number.isNaN(idNum)) {
+          conectados[idNum] = true;
+        }
+        const lista = state[key] || [];
+        lista.forEach((item) => {
+          if (item?.id_usuario) {
+            conectados[Number(item.id_usuario)] = true;
+          }
+        });
+      });
+      setUsuariosEnLinea(conectados);
+    };
+
+    channel
+      .on("presence", { event: "sync" }, sincronizarPresencia)
+      .on("presence", { event: "join" }, sincronizarPresencia)
+      .on("presence", { event: "leave" }, sincronizarPresencia)
+      .subscribe(async (status) => {
+        if (status === "SUBSCRIBED") {
+          await channel.track({
+            id_usuario: userId,
+            online_at: new Date().toISOString(),
+          });
+        }
+      });
+
+    return () => {
+      channel.untrack();
+      supabase.removeChannel(channel);
+    };
+  }, [usuarioSincronizado, datausuarios?.id, setUsuariosEnLinea]);
 
   const isLoading =
-    isLoadingEmpresa || isLoadingSucursales || isLoadingUsuarios;
+    !usuarioSincronizado ||
+    isLoadingEmpresa ||
+    isLoadingSucursales ||
+    isLoadingUsuarios;
 
   // Sin sesión no se dibuja la estructura (Sidebar/menú): ProtectedRoute
   // se encarga de redirigir al Login sin mostrar el "esqueleto" del Home.

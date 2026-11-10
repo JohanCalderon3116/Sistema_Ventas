@@ -31,6 +31,18 @@ export async function CerrarTurnoCaja(p) {
   }
   return data;
 }
+export async function EnviarReporteCierreCajaCorreo(p) {
+  const { data, error } = await supabase.functions.invoke(
+    "enviar-cierre-caja",
+    {
+      body: p,
+    },
+  );
+  if (error) {
+    throw new Error(error.message);
+  }
+  return data;
+}
 export async function MostrarCierreCajaPorEmpresa(p) {
   const { data, error } = await supabase.rpc(
     "mostrarcajasabiertasporempresa",

@@ -1,13 +1,14 @@
-import styled, { useTheme } from "styled-components";
+import styled, { keyframes, useTheme } from "styled-components";
 import {
   ContentAccionesTabla,
   Paginacion,
+  supabase,
   useAsignacionCajaSucursalesStore,
   useUsuariosStore,
 } from "../../../index";
 import Swal from "sweetalert2";
 import { v } from "../../../styles/variables";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   flexRender,
   getCoreRowModel,
@@ -19,6 +20,21 @@ import {
 import { FaArrowsAltV } from "react-icons/fa";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+
+const AVATAR_DEFAULT =
+  "https://i.ibb.co/KjJmzQYz/persona-de-libre-dedicacion.png";
+
+const pulseDot = keyframes`
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6);
+  }
+  50% {
+    transform: scale(1.08);
+    box-shadow: 0 0 0 5px rgba(16, 185, 129, 0);
+  }
+`;
+
 export function TablaUsuarios({
   data,
   SetopenRegistro,
@@ -30,9 +46,38 @@ export function TablaUsuarios({
   const [pagina, setPagina] = useState(1);
   const [datas, setData] = useState(data);
   const [columnFilters, setColumnFilters] = useState([]);
-  const { eliminarUsuariosAsignados } = useUsuariosStore();
+  const [logosPorUsuario, setLogosPorUsuario] = useState({});
+  const { eliminarUsuariosAsignados, datausuarios, usuariosEnLinea } =
+    useUsuariosStore();
   const { setSelectItem } = useAsignacionCajaSucursalesStore();
   const theme = useTheme();
+
+  useEffect(() => {
+    const cargarLogos = async () => {
+      if (!Array.isArray(data) || data.length === 0) return;
+      const ids = data
+        .map((item) => item?.id_usuario)
+        .filter((id) => id !== undefined && id !== null);
+      if (ids.length === 0) return;
+
+      const { data: usuariosDb, error } = await supabase
+        .from("usuarios")
+        .select("id, logo")
+        .in("id", ids);
+
+      if (!error && Array.isArray(usuariosDb)) {
+        const mapa = {};
+        usuariosDb.forEach((u) => {
+          mapa[Number(u.id)] =
+            !u.logo || u.logo === "-" ? AVATAR_DEFAULT : u.logo;
+        });
+        setLogosPorUsuario(mapa);
+      }
+    };
+
+    cargarLogos();
+  }, [data]);
+
   function eliminar(p) {
     Swal.fire({
       title: "¿Estás seguro(a)?",
@@ -54,17 +99,62 @@ export function TablaUsuarios({
       }
     });
   }
+
   function editar(data) {
     SetopenRegistro(true);
     setdataSelect(data);
     setAccion("Editar");
     setSelectItem(data);
   }
+
   const columns = [
     {
       accessorKey: "usuario",
       header: "Usuario",
-      cell: (info) => <span>{info.getValue()}</span>,
+      cell: (info) => {
+        const fila = info.row.original;
+        const idUsuario = Number(fila?.id_usuario);
+        const esUsuarioActual =
+          Boolean(datausuarios?.id) && Number(datausuarios.id) === idUsuario;
+        const estaEnLinea =
+          esUsuarioActual || Boolean(usuariosEnLinea?.[idUsuario]);
+
+        const logoDesdeFila =
+          fila?.logo && fila.logo !== "-" ? fila.logo : null;
+        const logoActual =
+          esUsuarioActual && datausuarios?.logo && datausuarios.logo !== "-"
+            ? datausuarios.logo
+            : null;
+        const avatarUrl =
+          logoActual ||
+          logoDesdeFila ||
+          logosPorUsuario[idUsuario] ||
+          AVATAR_DEFAULT;
+
+        return (
+          <UserCell>
+            <AvatarWrapper $online={estaEnLinea}>
+              <Avatar
+                src={avatarUrl}
+                alt={info.getValue() || "Usuario"}
+                onError={(e) => {
+                  e.currentTarget.src = AVATAR_DEFAULT;
+                }}
+              />
+              {estaEnLinea && <StatusDot title="Sesión activa (En línea)" />}
+            </AvatarWrapper>
+            <UserMeta>
+              <div className="name-row">
+                <span className="user-name">{info.getValue()}</span>
+                {esUsuarioActual && <span className="you-pill">Tú</span>}
+              </div>
+              <span className={`session-label ${estaEnLinea ? "online" : ""}`}>
+                {estaEnLinea ? "En línea" : "Sin sesión activa"}
+              </span>
+            </UserMeta>
+          </UserCell>
+        );
+      },
       enableColumnFilter: true,
       filterFn: (row, columnId, filterStatuses) => {
         if (filterStatuses.length === 0) return true;
@@ -147,6 +237,7 @@ export function TablaUsuarios({
       },
     },
   ];
+
   const table = useReactTable({
     data,
     columns,
@@ -172,6 +263,7 @@ export function TablaUsuarios({
         ),
     },
   });
+
   return (
     <>
       <Container>
@@ -231,6 +323,100 @@ export function TablaUsuarios({
     </>
   );
 }
+
+const UserCell = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+  width: 280px;
+  max-width: 100%;
+  margin: 0 auto;
+`;
+
+const AvatarWrapper = styled.div`
+  position: relative;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  padding: 2px;
+  flex-shrink: 0;
+  background: ${({ theme }) => theme.bg2};
+  border: 1.5px solid
+    ${({ theme, $online }) =>
+      $online ? "rgba(16, 185, 129, 0.55)" : theme.color2};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.25s ease;
+`;
+
+const Avatar = styled.img`
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+`;
+
+const StatusDot = styled.span`
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background-color: #10b981;
+  border: 2px solid ${({ theme }) => theme.bgtotal || "#09090b"};
+  animation: ${pulseDot} 2.4s infinite ease-in-out;
+`;
+
+const UserMeta = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  min-width: 0;
+
+  .name-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .user-name {
+    font-weight: 700;
+    font-size: 14px;
+    color: ${({ theme }) => theme.text};
+    line-height: 1.2;
+  }
+
+  .you-pill {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 1px 6px;
+    border-radius: 999px;
+    background: rgba(16, 185, 129, 0.14);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    line-height: 1.3;
+  }
+
+  .session-label {
+    font-size: 11.5px;
+    font-weight: 500;
+    color: ${({ theme }) => theme.colorSubtitle};
+    line-height: 1.2;
+
+    &.online {
+      color: #10b981;
+      font-weight: 600;
+    }
+  }
+`;
+
 const Container = styled.div`
   position: relative;
   margin: 3% 2%;

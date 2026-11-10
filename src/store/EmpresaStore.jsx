@@ -7,7 +7,8 @@ import {
 } from "../index";
 
 export const useEmpresaStore = create((set) => ({
-  dataempresa: [],
+  dataempresa: null,
+  limpiarEmpresa: () => set({ dataempresa: null }),
   mostrarempresa: async (p) => {
     const response = await MostrarEmpresaXIdUsuario(p);
     set({ dataempresa: response });
