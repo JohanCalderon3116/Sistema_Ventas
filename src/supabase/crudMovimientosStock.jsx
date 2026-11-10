@@ -28,3 +28,10 @@ export async function MostrarMovStock(p) {
   }
   return data;
 }
+export async function MostrarTotalInventario(p) {
+  const { data, error } = await supabase.rpc("mostrar_inversion_inventario", p);
+  if (error) {
+    throw new Error(error.message);
+  }
+  return data?.[0] ?? null;
+}

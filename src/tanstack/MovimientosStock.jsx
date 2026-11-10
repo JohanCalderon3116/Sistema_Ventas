@@ -70,8 +70,19 @@ export const useInsertarMovStcoMutationStack = ({ onClose, resetFuction }) => {
         queryKey: ["mostrar stock almacen y producto"],
       });
       queryClient.invalidateQueries({ queryKey: ["buscar productos"] });
+      queryClient.invalidateQueries({ queryKey: ["mostrar total inventario"] });
       onClose();
       resetFuction();
     },
+  });
+};
+export const useMostrarTotalInventarioQueryStack = () => {
+  const { dataempresa } = useEmpresaStore();
+  const { mostrarTotalInventario } = useMovStockStore();
+  return useQuery({
+    queryKey: ["mostrar total inventario", { _id_empresa: dataempresa?.id }],
+    queryFn: () => mostrarTotalInventario({ _id_empresa: dataempresa?.id }),
+    enabled: !!dataempresa?.id,
+    retry: 1,
   });
 };

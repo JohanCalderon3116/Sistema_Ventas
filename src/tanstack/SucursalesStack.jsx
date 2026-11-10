@@ -196,6 +196,7 @@ export const useEliminarSucursalesMutationStack = () => {
       queryClient.invalidateQueries({
         queryKey: ["mostrar sucursales asignadas"],
       });
+      queryClient.invalidateQueries({ queryKey: ["mostrar total inventario"] });
     },
   });
 };

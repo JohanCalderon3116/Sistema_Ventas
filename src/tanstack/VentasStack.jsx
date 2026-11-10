@@ -63,7 +63,13 @@ export const useConfirmarVentasMutationStack = ({
   const { dataCierreCaja } = useCierreCajaStore();
   const { cliproItemSelect } = useClientesProveedoresStore();
   const fechaActual = useFormattedDate();
-  const { total, resetDetalleVenta } = useDetalleVentasStore();
+  const {
+    total,
+    totalAPagar,
+    valorDescuento,
+    porcentajeDescuento,
+    resetDetalleVenta,
+  } = useDetalleVentasStore();
   const { dataMetodosPago } = useMetodosPagoStore();
   const { insertarMovcaja } = useMovCajaStore();
   const { dataImpresorasXCaja } = useImpresorasStore();
@@ -80,9 +86,13 @@ export const useConfirmarVentasMutationStack = ({
           acc + (tipo === "Efectivo" ? monto - vuelto : monto),
         0,
       );
-      if (Math.abs(pagadoNeto - total) > 0.5) {
+      if (Math.abs(pagadoNeto - totalAPagar) > 0.5) {
         throw new Error("El pago no coincide con el total, vuelve a intentar");
       }
+      const hayDescuento = porcentajeDescuento > 0;
+      const detalleDescuento = hayDescuento
+        ? ` | Descuento tipo porcentaje: ${porcentajeDescuento}% (-${valorDescuento}) | Valor real de la venta: ${total} | Total cobrado: ${totalAPagar}`
+        : "";
       const pventas = {
         _id_venta: idventa,
         _id_usuario: datausuarios?.id,
@@ -92,7 +102,7 @@ export const useConfirmarVentasMutationStack = ({
         _id_sucursal: dataCierreCaja?.caja?.id_sucursal,
         _id_cliente: cliproItemSelect?.id ?? null,
         _fecha: fechaActual,
-        _monto_total: total,
+        _monto_total: totalAPagar,
       };
       const responseVentaConfirmada = await confirmarVenta(pventas);
       for (const [tipo, monto] of Object.entries(valoresPago)) {
@@ -106,7 +116,7 @@ export const useConfirmarVentasMutationStack = ({
             tipo_movimiento: "venta",
             monto: montoNetoCaja,
             id_metodo_pago: metodoPago?.id,
-            descripcion: `Pago de venta con ${tipo} `,
+            descripcion: `Pago de venta con ${tipo}${detalleDescuento}`,
             id_usuario: datausuarios?.id,
             id_cierre_caja: dataCierreCaja?.id,
             id_venta: idventa,
@@ -127,7 +137,12 @@ export const useConfirmarVentasMutationStack = ({
         (acc, curr) => acc + curr,
         0,
       );
-      mostrarResumenVenta({ total, vuelto, restante, totalPagado });
+      mostrarResumenVenta({
+        total: totalAPagar,
+        vuelto,
+        restante,
+        totalPagado,
+      });
       await new Promise((r) => requestAnimationFrame(() => setTimeout(r, 50)));
     } else {
       toast.warning("Falta completar el pago, el restante tiene que ser cero");
@@ -211,6 +226,7 @@ export const useConfirmarVentasMutationStack = ({
       queryClient.invalidateQueries({
         queryKey: ["mostrar movimientos caja por fecha"],
       });
+      queryClient.invalidateQueries({ queryKey: ["mostrar total inventario"] });
       toast.success("😁🎉 Venta generada correctamente");
       document.getElementById("input-buscador-pos")?.focus();
     },
@@ -423,6 +439,7 @@ export const useEliminarVentasMutationStack = () => {
       queryClient.invalidateQueries({
         queryKey: ["mostrar movimientos caja live"],
       });
+      queryClient.invalidateQueries({ queryKey: ["mostrar total inventario"] });
       resetDetalleVenta();
       resetState();
       toast.success(

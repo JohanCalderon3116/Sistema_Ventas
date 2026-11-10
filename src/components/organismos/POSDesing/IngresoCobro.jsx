@@ -7,7 +7,10 @@ import { Btn1 } from "../../moleculas/Btn1";
 import { useUsuariosStore } from "../../../store/UsuariosStore";
 import { useEmpresaStore } from "../../../store/EmpresaStore";
 import { useVentasStore } from "../../../store/VentasStore";
-import { useDetalleVentasStore } from "../../../store/DetalleVentasStore";
+import {
+  useDetalleVentasStore,
+  redondear,
+} from "../../../store/DetalleVentasStore";
 import { PanelBuscador } from "./PanelBuscador";
 import { useClientesProveedoresStore } from "../../../store/ClientesProveedoresStore";
 import { useMetodosPagoStore } from "../../../store/MetodosPagoStore";
@@ -25,8 +28,9 @@ export const IngresoCobro = forwardRef((props, ref) => {
   const [openRegistro, setOpenRegistro] = useState(false);
   const [stateBuscadorClientes, setStateBuscadorClientes] = useState(false);
   const [montoManualEfectivo, setMontoManualEfectivo] = useState("");
-  // Lo que el cliente entrega en efectivo. 0 = pago exacto.
   const [recibido, setRecibido] = useState(0);
+  const [inputDescuento, setInputDescuento] = useState("");
+  const [errorDescuento, setErrorDescuento] = useState("");
   const {
     tipocobro,
     restante,
@@ -37,8 +41,43 @@ export const IngresoCobro = forwardRef((props, ref) => {
     setVuelto,
     vuelto,
   } = useVentasStore();
-  const { total, mostrardetalleventa } = useDetalleVentasStore();
-  // FIX: se eliminó `const [precioVenta, setPrecioVenta] = useState(total)`
+  const {
+    total,
+    mostrardetalleventa,
+    porcentajeDescuento,
+    valorDescuento,
+    totalAPagar,
+    setPorcentajeDescuento,
+  } = useDetalleVentasStore();
+  const hayDescuento = porcentajeDescuento > 0;
+
+  function quitarDescuento() {
+    setPorcentajeDescuento(0);
+    setInputDescuento("");
+    setErrorDescuento("");
+  }
+
+  function guardar() {
+    const texto = String(inputDescuento).trim();
+    if (texto === "") {
+      quitarDescuento();
+      return;
+    }
+    const valor = Number(texto);
+    if (isNaN(valor) || valor < 0 || valor > 100) {
+      setErrorDescuento("El descuento debe estar entre 0 y 100");
+      return;
+    }
+    setErrorDescuento("");
+    setPorcentajeDescuento(valor);
+  }
+
+  useEffect(() => {
+    setInputDescuento(
+      porcentajeDescuento > 0 ? String(porcentajeDescuento) : "",
+    );
+  }, [porcentajeDescuento]);
+
   const { data: dataMonedas } = useMostrarMonedaQueryStack();
   const {
     dataComprobantes,
@@ -56,24 +95,22 @@ export const IngresoCobro = forwardRef((props, ref) => {
   const denominacionesOrdenadas = [...(dataMonedas ?? [])].sort(
     (a, b) => a.numero - b.numero,
   );
-  // FIX: usa `total` directo en vez de `precioVenta`
   const calcularVueltoYRestante = () => {
-    const totalPagado = Object.values(valoresPago).reduce(
-      (acc, curr) => acc + curr,
-      0,
+    const totalPagado = redondear(
+      Object.values(valoresPago).reduce((acc, curr) => acc + curr, 0),
     );
     const totalSinEfectivo = totalPagado - (valoresPago["Efectivo"] || 0);
-    if (totalSinEfectivo > total) {
+    if (totalSinEfectivo > totalAPagar) {
       setVuelto(0);
-      setRestante(total - totalSinEfectivo);
+      setRestante(redondear(totalAPagar - totalSinEfectivo));
     } else {
-      if (totalPagado >= total) {
-        const exceso = totalPagado - total;
+      if (totalPagado >= totalAPagar) {
+        const exceso = redondear(totalPagado - totalAPagar);
         setVuelto(valoresPago["Efectivo"] ? exceso : 0);
         setRestante(0);
       } else {
         setVuelto(0);
-        setRestante(total - totalPagado);
+        setRestante(redondear(totalAPagar - totalPagado));
       }
     }
   };
@@ -131,7 +168,10 @@ export const IngresoCobro = forwardRef((props, ref) => {
       codigo_producto: ProductosItemSelect?.codigo_barra,
       productos: items,
       tipo_de_pago: tipocobro,
-      monto_total: total,
+      monto_total: totalAPagar,
+      total_original: total,
+      descuento_porcentaje: porcentajeDescuento,
+      descuento_valor: valorDescuento,
       pie_pagina: dataempresa?.pie_pagina_ticket,
       nombre_comprobante: itemSelectComprobanteSelect?.tipo_comprobantes.nombre,
       telefono: dataempresa?.telefono_celular,
@@ -139,31 +179,30 @@ export const IngresoCobro = forwardRef((props, ref) => {
     await ticket("print", dataenv);
   }
   function imprimirDirectoTicket() {}
+
   useEffect(() => {
     if (tipocobro === "Mixto") {
       setValoresPago({});
     } else if (tipocobro === "Efectivo") {
       setRecibido(0);
-      setValoresPago({ Efectivo: total });
+      setValoresPago({ Efectivo: totalAPagar });
     } else {
-      setValoresPago({ [tipocobro]: total });
+      setValoresPago({ [tipocobro]: totalAPagar });
     }
   }, [tipocobro]);
   useEffect(() => {
     if (tipocobro !== "Mixto" && tipocobro !== "Efectivo") {
-      setValoresPago({ [tipocobro]: total });
+      setValoresPago({ [tipocobro]: totalAPagar });
     }
-  }, [total]);
-  // Efectivo = lo recibido, o el total si no han puesto nada (pago exacto)
+  }, [totalAPagar]);
   useEffect(() => {
     if (tipocobro === "Efectivo") {
-      setValoresPago({ Efectivo: recibido > 0 ? recibido : total });
+      setValoresPago({ Efectivo: recibido > 0 ? recibido : totalAPagar });
     }
-  }, [recibido, total]);
-  // FIX: depende de `total` en vez de `precioVenta`
+  }, [recibido, totalAPagar]);
   useEffect(() => {
     calcularVueltoYRestante();
-  }, [total, tipocobro, valoresPago]);
+  }, [totalAPagar, tipocobro, valoresPago]);
   return (
     <Container $ancho={usaEfectivo ? "1000px" : "480px"}>
       {mutation.isPending ? (
@@ -252,7 +291,7 @@ export const IngresoCobro = forwardRef((props, ref) => {
                               </label>
                               <DisplayEfectivo>
                                 {FormatearNumeroDinero(
-                                  total,
+                                  totalAPagar,
                                   dataempresa?.currency,
                                   dataempresa?.iso,
                                 )}
@@ -310,12 +349,21 @@ export const IngresoCobro = forwardRef((props, ref) => {
                     }
                   }
                   return (
-                    <InputText textaling="center" key={index}>
+                    <InputText
+                      textaling="center"
+                      key={
+                        tipocobro === "Mixto"
+                          ? index
+                          : `${index}-${totalAPagar}`
+                      }
+                    >
                       <input
                         onChange={(e) =>
                           handleChangePago(item.nombre, e.target.value)
                         }
-                        defaultValue={tipocobro === item.nombre ? total : ""}
+                        defaultValue={
+                          tipocobro === item.nombre ? totalAPagar : ""
+                        }
                         className="form__field"
                         type="number"
                         disabled={tipocobro === "Mixto" ? false : true}
@@ -328,15 +376,38 @@ export const IngresoCobro = forwardRef((props, ref) => {
 
               <section className="totales">
                 <article>
+                  {hayDescuento && <span>Subtotal: </span>}
+                  {hayDescuento && (
+                    <span>Descuento ({porcentajeDescuento}%): </span>
+                  )}
                   <span className="total">Total: </span>
                   <span>Vuelto: </span>
                   <span>Restante: </span>
                 </article>
                 <article>
+                  {hayDescuento && (
+                    <span>
+                      {FormatearNumeroDinero(
+                        total,
+                        dataempresa?.currency,
+                        dataempresa?.iso,
+                      )}
+                    </span>
+                  )}
+                  {hayDescuento && (
+                    <span>
+                      -
+                      {FormatearNumeroDinero(
+                        valorDescuento,
+                        dataempresa?.currency,
+                        dataempresa?.iso,
+                      )}
+                    </span>
+                  )}
                   <span className="total">
                     {" "}
                     {FormatearNumeroDinero(
-                      total,
+                      totalAPagar,
                       dataempresa?.currency,
                       dataempresa?.iso,
                     )}{" "}
@@ -432,6 +503,53 @@ export const IngresoCobro = forwardRef((props, ref) => {
                       </DenominacionBtn>
                     ))}
                   </DenominacionesGrid>
+                  <div>
+                    <InputText>
+                      <h4>Descuentos: (%)</h4>
+                      <input
+                        type="number"
+                        min="0"
+                        max="100"
+                        placeholder="0"
+                        className="form__field"
+                        value={inputDescuento}
+                        onChange={(e) => setInputDescuento(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            guardar();
+                          }
+                        }}
+                      ></input>
+                    </InputText>
+                    {errorDescuento && (
+                      <Hint style={{ color: "#e04040", opacity: 1 }}>
+                        {errorDescuento}
+                      </Hint>
+                    )}
+                    {hayDescuento && (
+                      <Hint>
+                        Descuento {porcentajeDescuento}%: -
+                        {FormatearNumeroDinero(
+                          valorDescuento,
+                          dataempresa?.currency,
+                          dataempresa?.iso,
+                        )}
+                      </Hint>
+                    )}
+                  </div>
+                  <Btnguardar>
+                    <Btn1 titulo="Guardar" funcion={() => guardar()}></Btn1>
+                    {hayDescuento && (
+                      <Btn1
+                        titulo="Quitar"
+                        bgcolor="#e04040"
+                        color="#ffffff"
+                        funcion={() => quitarDescuento()}
+                      ></Btn1>
+                    )}
+                  </Btnguardar>
                 </PaginaDerecha>
               </>
             )}
@@ -692,6 +810,7 @@ const DisplayEfectivo = styled.div`
 `;
 
 const Hint = styled.span`
+  display: block;
   font-size: 14px;
   text-align: center;
   opacity: 0.6;
@@ -775,4 +894,10 @@ const DenominacionBtn = styled.button`
   &:active {
     transform: scale(0.96);
   }
+`;
+const Btnguardar = styled.div`
+  padding-top: 10px;
+  display: flex;
+  gap: 8px;
+  justify-content: center;
 `;

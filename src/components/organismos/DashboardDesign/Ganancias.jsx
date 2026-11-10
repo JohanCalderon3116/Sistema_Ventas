@@ -16,11 +16,13 @@ export const Ganacias = () => {
   const { validarPermiso } = useValidarPermisosOpertivos();
   const { totalGanancias, porcentajeCambioGanancias } = useDetalleVentasStore();
   const { isLoading } = useMostrarGanaciasXEmpresaQueryStack();
+
   const desbloquear = () => {
     const permitido = validarPermiso("Ver ganancias");
     if (!permitido) return;
     setVisible(true);
   };
+
   if (isLoading) {
     return <BarLoader color={__theme.text} />;
   }
@@ -37,11 +39,7 @@ export const Ganacias = () => {
       </Tarjeta>
       {!visible && (
         <Candado type="button" onClick={desbloquear}>
-          <Icon
-            icon="lucide:lock"
-            width="24"
-            height="24"
-          />
+          <Icon icon="lucide:lock" width="24" height="24" />
           <span>Ver ganancias</span>
         </Candado>
       )}
@@ -51,9 +49,13 @@ export const Ganacias = () => {
 
 const Contenedor = styled.div`
   position: relative;
+  height: 100%;
+  width: 100%;
 `;
 
 const Tarjeta = styled.div`
+  height: 100%;
+  width: 100%;
   transition: filter 0.25s ease;
   filter: ${({ $oculta }) => ($oculta ? "blur(10px)" : "none")};
   pointer-events: ${({ $oculta }) => ($oculta ? "none" : "auto")};
@@ -63,6 +65,8 @@ const Tarjeta = styled.div`
 const Candado = styled.button`
   position: absolute;
   inset: 0;
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;

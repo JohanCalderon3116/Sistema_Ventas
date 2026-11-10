@@ -2,10 +2,11 @@ import { Icon } from "@iconify/react";
 import styled from "styled-components";
 import { Device } from "../../../styles/breakpoints";
 
-export const CardTotales = ({ title, icon, value, porcentage }) => {
+export const CardTotales = ({ title, icon, value, porcentage, warning }) => {
+  const tienePorcentaje = porcentage !== undefined && porcentage !== null;
   const isPositive = porcentage > 0;
   const isNeutral = porcentage === 0;
-  
+
   return (
     <Container>
       <Title>
@@ -13,21 +14,24 @@ export const CardTotales = ({ title, icon, value, porcentage }) => {
         <Icon icon={icon} width="20" height="20"></Icon>
       </Title>
       <SalesValue> {value} </SalesValue>
-      <Percentage isPositive={isPositive} isNeutral={isNeutral}>
-        {" "}
-        <Icon
-          icon={
-            isNeutral
-              ? "akar-icons:minus"
-              : isPositive
-                ? "iconamoon:arrow-up-2-fill"
-                : "iconamoon:arrow-down-2-fill"
-          }
-          width="16"
-          height="16"
-        ></Icon>
-        {porcentage}% al periodo anterior
-      </Percentage>
+      {tienePorcentaje && (
+        <Percentage isPositive={isPositive} isNeutral={isNeutral}>
+          {" "}
+          <Icon
+            icon={
+              isNeutral
+                ? "akar-icons:minus"
+                : isPositive
+                  ? "iconamoon:arrow-up-2-fill"
+                  : "iconamoon:arrow-down-2-fill"
+            }
+            width="16"
+            height="16"
+          ></Icon>
+          {porcentage}% al periodo anterior
+        </Percentage>
+      )}
+      {warning && <Warning>{warning}</Warning>}
     </Container>
   );
 };
@@ -58,7 +62,7 @@ const SalesValue = styled.span`
   font-weight: bold;
   text-align: start;
   @media ${Device.tablet} {
-    font-size: 1.8rem;
+    font-size: 1.4rem;
   }
 `;
 const Percentage = styled.span`
@@ -68,4 +72,9 @@ const Percentage = styled.span`
   display: flex;
   align-items: start;
   font-size: 12px;
+`;
+const Warning = styled.span`
+  color: #6b7280;
+  font-size: 12px;
+  text-align: start;
 `;

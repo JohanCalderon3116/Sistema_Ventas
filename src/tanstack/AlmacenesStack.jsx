@@ -166,6 +166,7 @@ export const useEliminarAlmacenesMutationStack = () => {
       queryClient.invalidateQueries({
         queryKey: ["mostrar stock almacen y producto"],
       });
+      queryClient.invalidateQueries({ queryKey: ["mostrar total inventario"] });
     },
   });
 };

@@ -18,6 +18,15 @@ function calcularTotal(items) {
     0,
   );
 }
+
+export const redondear = (n) => Math.round((n + Number.EPSILON) * 100) / 100;
+
+function calcularDescuento(total, porcentaje) {
+  const valorDescuento = redondear(total * (porcentaje / 100));
+  const totalAPagar = redondear(total - valorDescuento);
+  return { valorDescuento, totalAPagar };
+}
+
 export const useDetalleVentasStore = create((set, get) => ({
   detalleventa: [],
   parametros: {},
@@ -29,15 +38,33 @@ export const useDetalleVentasStore = create((set, get) => ({
   porcentajeCambioGanancias: 0,
   ventasAgrupadasFecha: 0,
   total: 0,
+  porcentajeDescuento: 0,
+  valorDescuento: 0,
+  totalAPagar: 0,
+  setPorcentajeDescuento: (porcentaje) => {
+    const p = Number(porcentaje) || 0;
+    set({
+      porcentajeDescuento: p,
+      ...calcularDescuento(get().total, p),
+    });
+  },
   resetDetalleVenta: () => {
-    set({ detalleventa: [], total: 0 });
+    set({
+      detalleventa: [],
+      total: 0,
+      porcentajeDescuento: 0,
+      valorDescuento: 0,
+      totalAPagar: 0,
+    });
   },
   mostrardetalleventa: async (p) => {
     const response = await MostrarDetalleVenta(p);
     const items = response ?? [];
+    const total = calcularTotal(items);
     set({
       detalleventa: items,
-      total: calcularTotal(items),
+      total,
+      ...calcularDescuento(total, get().porcentajeDescuento),
     });
     return items;
   },

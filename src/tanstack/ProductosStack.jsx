@@ -141,6 +141,7 @@ export const useInsertarProductosMutationStack = ({
       queryClient.invalidateQueries({
         queryKey: ["mostrar stock almacen y producto"],
       });
+      queryClient.invalidateQueries({ queryKey: ["mostrar total inventario"] });
       cerrarFormulario();
       setRandomCodeBarras("");
     },

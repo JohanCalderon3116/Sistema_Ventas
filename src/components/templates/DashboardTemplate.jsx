@@ -8,6 +8,7 @@ import { CardMovimientosProductosTopMonto } from "../organismos/DashboardDesign/
 import { Ganacias } from "../..";
 import { CantidadVentas } from "../organismos/DashboardDesign/CantidadVentas";
 import { SumarVentas } from "../organismos/DashboardDesign/SumarVentas";
+import { TotalInversion } from "../organismos/DashboardDesign/TotalInversion";
 
 const isDarkTheme = (theme) =>
   theme?.text === "#FFFFFF" ||
@@ -32,6 +33,9 @@ export const DashboardTemplate = () => {
           </ContentTotales>
           <ContentTotales>
             <Ganacias />
+          </ContentTotales>
+          <ContentTotales>
+            <TotalInversion />
           </ContentTotales>
         </Area1>
         <Area2>
@@ -99,9 +103,9 @@ const Area1 = styled.section`
   grid-area: area1;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 18px;
+  gap: 14px;
   @media ${Device.desktop} {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
   }
 `;
 
@@ -118,7 +122,10 @@ const Area2 = styled.section`
   overflow: hidden;
   transition: all 0.2s ease-out;
   &:hover {
-    border-color: ${({ theme }) => theme.text === "#FFFFFF" ? "rgba(255, 255, 255, 0.24)" : "rgba(17, 17, 17, 0.24)"};
+    border-color: ${({ theme }) =>
+      theme.text === "#FFFFFF"
+        ? "rgba(255, 255, 255, 0.24)"
+        : "rgba(17, 17, 17, 0.24)"};
   }
 `;
 
@@ -135,7 +142,10 @@ const Area3 = styled.section`
   overflow: hidden;
   transition: all 0.2s ease-out;
   &:hover {
-    border-color: ${({ theme }) => theme.text === "#FFFFFF" ? "rgba(255, 255, 255, 0.24)" : "rgba(17, 17, 17, 0.24)"};
+    border-color: ${({ theme }) =>
+      theme.text === "#FFFFFF"
+        ? "rgba(255, 255, 255, 0.24)"
+        : "rgba(17, 17, 17, 0.24)"};
   }
 `;
 
@@ -151,7 +161,8 @@ const Area4 = styled.section`
 
 const ContentTotales = styled.div`
   background-color: ${({ theme }) => theme.bgcards};
-  padding: 18px;
+  padding: 14px;
+  min-width: 0;
   border-radius: 16px;
   text-align: center;
   border: 1px solid ${({ theme }) => theme.color2};
@@ -174,7 +185,10 @@ const ContentTotales = styled.div`
   }
   &:hover {
     transform: translateY(-2px);
-    border-color: ${({ theme }) => theme.text === "#FFFFFF" ? "rgba(255, 255, 255, 0.24)" : "rgba(17, 17, 17, 0.24)"};
+    border-color: ${({ theme }) =>
+      theme.text === "#FFFFFF"
+        ? "rgba(255, 255, 255, 0.24)"
+        : "rgba(17, 17, 17, 0.24)"};
     box-shadow: ${({ theme }) =>
       isDarkTheme(theme)
         ? "0 10px 24px -8px rgba(0, 0, 0, 0.5)"
