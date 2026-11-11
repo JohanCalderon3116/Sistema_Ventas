@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64"><title>SoftCreate POS</title><defs><linearGradient id="g" gradientUnits="userSpaceOnUse" x1="6" y1="6" x2="58" y2="58"><stop offset="0" stop-color="#A78BFA"/><stop offset="1" stop-color="#7C3AED"/></linearGradient></defs><g transform="translate(0 0) scale(1.0)" fill="none" stroke="url(#g)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M9 37V16a7 7 0 0 1 7-7h32a7 7 0 0 1 7 7v32a7 7 0 0 1-7 7H25"/>
+    <path d="M7.5 54.5 17 45V35l9-9h11.5"/>
+    <circle cx="42" cy="26" r="4.5"/>
+    <path d="M25 55 33.8 46.2"/>
+    <circle cx="37" cy="43" r="4.5"/>
+</g></svg>

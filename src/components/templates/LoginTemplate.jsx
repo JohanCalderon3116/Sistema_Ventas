@@ -103,7 +103,7 @@ export const LoginTemplate = () => {
       <div className="card">
         <ContentLogo>
           <span className="marca">
-            <img src={v.logo} alt="SoftCreate POS" />
+            <img src={isDark ? v.logoFullDark : v.logoFull} alt="SoftCreate POS" />
           </span>
         </ContentLogo>
         <TituloWrap>
@@ -358,13 +358,14 @@ const ContentLogo = styled.section`
     align-items: center;
   }
   img {
-    width: 190px;
+    width: 230px;
+    max-width: 100%;
     height: auto;
     object-fit: contain;
     filter: ${({ theme }) =>
       isDarkTheme(theme)
-        ? "drop-shadow(0 0 12px rgba(139, 92, 246, 0.28))"
-        : "drop-shadow(0 4px 10px rgba(0, 0, 0, 0.12))"};
+        ? "drop-shadow(0 0 14px rgba(139, 92, 246, 0.22))"
+        : "none"};
   }
   .nombre {
     font-family: "Poppins", sans-serif;

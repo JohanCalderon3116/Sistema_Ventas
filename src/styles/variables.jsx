@@ -12,8 +12,9 @@ import { TbBrandSupabase } from "react-icons/tb";
 import { FaReact } from "react-icons/fa";
 import { BsArrowDown, BsArrowUpShort } from "react-icons/bs";
 import { FaBalanceScale } from "react-icons/fa";
-import logo from "../../public/SoftCreate POS logo.png";
-import logoFull from "../../public/SoftCreate POS full.png";
+import logo from "../../public/SoftCreate POS icon.svg";
+import logoFull from "../../public/SoftCreate POS full.svg";
+import logoFullDark from "../../public/SoftCreate POS full dark.svg";
 import { FcGoogle } from "react-icons/fc";
 import { RiCloseLine } from "react-icons/ri";
 import { BiSave } from "react-icons/bi";
@@ -105,6 +106,7 @@ export const v = {
   balance: FaBalanceScale,
   logo: logo,
   logoFull: logoFull,
+  logoFullDark: logoFullDark,
   iconogoogle: FcGoogle,
   iconocerrar: RiCloseLine,
   iconoguardar: BiSave,

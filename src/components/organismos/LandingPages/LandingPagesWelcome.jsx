@@ -325,9 +325,14 @@ export const LandingPagesWelcome = () => {
           <MainPosBanner>
             <div className="banner-top">
               <img
-                src={v.logoFull || v.logo}
+                src={v.logoFull}
                 alt="Logo Sistema POS"
-                className="brand-logo"
+                className="brand-logo brand-logo--light"
+              />
+              <img
+                src={v.logoFullDark}
+                alt="Logo Sistema POS"
+                className="brand-logo brand-logo--dark"
               />
               <span className="pos-tag">Punto de Venta Integrado</span>
             </div>
@@ -790,7 +795,14 @@ const MainPosBanner = styled.div`
     .brand-logo {
       height: 46px;
       width: auto;
+      max-width: 100%;
       object-fit: contain;
+    }
+    .brand-logo--light {
+      display: ${({ theme }) => (isDarkTheme(theme) ? "none" : "block")};
+    }
+    .brand-logo--dark {
+      display: ${({ theme }) => (isDarkTheme(theme) ? "block" : "none")};
     }
 
     .pos-tag {
