@@ -52,6 +52,7 @@ export const TicketModal = () => {
       setGenerandoPdf(true);
       await TicketVentaModal("print", {
         ...data,
+        id_empresa: data?.id_empresa ?? dataempresa?.id,
         telefono: data?.telefono || dataempresa?.telefono_celular,
       });
     } catch (error) {
@@ -100,9 +101,16 @@ export const TicketModal = () => {
               </span>
             </InfoRow>
             <InfoRow>
-              <span>CAJERO</span>
+              <span>CAJERO: </span>
               <span>{data.nombre_usuario}</span>
             </InfoRow>
+            {(Number(data.id_empresa) === 7382 ||
+              Number(dataempresa?.id) === 7382) && (
+              <InfoRow>
+                <span>COMIS: </span>
+                <span>{data.nombre_comisionista || "-"}</span>
+              </InfoRow>
+            )}
 
             <Divider dashed />
 

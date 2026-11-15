@@ -12,6 +12,24 @@ export async function MostrarUsuarios(p) {
   }
   return data;
 }
+export async function MostrarUsuariosXEmpresa(p) {
+  const { data, error } = await supabase
+    .from(tabla)
+    .select(
+      `
+      *,
+      asignacion_sucursal!inner(
+        *,
+        sucursales!inner(*)
+      )
+    `,
+    )
+    .eq("asignacion_sucursal.sucursales.id_empresa", p.id_empresa);
+  if (error) {
+    throw new Error(error.message);
+  }
+  return data;
+}
 export async function InsertarAdmin(p) {
   const { error } = await supabase.from(tabla).insert(p);
   if (error) {

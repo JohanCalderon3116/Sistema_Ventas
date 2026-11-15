@@ -126,6 +126,9 @@ export const useInsertarUsuariosPorEmpresaMutationStack = ({
       queryClient.invalidateQueries({
         queryKey: ["buscar usuarios asignados"],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["mostrar usuarios x empresa"],
+      });
       if (accion === "Editar") {
         queryClient.invalidateQueries({
           queryKey: ["mostrar permisos por usuarios"],
@@ -133,6 +136,21 @@ export const useInsertarUsuariosPorEmpresaMutationStack = ({
       }
       onClose();
     },
+  });
+};
+export const useMostrarUsuariosXEmpresaQueryStack = () => {
+  const { dataempresa } = useEmpresaStore();
+  const { mostrarUsuariosXEmpresa } = useUsuariosStore();
+  return useQuery({
+    queryKey: ["mostrar usuarios x empresa", { id_empresa: dataempresa?.id }],
+    queryFn: () =>
+      mostrarUsuariosXEmpresa({
+        id_empresa: dataempresa?.id,
+      }),
+    enabled: !!dataempresa,
+    refetchOnWindowFocus: false,
+    staleTime: 1000 * 60 * 5,
+    retry: 1,
   });
 };
 export const useMostrarUsuariosQueryStack = () => {

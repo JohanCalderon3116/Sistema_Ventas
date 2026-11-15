@@ -229,6 +229,10 @@ const TicketVenta = async (output, data) => {
   const nombreCajero = ConvertirMayusculas(
     limpiarTexto(data?.nombre_usuario, "-"),
   );
+  const nombreComisionista = ConvertirMayusculas(
+    limpiarTexto(data?.nombre_comisionista, "-"),
+  );
+  const mostrarComisionista = Number(data?.id_empresa) === 7382;
   const piePagina = limpiarTexto(data?.pie_pagina, "GRACIAS POR SU COMPRA");
 
   const datosEmpresaSubtitulo = [
@@ -360,13 +364,25 @@ const TicketVenta = async (output, data) => {
             },
           ],
           [
-            { text: "CAJERO:", style: "tInfoLabel" },
+            { text: "CAJERO: ", style: "tInfoLabel" },
             {
               text: nombreCajero,
               style: "tInfoValue",
               alignment: "right",
             },
           ],
+          ...(mostrarComisionista
+            ? [
+                [
+                  { text: "COMIS: ", style: "tInfoLabel" },
+                  {
+                    text: nombreComisionista,
+                    style: "tInfoValue",
+                    alignment: "right",
+                  },
+                ],
+              ]
+            : []),
           [
             { text: "CLIENTE:", style: "tInfoLabel" },
             {

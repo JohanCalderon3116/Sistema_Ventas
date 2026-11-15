@@ -23,6 +23,8 @@ import { useBuscarClientesQueryStack } from "../../../tanstack/ClientesProveedor
 import { useConfirmarVentasMutationStack } from "../../../tanstack/VentasStack";
 import { BeatLoader } from "react-spinners";
 import { useMostrarMonedaQueryStack } from "../../../tanstack/MonedaStack";
+import { SelectList } from "../../ui/lists/SelectList";
+import { useMostrarUsuariosXEmpresaQueryStack } from "../../../tanstack/UsuariosStack";
 
 export const IngresoCobro = forwardRef((props, ref) => {
   const [openRegistro, setOpenRegistro] = useState(false);
@@ -85,7 +87,13 @@ export const IngresoCobro = forwardRef((props, ref) => {
     setItemSelectComprobanteSelect,
   } = useSerealizacionesStore();
   const { ProductosItemSelect } = useProductosStore();
-  const { datausuarios } = useUsuariosStore();
+  const {
+    datausuarios,
+    dataUsuariosXEmpresa,
+    usuariosItemSelect,
+    setUsuariosItemSelect,
+  } = useUsuariosStore();
+  useMostrarUsuariosXEmpresaQueryStack();
   const { dataMetodosPago } = useMetodosPagoStore();
   const theme = useTheme();
   const { dataempresa } = useEmpresaStore();
@@ -162,6 +170,9 @@ export const IngresoCobro = forwardRef((props, ref) => {
       pais: dataempresa.pais,
       id_venta: responseVentaConfirmada?.nro_comprobante,
       nombre_usuario: datausuarios?.nombres,
+      id_empresa: dataempresa?.id,
+      nombre_comisionista:
+        dataempresa?.id === 7382 ? usuariosItemSelect?.nombres || "-" : null,
       nombre_cliente: cliproItemSelect?.nombres || "-",
       cc: cliproItemSelect?.identificador_nacional || "-",
       direccion_cliente: cliproItemSelect.direccion || "-",
@@ -271,6 +282,18 @@ export const IngresoCobro = forwardRef((props, ref) => {
                   </EditButton>
                   <span className="cliente"> {cliproItemSelect?.nombres} </span>
                 </section>
+                {dataempresa?.id === 7382 && (
+                  <section className="filacomisionista">
+                    <span>Comisionista:</span>
+                    <SelectList
+                      data={dataUsuariosXEmpresa}
+                      itemSelect={usuariosItemSelect}
+                      onSelect={setUsuariosItemSelect}
+                      displayField="nombres"
+                      placeholder="-"
+                    ></SelectList>
+                  </section>
+                )}
               </section>
               <section className="metodos">
                 {dataMetodosPago?.map((item, index) => {
@@ -686,6 +709,21 @@ const PaginaIzquierda = styled.div`
     .cliente {
       font-weight: 700;
       color: ${({ theme }) => theme.text};
+    }
+
+    .filacomisionista {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 8px;
+      width: 100%;
+      font-size: 16px;
+
+      > span {
+        font-size: 18px;
+        font-weight: 600;
+      }
     }
   }
 

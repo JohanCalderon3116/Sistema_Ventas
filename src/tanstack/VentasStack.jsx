@@ -56,9 +56,17 @@ export const useConfirmarVentasMutationStack = ({
   imprimirConVentanaEmergente,
 }) => {
   const queryClient = useQueryClient();
-  const { restante, idventa, vuelto, confirmarVenta, valoresPago, resetState } =
-    useVentasStore();
-  const { datausuarios } = useUsuariosStore();
+  const {
+    restante,
+    idventa,
+    vuelto,
+    confirmarVenta,
+    editarComisionistaVenta,
+    valoresPago,
+    resetState,
+  } = useVentasStore();
+  const { datausuarios, usuariosItemSelect } = useUsuariosStore();
+  const { dataempresa } = useEmpresaStore();
   const { itemSelectComprobanteSelect } = useSerealizacionesStore();
   const { dataCierreCaja } = useCierreCajaStore();
   const { cliproItemSelect } = useClientesProveedoresStore();
@@ -105,6 +113,12 @@ export const useConfirmarVentasMutationStack = ({
         _monto_total: totalAPagar,
       };
       const responseVentaConfirmada = await confirmarVenta(pventas);
+      if (dataempresa?.id === 7382 && usuariosItemSelect?.id) {
+        await editarComisionistaVenta({
+          id: idventa,
+          id_comisionista: usuariosItemSelect?.id,
+        });
+      }
       for (const [tipo, monto] of Object.entries(valoresPago)) {
         if (monto > 0) {
           const metodoPago = dataMetodosPago.find(

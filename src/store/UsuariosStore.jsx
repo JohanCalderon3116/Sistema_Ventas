@@ -7,6 +7,7 @@ import {
   InsertarPermisos,
   InsertarUsuarios,
   MostrarUsuarios,
+  MostrarUsuariosXEmpresa,
   ObtenerIdAuthSupabase,
   usePermisosStore,
 } from "../index";
@@ -14,6 +15,16 @@ import {
 export const useUsuariosStore = create((set) => ({
   refetchs: null,
   datausuarios: null,
+  usuariosItemSelect: [],
+  setUsuariosItemSelect: (p) => {
+    set({ usuariosItemSelect: p });
+  },
+  dataUsuariosXEmpresa: [],
+  mostrarUsuariosXEmpresa: async (p) => {
+    const response = await MostrarUsuariosXEmpresa(p);
+    set({ dataUsuariosXEmpresa: response });
+    return response;
+  },
   usuariosEnLinea: {},
   setUsuariosEnLinea: (p) => set({ usuariosEnLinea: p }),
   limpiarUsuarios: () =>

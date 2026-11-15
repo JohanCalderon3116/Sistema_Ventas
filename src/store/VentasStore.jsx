@@ -1,11 +1,13 @@
 import { create } from "zustand";
 import {
   ConfirmarVenta,
+  EditarComisionistaVenta,
   EliminarVenta,
   EliminarVentasIncompletas,
   InsertarVentas,
   MostrarVentaCompletaPorId,
   useClientesProveedoresStore,
+  useUsuariosStore,
 } from "../index";
 import { toast } from "sonner";
 
@@ -27,7 +29,9 @@ export const useVentasStore = create((set, get) => ({
   },
   resetState: () => {
     const { selectCliPro } = useClientesProveedoresStore.getState();
+    const { setUsuariosItemSelect } = useUsuariosStore.getState();
     selectCliPro([]);
+    setUsuariosItemSelect([]);
     set(initialState);
   },
   setStatePantallaCobro: (p) =>
@@ -74,6 +78,9 @@ export const useVentasStore = create((set, get) => ({
     const response = await ConfirmarVenta(p);
     set({ dataventas: response });
     return response;
+  },
+  editarComisionistaVenta: async (p) => {
+    await EditarComisionistaVenta(p);
   },
   eliminarVenta: async (p) => {
     const { resetState } = get();

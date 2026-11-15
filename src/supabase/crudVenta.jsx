@@ -33,6 +33,15 @@ export async function ConfirmarVenta(p) {
   }
   return data;
 }
+export async function EditarComisionistaVenta(p) {
+  const { error } = await supabase
+    .from(tabla)
+    .update({ id_comisionista: p.id_comisionista })
+    .eq("id", p.id);
+  if (error) {
+    throw new Error(error.message);
+  }
+}
 export async function EliminarVenta(p) {
   const { error } = await supabase.from(tabla).delete().eq("id", p.id);
   if (error) {

@@ -24,7 +24,7 @@ export const SelectList = ({
   return (
     <DropdownContainer>
       <DropdownHeader onClick={toggleDropdown}>
-        {itemSelect?.[displayField]}
+        {itemSelect?.[displayField] || placeholder}
         <Arrow isOpen={isOpen}>
           <Icon icon="iconamoon:arrow-up-2-bold" width="24" height="24" />
         </Arrow>
